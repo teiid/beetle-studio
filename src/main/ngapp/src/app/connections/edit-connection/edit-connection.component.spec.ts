@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditConnectionComponent } from './edit-connection.component';
+import {RouterTestingModule} from '@angular/router/testing';
+import {BreadcrumbsComponent} from '@core/breadcrumbs/breadcrumbs.component';
+import {BreadcrumbComponent} from '@core/breadcrumbs/breadcrumb/breadcrumb.component';
 
 describe('EditConnectionComponent', () => {
   let component: EditConnectionComponent;
@@ -8,7 +11,8 @@ describe('EditConnectionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditConnectionComponent ]
+      imports: [ RouterTestingModule ],
+      declarations: [ EditConnectionComponent, BreadcrumbsComponent, BreadcrumbComponent ]
     })
     .compileComponents();
   }));

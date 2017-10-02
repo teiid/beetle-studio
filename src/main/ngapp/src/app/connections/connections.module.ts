@@ -27,12 +27,16 @@ import { EditConnectionComponent } from "@connections/edit-connection/edit-conne
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 import { ConnectionService } from "@connections/shared/connection.service";
+import { FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 
 @NgModule({
   imports: [
     CommonModule,
     CoreModule,
     SharedModule,
+    FormsModule,
+    RouterModule
   ],
   declarations: [
     AddConnectionComponent,
