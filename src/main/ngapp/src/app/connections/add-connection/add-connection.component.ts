@@ -27,8 +27,8 @@ import { AbstractPageComponent } from '@shared/abstract-page.component';
 
 @Component({
   selector: 'app-add-connection',
-  templateUrl: '@connections/add-connection.component.html',
-  styleUrls: ['@connections/add-connection.component.css']
+  templateUrl: './add-connection.component.html',
+  styleUrls: ['./add-connection.component.css']
 })
 export class AddConnectionComponent extends AbstractPageComponent {
 

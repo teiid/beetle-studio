@@ -27,7 +27,7 @@ export class NavHeaderComponent implements OnInit {
 
   version = 'N/A';
   builtOn: Date = new Date();
-  projectUrl = 'http://www.apicur.io/';
+  projectUrl = 'http://jboss.org/teiiddesigner/';
 
   constructor() {
     if (window['ApicurioStudioInfo']) {
