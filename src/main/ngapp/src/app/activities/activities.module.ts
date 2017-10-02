@@ -23,7 +23,6 @@ import { ActivitiesComponent } from "@activities/activities.component";
 import { ActivitiesListComponent } from "@activities/activities-list/activities-list.component";
 import { AddActivityComponent } from "@activities/add-activity/add-activity.component";
 import { AddActivityFormComponent } from "@activities/shared/add-activity-form/add-activity-form.component";
-import { ConnectionsModule } from "@connections/connections.module";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 import { ActivityService } from "@activities/shared/activity.service";
@@ -33,7 +32,6 @@ import {FormsModule} from "@angular/forms";
 @NgModule({
   imports: [
     CommonModule,
-    ConnectionsModule,
     CoreModule,
     SharedModule,
     RouterModule,

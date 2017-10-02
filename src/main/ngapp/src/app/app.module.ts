@@ -24,12 +24,14 @@ import { AppComponent } from '@app/app.component';
 import { ConnectionsModule } from "@connections/connections.module";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
+import {AppRouting} from "@app/app.routing";
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    AppRouting,
     ActivitiesModule,
     BrowserModule,
     ConnectionsModule,
