@@ -1,0 +1,34 @@
+<div class="container-fluid container-cards-pf">
+  <div class="row row-cards-pf">
+
+    <div class="col-xs-12 col-sm-4 col-md-4" *ngFor="let activity of activities">
+      <div class="card-pf card-pf-accented card-pf-aggregate-status activity-card" [class.active]="isSelected(activity)" (click)="toggleActivitySelected(activity)">
+        <div class="card-pf-body">
+          <!-- title -->
+          <h2 class="activity-card-title">
+            <span class="fa fa-fw fa-cog activity-card-icon"></span>
+            <span><a [routerLink]="[activity.getId()]">{{ activity.getId() }}</a></span>
+            <span class="pull-right fa fa-fw fa-close activity-card-action-icon" style="color:darkred;" (click)="deleteActivity(activity.getId())"></span>
+            <span class="pull-right fa fa-fw fa-edit activity-card-action-icon" (click)="editActivity(activity.getId())"></span>
+          </h2>
+          <hr/>
+          <div class="activity-tags">
+            <span class="activity-tags-label">Source:</span>
+            <span class="activity-tags-label">{{ activity.getSourceConnection() }}&nbsp;&nbsp;&nbsp;</span>
+          </div>
+          <div class="activity-tags">
+            <span class="activity-tags-label">Target:</span>
+            <span class="activity-tags-label">{{ activity.getSourceConnection() }}&nbsp;&nbsp;&nbsp;</span>
+          </div>
+          <!--
+          <div class="activity-tags" *ngIf="activity.tags && activity.tags.length > 0">
+            <span class="activity-tags-label">Tags:</span>
+            <span class="activity-tag" *ngFor="let tag of activity.tags" (click)="selectTag(tag, $event)">{{ tag }}</span>
+          </div>
+          <p class="activity-description">{{activity.description}}</p>
+          -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

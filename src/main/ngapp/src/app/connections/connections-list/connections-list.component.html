@@ -1,0 +1,40 @@
+<div class="list-group list-view-pf">
+  <div class="list-group-item list-view-pf-stacked" *ngFor="let connection of connections" [class.active]="isSelected(connection)" (click)="toggleConnectionSelected(connection)">
+    <div class="list-view-pf-main-info">
+      <div class="list-view-pf-left">
+        <span class="fa fa-plug list-view-pf-icon-sm"></span>
+      </div>
+      <div class="list-view-pf-body">
+        <div class="list-view-pf-description">
+          <div class="list-group-item-heading">
+            <a [routerLink]="[connection.getId()]">{{ connection.getId() }}</a>
+          </div>
+          <!--
+          <div class="list-group-item-text">{{ connection.description }}</div>
+          -->
+        </div>
+        <div class="list-view-pf-additional-info">
+          <div class="connection-tags">
+            <span class="connection-tags-label">JNDI:</span>
+            <span class="connection-tags-label">{{ connection.getDriverName() }}&nbsp;&nbsp;&nbsp;</span>
+          </div>
+          <div class="connection-tags">
+            <span class="connection-tags-label">Driver:</span>
+            <span class="connection-tags-label">{{ connection.getDriverName() }}&nbsp;&nbsp;&nbsp;</span>
+          </div>
+          <!--
+          <div class="connection-tags" *ngIf="connection.tags && connection.tags.length > 0">
+            <span class="connection-tags-label">Tags:</span>
+            <span class="connection-tag" *ngFor="let tag of connection.tags" (click)="selectTag(tag, $event)">{{ tag }}</span>
+          </div>
+          -->
+        </div>
+      </div>
+      <div class="list-view-pf-actions">
+        <button class="btn btn-default" type="button" (click)="pingConnection(connection.getId())">Ping</button>
+        <button class="btn btn-default" type="button" (click)="editConnection(connection.getId())">Edit</button>
+        <button class="btn btn-danger" type="button" (click)="deleteConnection(connection.getId())">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

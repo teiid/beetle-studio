@@ -1,0 +1,107 @@
+<div style="margin-left: 150px">
+
+  <div id="connections-breadcrumb-bar">
+    <breadcrumbs>
+      <li app-breadcrumb label="Connections" icon="plug" class="active"></li>
+    </breadcrumbs>
+  </div>
+
+  <app-page-error [error]="pageError" *ngIf="pageError"></app-page-error>
+
+  <div class="container-fluid connection-list-connections" *ngIf="!pageError">
+    <div class="row">
+      <h2>Connections</h2>
+    </div>
+    <div class="row toolbar-pf">
+      <div class="col-sm-12">
+        <form class="toolbar-pf-actions" (submit)="filterConnections()" #filterForm="ngForm">
+          <div class="form-group toolbar-pf-filter">
+            <label class="sr-only" for="filter">Name</label>
+            <div class="input-group" style="width: 100%">
+              <input name="name-filter" [(ngModel)]="filters.nameFilter" type="text" class="form-control name-filter" id="filter" placeholder="Filter by name...">
+            </div>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-link" type="button" (click)="toggleSortDirection()">
+              <span *ngIf="filters.sortDirection === 'ASC'" class="fa fa-sort-alpha-asc"></span>
+              <span *ngIf="filters.sortDirection === 'DESC'" class="fa fa-sort-alpha-desc"></span>
+            </button>
+          </div>
+          <div class="form-group">
+            <a class="btn btn-primary" [routerLink]="['/connections/add-connection']">Add Connection</a>
+          </div>
+          <div class="form-group toolbar-pf-view-selector">
+            <ul class="list-inline">
+              <li *ngIf="filters.layout === 'list'"><a (click)="onCardLayout()"><i class="fa fa-th-list"></i></a></li>
+              <li *ngIf="filters.layout === 'card'"><a (click)="onListLayout()"><i class="fa fa-th"></i></a></li>
+            </ul>
+          </div>
+        </form>
+        <div class="row toolbar-pf-results">
+          <div class="col-sm-12">
+            <h5>{{ filteredConnections.length }} Connections found
+              <a *ngIf="allConnections.length != filteredConnections.length"
+                 class="clear-filters" (click)="clearFilters()">(out of {{
+              allConnections.length }} total)</a></h5>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- List of Connections -->
+    <div class="row connection-list-items">
+      <div class="col-md-12 empty-state" *ngIf="isLoaded('connections') && allConnections.length === 0">
+        <div class="blank-slate-pf">
+          <div class="blank-slate-pf-icon">
+            <span class="pficon pficon pficon-add-circle-o"></span>
+          </div>
+          <h1>No Connections Found</h1>
+          <p>
+            No Connections were found - please click below to create a new Connection!
+          </p>
+          <div class="blank-slate-pf-main-action">
+            <div class="btn-group">
+              <a class="btn btn-primary btn-lg" [routerLink]="['/connections/add-connection']">Add Connection</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8 none-matched-state" *ngIf="filteredConnections.length === 0 && isFiltered()">
+        <div class="alert alert-info">
+          <span class="pficon pficon-info"></span>
+          <strong>No Connections matched the filter!</strong>&nbsp;&nbsp;Please try changing your filter criteria...
+        </div>
+      </div>
+
+      <!-- The 'loading Connections' card -->
+      <div class="col-md-12" *ngIf="!isLoaded('connections')">
+        <div class="container-fluid container-cards-pf">
+          <div class="row row-cards-pf">
+            <div class="card-pf card-pf-accented">
+              <div class="card-pf-heading">
+                <h1 class="card-pf-title">
+                  <p><span class="spinner spinner-xs spinner-inline"></span> Loading Connections...</p>
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- The list or card view -->
+      <div class="col-md-12" *ngIf="isLoaded('connections')">
+        <app-connections-list *ngIf="filters.layout === 'list'" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
+                              (onEditConnection)="onEdit($event)" (onPingConnection)="onPing($event)" (onDeleteConnection)="onDelete($event)"
+                              (onConnectionSelected)="onSelected($event)" (onConnectionDeselected)="onDeselected($event)"></app-connections-list>
+        <app-connections-cards *ngIf="filters.layout === 'card'" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
+                               (onEditConnection)="onEdit($event)" (onPingConnection)="onPing($event)" (onDeleteConnection)="onDelete($event)"
+                               (onConnectionSelected)="onSelected($event)" (onConnectionDeselected)="onDeselected($event)"></app-connections-cards>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+<app-confirm-delete (onDelete)="deleteConnection()">
+  <p>Do you really want to delete the selected Connection?</p>
+</app-confirm-delete>

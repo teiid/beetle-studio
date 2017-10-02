@@ -1,0 +1,16 @@
+<div style="margin-left: 150px">
+  <div id="activities-breadcrumb-bar">
+    <breadcrumbs>
+      <li app-breadcrumb label="Activities" icon="cog" [route]="[ '/activities' ]"></li>
+      <li app-breadcrumb label="Add Activity" icon="plus" class="active"></li>
+    </breadcrumbs>
+  </div>
+  <div class="container-fluid" *ngIf="!pageError">
+    <div class="row">
+      <h2>Add Activity</h2>
+    </div>
+    <div class="add-activity-form row">
+      <app-add-activity-form (onCreateActivity)="onCreateActivity($event)" #createActivityForm></app-add-activity-form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<div class="create-connection-form-panel panel panel-default">
+  <h1>Connection Properties</h1>
+  <div class="panel-body">
+    <form id="create-connection-form" class="form-horizontal" (submit)="createConnection()" #createConnectionForm="ngForm">
+      <div class="form-group">
+        <label class="col-sm-1 control-label" for="name">Name</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="name" required [(ngModel)]="model.name" name="name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-1 control-label" for="dv__jndiName">JNDI Name</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="dv__jndiName" required [(ngModel)]="model.jndiName" name="jndiName">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-1 control-label" for="dv__driverName">Driver</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="dv__driverName" [(ngModel)]="model.driverName" name="driverName">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-1 control-label" for="jdbc">JDBC</label>
+        <div class="col-sm-10">
+          <input type="checkbox" class="form-control" id="jdbc" [(ngModel)]="model.jdbc" name="jdbc">
+        </div>
+      </div>
+      <hr/>
+      <div class="form-group">
+        <div class="col-sm-offset-1 col-sm-10">
+          <button type="submit" class="btn btn-primary"
+                  [disabled]="creatingConnection">
+            <span *ngIf="!creatingConnection">Create Connection</span>
+            <span *ngIf="creatingConnection" class="spinner spinner-xs spinner-inline"></span>
+            <span *ngIf="creatingConnection">Creating</span>
+          </button>
+          <button class="btn btn-default" (click)="cancelAdd()">Cancel</button>
+        </div>
+      </div>
+    </form>
+</div>

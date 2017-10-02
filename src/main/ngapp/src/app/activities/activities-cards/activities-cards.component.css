@@ -1,0 +1,69 @@
+.container-cards-pf {
+  padding: 0;
+  margin-top: 0;
+}
+
+.row-cards-pf {
+  padding: 0;
+}
+
+
+.activity-card-action-icon {
+  cursor: pointer;
+}
+
+.activity-card-icon {
+  border: 2px solid #39a5dc;
+  border-radius: 50%;
+  padding: 5px;
+  margin-right: 10px;
+  width: 32px;
+}
+
+.activity-card .activity-card-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.activity-card {
+  -webkit-transition: background-color 300ms;
+  -moz-transition: background-color 300ms;
+  -ms-transition: background-color 300ms;
+  -o-transition: background-color 300ms;
+  transition: background-color 300ms;
+  height: 220px;
+}
+.activity-card:hover {
+  background-color: rgb(237, 237, 237);
+}
+
+.activity-card.active {
+  background-color: rgb(221, 234, 255);
+}
+
+.activity-description {
+  font-size: 13px;
+  overflow-y: auto;
+}
+
+.activity-card .activity-tags {
+  margin-bottom: 8px;
+}
+.activity-card .activity-tags .activity-tags-label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+.activity-card .activity-tags .activity-tag {
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  padding: 2px 4px;
+}
+.activity-card .activity-tags .activity-tag:hover {
+  cursor: pointer;
+  background-color: #0088ce;
+  border-color: #00659c;
+  color: white;
+}

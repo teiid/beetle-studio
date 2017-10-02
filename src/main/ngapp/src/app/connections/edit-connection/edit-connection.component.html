@@ -1,0 +1,18 @@
+<div style="margin-left: 150px">
+  <div id="connections-breadcrumb-bar">
+    <breadcrumbs>
+      <li app-breadcrumb label="Connections" icon="plug" [route]="[ '/connections' ]"></li>
+      <li app-breadcrumb label="Edit Connection" icon="pencil" class="active"></li>
+    </breadcrumbs>
+  </div>
+  <div class="container-fluid" *ngIf="!pageError">
+    <div class="row">
+      <h2>Edit Connection</h2>
+    </div>
+    <!--
+    <div class="add-connection-form row">
+      <app-add-connection-form (onCreateConnection)="onCreateConnection($event)" #createConnectionForm></app-add-connection-form>
+    </div>
+    -->
+  </div>
+</div>

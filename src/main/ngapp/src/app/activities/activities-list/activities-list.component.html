@@ -1,0 +1,40 @@
+<div class="list-group list-view-pf">
+  <div class="list-group-item list-view-pf-stacked" *ngFor="let activity of activities" [class.active]="isSelected(activity)" (click)="toggleActivitySelected(activity)">
+    <div class="list-view-pf-main-info">
+      <div class="list-view-pf-left">
+        <span class="fa fa-cog list-view-pf-icon-sm"></span>
+      </div>
+      <div class="list-view-pf-body">
+        <div class="list-view-pf-description">
+          <div class="list-group-item-heading">
+            <a [routerLink]="[activity.getId()]">{{ activity.getId() }}</a>
+          </div>
+          <!--
+          <div class="list-group-item-text">{{ activity.description }}</div>
+          -->
+        </div>
+        <div class="list-view-pf-additional-info">
+          <div class="activity-tags">
+            <span class="activity-tags-label">Source:</span>
+            <span class="activity-tags-label">{{ activity.getSourceConnection() }}&nbsp;&nbsp;&nbsp;</span>
+          </div>
+          <div class="activity-tags">
+            <span class="activity-tags-label">Target:</span>
+            <span class="activity-tags-label">{{ activity.getTargetConnection() }}&nbsp;&nbsp;&nbsp;</span>
+          </div>
+          <!--
+          <div class="activity-tags" *ngIf="activity.tags && activity.tags.length > 0">
+            <span class="activity-tags-label">Tags:</span>
+            <span class="activity-tag" *ngFor="let tag of activity.tags" (click)="selectTag(tag, $event)">{{ tag }}</span>
+          </div>
+          -->
+        </div>
+      </div>
+      <div class="list-view-pf-actions">
+        <button class="btn btn-primary" type="button" (click)="startActivity(activity.getId())">Start</button>
+        <button class="btn btn-default" type="button" (click)="editActivity(activity.getId())">Edit</button>
+        <button class="btn btn-danger" type="button" (click)="deleteActivity(activity.getId())">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

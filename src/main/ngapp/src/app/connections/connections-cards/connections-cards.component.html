@@ -1,0 +1,35 @@
+<div class="container-fluid container-cards-pf">
+  <div class="row row-cards-pf">
+
+    <div class="col-xs-12 col-sm-4 col-md-4" *ngFor="let connection of connections">
+      <div class="card-pf card-pf-accented card-pf-aggregate-status connection-card" [class.active]="isSelected(connection)" (click)="toggleConnectionSelected(connection)">
+        <div class="card-pf-body">
+          <!-- title -->
+          <h2 class="connection-card-title">
+            <span class="fa fa-fw fa-plug connection-card-icon"></span>
+            <span><a [routerLink]="[connection.getId()]">{{ connection.getId() }}</a></span>
+            <span class="pull-right fa fa-fw fa-close connection-card-action-icon" style="color:darkred;" (click)="deleteConnection(connection.getId())"></span>
+            <span class="pull-right fa fa-fw fa-edit connection-card-action-icon" (click)="editConnection(connection.getId())"></span>
+          </h2>
+          <hr/>
+          <div class="connection-tags">
+            <span class="connection-tags-label">JNDI:</span>
+            <span class="connection-tags-label">{{ connection.getJndiName() }}&nbsp;&nbsp;&nbsp;</span>
+          </div>
+          <div class="connection-tags">
+            <span class="connection-tags-label">Driver:</span>
+            <span class="connection-tags-label">{{ connection.getDriverName() }}&nbsp;&nbsp;&nbsp;</span>
+          </div>
+          <!--
+          <div class="connection-tags" *ngIf="connection.tags && connection.tags.length > 0">
+            <span class="connection-tags-label">Tags:</span>
+            <span class="connection-tag" *ngFor="let tag of connection.tags" (click)="selectTag(tag, $event)">{{ tag }}</span>
+          </div>
+          <p class="connection-description">{{connection.description}}</p>
+          -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

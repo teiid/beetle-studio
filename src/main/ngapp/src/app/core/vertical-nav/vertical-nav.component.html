@@ -1,0 +1,18 @@
+<div id="studio-vertical-nav-wrapper">
+
+  <div id="studio-vertical-nav">
+    <div id="studio-nav-item-activities" class="studio-nav-item" [class.active]="currentMenu === menuTypes.Activities"
+         (click)="onActivitiesClick()">
+      <span class="fa fa-fw fa-cog"></span>
+      <div>Activities</div>
+    </div>
+    <div id="studio-nav-item-connections" class="studio-nav-item" [class.active]="currentMenu === menuTypes.Connections"
+         (click)="onConnectionsClick()">
+      <span class="fa fa-fw fa-plug"></span>
+      <div>Connections</div>
+    </div>
+    <div class="studio-nav-item-filler">
+    </div>
+  </div>
+
+</div>

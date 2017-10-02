@@ -1,0 +1,68 @@
+.container-cards-pf {
+  padding: 0;
+  margin-top: 0;
+}
+
+.row-cards-pf {
+  padding: 0;
+}
+
+.connection-card-action-icon {
+  cursor: pointer;
+}
+
+.connection-card-icon {
+  border: 2px solid #39a5dc;
+  border-radius: 50%;
+  padding: 5px;
+  margin-right: 10px;
+  width: 32px;
+}
+
+.connection-card .connection-card-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.connection-card {
+  -webkit-transition: background-color 300ms;
+  -moz-transition: background-color 300ms;
+  -ms-transition: background-color 300ms;
+  -o-transition: background-color 300ms;
+  transition: background-color 300ms;
+  height: 220px;
+}
+.connection-card:hover {
+  background-color: rgb(237, 237, 237);
+}
+
+.connection-card.active {
+  background-color: rgb(221, 234, 255);
+}
+
+.connection-description {
+  font-size: 13px;
+  overflow-y: auto;
+}
+
+.connection-card .connection-tags {
+  margin-bottom: 8px;
+}
+.connection-card .connection-tags .connection-tags-label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+.connection-card .connection-tags .connection-tag {
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  padding: 2px 4px;
+}
+.connection-card .connection-tags .connection-tag:hover {
+  cursor: pointer;
+  background-color: #0088ce;
+  border-color: #00659c;
+  color: white;
+}

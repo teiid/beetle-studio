@@ -1,0 +1,12 @@
+.add-connection-form {
+  padding: 15px
+}
+
+.add-connection-form .form-instructions {
+  font-size: 15px;
+  padding-top: 10px
+}
+
+.add-connection-form .form-instructions ol {
+  padding-left: 20px;
+}
