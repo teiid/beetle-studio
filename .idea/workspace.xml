@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="76441ff2-7b36-44b8-b14c-721f57986b46" name="Default" comment="" />
+    <list default="true" id="76441ff2-7b36-44b8-b14c-721f57986b46" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/ngapp/package-lock.json" afterPath="$PROJECT_DIR$/src/main/ngapp/package-lock.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/ngapp/package.json" afterPath="$PROJECT_DIR$/src/main/ngapp/package.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/ngapp/src/app/connections/add-connection/add-connection.component.ts" afterPath="$PROJECT_DIR$/src/main/ngapp/src/app/connections/add-connection/add-connection.component.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.less" afterPath="$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.less" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.ts" afterPath="$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/ngapp/src/app/core/vertical-nav/vertical-nav.component.less" afterPath="$PROJECT_DIR$/src/main/ngapp/src/app/core/vertical-nav/vertical-nav.component.less" />
+    </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -14,14 +22,32 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="connections.component.ts" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/connections/connections.component.ts">
+      <file leaf-file-name="nav-header.component.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="545">
-              <caret line="194" column="75" lean-forward="true" selection-start-line="194" selection-start-column="75" selection-end-line="194" selection-end-column="75" />
-              <folding>
-                <element signature="e#608#661#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="75">
+              <caret line="20" column="13" lean-forward="true" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="vertical-nav.component.less" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/core/vertical-nav/vertical-nav.component.less">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="15">
+              <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="nav-header.component.less" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.less">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="15">
+              <caret line="1" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -61,11 +87,16 @@
         <option value="$PROJECT_DIR$/src/main/ngapp/src/app/activities/shared/activity.service.ts" />
         <option value="$PROJECT_DIR$/src/main/ngapp/src/app/shared/shared.module.ts" />
         <option value="$PROJECT_DIR$/src/main/ngapp/src/app/connections/shared/connection.service.ts" />
-        <option value="$PROJECT_DIR$/src/main/ngapp/src/app/connections/add-connection/add-connection.component.ts" />
         <option value="$PROJECT_DIR$/src/main/ngapp/src/app/connections/connections.module.ts" />
         <option value="$PROJECT_DIR$/src/main/ngapp/src/app/activities/shared/new-activity.model.ts" />
         <option value="$PROJECT_DIR$/src/main/ngapp/src/app/activities/activities.module.ts" />
         <option value="$PROJECT_DIR$/src/main/ngapp/src/app/connections/connections.component.ts" />
+        <option value="$PROJECT_DIR$/src/main/ngapp/package.json" />
+        <option value="$PROJECT_DIR$/src/main/ngapp/src/app/shared/confirm-delete/confirm-delete.component.ts" />
+        <option value="$PROJECT_DIR$/src/main/ngapp/src/app/connections/add-connection/add-connection.component.ts" />
+        <option value="$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.ts" />
+        <option value="$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.less" />
+        <option value="$PROJECT_DIR$/src/main/ngapp/src/app/core/vertical-nav/vertical-nav.component.less" />
       </list>
     </option>
   </component>
@@ -79,8 +110,8 @@
     <handled-path value="$PROJECT_DIR$/src/main/ngapp/node_modules" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-1743" />
-    <option name="y" value="-39" />
+    <option name="x" value="-1675" />
+    <option name="y" value="-30" />
     <option name="width" value="1644" />
     <option name="height" value="980" />
   </component>
@@ -151,7 +182,7 @@
               <item name="ngapp" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="activities" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="beetle-studio" type="b2602c69:ProjectViewProjectNode" />
@@ -161,8 +192,8 @@
               <item name="ngapp" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="activities" type="462c0819:PsiDirectoryNode" />
-              <item name="activities-cards" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="nav-header" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="beetle-studio" type="b2602c69:ProjectViewProjectNode" />
@@ -172,40 +203,8 @@
               <item name="ngapp" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="activities" type="462c0819:PsiDirectoryNode" />
-              <item name="activities-list" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="beetle-studio" type="b2602c69:ProjectViewProjectNode" />
-              <item name="beetle-studio" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="ngapp" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="activities" type="462c0819:PsiDirectoryNode" />
-              <item name="add-activity" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="beetle-studio" type="b2602c69:ProjectViewProjectNode" />
-              <item name="beetle-studio" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="ngapp" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="activities" type="462c0819:PsiDirectoryNode" />
-              <item name="shared" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="beetle-studio" type="b2602c69:ProjectViewProjectNode" />
-              <item name="beetle-studio" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="ngapp" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="connections" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="vertical-nav" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -242,15 +241,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1506702341112</updated>
-      <workItem from="1506702342333" duration="25397000" />
+      <workItem from="1506702342333" duration="27457000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25397000" />
+    <option name="totallyTimeSpent" value="27457000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1743" y="-39" width="1644" height="980" extended-state="0" />
+    <frame x="-1675" y="-30" width="1644" height="980" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -341,34 +340,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/activities/shared/add-activity-form/add-activity-form.component.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/activities/add-activity/add-activity.component.spec.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#73#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/activities/add-activity/add-activity.component.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/activities/activities-list/activities-list.component.spec.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -557,16 +528,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/core/vertical-nav/vertical-nav.component.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -582,17 +543,6 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/shared/confirm-delete/confirm-delete.component.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="45" lean-forward="true" selection-start-line="18" selection-start-column="45" selection-end-line="18" selection-end-column="45" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-            <element signature="e#608#707#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -662,30 +612,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/connections/add-connection/add-connection.component.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="30" column="27" lean-forward="false" selection-start-line="30" selection-start-column="27" selection-end-line="30" selection-end-column="27" />
-          <folding>
-            <element signature="e#608#650#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/core/core.module.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="17" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding>
-            <element signature="e#608#655#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/shared/shared.module.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="33" column="22" lean-forward="true" selection-start-line="33" selection-start-column="22" selection-end-line="33" selection-end-column="22" />
           <folding>
             <element signature="e#608#655#0" expanded="false" />
           </folding>
@@ -806,6 +736,64 @@
           <folding>
             <element signature="e#608#661#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/shared/shared.module.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="33" column="22" lean-forward="false" selection-start-line="33" selection-start-column="22" selection-end-line="33" selection-end-column="22" />
+          <folding>
+            <element signature="e#608#655#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/ngapp/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="24" column="28" lean-forward="false" selection-start-line="24" selection-start-column="28" selection-end-line="24" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/shared/confirm-delete/confirm-delete.component.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="18" column="43" lean-forward="false" selection-start-line="18" selection-start-column="43" selection-end-line="18" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/connections/add-connection/add-connection.component.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="30" column="17" lean-forward="false" selection-start-line="30" selection-start-column="17" selection-end-line="30" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/core/nav-header/nav-header.component.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="20" column="13" lean-forward="true" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/ngapp/src/app/core/vertical-nav/vertical-nav.component.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
