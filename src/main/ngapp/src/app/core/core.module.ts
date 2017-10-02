@@ -17,6 +17,7 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import {RouterModule} from '@angular/router';
 
 import { NavHeaderComponent } from "@core/nav-header/nav-header.component";
 import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component";
@@ -25,7 +26,8 @@ import { BreadcrumbsComponent } from "@core/breadcrumbs/breadcrumbs.component";
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule
   ],
   declarations: [
     BreadcrumbComponent,

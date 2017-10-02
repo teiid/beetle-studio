@@ -20,10 +20,12 @@ import { NgModule } from '@angular/core';
 
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { PageErrorComponent } from "@shared/page-error/page-error.component";
+import { ModalModule } from 'ngx-bootstrap';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    ModalModule
   ],
   declarations: [
     ConfirmDeleteComponent,
