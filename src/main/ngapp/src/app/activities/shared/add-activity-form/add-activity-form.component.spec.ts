@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { AddActivityFormComponent } from './add-activity-form.component';
+import { CoreModule } from '@core/core.module';
 
 describe('AddActivityFormComponent', () => {
   let component: AddActivityFormComponent;
@@ -8,6 +11,7 @@ describe('AddActivityFormComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [ FormsModule, RouterTestingModule, CoreModule ],
       declarations: [ AddActivityFormComponent ]
     })
     .compileComponents();

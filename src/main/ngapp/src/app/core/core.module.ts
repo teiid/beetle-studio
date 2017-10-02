@@ -34,6 +34,12 @@ import { BreadcrumbsComponent } from "@core/breadcrumbs/breadcrumbs.component";
     BreadcrumbsComponent,
     NavHeaderComponent,
     VerticalNavComponent
+  ],
+  exports: [
+    BreadcrumbComponent,
+    BreadcrumbsComponent,
+    NavHeaderComponent,
+    VerticalNavComponent
   ]
 })
 export class CoreModule { }

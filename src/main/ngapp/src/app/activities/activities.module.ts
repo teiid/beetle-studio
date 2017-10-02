@@ -27,13 +27,17 @@ import { ConnectionsModule } from "@connections/connections.module";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 import { ActivityService } from "@activities/shared/activity.service";
+import {RouterModule} from "@angular/router";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   imports: [
     CommonModule,
     ConnectionsModule,
     CoreModule,
-    SharedModule
+    SharedModule,
+    RouterModule,
+    FormsModule
   ],
   declarations: [
     ActivitiesCardsComponent,
