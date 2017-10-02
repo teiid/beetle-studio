@@ -23,10 +23,12 @@ import { NavHeaderComponent } from "@core/nav-header/nav-header.component";
 import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component";
 import { BreadcrumbComponent } from "@core/breadcrumbs/breadcrumb/breadcrumb.component";
 import { BreadcrumbsComponent } from "@core/breadcrumbs/breadcrumbs.component";
+import {HttpModule} from "@angular/http";
 
 @NgModule({
   imports: [
     CommonModule,
+    HttpModule,
     RouterModule
   ],
   declarations: [
