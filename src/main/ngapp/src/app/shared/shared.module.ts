@@ -25,7 +25,7 @@ import { ModalModule } from 'ngx-bootstrap';
 @NgModule({
   imports: [
     CommonModule,
-    ModalModule
+    ModalModule.forRoot()
   ],
   declarations: [
     ConfirmDeleteComponent,

@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PageErrorComponent } from './page-error.component';
+import { HttpModule } from "@angular/http";
 
 describe('PageErrorComponent', () => {
   let component: PageErrorComponent;
@@ -8,6 +9,7 @@ describe('PageErrorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [ HttpModule ],
       declarations: [ PageErrorComponent ]
     })
     .compileComponents();
@@ -16,6 +18,7 @@ describe('PageErrorComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PageErrorComponent);
     component = fixture.componentInstance;
+    component.error = 'test';
     fixture.detectChanges();
   });
 

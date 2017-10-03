@@ -1,14 +1,13 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AddActivityComponent } from './add-activity.component';
+import {AddActivityComponent} from './add-activity.component';
 import {FormsModule} from "@angular/forms";
 import {RouterTestingModule} from "@angular/router/testing";
 import {HttpModule} from '@angular/http';
-import {BreadcrumbComponent} from '@core/breadcrumbs/breadcrumb/breadcrumb.component';
-import {BreadcrumbsComponent} from '@core/breadcrumbs/breadcrumbs.component';
 import {AddActivityFormComponent} from '@activities/shared/add-activity-form/add-activity-form.component';
 import {ActivityService} from '@activities/shared/activity.service';
 import {MockActivityService} from '@activities/shared/mock-activity.service';
+import {CoreModule} from "@core/core.module";
 
 describe('AddActivityComponent', () => {
   let component: AddActivityComponent;
@@ -16,8 +15,8 @@ describe('AddActivityComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, RouterTestingModule, HttpModule],
-      declarations: [ AddActivityComponent, AddActivityFormComponent, BreadcrumbComponent, BreadcrumbsComponent ],
+      imports: [ CoreModule, FormsModule, HttpModule, RouterTestingModule ],
+      declarations: [ AddActivityComponent, AddActivityFormComponent ],
       providers: [
         { provide: ActivityService, useClass: MockActivityService },
       ]
