@@ -30,11 +30,11 @@ export class NavHeaderComponent implements OnInit {
   projectUrl = 'http://jboss.org/teiiddesigner/';
 
   constructor() {
-    if (window['ApicurioStudioInfo']) {
-      console.log('[NavHeaderComponent] Found app info: %o', window['ApicurioStudioInfo'])
-      this.version = window['ApicurioStudioInfo'].version;
-      this.builtOn = new Date(window['ApicurioStudioInfo'].builtOn);
-      this.projectUrl = window['ApicurioStudioInfo'].url;
+    if (window['BeetleStudio']) {
+      console.log('[NavHeaderComponent] Found app info: %o', window['BeetleStudio'])
+      this.version = window['BeetleStudio'].version;
+      this.builtOn = new Date(window['BeetleStudio'].builtOn);
+      this.projectUrl = window['BeetleStudio'].url;
     } else {
       console.log('[NavHeaderComponent] App info not found.');
     }

@@ -20,24 +20,28 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from "@angular/router";
 
 import { ActivitiesModule } from "@activities/activities.module";
+import { ActivitiesRoutingModule } from "@activities/activities-routing.module";
 import { AppComponent } from '@app/app.component';
+import { AppRoutingModule } from "@app/app-routing.module";
 import { ConnectionsModule } from "@connections/connections.module";
+import { ConnectionsRoutingModule } from "@connections/connections-routing.module";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
-import {AppRouting} from "@app/app.routing";
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
-    AppRouting,
     ActivitiesModule,
     BrowserModule,
     ConnectionsModule,
     CoreModule,
     RouterModule,
-    SharedModule
+    SharedModule,
+    ActivitiesRoutingModule,
+    ConnectionsRoutingModule,
+    AppRoutingModule // last so its routes are check after all other routes
   ],
   providers: [],
   bootstrap: [AppComponent]
