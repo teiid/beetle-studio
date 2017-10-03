@@ -15,29 +15,25 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { Routes } from '@angular/router';
 
-import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
-import { PageErrorComponent } from "@shared/page-error/page-error.component";
-import { ModalModule } from 'ngx-bootstrap';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { ActivitiesComponent } from "@activities/activities.component";
+import { AddActivityComponent } from "@activities/add-activity/add-activity.component";
+
+const activitiesRoutes: Routes = [
+  { path: 'activities', component: ActivitiesComponent },
+  { path: 'activities/add-activity', component: AddActivityComponent }
+];
 
 @NgModule({
   imports: [
-    CommonModule,
-    ModalModule.forRoot()
-  ],
-  declarations: [
-    ConfirmDeleteComponent,
-    PageErrorComponent,
-    PageNotFoundComponent
+    RouterModule.forRoot( activitiesRoutes )
   ],
   exports: [
-    ConfirmDeleteComponent,
-    PageErrorComponent,
-    PageNotFoundComponent
+    RouterModule
   ]
 })
-export class SharedModule {
-}
+
+export class ActivitiesRoutingModule {}
