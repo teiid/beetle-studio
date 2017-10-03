@@ -1,9 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { EditConnectionComponent } from './edit-connection.component';
+import {EditConnectionComponent} from './edit-connection.component';
 import {RouterTestingModule} from '@angular/router/testing';
-import {BreadcrumbsComponent} from '@core/breadcrumbs/breadcrumbs.component';
-import {BreadcrumbComponent} from '@core/breadcrumbs/breadcrumb/breadcrumb.component';
+import {ConnectionService} from "@connections/shared/connection.service";
+import {MockConnectionService} from "@connections/shared/mock-connection.service";
+import {HttpModule} from "@angular/http";
+import {CoreModule} from "@core/core.module";
 
 describe('EditConnectionComponent', () => {
   let component: EditConnectionComponent;
@@ -11,8 +13,11 @@ describe('EditConnectionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule ],
-      declarations: [ EditConnectionComponent, BreadcrumbsComponent, BreadcrumbComponent ]
+      imports: [ CoreModule, HttpModule, RouterTestingModule ],
+      declarations: [ EditConnectionComponent ],
+      providers: [
+        { provide: ConnectionService, useClass: MockConnectionService },
+      ]
     })
     .compileComponents();
   }));

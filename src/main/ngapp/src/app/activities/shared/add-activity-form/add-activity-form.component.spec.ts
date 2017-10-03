@@ -11,7 +11,7 @@ describe('AddActivityFormComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, RouterTestingModule, CoreModule ],
+      imports: [ CoreModule, FormsModule, RouterTestingModule ],
       declarations: [ AddActivityFormComponent ]
     })
     .compileComponents();

@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ActivitiesListComponent } from './activities-list.component';
+import {ActivitiesListComponent} from './activities-list.component';
 import {RouterModule} from "@angular/router";
 
 describe('ActivitiesListComponent', () => {

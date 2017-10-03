@@ -1,10 +1,12 @@
-import { TestBed, inject } from '@angular/core/testing';
+import {TestBed, inject} from '@angular/core/testing';
 
-import { ConnectionService } from './connection.service';
+import {ConnectionService} from './connection.service';
+import {HttpModule} from "@angular/http";
 
 describe('ConnectionService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [ HttpModule ],
       providers: [ConnectionService]
     });
   });

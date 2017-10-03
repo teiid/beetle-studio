@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ConfirmDeleteComponent } from './confirm-delete.component';
-import {ModalModule} from 'ngx-bootstrap';
+import { ModalModule } from 'ngx-bootstrap';
 
 describe('ConfirmDeleteComponent', () => {
   let component: ConfirmDeleteComponent;
