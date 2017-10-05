@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {AddConnectionComponent} from './add-connection.component';
-import {AddConnectionFormComponent} from "@connections/add-connection/add-connection-form/add-connection-form.component";
+import {AddConnectionFormComponent} from "@connections/shared/add-connection-form/add-connection-form.component";
 import {FormsModule} from "@angular/forms";
 import {ConnectionService} from "@connections/shared/connection.service";
 import {MockConnectionService} from "@connections/shared/mock-connection.service";
