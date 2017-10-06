@@ -15,29 +15,31 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
-
-import { NewConnection } from '@connections/shared/new-connection.model';
+import { Component, EventEmitter, Output } from "@angular/core";
+import { Router } from "@angular/router";
+import { connectionsRootPath } from "@connections/connections-routing.module";
+import { NewConnection } from "@connections/shared/new-connection.model";
 
 @Component({
-  selector: 'app-add-connection-form',
-  templateUrl: './add-connection-form.component.html',
-  styleUrls: ['./add-connection-form.component.css']
+  selector: "app-add-connection-form",
+  templateUrl: "./add-connection-form.component.html",
+  styleUrls: ["./add-connection-form.component.css"]
 })
-export class AddConnectionFormComponent implements OnInit {
+export class AddConnectionFormComponent {
 
-  @Output() onCreateConnection = new EventEmitter<NewConnection>();
+  private creatingConnection = false;
+  private model = new NewConnection();
+  private router: Router;
 
-  model = new NewConnection();
-  creatingConnection = false;
+  @Output() private onCreateConnection = new EventEmitter<NewConnection>();
 
-  constructor( private router: Router ) { }
-
-  ngOnInit() {
+  constructor( router: Router ) {
+    this.router = router;
   }
 
-  get currentConnection() { return JSON.stringify(this.model); }
+  public currentConnection(): string {
+    return JSON.stringify(this.model);
+  }
 
   /**
    * Called when the user clicks the "Create Connection" submit button on the form.
@@ -49,15 +51,21 @@ export class AddConnectionFormComponent implements OnInit {
     connection.setDriverName(this.model.getDriverName());
     connection.setJdbc(this.model.isJdbc());
 
-    console.log('[AddConnectionFormComponent] Firing create-connection event: %o', connection);
+    console.log("[AddConnectionFormComponent] Firing create-connection event: %o", connection);
 
     this.creatingConnection = true;
     this.onCreateConnection.emit(connection);
   }
 
   public cancelAdd(): void {
-    const link: string[] = [ '/connections' ];
+    const link: string[] = [ connectionsRootPath ];
     this.router.navigate(link);
   }
 
+  /**
+   * Called when the connection has been created.
+   */
+  public connectionCreated(): void {
+    this.creatingConnection = false;
+  }
 }

@@ -15,70 +15,54 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
-
-import { Activity } from '@activities/shared/activity.model';
-import { NewActivity } from '@activities/shared/new-activity.model';
-import { ActivityService } from '@activities/shared/activity.service';
-import { ArrayUtils } from '@core/common';
+import { addActivityPath, editActivityPath } from "@activities/activities-routing.module";
+import { Activity } from "@activities/shared/activity.model";
+import { ActivityService } from "@activities/shared/activity.service";
+import { NewActivity } from "@activities/shared/new-activity.model";
+import { ViewChild } from "@angular/core";
+import { Component } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { Router } from "@angular/router";
+import { ArrayUtils } from "@core/utils/array-utils";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
-import { ConfirmDeleteComponent } from '@shared/confirm-delete/confirm-delete.component';
-
-class Filters {
-  nameFilter: string;
-  sortDirection: string;
-  layout: string;
-
-  constructor(params?: any) {
-    this.reset();
-    if (params) {
-      for (const key of Object.keys(params)) {
-        this[key] = params[ key ];
-      }
-    }
-  }
-
-  public accepts(activity: Activity): boolean {
-    const name: string = activity.getId().toLocaleLowerCase();
-    const namef: string = this.nameFilter.toLocaleLowerCase();
-    return name.indexOf(namef) >= 0;
-  }
-
-  public reset(): void {
-    this.nameFilter = '';
-    this.sortDirection = 'ASC';
-    this.layout = 'card';
-  }
-}
+import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
+import { IdFilter } from "@shared/id-filter";
+import { LayoutType } from "@shared/layout-type.enum";
+import { SortDirection } from "@shared/sort-direction.enum";
 
 @Component({
   moduleId: module.id,
-  selector: 'app-activities',
-  templateUrl: './activities.component.html',
-  styleUrls: ['./activities.component.css'],
+  selector: "app-activities",
+  templateUrl: "./activities.component.html",
+  styleUrls: ["./activities.component.css"],
   providers: [ ActivityService ]
 })
 export class ActivitiesComponent extends AbstractPageComponent {
 
-  allActivities: Activity[] = [];
-  filteredActivities: Activity[] = [];
-  selectedActivities: Activity[] = [];
-  filters: Filters = new Filters();
+  public addActivityLink = addActivityPath;
+
+  private allActivities: Activity[] = [];
+  private filteredActivities: Activity[] = [];
+  private selectedActivities: Activity[] = [];
   private activityNameForDelete: string;
+  private router: Router;
+  private activityService: ActivityService;
+  private filter: IdFilter = new IdFilter();
+  private layout: LayoutType = LayoutType.CARD;
+  private sortDirection: SortDirection;
 
-  @ViewChild(ConfirmDeleteComponent) confirmDeleteDialog: ConfirmDeleteComponent;
+  @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
-  constructor(private router: Router, route: ActivatedRoute, private activityService: ActivityService) {
+  constructor(router: Router, route: ActivatedRoute, activityService: ActivityService) {
     super(route);
+    this.router = router;
+    this.activityService = activityService;
   }
 
-  public loadAsyncPageData() {
+  public loadAsyncPageData(): void {
     this.allActivities = this.activityService.getAllActivities();
     this.filteredActivities = this.filterActivities();
-    this.loaded('activities');
+    this.loaded("activities");
   }
 
   /**
@@ -88,13 +72,13 @@ export class ActivitiesComponent extends AbstractPageComponent {
     // Clear the array first.
     this.filteredActivities.splice(0, this.filteredActivities.length);
     for (const activity of this.allActivities) {
-      if (this.filters.accepts(activity)) {
+      if (this.filter.accepts(activity)) {
         this.filteredActivities.push(activity);
       }
     }
     this.filteredActivities.sort( (a1: Activity, a2: Activity) => {
       let rval: number = a1.getId().localeCompare(a2.getId());
-      if (this.filters.sortDirection === 'DESC') {
+      if (this.sortDirection === SortDirection.DESC) {
         rval *= -1;
       }
       return rval;
@@ -118,7 +102,7 @@ export class ActivitiesComponent extends AbstractPageComponent {
   }
 
   public onEdit(activityName: string): void {
-    const link: string[] = [ '/activities/edit-activity' ];
+    const link: string[] = [ editActivityPath ];
     this.router.navigate(link);
   }
 
@@ -128,7 +112,7 @@ export class ActivitiesComponent extends AbstractPageComponent {
   }
 
   public onStart(activityName: string): void {
-    alert('Start activity ' + activityName);
+    alert("Start activity " + activityName);
   }
 
   public isFiltered(): boolean {
@@ -136,38 +120,73 @@ export class ActivitiesComponent extends AbstractPageComponent {
   }
 
   public toggleSortDirection(): void {
-    if (this.filters.sortDirection === 'ASC') {
-      this.filters.sortDirection = 'DESC';
+    if (this.sortDirection === SortDirection.ASC) {
+      this.sortDirection = SortDirection.DESC;
     } else {
-      this.filters.sortDirection = 'ASC';
+      this.sortDirection = SortDirection.ASC;
     }
     this.filterActivities();
   }
 
   public clearFilters(): void {
-    this.filters.nameFilter = '';
+    this.filter.reset();
     this.filterActivities();
   }
 
-  public onListLayout(): void {
-    this.filters.layout = 'list';
-  }
-
-  public onCardLayout(): void {
-    this.filters.layout = 'card';
+  /**
+   * @returns {boolean} true if activities are being represented by cards
+   */
+  public get isCardLayout(): boolean {
+    return this.layout === LayoutType.CARD;
   }
 
   /**
-   * Called to delete all selected APIs.
+   * @returns {boolean} true if activities are being represented by items in a list
+   */
+  public get isListLayout(): boolean {
+    return this.layout === LayoutType.LIST;
+  }
+
+  /**
+   * @returns {boolean} true if sorting activity names in ascending order
+   */
+  public get isSortAscending(): boolean {
+    return this.sortDirection === SortDirection.ASC;
+  }
+
+  /**
+   * @returns {boolean} true if sorting activity names in descending order
+   */
+  public get isSortDescending(): boolean {
+    return this.sortDirection === SortDirection.DESC;
+  }
+
+  /**
+   * @returns {string} the pattern the activity names are being matched to (can be null or empty)
+   */
+  public get nameFilter(): string {
+    return this.filter.getPattern();
+  }
+
+  public onListLayout(): void {
+    this.layout = LayoutType.LIST;
+  }
+
+  public onCardLayout(): void {
+    this.layout = LayoutType.CARD;
+  }
+
+  /**
+   * Called to doDelete all selected APIs.
    */
   public deleteActivity(): void {
-    const selectedActiv =  this.filterActivities().find(x => x.getId() === this.activityNameForDelete);
+    const selectedActivity =  this.filterActivities().find((x) => x.getId() === this.activityNameForDelete);
 
     const activityToDelete: NewActivity = new NewActivity();
-    activityToDelete.setName(selectedActiv.getId());
+    activityToDelete.setName(selectedActivity.getId());
 
-    // Note: we can only delete selected items that we can see in the UI.
-    console.log('[ActivitiesPageComponent] Deleting selected Activity.');
+    // Note: we can only doDelete selected items that we can see in the UI.
+    console.log("[ActivitiesPageComponent] Deleting selected Activity.");
     this.activityService.deleteActivity(activityToDelete);
     /*
     this.apiService
@@ -183,7 +202,7 @@ export class ActivitiesComponent extends AbstractPageComponent {
       */
   }
 
-  private removeActivityFromList(activity: Activity) {
+  private removeActivityFromList(activity: Activity): void {
     this.allActivities.splice(this.allActivities.indexOf(activity), 1);
     this.filterActivities();
   }

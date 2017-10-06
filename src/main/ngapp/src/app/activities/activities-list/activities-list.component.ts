@@ -15,34 +15,35 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { EventEmitter } from '@angular/core';
-import { Input } from '@angular/core';
-import { Output } from '@angular/core';
-
-import { Activity } from '@activities/shared/activity.model';
+import { Activity } from "@activities/shared/activity.model";
+import { Component } from "@angular/core";
+import { EventEmitter } from "@angular/core";
+import { Input } from "@angular/core";
+import { Output } from "@angular/core";
 
 @Component({
   moduleId: module.id,
-  selector: 'app-activities-list',
-  templateUrl: 'activities-list.component.html',
-  styleUrls: ['activities-list.component.css']
+  selector: "app-activities-list",
+  templateUrl: "activities-list.component.html",
+  styleUrls: ["activities-list.component.css"]
 })
 export class ActivitiesListComponent {
 
-  @Input() activities: Activity[];
-  @Input() selectedActivities: Activity[];
-  @Output() onActivitySelected: EventEmitter<Activity> = new EventEmitter<Activity>();
-  @Output() onActivityDeselected: EventEmitter<Activity> = new EventEmitter<Activity>();
-  @Output() onTagSelected: EventEmitter<string> = new EventEmitter<string>();
-  @Output() onEditActivity: EventEmitter<string> = new EventEmitter<string>();
-  @Output() onStartActivity: EventEmitter<string> = new EventEmitter<string>();
-  @Output() onDeleteActivity: EventEmitter<string> = new EventEmitter<string>();
+  @Input() private activities: Activity[];
+  @Input() private selectedActivities: Activity[];
+  @Output() private onActivitySelected: EventEmitter<Activity> = new EventEmitter<Activity>();
+  @Output() private onActivityDeselected: EventEmitter<Activity> = new EventEmitter<Activity>();
+  @Output() private onTagSelected: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private onEditActivity: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private onStartActivity: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private onDeleteActivity: EventEmitter<string> = new EventEmitter<string>();
 
   /**
    * Constructor.
    */
-  constructor() {}
+  constructor() {
+    // nothing to do
+  }
 
   public toggleActivitySelected(activity: Activity): void {
     if (this.isSelected(activity)) {

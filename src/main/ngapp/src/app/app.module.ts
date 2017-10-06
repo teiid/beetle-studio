@@ -15,16 +15,15 @@
  * limitations under the License.
  */
 
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { RouterModule } from "@angular/router";
-
-import { ActivitiesModule } from "@activities/activities.module";
 import { ActivitiesRoutingModule } from "@activities/activities-routing.module";
-import { AppComponent } from '@app/app.component';
+import { ActivitiesModule } from "@activities/activities.module";
+import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
+import { RouterModule } from "@angular/router";
 import { AppRoutingModule } from "@app/app-routing.module";
-import { ConnectionsModule } from "@connections/connections.module";
+import { AppComponent } from "@app/app.component";
 import { ConnectionsRoutingModule } from "@connections/connections-routing.module";
+import { ConnectionsModule } from "@connections/connections.module";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 

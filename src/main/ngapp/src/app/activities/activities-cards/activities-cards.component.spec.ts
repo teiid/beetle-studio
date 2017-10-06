@@ -1,9 +1,8 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
-import {ActivitiesCardsComponent} from './activities-cards.component';
+import {ActivitiesCardsComponent} from "@activities/activities-cards/activities-cards.component";
+import {async, ComponentFixture, TestBed} from "@angular/core/testing";
 import {RouterModule} from "@angular/router";
 
-describe('ActivitiesCardsComponent', () => {
+describe("ActivitiesCardsComponent", () => {
   let component: ActivitiesCardsComponent;
   let fixture: ComponentFixture<ActivitiesCardsComponent>;
 
@@ -21,7 +20,7 @@ describe('ActivitiesCardsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
   });
 });

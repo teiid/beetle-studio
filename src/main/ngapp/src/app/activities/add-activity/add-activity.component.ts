@@ -15,27 +15,34 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
-
-import { ActivityService } from '@activities/shared/activity.service';
-import { AddActivityFormComponent } from '@activities/shared/add-activity-form/add-activity-form.component';
-import { NewActivity } from '@activities/shared/new-activity.model';
-import { AbstractPageComponent } from '@shared/abstract-page.component';
+import { activitiesRootPath } from "@activities/activities-routing.module";
+import { ActivityService } from "@activities/shared/activity.service";
+import { AddActivityFormComponent } from "@activities/shared/add-activity-form/add-activity-form.component";
+import { NewActivity } from "@activities/shared/new-activity.model";
+import { Component } from "@angular/core";
+import { ViewChild } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { Router } from "@angular/router";
+import { AbstractPageComponent } from "@shared/abstract-page.component";
 
 @Component({
-  selector: 'app-add-activity',
-  templateUrl: './add-activity.component.html',
-  styleUrls: ['./add-activity.component.css']
+  selector: "app-add-activity",
+  templateUrl: "./add-activity.component.html",
+  styleUrls: ["./add-activity.component.css"]
 })
 export class AddActivityComponent extends AbstractPageComponent {
 
-  @ViewChild(AddActivityFormComponent) form: AddActivityFormComponent;
+  public activitiesLink = activitiesRootPath;
 
-  constructor(private router: Router, route: ActivatedRoute, private activityService: ActivityService) {
+  private router: Router;
+  private activityService: ActivityService;
+
+  @ViewChild(AddActivityFormComponent) private form: AddActivityFormComponent;
+
+  constructor(router: Router, route: ActivatedRoute, activityService: ActivityService) {
     super(route);
+    this.router = router;
+    this.activityService = activityService;
   }
 
   /**
@@ -43,11 +50,11 @@ export class AddActivityComponent extends AbstractPageComponent {
    * from the add-activity.page.html template.
    * @param {NewActivity} activity
    */
-  public onCreateActivity(activity: NewActivity) {
-    console.log('[AddActivityComponent] onCreateActivity(): ' + JSON.stringify(activity));
+  public onCreateActivity(activity: NewActivity): void {
+    console.log("[AddActivityComponent] onCreateActivity(): " + JSON.stringify(activity));
     this.activityService.createActivity(activity);
-    const link: string[] = [ '/activities' ];
-    console.log('[AddActivityComponent] Navigating to: %o', link);
+    const link: string[] = [ activitiesRootPath ];
+    console.log("[AddActivityComponent] Navigating to: %o", link);
     this.router.navigate(link);
   }
 

@@ -15,21 +15,20 @@
  * limitations under the License.
  */
 
-import {Component, Output, EventEmitter, ViewChildren, QueryList, ElementRef} from '@angular/core';
-import {ModalDirective} from 'ngx-bootstrap';
+import {Component, EventEmitter, Output, QueryList, ViewChildren} from "@angular/core";
+import {ModalDirective} from "ngx-bootstrap";
 
 @Component({
   moduleId: module.id,
-  selector: 'app-confirm-delete',
-  templateUrl: './confirm-delete.component.html',
-  styleUrls: ['./confirm-delete.component.css']
+  selector: "app-confirm-delete",
+  templateUrl: "./confirm-delete.component.html",
+  styleUrls: ["./confirm-delete.component.css"]
 })
 
 export class ConfirmDeleteComponent {
 
-  @Output() onDelete: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-  @ViewChildren('confirmDeleteModal') confirmDeleteModal: QueryList<ModalDirective>;
+  @Output() private onDelete: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @ViewChildren("confirmDeleteModal") private confirmDeleteModal: QueryList<ModalDirective>;
 
   protected _isOpen = false;
 
@@ -38,7 +37,7 @@ export class ConfirmDeleteComponent {
    */
   public open(): void {
     this._isOpen = true;
-    this.confirmDeleteModal.changes.subscribe( thing => {
+    this.confirmDeleteModal.changes.subscribe( (thing) => {
       if (this.confirmDeleteModal.first) {
         this.confirmDeleteModal.first.show();
       }
@@ -55,7 +54,7 @@ export class ConfirmDeleteComponent {
   /**
    * Called when the user clicks "Yes".
    */
-  protected delete(): void {
+  protected doDelete(): void {
     this.onDelete.emit(true);
     this.cancel();
   }

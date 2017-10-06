@@ -25,10 +25,10 @@ export class Activity {
    * @param {Object} json the JSON representation of a Activity
    * @returns {Activity} the new Activity (never null)
    */
-  public static create( json: Object = {} ) {
-    const conn = new Activity();
-    conn.setValues( json );
-    return conn;
+  public static create( json: Object = {} ): Activity {
+    const activity = new Activity();
+    activity.setValues( json );
+    return activity;
   }
 
   constructor() {
@@ -81,7 +81,7 @@ export class Activity {
    * Set all object values using the supplied Activity json
    * @param {Object} values
    */
-  public setValues(values: Object = {}) {
+  public setValues(values: Object = {}): void {
     Object.assign(this, values);
   }
 }

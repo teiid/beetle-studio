@@ -15,27 +15,34 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
-
-import { AddConnectionFormComponent } from '@connections/shared/add-connection-form/add-connection-form.component';
-import { ConnectionService } from '@connections/shared/connection.service';
-import { NewConnection } from '@connections/shared/new-connection.model';
-import { AbstractPageComponent } from '@shared/abstract-page.component';
+import { Component } from "@angular/core";
+import { ViewChild } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { Router } from "@angular/router";
+import { addConnectionPath, connectionsRootPath } from "@connections/connections-routing.module";
+import { AddConnectionFormComponent } from "@connections/shared/add-connection-form/add-connection-form.component";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { NewConnection } from "@connections/shared/new-connection.model";
+import { AbstractPageComponent } from "@shared/abstract-page.component";
 
 @Component({
-  selector: 'app-add-connection',
-  templateUrl: './add-connection.component.html',
-  styleUrls: ['./add-connection.component.css']
+  selector: "app-add-connection",
+  templateUrl: "./add-connection.component.html",
+  styleUrls: ["./add-connection.component.css"]
 })
 export class AddConnectionComponent extends AbstractPageComponent {
 
-  @ViewChild(AddConnectionFormComponent) form: AddConnectionFormComponent;
+  public addConnectionLink = addConnectionPath;
 
-  constructor(private router: Router, route: ActivatedRoute, private apiService: ConnectionService) {
+  private router: Router;
+  private connectionService: ConnectionService;
+
+  @ViewChild(AddConnectionFormComponent) private form: AddConnectionFormComponent;
+
+  constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService) {
     super(route);
+    this.router = router;
+    this.connectionService = connectionService;
   }
 
   /**
@@ -43,15 +50,15 @@ export class AddConnectionComponent extends AbstractPageComponent {
    * from the add-connection.page.html template.
    * @param {NewConnection} connection
    */
-  public onCreateConnection(connection: NewConnection) {
-    console.log('[AddConnectionComponent] onCreateConnection(): ' + JSON.stringify(connection));
-    this.apiService
+  public onCreateConnection(connection: NewConnection): void {
+    console.log("[AddConnectionComponent] onCreateConnection(): " + JSON.stringify(connection));
+    this.connectionService
       .createConnection(connection)
       .subscribe(
       () => {
-        this.form.creatingConnection = false;
-        const link: string[] = [ '/connections' ];
-        console.log('[AddConnectionComponent] Navigating to: %o', link);
+        this.form.connectionCreated();
+        const link: string[] = [ connectionsRootPath ];
+        console.log("[AddConnectionComponent] Navigating to: %o", link);
         this.router.navigate(link);
       }
     );

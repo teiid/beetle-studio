@@ -15,18 +15,19 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { Routes } from '@angular/router';
-
-import { environment } from '@environments/environment';
+import { activitiesRootPath } from "@activities/activities-routing.module";
+import { NgModule } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { Routes } from "@angular/router";
+import { connectionsRootPath } from "@connections/connections-routing.module";
+import { environment } from "@environments/environment";
 import { PageNotFoundComponent } from "@shared/page-not-found/page-not-found.component";
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: environment.homePagePath, pathMatch: 'full'},
-  {path: 'connections', loadChildren: '@connections/connections.module#ConnectionsModule'},
-  {path: 'activities', loadChildren: '@activities/activities.module#ActivitiesModule'},
-  { path: '**', component: PageNotFoundComponent }, // always last
+  { path: "", redirectTo: environment.homePagePath, pathMatch: "full" },
+  { path: connectionsRootPath, loadChildren: "@connections/connections.module#ConnectionsModule" },
+  { path: activitiesRootPath, loadChildren: "@activities/activities.module#ActivitiesModule" },
+  { path: "**", component: PageNotFoundComponent }, // always last
 ];
 
 @NgModule({

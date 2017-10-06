@@ -15,32 +15,62 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { EventEmitter } from '@angular/core';
-import { OnInit } from '@angular/core';
-import { Output } from '@angular/core';
-import { Router } from '@angular/router';
-
-import { NewActivity } from '@activities/shared/new-activity.model';
+import { activitiesRootPath } from "@activities/activities-routing.module";
+import { NewActivity } from "@activities/shared/new-activity.model";
+import { Component } from "@angular/core";
+import { EventEmitter } from "@angular/core";
+import { Output } from "@angular/core";
+import { Router } from "@angular/router";
+import { NewConnection } from "@connections/shared/new-connection.model";
 
 @Component({
-  selector: 'app-add-activity-form',
-  templateUrl: './add-activity-form.component.html',
-  styleUrls: ['./add-activity-form.component.css']
+  selector: "app-add-activity-form",
+  templateUrl: "./add-activity-form.component.html",
+  styleUrls: ["./add-activity-form.component.css"]
 })
-export class AddActivityFormComponent implements OnInit {
+export class AddActivityFormComponent {
 
-  @Output() onCreateActivity = new EventEmitter<NewActivity>();
+  private model = new NewActivity();
+  private creatingActivity = false;
+  private router: Router;
 
-  model = new NewActivity();
-  creatingActivity = false;
+  @Output() private onCreateActivity = new EventEmitter<NewActivity>();
 
-  constructor( private router: Router ) { }
-
-  ngOnInit() {
+  constructor( router: Router ) {
+    this.router = router;
   }
 
-  get currentActivity() { return JSON.stringify(this.model); }
+  /**
+   * @returns {string} the activity description
+   */
+  public get activityDescription(): string {
+    return this.model.getDescription();
+  }
+
+  /**
+   * @returns {string} the activity name
+   */
+  public get activityName(): string {
+    return this.model.getName();
+  }
+
+  /**
+   * @returns {string} the activity's source connection
+   */
+  public get activitySource(): NewConnection {
+    return this.model.getSourceConnection();
+  }
+
+  /**
+   * @returns {string} the activity's target connection
+   */
+  public get activityTarget(): NewConnection {
+    return this.model.getTargetConnection();
+  }
+
+  public get currentActivity(): string {
+    return JSON.stringify(this.model);
+  }
 
   /**
    * Called when the user clicks the "Create Activity" submit button on the form.
@@ -52,14 +82,14 @@ export class AddActivityFormComponent implements OnInit {
     activity.setSourceConnection(this.model.getSourceConnection());
     activity.setTargetConnection(this.model.getTargetConnection());
 
-    console.log('[AddActivityFormComponent] Firing create-activity event: %o', activity);
+    console.log("[AddActivityFormComponent] Firing create-activity event: %o", activity);
 
     this.creatingActivity = true;
     this.onCreateActivity.emit(activity);
   }
 
   public cancelAdd(): void {
-    const link: string[] = [ '/activities' ];
+    const link: string[] = [ activitiesRootPath ];
     this.router.navigate(link);
   }
 

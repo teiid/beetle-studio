@@ -5,25 +5,25 @@
       <div class="form-group">
         <label class="col-sm-1 control-label" for="name">Name</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="name" required [(ngModel)]="model.name" name="name">
+          <input type="text" class="form-control" id="name" required [(ngModel)]="model.getName()" name="name">
         </div>
       </div>
       <div class="form-group">
         <label class="col-sm-1 control-label" for="dv__jndiName">JNDI Name</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="dv__jndiName" required [(ngModel)]="model.jndiName" name="jndiName">
+          <input type="text" class="form-control" id="dv__jndiName" required [(ngModel)]="model.getJndiName()" name="jndiName">
         </div>
       </div>
       <div class="form-group">
         <label class="col-sm-1 control-label" for="dv__driverName">Driver</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="dv__driverName" [(ngModel)]="model.driverName" name="driverName">
+          <input type="text" class="form-control" id="dv__driverName" [(ngModel)]="model.getDriverName()" name="driverName">
         </div>
       </div>
       <div class="form-group">
         <label class="col-sm-1 control-label" for="jdbc">JDBC</label>
         <div class="col-sm-10">
-          <input type="checkbox" class="form-control" id="jdbc" [(ngModel)]="model.jdbc" name="jdbc">
+          <input type="checkbox" class="form-control" id="jdbc" [(ngModel)]="model.isJdbc()" name="jdbc">
         </div>
       </div>
       <hr/>
@@ -39,4 +39,5 @@
         </div>
       </div>
     </form>
+  </div>
 </div>

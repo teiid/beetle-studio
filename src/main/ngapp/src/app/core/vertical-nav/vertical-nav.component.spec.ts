@@ -1,9 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { RouterTestingModule } from "@angular/router/testing";
+import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component";
 
-import { VerticalNavComponent } from './vertical-nav.component';
-
-describe('VerticalNavComponent', () => {
+describe("VerticalNavComponent", () => {
   let component: VerticalNavComponent;
   let fixture: ComponentFixture<VerticalNavComponent>;
 
@@ -21,7 +20,7 @@ describe('VerticalNavComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
   });
 });

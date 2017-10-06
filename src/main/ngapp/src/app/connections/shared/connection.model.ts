@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-export class Connection {
+import { Identifiable } from "@shared/identifiable";
+
+export class Connection implements Identifiable< string > {
 
   private keng__id: string;
   private dv__jndiName: string;
@@ -26,7 +28,7 @@ export class Connection {
    * @param {Object} json the JSON representation of a Connection
    * @returns {Connection} the new Connection (never null)
    */
-  public static create( json: Object = {} ) {
+  public static create( json: Object = {} ): Connection {
     const conn = new Connection();
     conn.setValues( json );
     return conn;
@@ -96,7 +98,7 @@ export class Connection {
    * Set all object values using the supplied Connection json
    * @param {Object} values
    */
-  public setValues(values: Object = {}) {
+  public setValues(values: Object = {}): void {
     Object.assign(this, values);
   }
 

@@ -15,31 +15,32 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Output, Input } from '@angular/core';
-
-import { Connection } from '@connections/shared/connection.model';
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Connection } from "@connections/shared/connection.model";
 
 @Component({
   moduleId: module.id,
-  selector: 'app-connections-cards',
-  templateUrl: 'connections-cards.component.html',
-  styleUrls: ['connections-cards.component.css']
+  selector: "app-connections-cards",
+  templateUrl: "connections-cards.component.html",
+  styleUrls: ["connections-cards.component.css"]
 })
 export class ConnectionsCardsComponent {
 
-  @Input() connections: Connection[];
-  @Input() selectedConnections: Connection[];
-  @Output() onConnectionSelected: EventEmitter<Connection> = new EventEmitter<Connection>();
-  @Output() onConnectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();
-  @Output() onTagSelected: EventEmitter<string> = new EventEmitter<string>();
-  @Output() onPingConnection: EventEmitter<string> = new EventEmitter<string>();
-  @Output() onEditConnection: EventEmitter<string> = new EventEmitter<string>();
-  @Output() onDeleteConnection: EventEmitter<string> = new EventEmitter<string>();
+  @Input() private connections: Connection[];
+  @Input() private selectedConnections: Connection[];
+  @Output() private onConnectionSelected: EventEmitter<Connection> = new EventEmitter<Connection>();
+  @Output() private onConnectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();
+  @Output() private onTagSelected: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private onPingConnection: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private onEditConnection: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private onDeleteConnection: EventEmitter<string> = new EventEmitter<string>();
 
   /**
    * Constructor.
    */
-  constructor() {}
+  constructor() {
+    // nothing to do
+  }
 
   public toggleConnectionSelected(connection: Connection): void {
     if (this.isSelected(connection)) {

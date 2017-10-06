@@ -15,19 +15,17 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { OnInit } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-page-not-found',
-  templateUrl: './page-not-found.component.html',
-  styleUrls: ['./page-not-found.component.css']
+  selector: "app-page-not-found",
+  templateUrl: "./page-not-found.component.html",
+  styleUrls: ["./page-not-found.component.css"]
 })
-export class PageNotFoundComponent implements OnInit {
+export class PageNotFoundComponent {
 
-  constructor() { }
-
-  ngOnInit() {
+  constructor() {
+    // nothing to do
   }
 
 }

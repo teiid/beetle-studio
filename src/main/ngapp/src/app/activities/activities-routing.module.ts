@@ -2,12 +2,7 @@
  * @license
  * Copyright 2017 JBoss Inc
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed under the Apache License, /
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,16 +10,20 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { Routes } from '@angular/router';
-
 import { ActivitiesComponent } from "@activities/activities.component";
 import { AddActivityComponent } from "@activities/add-activity/add-activity.component";
+import { NgModule } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { Routes } from "@angular/router";
+
+export const activitiesRootPath = "/activities";
+export const addActivityPath = activitiesRootPath + "/add-activity";
+export const editActivityPath = activitiesRootPath + "/edit-activity";
 
 const activitiesRoutes: Routes = [
-  { path: 'activities', component: ActivitiesComponent },
-  { path: 'activities/add-activity', component: AddActivityComponent }
+  { path: activitiesRootPath, component: ActivitiesComponent },
+  { path: addActivityPath, component: AddActivityComponent }
+//  { path: editActivityPath, component: EditActivityComponent }
 ];
 
 @NgModule({

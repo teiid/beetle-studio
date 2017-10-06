@@ -1,16 +1,15 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
-import {ConnectionsComponent} from './connections.component';
+import {async, ComponentFixture, TestBed} from "@angular/core/testing";
 import {FormsModule} from "@angular/forms";
-import {RouterTestingModule} from "@angular/router/testing";
-import {ConnectionsListComponent} from "@connections/connections-list/connections-list.component";
-import {ConnectionsCardsComponent} from "@connections/connections-cards/connections-cards.component";
-import {ModalModule} from "ngx-bootstrap";
 import {HttpModule} from "@angular/http";
+import {RouterTestingModule} from "@angular/router/testing";
+import {ConnectionsCardsComponent} from "@connections/connections-cards/connections-cards.component";
+import {ConnectionsListComponent} from "@connections/connections-list/connections-list.component";
+import {ConnectionsComponent} from "@connections/connections.component";
 import {CoreModule} from "@core/core.module";
 import {SharedModule} from "@shared/shared.module";
+import {ModalModule} from "ngx-bootstrap";
 
-describe('ConnectionsComponent', () => {
+describe("ConnectionsComponent", () => {
   let component: ConnectionsComponent;
   let fixture: ComponentFixture<ConnectionsComponent>;
 
@@ -28,7 +27,7 @@ describe('ConnectionsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
   });
 });

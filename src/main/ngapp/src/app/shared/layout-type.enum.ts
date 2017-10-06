@@ -15,18 +15,19 @@
  * limitations under the License.
  */
 
-import {Component, Input} from "@angular/core";
+/**
+ * An enumeration of valid collection member layout types.
+ */
+export enum LayoutType {
 
-@Component({
-  moduleId: module.id,
-  selector: "[app-breadcrumb]",
-  templateUrl: "breadcrumb.component.html",
-  styleUrls: ["breadcrumb.component.css"]
-})
-export class BreadcrumbComponent {
+  /**
+   * Members of a collection are represented by a card.
+   */
+  CARD,
 
-  @Input() private label: string;
-  @Input() private icon: string;
-  @Input() private route: string[];
+  /**
+   * Members of a collections are represented as an item in the list.
+   */
+  LIST
 
 }

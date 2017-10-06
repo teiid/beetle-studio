@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { FormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
-
 import { ActivitiesCardsComponent } from "@activities/activities-cards/activities-cards.component";
-import { ActivitiesComponent } from "@activities/activities.component";
 import { ActivitiesListComponent } from "@activities/activities-list/activities-list.component";
 import { ActivitiesRoutingModule } from "@activities/activities-routing.module";
+import { ActivitiesComponent } from "@activities/activities.component";
 import { AddActivityComponent } from "@activities/add-activity/add-activity.component";
-import { AddActivityFormComponent } from "@activities/shared/add-activity-form/add-activity-form.component";
 import { ActivityService } from "@activities/shared/activity.service";
+import { AddActivityFormComponent } from "@activities/shared/add-activity-form/add-activity-form.component";
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 import { ConnectionsModule } from "@connections/connections.module";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";

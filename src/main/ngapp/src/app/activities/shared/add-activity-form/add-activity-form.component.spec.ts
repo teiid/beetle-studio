@@ -1,11 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormsModule } from "@angular/forms";
+import { RouterTestingModule } from "@angular/router/testing";
+import { CoreModule } from "@core/core.module";
+import { AddActivityFormComponent } from "./add-activity-form.component";
 
-import { AddActivityFormComponent } from './add-activity-form.component';
-import { CoreModule } from '@core/core.module';
-
-describe('AddActivityFormComponent', () => {
+describe("AddActivityFormComponent", () => {
   let component: AddActivityFormComponent;
   let fixture: ComponentFixture<AddActivityFormComponent>;
 
@@ -23,7 +22,7 @@ describe('AddActivityFormComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
   });
 });

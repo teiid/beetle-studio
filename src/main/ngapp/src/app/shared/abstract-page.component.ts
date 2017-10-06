@@ -15,21 +15,23 @@
  * limitations under the License.
  */
 
-import {OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/combineLatest';
+import {OnInit} from "@angular/core";
+import {ActivatedRoute} from "@angular/router";
+import "rxjs/add/observable/combineLatest";
+import {Observable} from "rxjs/Observable";
 
 export abstract class AbstractPageComponent implements OnInit {
 
   public dataLoaded: Map<string, boolean> = new Map<string, boolean>();
   public pageError: any;
+  protected route: ActivatedRoute;
 
   /**
    * C'tor.
    * @param {ActivatedRoute} route
    */
-  constructor(protected route: ActivatedRoute) {
+  constructor(route: ActivatedRoute) {
+    this.route = route;
   }
 
   /**
@@ -38,7 +40,7 @@ export abstract class AbstractPageComponent implements OnInit {
    */
   public ngOnInit(): void {
     const combined = Observable.combineLatest(this.route.params, this.route.queryParams, (params, qparams) => ({params, qparams}));
-    combined.subscribe( ap => {
+    combined.subscribe( (ap) => {
       this.loadAsyncPageData(ap.params, ap.qparams);
     });
   }
@@ -50,6 +52,7 @@ export abstract class AbstractPageComponent implements OnInit {
    * @param queryParams
    */
   public loadAsyncPageData(pathParams: any, queryParams: any): void {
+    // TODO is this method needed
   }
 
   /**
@@ -57,7 +60,7 @@ export abstract class AbstractPageComponent implements OnInit {
    * @param error
    */
   public error(error: any): void {
-    console.error('    Error: %o', error);
+    console.error("    Error: %o", error);
     this.pageError = error;
   }
 
@@ -75,11 +78,7 @@ export abstract class AbstractPageComponent implements OnInit {
    * @return {boolean}
    */
   public isLoaded(key: string): boolean {
-    if (this.dataLoaded[key]) {
-      return true;
-    } else {
-      return false;
-    }
+    return !!this.dataLoaded[ key ];
   }
 
 }

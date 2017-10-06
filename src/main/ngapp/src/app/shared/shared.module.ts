@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { PageErrorComponent } from "@shared/page-error/page-error.component";
-import { ModalModule } from 'ngx-bootstrap';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { ModalModule } from "ngx-bootstrap";
+import { PageNotFoundComponent } from "./page-not-found/page-not-found.component";
 
 @NgModule({
   imports: [

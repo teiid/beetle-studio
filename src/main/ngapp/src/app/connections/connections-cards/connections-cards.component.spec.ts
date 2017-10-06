@@ -1,9 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { RouterTestingModule } from "@angular/router/testing";
+import { ConnectionsCardsComponent } from "@connections/connections-cards/connections-cards.component";
 
-import { ConnectionsCardsComponent } from './connections-cards.component';
-
-describe('ConnectionsCardsComponent', () => {
+describe("ConnectionsCardsComponent", () => {
   let component: ConnectionsCardsComponent;
   let fixture: ComponentFixture<ConnectionsCardsComponent>;
 
@@ -21,7 +20,7 @@ describe('ConnectionsCardsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
   });
 });

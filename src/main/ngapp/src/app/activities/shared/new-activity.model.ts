@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import { NewConnection } from '@connections/shared/new-connection.model';
+import { NewConnection } from "@connections/shared/new-connection.model";
 
 export class NewActivity {
 
-  name: string;
-  description: string;
-  sourceConnection: NewConnection = new NewConnection();
-  targetConnection: NewConnection = new NewConnection();
+  private name: string;
+  private description: string;
+  private sourceConnection: NewConnection = new NewConnection();
+  private targetConnection: NewConnection = new NewConnection();
 
   /**
    * Constructor
@@ -88,7 +88,7 @@ export class NewActivity {
   }
 
   // overrides toJSON - we do not want the name supplied in the json body.
-  public toJSON() {
+  public toJSON(): {} {
     return {
       sourceConnection: this.sourceConnection,
       targetConnection: this.targetConnection

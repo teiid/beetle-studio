@@ -15,20 +15,22 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-
+import { Injectable } from "@angular/core";
+import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { ApiService } from "@core/api.service";
-import { KOMODO_WORKSPACE_URL } from "@core/api.service";
+import { komodoWorkspaceUrl } from "@core/api.service";
+import { Observable } from "rxjs/Observable";
 
 @Injectable()
 export class ConnectionService extends ApiService {
 
-  constructor( private http: Http ) {
+  private http: Http;
+
+  constructor( http: Http ) {
     super();
+    this.http = http;
   }
 
   /**
@@ -37,10 +39,10 @@ export class ConnectionService extends ApiService {
    */
   public getAllConnections(): Observable<Connection[]> {
     return this.http
-      .get(KOMODO_WORKSPACE_URL + '/connections', this.getAuthRequestOptions())
-      .map(response => {
+      .get(komodoWorkspaceUrl + "/connections", this.getAuthRequestOptions())
+      .map((response) => {
         const connections = response.json();
-        return connections.map((connection) => {const conn = Connection.create( connection ); return conn; });
+        return connections.map((connection) => Connection.create( connection ));
       })
       .catch(this.handleError);
   }
@@ -52,8 +54,8 @@ export class ConnectionService extends ApiService {
    */
   public createConnection(connection: NewConnection): Observable<NewConnection> {
     return this.http
-      .post(KOMODO_WORKSPACE_URL + '/connections/' + connection.getName(), connection, this.getAuthRequestOptions())
-      .map(response => {
+      .post(komodoWorkspaceUrl + "/connections/" + connection.getName(), connection, this.getAuthRequestOptions())
+      .map((response) => {
         return new Connection();
       })
       .catch(this.handleError);
@@ -66,8 +68,8 @@ export class ConnectionService extends ApiService {
    */
   public deleteConnection(connection: NewConnection): Observable<NewConnection> {
     return this.http
-      .delete(KOMODO_WORKSPACE_URL + '/connections/' + connection.getName(), this.getAuthRequestOptions())
-      .map(response => null)
+      .delete(komodoWorkspaceUrl + "/connections/" + connection.getName(), this.getAuthRequestOptions())
+      .map((response) => null)
       .catch(this.handleError);
   }
 

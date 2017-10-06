@@ -15,75 +15,58 @@
  * limitations under the License.
  */
 
-import { Component, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
-import { AbstractPageComponent } from '@shared/abstract-page.component';
-import { ArrayUtils } from '@core/common';
-import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
+import { Component, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { addConnectionPath, connectionsRootPath, editConnectionPath } from "@connections/connections-routing.module";
 import { Connection } from "@connections/shared/connection.model";
-import { ConnectionService } from '@connections/shared/connection.service';
-import { NewConnection } from '@connections/shared/new-connection.model';
-
-class Filters {
-  nameFilter: string;
-  sortDirection: string;
-  layout: string;
-
-  constructor(params?: any) {
-    this.reset();
-    if (params) {
-      for (const key of Object.keys(params)) {
-        const value: string = params[key];
-        this[key] = value;
-      }
-    }
-  }
-
-  public accepts(connection: Connection): boolean {
-    const name: string = connection.getId().toLocaleLowerCase();
-    const namef: string = this.nameFilter.toLocaleLowerCase();
-    return name.indexOf(namef) >= 0;
-  }
-
-  public reset(): void {
-    this.nameFilter = '';
-    this.sortDirection = 'ASC';
-    this.layout = 'card';
-  }
-}
+import { ConnectionService } from "@connections/shared/connection.service";
+import { NewConnection } from "@connections/shared/new-connection.model";
+import { ArrayUtils } from "@core/utils/array-utils";
+import { AbstractPageComponent } from "@shared/abstract-page.component";
+import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
+import { IdFilter } from "@shared/id-filter";
+import { LayoutType } from "@shared/layout-type.enum";
+import { SortDirection } from "@shared/sort-direction.enum";
 
 @Component({
-  selector: 'app-connections',
-  templateUrl: './connections.component.html',
-  styleUrls: ['./connections.component.css'],
+  selector: "app-connections",
+  templateUrl: "./connections.component.html",
+  styleUrls: ["./connections.component.css"],
   providers: [ConnectionService]
 })
 export class ConnectionsComponent extends AbstractPageComponent {
 
-  allConnections: Connection[] = [];
-  filteredConnections: Connection[] = [];
-  selectedConnections: Connection[] = [];
-  filters: Filters = new Filters();
+  public addConnectionLink: string = addConnectionPath;
+
+  private allConnections: Connection[] = [];
+  private filteredConnections: Connection[] = [];
+  private selectedConnections: Connection[] = [];
   private connectionNameForDelete: string;
+  private router: Router;
+  private connectionService: ConnectionService;
+  private filter: IdFilter = new IdFilter();
+  private layout: LayoutType = LayoutType.CARD;
+  private sortDirection: SortDirection;
 
-  @ViewChild(ConfirmDeleteComponent) confirmDeleteDialog: ConfirmDeleteComponent;
+  @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
-  constructor(private router: Router, route: ActivatedRoute, private connectionService: ConnectionService) {
+  constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService) {
     super(route);
+    this.router = router;
+    this.connectionService = connectionService;
   }
 
-  public loadAsyncPageData() {
+  public loadAsyncPageData(): void {
     this.connectionService
       .getAllConnections()
       .subscribe(
         (connections) => {
           this.allConnections = connections;
           this.filteredConnections = this.filterConnections();
-          this.loaded('connections');
+          this.loaded("connections");
         },
         (error) => {
-          console.error('[ConnectionsComponent] Error getting connections.');
+          console.error("[ConnectionsComponent] Error getting connections.");
           this.error(error);
         }
       );
@@ -96,13 +79,13 @@ export class ConnectionsComponent extends AbstractPageComponent {
     // Clear the array first.
     this.filteredConnections.splice(0, this.filteredConnections.length);
     for (const connection of this.allConnections) {
-      if (this.filters.accepts(connection)) {
+      if (this.filter.accepts(connection)) {
         this.filteredConnections.push(connection);
       }
     }
     this.filteredConnections.sort( (c1: Connection, c2: Connection) => {
       let rval: number = c1.getId().localeCompare(c2.getId());
-      if (this.filters.sortDirection === 'DESC') {
+      if (this.sortDirection === SortDirection.DESC) {
         rval *= -1;
       }
       return rval;
@@ -111,6 +94,52 @@ export class ConnectionsComponent extends AbstractPageComponent {
     this.selectedConnections = ArrayUtils.intersect(this.selectedConnections, this.filteredConnections);
 
     return this.filteredConnections;
+  }
+
+  /**
+   * @returns {boolean} true if connections are being represented by cards
+   */
+  public get isCardLayout(): boolean {
+    return this.layout === LayoutType.CARD;
+  }
+
+  /**
+   * @returns {boolean} true if connections are being represented by items in a list
+   */
+  public get isListLayout(): boolean {
+    return this.layout === LayoutType.LIST;
+  }
+
+  /**
+   * @returns {boolean} true if sorting connection names in ascending order
+   */
+  public get isSortAscending(): boolean {
+    return this.sortDirection === SortDirection.ASC;
+  }
+
+  /**
+   * @returns {boolean} true if sorting connection names in descending order
+   */
+  public get isSortDescending(): boolean {
+    return this.sortDirection === SortDirection.DESC;
+  }
+
+  /**
+   * @returns {string} the pattern the connection names are being matched to (can be null or empty)
+   */
+  public get nameFilter(): string {
+    return this.filter.getPattern();
+  }
+
+  /**
+   * @param {string} pattern the new pattern for the connection name filter (can be null or empty)
+   */
+  public set nameFilter( pattern: string ) {
+    this.filter.setFilter( pattern );
+  }
+
+  public onPing( connName: string): void {
+    alert("Ping connection " + connName);
   }
 
   public onSelected(connection: Connection): void {
@@ -126,7 +155,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
   }
 
   public onEdit(connName: string): void {
-    const link: string[] = [ '/connections/edit-connection' ];
+    const link: string[] = [ editConnectionPath ];
     this.router.navigate(link);
   }
 
@@ -135,41 +164,37 @@ export class ConnectionsComponent extends AbstractPageComponent {
     this.confirmDeleteDialog.open();
   }
 
-  public onPing(connName: string): void {
-    alert('Ping connection ' + connName);
-  }
-
   public isFiltered(): boolean {
     return this.allConnections.length !== this.filteredConnections.length;
   }
 
   public toggleSortDirection(): void {
-    if (this.filters.sortDirection === 'ASC') {
-      this.filters.sortDirection = 'DESC';
+    if (this.sortDirection === SortDirection.ASC) {
+      this.sortDirection = SortDirection.DESC;
     } else {
-      this.filters.sortDirection = 'ASC';
+      this.sortDirection = SortDirection.ASC;
     }
     this.filterConnections();
   }
 
   public clearFilters(): void {
-    this.filters.nameFilter = '';
+    this.filter.reset();
     this.filterConnections();
   }
 
   public onListLayout(): void {
-    this.filters.layout = 'list';
+    this.layout = LayoutType.LIST;
   }
 
   public onCardLayout(): void {
-    this.filters.layout = 'card';
+    this.layout = LayoutType.CARD;
   }
 
   /**
-   * Called to delete all selected APIs.
+   * Called to doDelete all selected APIs.
    */
   public deleteConnection(): void {
-    const selectedConn =  this.filterConnections().find(x => x.getId() === this.connectionNameForDelete);
+    const selectedConn =  this.filterConnections().find((x) => x.getId() === this.connectionNameForDelete);
 
     // const itemsToDelete: Connection[] = ArrayUtils.intersect(this.selectedConnections, this.filteredConnections);
     // const selectedConn = itemsToDelete[0];
@@ -177,21 +202,21 @@ export class ConnectionsComponent extends AbstractPageComponent {
     const connectionToDelete: NewConnection = new NewConnection();
     connectionToDelete.setName(selectedConn.getId());
 
-    // Note: we can only delete selected items that we can see in the UI.
-    console.log('[ConnectionsPageComponent] Deleting selected Connection.');
+    // Note: we can only doDelete selected items that we can see in the UI.
+    console.log("[ConnectionsPageComponent] Deleting selected Connection.");
     this.connectionService
       .deleteConnection(connectionToDelete)
       .subscribe(
         () => {
           this.removeConnectionFromList(selectedConn);
-          const link: string[] = [ '/connections' ];
-          console.log('[CreateApiPageComponent] Navigating to: %o', link);
+          const link: string[] = [ connectionsRootPath ];
+          console.log("[CreateApiPageComponent] Navigating to: %o", link);
           this.router.navigate(link);
         }
       );
   }
 
-  private removeConnectionFromList(connection: Connection) {
+  private removeConnectionFromList(connection: Connection): void {
     this.allConnections.splice(this.allConnections.indexOf(connection), 1);
     this.filterConnections();
   }

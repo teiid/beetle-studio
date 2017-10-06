@@ -15,15 +15,14 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import {RouterModule} from '@angular/router';
-
-import { NavHeaderComponent } from "@core/nav-header/nav-header.component";
-import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component";
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import {HttpModule} from "@angular/http";
+import {RouterModule} from "@angular/router";
 import { BreadcrumbComponent } from "@core/breadcrumbs/breadcrumb/breadcrumb.component";
 import { BreadcrumbsComponent } from "@core/breadcrumbs/breadcrumbs.component";
-import {HttpModule} from "@angular/http";
+import { NavHeaderComponent } from "@core/nav-header/nav-header.component";
+import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component";
 
 @NgModule({
   imports: [

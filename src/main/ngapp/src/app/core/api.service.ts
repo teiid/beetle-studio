@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { environment } from '@environments/environment';
-import {Http, Headers, RequestOptions} from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
+import { Injectable } from "@angular/core";
+import {Headers, RequestOptions} from "@angular/http";
+import { environment } from "@environments/environment";
+import "rxjs/add/observable/throw";
+import "rxjs/add/operator/catch";
+import "rxjs/add/operator/map";
+import { Observable } from "rxjs/Observable";
+import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 
-export const KOMODO_WORKSPACE_URL = environment.komodoWorkspaceUrl;
+export const komodoWorkspaceUrl = environment.komodoWorkspaceUrl;
 
 @Injectable()
 export class ApiService {
@@ -34,13 +35,12 @@ export class ApiService {
    * @returns {RequestOptions}
    */
   protected getAuthRequestOptions(): RequestOptions {
-    const headers = new Headers({ 'Authorization': 'Basic ' +  btoa('dsbUser:1demo-user1') });
-    const options = new RequestOptions({ headers: headers });
-    return options;
+    const headers = new Headers({ "Authorization": "Basic " +  btoa("dsbUser:1demo-user1") });
+    return new RequestOptions({ headers });
   }
 
-  protected handleError (error: Response | any) {
-    console.error('ApiService::handleError', error);
+  protected handleError(error: Response | any): ErrorObservable {
+    console.error("ApiService::handleError", error);
     return Observable.throw(error);
   }
 
