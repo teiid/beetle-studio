@@ -46,10 +46,24 @@ export class AddConnectionFormComponent {
   }
 
   /**
+   * @param {string} name the new connection name
+   */
+  public set connectionName( name: string ) {
+    this.model.setName( name );
+  }
+
+  /**
    * @returns {string} the driver name of the connection
    */
   public get connectionDriverName(): string {
     return this.model.getDriverName();
+  }
+
+  /**
+   * @param {string} driverName the new connection driver name
+   */
+  public set connectionDriverName( driverName: string ) {
+    this.model.setDriverName( driverName );
   }
 
   /**
@@ -60,10 +74,24 @@ export class AddConnectionFormComponent {
   }
 
   /**
+   * @param {boolean} isJdbc true if the new connection is a JDBC connection
+   */
+  public set connectionIsJdbc( isJdbc: boolean ) {
+    this.model.setJdbc( isJdbc );
+  }
+
+  /**
    * @returns {string} the JNDI name of the connection
    */
   public get connectionJndiName(): string {
     return this.model.getJndiName();
+  }
+
+  /**
+   * @param {string} jndiName the new connection JNDI name
+   */
+  public set connectionJndiName( jndiName: string ) {
+    this.model.setJndiName( jndiName );
   }
 
   public currentConnection(): string {

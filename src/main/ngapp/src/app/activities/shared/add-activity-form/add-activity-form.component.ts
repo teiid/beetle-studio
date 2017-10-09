@@ -22,6 +22,7 @@ import { EventEmitter } from "@angular/core";
 import { Output } from "@angular/core";
 import { Router } from "@angular/router";
 import { NewConnection } from "@connections/shared/new-connection.model";
+import { de } from "ngx-bootstrap/locale";
 
 @Component({
   moduleId: module.id,
@@ -49,10 +50,24 @@ export class AddActivityFormComponent {
   }
 
   /**
+   * @param {string} description the new activity description
+   */
+  public set activityDescription( description: string ) {
+    this.model.setDescription( description );
+  }
+
+  /**
    * @returns {string} the activity name
    */
   public get activityName(): string {
     return this.model.getName();
+  }
+
+  /**
+   * @param {string} name the new activity name
+   */
+  public set activityName( name: string ) {
+    this.model.setName( name );
   }
 
   /**
@@ -63,10 +78,24 @@ export class AddActivityFormComponent {
   }
 
   /**
+   * @param {string} source the new activity source
+   */
+  public set activitySource( source: NewConnection ) {
+    this.model.setSourceConnection( source );
+  }
+
+  /**
    * @returns {string} the activity's target connection
    */
   public get activityTarget(): NewConnection {
     return this.model.getTargetConnection();
+  }
+
+  /**
+   * @param {string} target the new activity target
+   */
+  public set activityTarget( target: NewConnection ) {
+    this.model.setTargetConnection( target );
   }
 
   public get currentActivity(): string {
