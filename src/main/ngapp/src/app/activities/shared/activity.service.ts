@@ -15,45 +15,46 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-
 import { Activity } from "@activities/shared/activity.model";
 import { NewActivity } from "@activities/shared/new-activity.model";
+import { Injectable } from "@angular/core";
+import { Http } from "@angular/http";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { ApiService } from "@core/api.service";
 
 @Injectable()
 export class ActivityService extends ApiService {
 
-  activity1 = new Activity();
-  activity2 = new Activity();
-  activity3 = new Activity();
-  activities: Activity[] = [this.activity1, this.activity2, this.activity3];
-  newActivity1 = new NewActivity();
+  private activity1 = new Activity();
+  private activity2 = new Activity();
+  private activity3 = new Activity();
+  private activities: Activity[] = [this.activity1, this.activity2, this.activity3];
+  private newActivity1 = new NewActivity();
+  private http: Http;
 
-  constructor( private http: Http ) {
+  constructor( http: Http ) {
     super();
-    this.activity1.setId('activity1');
-    this.activity1.setSourceConnection('activity1SrcConn');
-    this.activity1.setTargetConnection('activity1TgtConn');
-    this.activity2.setId('activity2');
-    this.activity2.setSourceConnection('activity2SrcConn');
-    this.activity2.setTargetConnection('activity2TgtConn');
-    this.activity3.setId('activity3');
-    this.activity3.setSourceConnection('activity3SrcConn');
-    this.activity3.setTargetConnection('activity3TgtConn');
-    this.newActivity1.setName('newActivity1');
+    this.http = http;
+    this.activity1.setId("activity1");
+    this.activity1.setSourceConnection("activity1SrcConn");
+    this.activity1.setTargetConnection("activity1TgtConn");
+    this.activity2.setId("activity2");
+    this.activity2.setSourceConnection("activity2SrcConn");
+    this.activity2.setTargetConnection("activity2TgtConn");
+    this.activity3.setId("activity3");
+    this.activity3.setSourceConnection("activity3SrcConn");
+    this.activity3.setTargetConnection("activity3TgtConn");
+    this.newActivity1.setName("newActivity1");
     const srcConn = new NewConnection();
-    srcConn.setName('new1Src');
-    srcConn.setJndiName('new1SrcJndi');
-    srcConn.setDriverName('new1SrcDriver');
+    srcConn.setName("new1Src");
+    srcConn.setJndiName("new1SrcJndi");
+    srcConn.setDriverName("new1SrcDriver");
     srcConn.setJdbc(true);
     this.newActivity1.setSourceConnection(srcConn);
     const tgtConn = new NewConnection();
-    tgtConn.setName('new1Tgt');
-    tgtConn.setJndiName('new1TgtJndi');
-    tgtConn.setDriverName('new1TgtDriver');
+    tgtConn.setName("new1Tgt");
+    tgtConn.setJndiName("new1TgtJndi");
+    tgtConn.setDriverName("new1TgtDriver");
     tgtConn.setJdbc(false);
     this.newActivity1.setTargetConnection(tgtConn);
   }
@@ -66,7 +67,7 @@ export class ActivityService extends ApiService {
     return this.activities;
     /*
     return this.http
-      .get(KOMODO_WORKSPACE_URL + '/activities', this.getAuthRequestOptions())
+      .get(komodoWorkspaceUrl + '/activities', this.getAuthRequestOptions())
       .map(response => {
         const activities = response.json();
         return activities.map((activity) => {const activ = new Activity(); activ.setValues(activity); return activ; });
@@ -81,10 +82,11 @@ export class ActivityService extends ApiService {
    * @returns {Activity}
    */
   public createActivity(activity: NewActivity): NewActivity {
+    // TODO implement createActivity()
     return this.newActivity1;
     /*
     return this.http
-      .post(KOMODO_WORKSPACE_URL + '/activities/' + activity.name, activity, this.getAuthRequestOptions())
+      .post(komodoWorkspaceUrl + '/activities/' + activity.name, activity, this.getAuthRequestOptions())
       .map(response => {
         return new Activity();
       })
@@ -97,9 +99,10 @@ export class ActivityService extends ApiService {
    * @param {NewActivity} activity
    */
   public deleteActivity(activity: NewActivity): NewActivity {
+    // TODO implement deleteActivity()
     /*
     return this.http
-      .delete(KOMODO_WORKSPACE_URL + '/activities/' + activity.name, this.getAuthRequestOptions())
+      .doDelete(komodoWorkspaceUrl + '/activities/' + activity.name, this.getAuthRequestOptions())
       .map(response => null)
       .catch(this.handleError);
       */

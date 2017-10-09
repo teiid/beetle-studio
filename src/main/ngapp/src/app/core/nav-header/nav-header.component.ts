@@ -15,39 +15,40 @@
  * limitations under the License.
  */
 
-import {Component, OnInit, Inject} from '@angular/core';
+import {Component} from "@angular/core";
 
 @Component({
   moduleId: module.id,
-  selector: 'app-nav-header',
-  templateUrl: './nav-header.component.html',
-  styleUrls: [ './nav-header.component.less' ]
+  selector: "app-nav-header",
+  templateUrl: "./nav-header.component.html",
+  styleUrls: [ "./nav-header.component.less" ]
 })
-export class NavHeaderComponent implements OnInit {
+export class NavHeaderComponent {
 
-  version = 'N/A';
-  builtOn: Date = new Date();
-  projectUrl = 'http://jboss.org/teiiddesigner/';
+  private version = "N/A";
+  private builtOn: Date = new Date();
+  private projectUrl = "http://jboss.org/teiiddesigner/";
+  private userId = "user";
 
   constructor() {
-    if (window['BeetleStudio']) {
-      console.log('[NavHeaderComponent] Found app info: %o', window['BeetleStudio'])
-      this.version = window['BeetleStudio'].version;
-      this.builtOn = new Date(window['BeetleStudio'].builtOn);
-      this.projectUrl = window['BeetleStudio'].url;
+    // TODO this does not work
+    if (window["BeetleStudio"]) {
+      console.log("[NavHeaderComponent] Found app info: %o", window["BeetleStudio"]);
+      this.version = window["BeetleStudio"].version;
+      this.builtOn = new Date(window["BeetleStudio"].builtOn);
+      this.projectUrl = window["BeetleStudio"].url;
     } else {
-      console.log('[NavHeaderComponent] App info not found.');
+      console.log("[NavHeaderComponent] App info not found.");
     }
   }
 
-  ngOnInit(): void {
-  }
-
   public user(): string {
-    return 'User';
+    // TODO implement user()
+    return this.userId;
   }
 
   public logout(): void {
+    // TODO implement logout()
   }
 
 }

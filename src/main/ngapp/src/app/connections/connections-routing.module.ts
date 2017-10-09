@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { Routes } from '@angular/router';
-
+import { NgModule } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { Routes } from "@angular/router";
 import { AddConnectionComponent } from "@connections/add-connection/add-connection.component";
 import { ConnectionsComponent } from "@connections/connections.component";
 import { EditConnectionComponent } from "@connections/edit-connection/edit-connection.component";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 
 const connectionsRoutes: Routes = [
-  { path: 'connections', component: ConnectionsComponent },
-  { path: 'connections/add-connection', component: AddConnectionComponent },
-  { path: 'connections/edit-connection', component: EditConnectionComponent }
+  { path: ConnectionsConstants.connectionsRootRoute, component: ConnectionsComponent },
+  { path: ConnectionsConstants.addConnectionRoute, component: AddConnectionComponent },
+  { path: ConnectionsConstants.editConnectionRoute, component: EditConnectionComponent }
 ];
 
 @NgModule({
@@ -37,5 +37,4 @@ const connectionsRoutes: Routes = [
     RouterModule
   ]
 })
-
 export class ConnectionsRoutingModule {}

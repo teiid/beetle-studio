@@ -15,20 +15,19 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-
 import { AddConnectionComponent } from "@connections/add-connection/add-connection.component";
-import { AddConnectionFormComponent } from "@connections/shared/add-connection-form/add-connection-form.component";
 import { ConnectionsCardsComponent } from "@connections/connections-cards/connections-cards.component";
-import { ConnectionsComponent } from "@connections/connections.component";
 import { ConnectionsListComponent } from "@connections/connections-list/connections-list.component";
-import { EditConnectionComponent } from "@connections/edit-connection/edit-connection.component";
-import { CoreModule } from "@core/core.module";
-import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsRoutingModule } from "@connections/connections-routing.module";
+import { ConnectionsComponent } from "@connections/connections.component";
+import { EditConnectionComponent } from "@connections/edit-connection/edit-connection.component";
+import { AddConnectionFormComponent } from "@connections/shared/add-connection-form/add-connection-form.component";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 
 @NgModule({

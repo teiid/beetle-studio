@@ -15,18 +15,14 @@
  * limitations under the License.
  */
 
-import {Component, Input} from "@angular/core";
+/**
+ * An object that has an identifiable property.
+ */
+export interface Identifiable< T > {
 
-@Component({
-  moduleId: module.id,
-  selector: "[app-breadcrumb]",
-  templateUrl: "breadcrumb.component.html",
-  styleUrls: ["breadcrumb.component.css"]
-})
-export class BreadcrumbComponent {
-
-  @Input() private label: string;
-  @Input() private icon: string;
-  @Input() private route: string[];
+  /**
+   * @returns {T} the object identifier (can be null)
+   */
+  getId(): T;
 
 }

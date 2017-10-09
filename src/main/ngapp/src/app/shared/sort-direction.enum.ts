@@ -15,18 +15,19 @@
  * limitations under the License.
  */
 
-import {Component, Input} from "@angular/core";
+/**
+ * An enumeration of valid sort directions.
+ */
+export enum SortDirection {
 
-@Component({
-  moduleId: module.id,
-  selector: "[app-breadcrumb]",
-  templateUrl: "breadcrumb.component.html",
-  styleUrls: ["breadcrumb.component.css"]
-})
-export class BreadcrumbComponent {
+  /**
+   * Sort connections in ascending order.
+   */
+  ASC,
 
-  @Input() private label: string;
-  @Input() private icon: string;
-  @Input() private route: string[];
+  /**
+   * Sort connections in descending order.
+   */
+  DESC
 
 }

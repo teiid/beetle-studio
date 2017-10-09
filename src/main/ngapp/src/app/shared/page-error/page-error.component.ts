@@ -15,27 +15,20 @@
  * limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
+import {Component, Input} from "@angular/core";
 
 @Component({
   moduleId: module.id,
-  selector: 'app-page-error',
-  templateUrl: './page-error.component.html',
-  styleUrls: ['./page-error.component.css']
+  selector: "app-page-error",
+  templateUrl: "./page-error.component.html",
+  styleUrls: ["./page-error.component.css"]
 })
 export class PageErrorComponent {
-
-  @Input() error: any;
 
   private eobj: any = null;
   private showDetails = false;
 
-  /**
-   * Called to reload the browser page.
-   */
-  public reloadPage(): void {
-    window.location.reload();
-  }
+  @Input() private error: any;
 
   /**
    * Returns whether details should be shown.
@@ -90,6 +83,13 @@ export class PageErrorComponent {
       this.eobj = this.error.json();
     }
     return this.eobj;
+  }
+
+  /**
+   * Called to reload the browser page.
+   */
+  public reloadPage(): void {
+    window.location.reload();
   }
 
 }

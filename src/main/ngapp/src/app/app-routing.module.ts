@@ -15,18 +15,19 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { Routes } from '@angular/router';
-
-import { environment } from '@environments/environment';
+import { ActivitiesConstants } from "@activities/shared/activities-constants";
+import { NgModule } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { Routes } from "@angular/router";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { environment } from "@environments/environment";
 import { PageNotFoundComponent } from "@shared/page-not-found/page-not-found.component";
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: environment.homePagePath, pathMatch: 'full'},
-  {path: 'connections', loadChildren: '@connections/connections.module#ConnectionsModule'},
-  {path: 'activities', loadChildren: '@activities/activities.module#ActivitiesModule'},
-  { path: '**', component: PageNotFoundComponent }, // always last
+  { path: "", redirectTo: environment.homePagePath, pathMatch: "full" },
+  { path: ConnectionsConstants.connectionsRootRoute, loadChildren: "@connections/connections.module#ConnectionsModule" },
+  { path: ActivitiesConstants.activitiesRootRoute, loadChildren: "@activities/activities.module#ActivitiesModule" },
+  { path: "**", component: PageNotFoundComponent }, // always last
 ];
 
 @NgModule({
@@ -37,5 +38,4 @@ const appRoutes: Routes = [
     RouterModule
   ]
 })
-
 export class AppRoutingModule {}

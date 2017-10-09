@@ -17,16 +17,17 @@
 
 export class NewConnection {
 
-  name: string;
-  jndiName: string;
-  driverName: string;
-  jdbc: boolean;
-  properties: Map< string, string > = new Map< string, string >();
+  private name: string;
+  private jndiName: string;
+  private driverName: string;
+  private jdbc: boolean;
+  private properties: Map< string, string > = new Map< string, string >();
 
   /**
    * Constructor
    */
   constructor() {
+    // nothing to do
   }
 
   /**
@@ -86,7 +87,7 @@ export class NewConnection {
   }
 
   /**
-   * @param {boolean} jdbc the jdbc status (optional)
+   * @param {boolean} isJdbc the jdbc status (optional)
    */
   public setJdbc( isJdbc?: boolean ): void {
     this.jdbc = isJdbc ? isJdbc : true;
@@ -99,9 +100,8 @@ export class NewConnection {
     this.properties = props ? props : new Map< string, string >();
   }
 
-
   // overrides toJSON - we do not want the name supplied in the json body.
-  public toJSON() {
+  public toJSON(): {} {
     return {
       jndiName: this.jndiName,
       driverName: this.driverName,

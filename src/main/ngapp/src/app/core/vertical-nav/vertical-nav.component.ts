@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
-import { Component, OnInit } from '@angular/core';
-import {Router, NavigationEnd} from '@angular/router';
+import { ActivitiesConstants } from "@activities/shared/activities-constants";
+import { Component, OnInit } from "@angular/core";
+import { NavigationEnd, Router } from "@angular/router";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 
 /**
  * Models the menus off the main left-hand vertical nav.
@@ -27,49 +29,51 @@ enum VerticalNavType {
 
 @Component({
   moduleId: module.id,
-  selector: 'app-vertical-nav',
-  templateUrl: './vertical-nav.component.html',
-  styleUrls: ['./vertical-nav.component.less']
+  selector: "app-vertical-nav",
+  templateUrl: "./vertical-nav.component.html",
+  styleUrls: ["./vertical-nav.component.less"]
 })
 
 export class VerticalNavComponent implements OnInit {
 
-    public menuTypes: any = VerticalNavType;
-    public currentMenu: VerticalNavType = VerticalNavType.Home;
+  public menuTypes: any = VerticalNavType;
+  public currentMenu: VerticalNavType = VerticalNavType.Home;
+  private router: Router;
 
-    constructor(private router: Router) {
-    }
+  constructor(router: Router) {
+    this.router = router;
+  }
 
-    ngOnInit(): void {
-        console.log('Subscribing to router events.');
-          this.router.events.subscribe(event => {
-            if (event instanceof NavigationEnd) {
-              this.onShadeClick();
-            }
-          });
-    }
+  public ngOnInit(): void {
+    console.log("Subscribing to router events.");
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.onShadeClick();
+      }
+    });
+  }
 
-    /**
-     * Returns true if the currently active route is /activities/*
-     * @returns {boolean}
-     */
-    isActivitiesRoute(): boolean {
-      return this.router.isActive('/activities', true);
-    }
+  /**
+   * Returns true if the currently active route is /activities/*
+   * @returns {boolean}
+   */
+  private isActivitiesRoute(): boolean {
+    return this.router.isActive( "/activities", true );
+  }
 
     /**
      * Returns true if the currently active route is /connections/*
      * @returns {boolean}
      */
-    isConnectionsRoute(): boolean {
-        return this.router.isActive('/connections', true);
-    }
+  private isConnectionsRoute(): boolean {
+    return this.router.isActive("/connections", true);
+  }
 
    /**
-     * Called when the user clicks the vertical menu shade (the grey shaded area behind the submenu div that
-     * is displayed when a sub-menu is selected).  Clicking the shade makes the sub-menu div go away.
-     */
-    onShadeClick(): void {
+    * Called when the user clicks the vertical menu shade (the grey shaded area behind the submenu div that
+    * is displayed when a sub-menu is selected).  Clicking the shade makes the sub-menu div go away.
+    */
+  private onShadeClick(): void {
       /*
         this.subMenuOut = false;
         setTimeout(() => {
@@ -81,18 +85,18 @@ export class VerticalNavComponent implements OnInit {
     /**
      * Called when the user clicks the vertical menu Activities item.
      */
-    onActivitiesClick(): void {
+  private onActivitiesClick(): void {
       this.currentMenu = VerticalNavType.Activities;
-      const link: string[] = [ '/activities' ];
+      const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
       this.router.navigate(link);
     }
 
     /**
      * Called when the user clicks the vertical menu Connections item.
      */
-    onConnectionsClick(): void {
+  private onConnectionsClick(): void {
       this.currentMenu = VerticalNavType.Connections;
-      const link: string[] = [ '/connections' ];
+      const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
       this.router.navigate(link);
     }
 

@@ -1,9 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ModalModule } from "ngx-bootstrap";
+import { ConfirmDeleteComponent } from "./confirm-delete.component";
 
-import { ConfirmDeleteComponent } from './confirm-delete.component';
-import { ModalModule } from 'ngx-bootstrap';
-
-describe('ConfirmDeleteComponent', () => {
+describe("ConfirmDeleteComponent", () => {
   let component: ConfirmDeleteComponent;
   let fixture: ComponentFixture<ConfirmDeleteComponent>;
 
@@ -21,7 +20,7 @@ describe('ConfirmDeleteComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
   });
 });

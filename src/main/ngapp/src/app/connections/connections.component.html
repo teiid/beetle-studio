@@ -18,22 +18,22 @@
           <div class="form-group toolbar-pf-filter">
             <label class="sr-only" for="filter">Name</label>
             <div class="input-group" style="width: 100%">
-              <input name="name-filter" [(ngModel)]="filters.nameFilter" type="text" class="form-control name-filter" id="filter" placeholder="Filter by name...">
+              <input name="name-filter" [(ngModel)]="nameFilter" type="text" class="form-control name-filter" id="filter" placeholder="Filter by name...">
             </div>
           </div>
           <div class="form-group">
             <button class="btn btn-link" type="button" (click)="toggleSortDirection()">
-              <span *ngIf="filters.sortDirection === 'ASC'" class="fa fa-sort-alpha-asc"></span>
-              <span *ngIf="filters.sortDirection === 'DESC'" class="fa fa-sort-alpha-desc"></span>
+              <span *ngIf="isSortAscending" class="fa fa-sort-alpha-asc"></span>
+              <span *ngIf="isSortDescending" class="fa fa-sort-alpha-desc"></span>
             </button>
           </div>
           <div class="form-group">
-            <a class="btn btn-primary" [routerLink]="['/connections/add-connection']">Add Connection</a>
+            <a class="btn btn-primary" [routerLink]="[addConnectionLink]">Add Connection</a>
           </div>
           <div class="form-group toolbar-pf-view-selector">
             <ul class="list-inline">
-              <li *ngIf="filters.layout === 'list'"><a (click)="onCardLayout()"><i class="fa fa-th-list"></i></a></li>
-              <li *ngIf="filters.layout === 'card'"><a (click)="onListLayout()"><i class="fa fa-th"></i></a></li>
+              <li *ngIf="isListLayout"><a (click)="onCardLayout()"><i class="fa fa-th-list"></i></a></li>
+              <li *ngIf="isCardLayout"><a (click)="onListLayout()"><i class="fa fa-th"></i></a></li>
             </ul>
           </div>
         </form>
@@ -60,7 +60,7 @@
           </p>
           <div class="blank-slate-pf-main-action">
             <div class="btn-group">
-              <a class="btn btn-primary btn-lg" [routerLink]="['/connections/add-connection']">Add Connection</a>
+              <a class="btn btn-primary btn-lg" [routerLink]="[ addConnectionLink ]">Add Connection</a>
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@
             <div class="card-pf card-pf-accented">
               <div class="card-pf-heading">
                 <h1 class="card-pf-title">
-                  <p><span class="spinner spinner-xs spinner-inline"></span> Loading Connections...</p>
+                  <span class="spinner spinner-xs spinner-inline"></span> Loading Connections...
                 </h1>
               </div>
             </div>
@@ -89,10 +89,10 @@
 
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('connections')">
-        <app-connections-list *ngIf="filters.layout === 'list'" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
+        <app-connections-list *ngIf="isListLayout" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
                               (onEditConnection)="onEdit($event)" (onPingConnection)="onPing($event)" (onDeleteConnection)="onDelete($event)"
                               (onConnectionSelected)="onSelected($event)" (onConnectionDeselected)="onDeselected($event)"></app-connections-list>
-        <app-connections-cards *ngIf="filters.layout === 'card'" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
+        <app-connections-cards *ngIf="isCardLayout" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
                                (onEditConnection)="onEdit($event)" (onPingConnection)="onPing($event)" (onDeleteConnection)="onDelete($event)"
                                (onConnectionSelected)="onSelected($event)" (onConnectionDeselected)="onDeselected($event)"></app-connections-cards>
       </div>

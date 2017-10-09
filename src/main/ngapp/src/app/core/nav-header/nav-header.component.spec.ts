@@ -1,8 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { NavHeaderComponent } from "@core/nav-header/nav-header.component";
 
-import { NavHeaderComponent } from './nav-header.component';
-
-describe('NavHeaderComponent', () => {
+describe("NavHeaderComponent", () => {
   let component: NavHeaderComponent;
   let fixture: ComponentFixture<NavHeaderComponent>;
 
@@ -19,7 +18,7 @@ describe('NavHeaderComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
   });
 });

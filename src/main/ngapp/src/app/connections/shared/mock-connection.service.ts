@@ -1,26 +1,25 @@
-import {Injectable } from '@angular/core';
-import {Http} from '@angular/http';
-import {environment} from "@environments/environment";
-import {Connection} from '@connections/shared/connection.model';
-import {NewConnection} from '@connections/shared/new-connection.model';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/observable/of';
-
-const KOMODO_WORKSPACE_URL = environment.komodoWorkspaceUrl;
+import {Injectable } from "@angular/core";
+import {Http} from "@angular/http";
+import {Connection} from "@connections/shared/connection.model";
+import {NewConnection} from "@connections/shared/new-connection.model";
+import "rxjs/add/observable/of";
+import "rxjs/add/observable/throw";
+import "rxjs/add/operator/catch";
+import "rxjs/add/operator/map";
+import { Observable } from "rxjs/Observable";
 
 @Injectable()
 export class MockConnectionService {
 
-  newConnection = new NewConnection();
-  conn1 = new Connection();
-  conn2 = new Connection();
-  conn3 = new Connection();
-  conns: Connection[] = [this.conn1, this.conn2, this.conn3];
+  private newConnection = new NewConnection();
+  private conn1 = new Connection();
+  private conn2 = new Connection();
+  private conn3 = new Connection();
+  private conns: Connection[] = [this.conn1, this.conn2, this.conn3];
+  private http: Http;
 
-  constructor( private http: Http ) {
+  constructor( http: Http ) {
+    this.http = http;
   }
 
   /**

@@ -15,25 +15,33 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
-
-import { NewConnection } from '@connections/shared/new-connection.model';
-import { ConnectionService } from '@connections/shared/connection.service';
-import { AbstractPageComponent } from '@shared/abstract-page.component';
+import { Component } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { Router } from "@angular/router";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { NewConnection } from "@connections/shared/new-connection.model";
+import { AbstractPageComponent } from "@shared/abstract-page.component";
 
 @Component({
-  selector: 'app-edit-connection',
-  templateUrl: './edit-connection.component.html',
-  styleUrls: ['./edit-connection.component.css']
+  moduleId: module.id,
+  selector: "app-edit-connection",
+  templateUrl: "./edit-connection.component.html",
+  styleUrls: ["./edit-connection.component.css"]
 })
 export class EditConnectionComponent extends AbstractPageComponent {
 
+  public readonly connectionsLink = ConnectionsConstants.connectionsRootPath;
+
+  private router: Router;
+  private connectionService: ConnectionService;
+
 //  @ViewChild(AddConnectionFormComponent) form: AddConnectionFormComponent;
 
-  constructor(private router: Router, route: ActivatedRoute, private connectionService: ConnectionService) {
+  constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService) {
     super(route);
+    this.router = router;
+    this.connectionService = connectionService;
   }
 
   /**
