@@ -49,6 +49,8 @@ import { SharedModule } from "@shared/shared.module";
   ],
   providers: [
     ConnectionService
+  ],
+  exports: [
   ]
 })
 export class ConnectionsModule { }

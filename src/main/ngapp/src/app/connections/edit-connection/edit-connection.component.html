@@ -1,13 +1,16 @@
 <div style="margin-left: 150px">
   <div id="connections-breadcrumb-bar">
-    <breadcrumbs>
+    <app-breadcrumbs>
       <li app-breadcrumb label="Connections" icon="plug" [route]="[ connectionsLink ]"></li>
       <li app-breadcrumb label="Edit Connection" icon="pencil" class="active"></li>
-    </breadcrumbs>
+    </app-breadcrumbs>
   </div>
   <div class="container-fluid" *ngIf="!pageError">
     <div class="row">
-      <h2>Edit Connection</h2>
+      <h2>Connection Properties</h2>
+    </div>
+    <div class="edit-connection-form row">
+        <app-property-form [formProperties]="getPropertyDefinitions()"></app-property-form>
     </div>
     <!--
     <div class="add-connection-form row">

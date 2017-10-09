@@ -17,25 +17,33 @@
 
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
+import { ReactiveFormsModule } from "@angular/forms";
+
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { PageErrorComponent } from "@shared/page-error/page-error.component";
 import { ModalModule } from "ngx-bootstrap";
 import { PageNotFoundComponent } from "./page-not-found/page-not-found.component";
+import { PropertyFormPropertyComponent } from "./property-form/property-form-property/property-form-property.component";
+import { PropertyFormComponent } from "./property-form/property-form.component";
 
 @NgModule({
   imports: [
     CommonModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    ReactiveFormsModule
   ],
   declarations: [
     ConfirmDeleteComponent,
     PageErrorComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    PropertyFormComponent,
+    PropertyFormPropertyComponent
   ],
   exports: [
     ConfirmDeleteComponent,
     PageErrorComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    PropertyFormComponent
   ]
 })
 export class SharedModule {

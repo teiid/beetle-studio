@@ -25,7 +25,7 @@ export class Activity {
    * @param {Object} json the JSON representation of a Activity
    * @returns {Activity} the new Activity (never null)
    */
-  public static create( json: Object = {} ): Activity {
+  public static create( json: object = {} ): Activity {
     const activity = new Activity();
     activity.setValues( json );
     return activity;
@@ -81,7 +81,7 @@ export class Activity {
    * Set all object values using the supplied Activity json
    * @param {Object} values
    */
-  public setValues(values: Object = {}): void {
+  public setValues(values: object = {}): void {
     Object.assign(this, values);
   }
 }

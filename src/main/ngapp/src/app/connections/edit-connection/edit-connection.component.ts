@@ -15,13 +15,16 @@
  * limitations under the License.
  */
 
+import { ViewChild } from "@angular/core";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
+
 import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
-import { NewConnection } from "@connections/shared/new-connection.model";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
+import { PropertyDefinition } from "@shared/property-form/property-definition.model";
+import { PropertyFormComponent } from "@shared/property-form/property-form.component";
 
 @Component({
   moduleId: module.id,
@@ -35,8 +38,8 @@ export class EditConnectionComponent extends AbstractPageComponent {
 
   private router: Router;
   private connectionService: ConnectionService;
-
-//  @ViewChild(AddConnectionFormComponent) form: AddConnectionFormComponent;
+  private properties: Array<PropertyDefinition<any>> = [];
+  @ViewChild(PropertyFormComponent) private connectionForm: PropertyFormComponent;
 
   constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService) {
     super(route);
@@ -44,25 +47,29 @@ export class EditConnectionComponent extends AbstractPageComponent {
     this.connectionService = connectionService;
   }
 
-  /**
-   * Called when the Add Connection form (component) emits a "add-connection" event.  This is bound to
-   * from the add-connection.page.html template.
-   * @param {NewConnection} connection
-   */
-  /*
-  public onCreateConnection(connection: NewConnection) {
-    console.log('[AddConnectionComponent] onCreateConnection(): ' + JSON.stringify(connection));
-    this.apiService
-      .createConnection(connection)
+  public loadAsyncPageData(): void {
+    const that = this;
+    this.connectionService
+      .getConnectionTemplateProperties("h2")
       .subscribe(
-        () => {
-          this.form.creatingConnection = false;
-          const link: string[] = [ '/connections' ];
-          console.log('[AddConnectionComponent] Navigating to: %o', link);
-          this.router.navigate(link);
+        (props) => {
+          that.properties = props;
+          that.connectionForm.setFormProperties(that.properties);
+          that.connectionForm.updateForm();
+          console.log("[AddConnectionComponent] Navigating to: %o");
+        },
+        (error) => {
+          console.error("[ConnectionsComponent] Error getting connections.");
+          this.error(error);
         }
       );
-
   }
-  */
+
+  /**
+   * @returns {PropertyDefinition<any>[]} the property definitions (can be null)
+   */
+  public getPropertyDefinitions(): Array<PropertyDefinition<any>> {
+    return this.properties;
+  }
+
 }
