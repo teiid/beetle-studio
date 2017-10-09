@@ -17,10 +17,11 @@
 
 import { Component, EventEmitter, Output } from "@angular/core";
 import { Router } from "@angular/router";
-import { connectionsRootPath } from "@connections/connections-routing.module";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
 
 @Component({
+  moduleId: module.id,
   selector: "app-add-connection-form",
   templateUrl: "./add-connection-form.component.html",
   styleUrls: ["./add-connection-form.component.css"]
@@ -35,6 +36,34 @@ export class AddConnectionFormComponent {
 
   constructor( router: Router ) {
     this.router = router;
+  }
+
+  /**
+   * @returns {string} the name of the connection
+   */
+  public get connectionName(): string {
+    return this.model.getName();
+  }
+
+  /**
+   * @returns {string} the driver name of the connection
+   */
+  public get connectionDriverName(): string {
+    return this.model.getDriverName();
+  }
+
+  /**
+   * @returns {boolean} true if a JDBC connection
+   */
+  public get connectionIsJdbc(): boolean {
+    return this.model.isJdbc();
+  }
+
+  /**
+   * @returns {string} the JNDI name of the connection
+   */
+  public get connectionJndiName(): string {
+    return this.model.getJndiName();
   }
 
   public currentConnection(): string {
@@ -58,7 +87,7 @@ export class AddConnectionFormComponent {
   }
 
   public cancelAdd(): void {
-    const link: string[] = [ connectionsRootPath ];
+    const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
     this.router.navigate(link);
   }
 

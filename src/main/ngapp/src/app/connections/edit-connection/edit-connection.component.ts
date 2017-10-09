@@ -18,19 +18,20 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
-import { connectionsRootPath } from "@connections/connections-routing.module";
 import { ConnectionService } from "@connections/shared/connection.service";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 
 @Component({
+  moduleId: module.id,
   selector: "app-edit-connection",
   templateUrl: "./edit-connection.component.html",
   styleUrls: ["./edit-connection.component.css"]
 })
 export class EditConnectionComponent extends AbstractPageComponent {
 
-  public connectionsLink = connectionsRootPath;
+  public readonly connectionsLink = ConnectionsConstants.connectionsRootPath;
 
   private router: Router;
   private connectionService: ConnectionService;

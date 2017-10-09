@@ -19,20 +19,21 @@ import { Component } from "@angular/core";
 import { ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
-import { addConnectionPath, connectionsRootPath } from "@connections/connections-routing.module";
 import { AddConnectionFormComponent } from "@connections/shared/add-connection-form/add-connection-form.component";
 import { ConnectionService } from "@connections/shared/connection.service";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 
 @Component({
+  moduleId: module.id,
   selector: "app-add-connection",
   templateUrl: "./add-connection.component.html",
   styleUrls: ["./add-connection.component.css"]
 })
 export class AddConnectionComponent extends AbstractPageComponent {
 
-  public addConnectionLink = addConnectionPath;
+  public readonly addConnectionLink = ConnectionsConstants.addConnectionPath;
 
   private router: Router;
   private connectionService: ConnectionService;
@@ -57,7 +58,7 @@ export class AddConnectionComponent extends AbstractPageComponent {
       .subscribe(
       () => {
         this.form.connectionCreated();
-        const link: string[] = [ connectionsRootPath ];
+        const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
         console.log("[AddConnectionComponent] Navigating to: %o", link);
         this.router.navigate(link);
       }

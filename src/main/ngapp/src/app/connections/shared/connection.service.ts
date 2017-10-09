@@ -20,8 +20,9 @@ import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { ApiService } from "@core/api.service";
-import { komodoWorkspaceUrl } from "@core/api.service";
+import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Observable";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 
 @Injectable()
 export class ConnectionService extends ApiService {
@@ -39,7 +40,7 @@ export class ConnectionService extends ApiService {
    */
   public getAllConnections(): Observable<Connection[]> {
     return this.http
-      .get(komodoWorkspaceUrl + "/connections", this.getAuthRequestOptions())
+      .get(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath, this.getAuthRequestOptions())
       .map((response) => {
         const connections = response.json();
         return connections.map((connection) => Connection.create( connection ));
@@ -54,7 +55,8 @@ export class ConnectionService extends ApiService {
    */
   public createConnection(connection: NewConnection): Observable<NewConnection> {
     return this.http
-      .post(komodoWorkspaceUrl + "/connections/" + connection.getName(), connection, this.getAuthRequestOptions())
+      .post(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath + "/" + connection.getName(),
+             connection, this.getAuthRequestOptions())
       .map((response) => {
         return new Connection();
       })
@@ -68,7 +70,8 @@ export class ConnectionService extends ApiService {
    */
   public deleteConnection(connection: NewConnection): Observable<NewConnection> {
     return this.http
-      .delete(komodoWorkspaceUrl + "/connections/" + connection.getName(), this.getAuthRequestOptions())
+      .delete(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath + "/" + connection.getName(),
+               this.getAuthRequestOptions())
       .map((response) => null)
       .catch(this.handleError);
   }

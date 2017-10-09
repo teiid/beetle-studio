@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import { addActivityPath, editActivityPath } from "@activities/activities-routing.module";
+import { ActivitiesConstants } from "@activities/shared/activities-constants";
 import { Activity } from "@activities/shared/activity.model";
 import { ActivityService } from "@activities/shared/activity.service";
 import { NewActivity } from "@activities/shared/new-activity.model";
-import { ViewChild } from "@angular/core";
 import { Component } from "@angular/core";
+import { ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
 import { ArrayUtils } from "@core/utils/array-utils";
@@ -39,7 +39,7 @@ import { SortDirection } from "@shared/sort-direction.enum";
 })
 export class ActivitiesComponent extends AbstractPageComponent {
 
-  public addActivityLink = addActivityPath;
+  public readonly addActivityLink = ActivitiesConstants.addActivityPath;
 
   private allActivities: Activity[] = [];
   private filteredActivities: Activity[] = [];
@@ -102,7 +102,7 @@ export class ActivitiesComponent extends AbstractPageComponent {
   }
 
   public onEdit(activityName: string): void {
-    const link: string[] = [ editActivityPath ];
+    const link: string[] = [ ActivitiesConstants.editActivityPath ];
     this.router.navigate(link);
   }
 

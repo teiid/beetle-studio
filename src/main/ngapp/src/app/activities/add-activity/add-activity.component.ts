@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { activitiesRootPath } from "@activities/activities-routing.module";
+import { ActivitiesConstants } from "@activities/shared/activities-constants";
 import { ActivityService } from "@activities/shared/activity.service";
 import { AddActivityFormComponent } from "@activities/shared/add-activity-form/add-activity-form.component";
 import { NewActivity } from "@activities/shared/new-activity.model";
@@ -26,13 +26,14 @@ import { Router } from "@angular/router";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 
 @Component({
+  moduleId: module.id,
   selector: "app-add-activity",
   templateUrl: "./add-activity.component.html",
   styleUrls: ["./add-activity.component.css"]
 })
 export class AddActivityComponent extends AbstractPageComponent {
 
-  public activitiesLink = activitiesRootPath;
+  public readonly activitiesLink = ActivitiesConstants.activitiesRootPath;
 
   private router: Router;
   private activityService: ActivityService;
@@ -53,7 +54,7 @@ export class AddActivityComponent extends AbstractPageComponent {
   public onCreateActivity(activity: NewActivity): void {
     console.log("[AddActivityComponent] onCreateActivity(): " + JSON.stringify(activity));
     this.activityService.createActivity(activity);
-    const link: string[] = [ activitiesRootPath ];
+    const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
     console.log("[AddActivityComponent] Navigating to: %o", link);
     this.router.navigate(link);
   }

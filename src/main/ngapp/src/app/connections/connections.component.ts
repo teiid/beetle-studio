@@ -17,9 +17,9 @@
 
 import { Component, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { addConnectionPath, connectionsRootPath, editConnectionPath } from "@connections/connections-routing.module";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { ArrayUtils } from "@core/utils/array-utils";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
@@ -29,6 +29,7 @@ import { LayoutType } from "@shared/layout-type.enum";
 import { SortDirection } from "@shared/sort-direction.enum";
 
 @Component({
+  moduleId: module.id,
   selector: "app-connections",
   templateUrl: "./connections.component.html",
   styleUrls: ["./connections.component.css"],
@@ -36,7 +37,7 @@ import { SortDirection } from "@shared/sort-direction.enum";
 })
 export class ConnectionsComponent extends AbstractPageComponent {
 
-  public addConnectionLink: string = addConnectionPath;
+  public readonly addConnectionLink: string = ConnectionsConstants.addConnectionPath;
 
   private allConnections: Connection[] = [];
   private filteredConnections: Connection[] = [];
@@ -155,7 +156,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
   }
 
   public onEdit(connName: string): void {
-    const link: string[] = [ editConnectionPath ];
+    const link: string[] = [ ConnectionsConstants.editConnectionPath ];
     this.router.navigate(link);
   }
 
@@ -209,7 +210,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
       .subscribe(
         () => {
           this.removeConnectionFromList(selectedConn);
-          const link: string[] = [ connectionsRootPath ];
+          const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
           console.log("[CreateApiPageComponent] Navigating to: %o", link);
           this.router.navigate(link);
         }

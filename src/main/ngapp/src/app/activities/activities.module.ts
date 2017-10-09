@@ -49,5 +49,6 @@ import { SharedModule } from "@shared/shared.module";
   ],
   providers: [
     ActivityService
-  ]})
-export class ActivitiesModule { }
+  ]
+})
+export class ActivitiesModule {}

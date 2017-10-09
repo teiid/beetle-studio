@@ -21,15 +21,12 @@ import { Routes } from "@angular/router";
 import { AddConnectionComponent } from "@connections/add-connection/add-connection.component";
 import { ConnectionsComponent } from "@connections/connections.component";
 import { EditConnectionComponent } from "@connections/edit-connection/edit-connection.component";
-
-export const connectionsRootPath = "/connections";
-export const addConnectionPath = connectionsRootPath + "/add-connection";
-export const editConnectionPath = connectionsRootPath + "/edit-connection";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 
 const connectionsRoutes: Routes = [
-  { path: connectionsRootPath, component: ConnectionsComponent },
-  { path: addConnectionPath, component: AddConnectionComponent },
-  { path: editConnectionPath, component: EditConnectionComponent }
+  { path: ConnectionsConstants.connectionsRootRoute, component: ConnectionsComponent },
+  { path: ConnectionsConstants.addConnectionRoute, component: AddConnectionComponent },
+  { path: ConnectionsConstants.editConnectionRoute, component: EditConnectionComponent }
 ];
 
 @NgModule({
@@ -40,5 +37,4 @@ const connectionsRoutes: Routes = [
     RouterModule
   ]
 })
-
 export class ConnectionsRoutingModule {}

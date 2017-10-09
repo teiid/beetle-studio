@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
+import { ActivitiesConstants } from "@activities/shared/activities-constants";
 import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 
 /**
  * Models the menus off the main left-hand vertical nav.
@@ -33,6 +35,7 @@ enum VerticalNavType {
 })
 
 export class VerticalNavComponent implements OnInit {
+
   public menuTypes: any = VerticalNavType;
   public currentMenu: VerticalNavType = VerticalNavType.Home;
   private router: Router;
@@ -84,7 +87,7 @@ export class VerticalNavComponent implements OnInit {
      */
   private onActivitiesClick(): void {
       this.currentMenu = VerticalNavType.Activities;
-      const link: string[] = [ "/activities" ];
+      const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
       this.router.navigate(link);
     }
 
@@ -93,7 +96,7 @@ export class VerticalNavComponent implements OnInit {
      */
   private onConnectionsClick(): void {
       this.currentMenu = VerticalNavType.Connections;
-      const link: string[] = [ "/connections" ];
+      const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
       this.router.navigate(link);
     }
 

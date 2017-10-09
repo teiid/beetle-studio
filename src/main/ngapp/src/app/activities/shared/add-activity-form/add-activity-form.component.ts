@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { activitiesRootPath } from "@activities/activities-routing.module";
+import { ActivitiesConstants } from "@activities/shared/activities-constants";
 import { NewActivity } from "@activities/shared/new-activity.model";
 import { Component } from "@angular/core";
 import { EventEmitter } from "@angular/core";
@@ -24,6 +24,7 @@ import { Router } from "@angular/router";
 import { NewConnection } from "@connections/shared/new-connection.model";
 
 @Component({
+  moduleId: module.id,
   selector: "app-add-activity-form",
   templateUrl: "./add-activity-form.component.html",
   styleUrls: ["./add-activity-form.component.css"]
@@ -89,7 +90,7 @@ export class AddActivityFormComponent {
   }
 
   public cancelAdd(): void {
-    const link: string[] = [ activitiesRootPath ];
+    const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
     this.router.navigate(link);
   }
 

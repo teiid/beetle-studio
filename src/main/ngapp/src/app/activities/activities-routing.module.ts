@@ -12,18 +12,15 @@
 
 import { ActivitiesComponent } from "@activities/activities.component";
 import { AddActivityComponent } from "@activities/add-activity/add-activity.component";
+import { ActivitiesConstants } from "@activities/shared/activities-constants";
 import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Routes } from "@angular/router";
 
-export const activitiesRootPath = "/activities";
-export const addActivityPath = activitiesRootPath + "/add-activity";
-export const editActivityPath = activitiesRootPath + "/edit-activity";
-
 const activitiesRoutes: Routes = [
-  { path: activitiesRootPath, component: ActivitiesComponent },
-  { path: addActivityPath, component: AddActivityComponent }
-//  { path: editActivityPath, component: EditActivityComponent }
+  { path: ActivitiesConstants.activitiesRootRoute, component: ActivitiesComponent },
+  { path: ActivitiesConstants.addActivityRoute, component: AddActivityComponent }
+//  { path: ActivitiesConstants.editActivityRoute, component: EditActivityComponent }
 ];
 
 @NgModule({
@@ -34,5 +31,4 @@ const activitiesRoutes: Routes = [
     RouterModule
   ]
 })
-
 export class ActivitiesRoutingModule {}

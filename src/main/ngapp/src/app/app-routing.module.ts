@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-import { activitiesRootPath } from "@activities/activities-routing.module";
+import { ActivitiesConstants } from "@activities/shared/activities-constants";
 import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Routes } from "@angular/router";
-import { connectionsRootPath } from "@connections/connections-routing.module";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { environment } from "@environments/environment";
 import { PageNotFoundComponent } from "@shared/page-not-found/page-not-found.component";
 
 const appRoutes: Routes = [
   { path: "", redirectTo: environment.homePagePath, pathMatch: "full" },
-  { path: connectionsRootPath, loadChildren: "@connections/connections.module#ConnectionsModule" },
-  { path: activitiesRootPath, loadChildren: "@activities/activities.module#ActivitiesModule" },
+  { path: ConnectionsConstants.connectionsRootRoute, loadChildren: "@connections/connections.module#ConnectionsModule" },
+  { path: ActivitiesConstants.activitiesRootRoute, loadChildren: "@activities/activities.module#ActivitiesModule" },
   { path: "**", component: PageNotFoundComponent }, // always last
 ];
 
@@ -38,5 +38,4 @@ const appRoutes: Routes = [
     RouterModule
   ]
 })
-
 export class AppRoutingModule {}
