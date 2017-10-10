@@ -28,7 +28,7 @@ export class PageErrorComponent {
   private eobj: any = null;
   private showDetails = false;
 
-  @Input() private error: any;
+  @Input() private error: any = "";
 
   /**
    * Returns whether details should be shown.

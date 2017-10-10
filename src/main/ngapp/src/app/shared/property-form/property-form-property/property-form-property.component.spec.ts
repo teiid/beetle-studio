@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
+import { ReactiveFormsModule } from "@angular/forms";
 import { PropertyFormPropertyComponent } from "./property-form-property.component";
 
 describe("PropertyFormPropertyComponent", () => {
@@ -8,6 +9,7 @@ describe("PropertyFormPropertyComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [ ReactiveFormsModule ],
       declarations: [ PropertyFormPropertyComponent ]
     })
     .compileComponents();

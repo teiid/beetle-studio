@@ -28,7 +28,7 @@ import { Observable } from "rxjs/Observable";
 @Injectable()
 export class ConnectionService extends ApiService {
 
-  private http;
+  private http: Http;
 
   constructor( http: Http ) {
     super();

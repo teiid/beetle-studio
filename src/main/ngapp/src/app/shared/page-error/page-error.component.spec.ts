@@ -17,7 +17,6 @@ describe("PageErrorComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PageErrorComponent);
     component = fixture.componentInstance;
-    component.error = "test";
     fixture.detectChanges();
   });
 

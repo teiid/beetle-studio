@@ -1,5 +1,7 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
+import {FormsModule} from "@angular/forms";
+import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "./property-form.component";
 
 describe("PropertyFormComponent", () => {
@@ -8,7 +10,8 @@ describe("PropertyFormComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PropertyFormComponent ]
+      imports: [ FormsModule ],
+      declarations: [ PropertyFormComponent, PropertyFormPropertyComponent ]
     })
     .compileComponents();
   }));

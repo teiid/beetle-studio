@@ -1,9 +1,12 @@
 import {async, ComponentFixture, TestBed} from "@angular/core/testing";
+import {ReactiveFormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {RouterTestingModule} from "@angular/router/testing";
 import {ConnectionService} from "@connections/shared/connection.service";
 import {MockConnectionService} from "@connections/shared/mock-connection.service";
 import {CoreModule} from "@core/core.module";
+import {PropertyFormPropertyComponent} from "@shared/property-form/property-form-property/property-form-property.component";
+import {PropertyFormComponent} from "@shared/property-form/property-form.component";
 import {EditConnectionComponent} from "./edit-connection.component";
 
 describe("EditConnectionComponent", () => {
@@ -12,8 +15,8 @@ describe("EditConnectionComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, HttpModule, RouterTestingModule ],
-      declarations: [ EditConnectionComponent ],
+      imports: [ CoreModule, HttpModule, ReactiveFormsModule, RouterTestingModule ],
+      declarations: [ EditConnectionComponent, PropertyFormComponent, PropertyFormPropertyComponent ],
       providers: [
         { provide: ConnectionService, useClass: MockConnectionService },
       ]
