@@ -18,16 +18,17 @@
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { ApiService } from "@core/api.service";
 import { environment } from "@environments/environment";
+import { PropertyDefinition } from "@shared/property-form/property-definition.model";
 import { Observable } from "rxjs/Observable";
-import { ConnectionsConstants } from "@connections/shared/connections-constants";
 
 @Injectable()
 export class ConnectionService extends ApiService {
 
-  private http: Http;
+  private http;
 
   constructor( http: Http ) {
     super();
@@ -73,6 +74,21 @@ export class ConnectionService extends ApiService {
       .delete(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath + "/" + connection.getName(),
                this.getAuthRequestOptions())
       .map((response) => null)
+      .catch(this.handleError);
+  }
+
+  /**
+   * Get the connection template property definitions from the komodo rest interface
+   * @param {string} templateName
+   * @returns {Observable<Array<PropertyDefinition<any>>>}
+   */
+  public getConnectionTemplateProperties(templateName: string): Observable<Array<PropertyDefinition<any>>> {
+    return this.http
+      .get( environment.komodoTeiidUrl + "/templates/" + templateName + "/entries", this.getAuthRequestOptions())
+      .map((response) => {
+        const entries = response.json() as Array<PropertyDefinition<any>>;
+        return entries.map((entry) => {const ent = PropertyDefinition.create( entry ); return ent; });
+      })
       .catch(this.handleError);
   }
 

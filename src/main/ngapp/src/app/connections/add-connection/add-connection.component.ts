@@ -33,7 +33,7 @@ import { AbstractPageComponent } from "@shared/abstract-page.component";
 })
 export class AddConnectionComponent extends AbstractPageComponent {
 
-  public readonly addConnectionLink = ConnectionsConstants.addConnectionPath;
+  public readonly connectionsLink = ConnectionsConstants.connectionsRootPath;
 
   private router: Router;
   private connectionService: ConnectionService;

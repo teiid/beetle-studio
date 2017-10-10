@@ -28,7 +28,7 @@ export class Connection implements Identifiable< string > {
    * @param {Object} json the JSON representation of a Connection
    * @returns {Connection} the new Connection (never null)
    */
-  public static create( json: Object = {} ): Connection {
+  public static create( json: object = {} ): Connection {
     const conn = new Connection();
     conn.setValues( json );
     return conn;
@@ -98,7 +98,7 @@ export class Connection implements Identifiable< string > {
    * Set all object values using the supplied Connection json
    * @param {Object} values
    */
-  public setValues(values: Object = {}): void {
+  public setValues(values: object = {}): void {
     Object.assign(this, values);
   }
 

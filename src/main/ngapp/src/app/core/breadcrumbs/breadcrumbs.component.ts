@@ -19,7 +19,7 @@ import {Component} from "@angular/core";
 
 @Component({
   moduleId: module.id,
-  selector: "breadcrumbs",
+  selector: "app-breadcrumbs",
   templateUrl: "breadcrumbs.component.html",
   styleUrls: ["breadcrumbs.component.css"]
 })

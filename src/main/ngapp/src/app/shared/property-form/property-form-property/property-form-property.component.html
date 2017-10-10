@@ -1,0 +1,19 @@
+<div [ngClass]="isValid ? 'form-group' : 'form-group has-error'" [formGroup]="form">
+  <label class="col-md-2 control-label" [attr.for]="property.getId()" data-toggle="tooltip" [title]="property.getDescription()">{{ property.getDisplayName() }}</label>
+
+  <div class="col-md-10" [ngSwitch]="property.getControlType()">
+
+    <input *ngSwitchCase="'textbox'" class="form-control" [formControlName]="property.getId()"
+           [id]="property.getId()" type="textbox">
+
+    <input *ngSwitchCase="'checkbox'" [formControlName]="property.getId()"
+           [id]="property.getId()" type="checkbox">
+
+    <select [id]="property.getId()" *ngSwitchCase="'dropdown'" [(ngModel)]="property.theDefaultValue" class="form-control" [formControlName]="property.getId()">
+      <option *ngFor="let allowedValue of property.getAllowedValues()" [selected]="allowedValue === property.theDefaultValue" [value]="allowedValue">{{ allowedValue }}</option>
+    </select>
+
+    <div class="help-block" *ngIf="!isValid">{{ validationErrorMessage }}</div>
+  </div>
+
+</div>
