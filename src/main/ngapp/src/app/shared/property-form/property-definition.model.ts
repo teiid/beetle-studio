@@ -235,7 +235,7 @@ export class PropertyDefinition<T> {
   }
 
   /**
-   * @param {string[]} the array of allowed values
+   * @param {string[]} allowedValues the array of allowed values
    */
   public setAllowedValues( allowedValues?: string[] ): void {
     this.allowedValues = allowedValues ? allowedValues : null;

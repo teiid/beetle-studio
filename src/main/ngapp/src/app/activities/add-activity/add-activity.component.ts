@@ -23,6 +23,7 @@ import { Component } from "@angular/core";
 import { ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
+import { LoggerService } from "@core/logger.service";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 
 @Component({
@@ -40,8 +41,8 @@ export class AddActivityComponent extends AbstractPageComponent {
 
   @ViewChild(AddActivityFormComponent) private form: AddActivityFormComponent;
 
-  constructor(router: Router, route: ActivatedRoute, activityService: ActivityService) {
-    super(route);
+  constructor(router: Router, route: ActivatedRoute, activityService: ActivityService, logger: LoggerService ) {
+    super(route, logger);
     this.router = router;
     this.activityService = activityService;
   }
@@ -52,10 +53,10 @@ export class AddActivityComponent extends AbstractPageComponent {
    * @param {NewActivity} activity
    */
   public onCreateActivity(activity: NewActivity): void {
-    console.log("[AddActivityComponent] onCreateActivity(): " + JSON.stringify(activity));
+    this.logger.log("[AddActivityComponent] onCreateActivity(): " + JSON.stringify(activity));
     this.activityService.createActivity(activity);
     const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
-    console.log("[AddActivityComponent] Navigating to: %o", link);
+    this.logger.log("[AddActivityComponent] Navigating to: %o", link);
     this.router.navigate(link);
   }
 

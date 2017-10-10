@@ -75,6 +75,13 @@ export class PageErrorComponent {
   }
 
   /**
+   * Called to reload the browser page.
+   */
+  public reloadPage(): void {
+    window.location.reload();
+  }
+
+  /**
    * Returns the parsed error body.
    * @return {any}
    */
@@ -83,13 +90,6 @@ export class PageErrorComponent {
       this.eobj = this.error.json();
     }
     return this.eobj;
-  }
-
-  /**
-   * Called to reload the browser page.
-   */
-  public reloadPage(): void {
-    window.location.reload();
   }
 
 }

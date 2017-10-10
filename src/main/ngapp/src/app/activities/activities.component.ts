@@ -23,6 +23,7 @@ import { Component } from "@angular/core";
 import { ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
+import { LoggerService } from "@core/logger.service";
 import { ArrayUtils } from "@core/utils/array-utils";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
@@ -53,40 +54,17 @@ export class ActivitiesComponent extends AbstractPageComponent {
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
-  constructor(router: Router, route: ActivatedRoute, activityService: ActivityService) {
-    super(route);
+  constructor(router: Router, route: ActivatedRoute, activityService: ActivityService, logger: LoggerService ) {
+    super(route, logger);
     this.router = router;
     this.activityService = activityService;
+    this.logger = logger;
   }
 
   public loadAsyncPageData(): void {
     this.allActivities = this.activityService.getAllActivities();
     this.filteredActivities = this.filterActivities();
     this.loaded("activities");
-  }
-
-  /**
-   * Filters and sorts the list of activities based on the user input
-   */
-  private filterActivities(): Activity[] {
-    // Clear the array first.
-    this.filteredActivities.splice(0, this.filteredActivities.length);
-    for (const activity of this.allActivities) {
-      if (this.filter.accepts(activity)) {
-        this.filteredActivities.push(activity);
-      }
-    }
-    this.filteredActivities.sort( (a1: Activity, a2: Activity) => {
-      let rval: number = a1.getId().localeCompare(a2.getId());
-      if (this.sortDirection === SortDirection.DESC) {
-        rval *= -1;
-      }
-      return rval;
-    });
-
-    this.selectedActivities = ArrayUtils.intersect(this.selectedActivities, this.filteredActivities);
-
-    return this.filteredActivities;
   }
 
   public onSelected(activity: Activity): void {
@@ -186,7 +164,7 @@ export class ActivitiesComponent extends AbstractPageComponent {
     activityToDelete.setName(selectedActivity.getId());
 
     // Note: we can only doDelete selected items that we can see in the UI.
-    console.log("[ActivitiesPageComponent] Deleting selected Activity.");
+    this.logger.log("[ActivitiesPageComponent] Deleting selected Activity.");
     this.activityService.deleteActivity(activityToDelete);
     /*
     this.apiService
@@ -195,11 +173,35 @@ export class ActivitiesComponent extends AbstractPageComponent {
         () => {
           this.removeActivityFromList(selectedActiv);
           const link: string[] = [ '/activities' ];
-          console.log('[CreateApiPageComponent] Navigating to: %o', link);
+          this.logger.log('[CreateApiPageComponent] Navigating to: %o', link);
           this.router.navigate(link);
         }
       );
       */
+  }
+
+  /**
+   * Filters and sorts the list of activities based on the user input
+   */
+  private filterActivities(): Activity[] {
+    // Clear the array first.
+    this.filteredActivities.splice(0, this.filteredActivities.length);
+    for (const activity of this.allActivities) {
+      if (this.filter.accepts(activity)) {
+        this.filteredActivities.push(activity);
+      }
+    }
+    this.filteredActivities.sort( (a1: Activity, a2: Activity) => {
+      let rval: number = a1.getId().localeCompare(a2.getId());
+      if (this.sortDirection === SortDirection.DESC) {
+        rval *= -1;
+      }
+      return rval;
+    });
+
+    this.selectedActivities = ArrayUtils.intersect(this.selectedActivities, this.filteredActivities);
+
+    return this.filteredActivities;
   }
 
   private removeActivityFromList(activity: Activity): void {

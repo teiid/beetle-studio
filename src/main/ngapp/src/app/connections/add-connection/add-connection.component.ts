@@ -23,6 +23,7 @@ import { AddConnectionFormComponent } from "@connections/shared/add-connection-f
 import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
+import { LoggerService } from "@core/logger.service";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 
 @Component({
@@ -40,8 +41,8 @@ export class AddConnectionComponent extends AbstractPageComponent {
 
   @ViewChild(AddConnectionFormComponent) private form: AddConnectionFormComponent;
 
-  constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService) {
-    super(route);
+  constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService, logger: LoggerService ) {
+    super(route, logger);
     this.router = router;
     this.connectionService = connectionService;
   }
@@ -52,14 +53,14 @@ export class AddConnectionComponent extends AbstractPageComponent {
    * @param {NewConnection} connection
    */
   public onCreateConnection(connection: NewConnection): void {
-    console.log("[AddConnectionComponent] onCreateConnection(): " + JSON.stringify(connection));
+    this.logger.log("[AddConnectionComponent] onCreateConnection(): " + JSON.stringify(connection));
     this.connectionService
       .createConnection(connection)
       .subscribe(
       () => {
         this.form.connectionCreated();
         const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
-        console.log("[AddConnectionComponent] Navigating to: %o", link);
+        this.logger.log("[AddConnectionComponent] Navigating to: %o", link);
         this.router.navigate(link);
       }
     );

@@ -22,7 +22,7 @@ import { EventEmitter } from "@angular/core";
 import { Output } from "@angular/core";
 import { Router } from "@angular/router";
 import { NewConnection } from "@connections/shared/new-connection.model";
-import { de } from "ngx-bootstrap/locale";
+import { LoggerService } from "@core/logger.service";
 
 @Component({
   moduleId: module.id,
@@ -34,12 +34,14 @@ export class AddActivityFormComponent {
 
   private model = new NewActivity();
   private creatingActivity = false;
+  private logger: LoggerService;
   private router: Router;
 
-  @Output() private onCreateActivity = new EventEmitter<NewActivity>();
+  @Output() private createActivity = new EventEmitter<NewActivity>();
 
-  constructor( router: Router ) {
+  constructor( router: Router, logger: LoggerService ) {
     this.router = router;
+    this.logger = logger;
   }
 
   /**
@@ -105,17 +107,17 @@ export class AddActivityFormComponent {
   /**
    * Called when the user clicks the "Create Activity" submit button on the form.
    */
-  public createActivity(): void {
+  public onCreateActivity(): void {
     const activity: NewActivity = new NewActivity();
     activity.setName(this.model.getName());
     activity.setDescription(this.model.getDescription());
     activity.setSourceConnection(this.model.getSourceConnection());
     activity.setTargetConnection(this.model.getTargetConnection());
 
-    console.log("[AddActivityFormComponent] Firing create-activity event: %o", activity);
+    this.logger.log("[AddActivityFormComponent] Firing create-activity event: %o", activity);
 
     this.creatingActivity = true;
-    this.onCreateActivity.emit(activity);
+    this.createActivity.emit(activity);
   }
 
   public cancelAdd(): void {

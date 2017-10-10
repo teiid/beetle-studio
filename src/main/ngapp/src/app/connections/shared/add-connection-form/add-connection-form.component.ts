@@ -19,6 +19,7 @@ import { Component, EventEmitter, Output } from "@angular/core";
 import { Router } from "@angular/router";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
+import { LoggerService } from "@core/logger.service";
 
 @Component({
   moduleId: module.id,
@@ -29,13 +30,15 @@ import { NewConnection } from "@connections/shared/new-connection.model";
 export class AddConnectionFormComponent {
 
   private creatingConnection = false;
+  private logger: LoggerService;
   private model = new NewConnection();
   private router: Router;
 
-  @Output() private onCreateConnection = new EventEmitter<NewConnection>();
+  @Output() private createConnection = new EventEmitter<NewConnection>();
 
-  constructor( router: Router ) {
+  constructor( router: Router, logger: LoggerService ) {
     this.router = router;
+    this.logger = logger;
   }
 
   /**
@@ -101,17 +104,17 @@ export class AddConnectionFormComponent {
   /**
    * Called when the user clicks the "Create Connection" submit button on the form.
    */
-  public createConnection(): void {
+  public onCreateConnection(): void {
     const connection: NewConnection = new NewConnection();
     connection.setName(this.model.getName());
     connection.setJndiName(this.model.getJndiName());
     connection.setDriverName(this.model.getDriverName());
     connection.setJdbc(this.model.isJdbc());
 
-    console.log("[AddConnectionFormComponent] Firing create-connection event: %o", connection);
+    this.logger.log("[AddConnectionFormComponent] Firing create-connection event: %o", connection);
 
     this.creatingConnection = true;
-    this.onCreateConnection.emit(connection);
+    this.createConnection.emit(connection);
   }
 
   public cancelAdd(): void {

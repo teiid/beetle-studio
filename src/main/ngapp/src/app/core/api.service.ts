@@ -17,6 +17,7 @@
 
 import { Injectable } from "@angular/core";
 import {Headers, RequestOptions} from "@angular/http";
+import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
@@ -25,6 +26,12 @@ import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 
 @Injectable()
 export class ApiService {
+
+  private logger: LoggerService;
+
+  constructor( logger: LoggerService ) {
+    this.logger = logger;
+  }
 
   /**
    * Get the Auth RequestOptions
@@ -37,7 +44,7 @@ export class ApiService {
   }
 
   protected handleError(error: Response | any): ErrorObservable {
-    console.error("ApiService::handleError", error);
+    this.logger.error("ApiService::handleError", error);
     return Observable.throw(error);
   }
 

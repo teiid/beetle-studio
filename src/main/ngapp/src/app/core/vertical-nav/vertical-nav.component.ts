@@ -19,6 +19,7 @@ import { ActivitiesConstants } from "@activities/shared/activities-constants";
 import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { LoggerService } from "@core/logger.service";
 
 /**
  * Models the menus off the main left-hand vertical nav.
@@ -38,14 +39,16 @@ export class VerticalNavComponent implements OnInit {
 
   public menuTypes: any = VerticalNavType;
   public currentMenu: VerticalNavType = VerticalNavType.Home;
+  private logger: LoggerService;
   private router: Router;
 
-  constructor(router: Router) {
+  constructor(router: Router, logger: LoggerService) {
     this.router = router;
+    this.logger = logger;
   }
 
   public ngOnInit(): void {
-    console.log("Subscribing to router events.");
+    this.logger.log("Subscribing to router events.");
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.onShadeClick();
