@@ -1,16 +1,19 @@
 // This file is required by karma.conf.js and loads recursively all the .spec and framework files
 
+import "zone.js/dist/long-stack-trace-zone";
+import "zone.js/dist/proxy.js";
+import "zone.js/dist/sync-test";
+// noinspection TsLint
+import "zone.js/dist/jasmine-patch";
+// noinspection TsLint
+import "zone.js/dist/async-test";
+import "zone.js/dist/fake-async-test";
+// noinspection TsLint
 import { getTestBed } from "@angular/core/testing";
 import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting
 } from "@angular/platform-browser-dynamic/testing";
-import "zone.js/dist/async-test";
-import "zone.js/dist/fake-async-test";
-import "zone.js/dist/jasmine-patch";
-import "zone.js/dist/long-stack-trace-zone";
-import "zone.js/dist/proxy.js";
-import "zone.js/dist/sync-test";
 
 // Unfortunately there's no typing for the `__karma__` variable. Just declare it as any.
 declare const __karma__: any;
@@ -18,7 +21,7 @@ declare const require: any;
 
 // Prevent Karma from running prematurely.
 __karma__.loaded = () => {
-  // nothing to do
+  // Nothing to do
 };
 
 // First, initialize the Angular testing environment.
