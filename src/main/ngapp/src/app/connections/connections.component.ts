@@ -21,6 +21,7 @@ import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
+import { LoggerService } from "@core/logger.service";
 import { ArrayUtils } from "@core/utils/array-utils";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
@@ -51,8 +52,8 @@ export class ConnectionsComponent extends AbstractPageComponent {
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
-  constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService) {
-    super(route);
+  constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService, logger: LoggerService) {
+    super(route, logger);
     this.router = router;
     this.connectionService = connectionService;
   }
@@ -67,34 +68,10 @@ export class ConnectionsComponent extends AbstractPageComponent {
           this.loaded("connections");
         },
         (error) => {
-          console.error("[ConnectionsComponent] Error getting connections.");
+          this.logger.error("[ConnectionsComponent] Error getting connections.");
           this.error(error);
         }
       );
-  }
-
-  /**
-   * Filters and sorts the list of connections based on the user input
-   */
-  private filterConnections(): Connection[] {
-    // Clear the array first.
-    this.filteredConnections.splice(0, this.filteredConnections.length);
-    for (const connection of this.allConnections) {
-      if (this.filter.accepts(connection)) {
-        this.filteredConnections.push(connection);
-      }
-    }
-    this.filteredConnections.sort( (c1: Connection, c2: Connection) => {
-      let rval: number = c1.getId().localeCompare(c2.getId());
-      if (this.sortDirection === SortDirection.DESC) {
-        rval *= -1;
-      }
-      return rval;
-    });
-
-    this.selectedConnections = ArrayUtils.intersect(this.selectedConnections, this.filteredConnections);
-
-    return this.filteredConnections;
   }
 
   /**
@@ -157,7 +134,9 @@ export class ConnectionsComponent extends AbstractPageComponent {
 
   public onEdit(connName: string): void {
     const link: string[] = [ ConnectionsConstants.editConnectionPath ];
-    this.router.navigate(link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
   public onDelete(connName: string): void {
@@ -194,7 +173,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
   /**
    * Called to doDelete all selected APIs.
    */
-  public deleteConnection(): void {
+  public onDeleteConnection(): void {
     const selectedConn =  this.filterConnections().find((x) => x.getId() === this.connectionNameForDelete);
 
     // const itemsToDelete: Connection[] = ArrayUtils.intersect(this.selectedConnections, this.filteredConnections);
@@ -204,17 +183,43 @@ export class ConnectionsComponent extends AbstractPageComponent {
     connectionToDelete.setName(selectedConn.getId());
 
     // Note: we can only doDelete selected items that we can see in the UI.
-    console.log("[ConnectionsPageComponent] Deleting selected Connection.");
+    this.logger.log("[ConnectionsPageComponent] Deleting selected Connection.");
     this.connectionService
       .deleteConnection(connectionToDelete)
       .subscribe(
         () => {
           this.removeConnectionFromList(selectedConn);
           const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
-          console.log("[CreateApiPageComponent] Navigating to: %o", link);
-          this.router.navigate(link);
+          this.logger.log("[CreateApiPageComponent] Navigating to: %o", link);
+          this.router.navigate(link).then(() => {
+            // nothing to do
+          });
         }
       );
+  }
+
+  /**
+   * Filters and sorts the list of connections based on the user input
+   */
+  private filterConnections(): Connection[] {
+    // Clear the array first.
+    this.filteredConnections.splice(0, this.filteredConnections.length);
+    for (const connection of this.allConnections) {
+      if (this.filter.accepts(connection)) {
+        this.filteredConnections.push(connection);
+      }
+    }
+    this.filteredConnections.sort( (c1: Connection, c2: Connection) => {
+      let rval: number = c1.getId().localeCompare(c2.getId());
+      if (this.sortDirection === SortDirection.DESC) {
+        rval *= -1;
+      }
+      return rval;
+    });
+
+    this.selectedConnections = ArrayUtils.intersect(this.selectedConnections, this.filteredConnections);
+
+    return this.filteredConnections;
   }
 
   private removeConnectionFromList(connection: Connection): void {

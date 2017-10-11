@@ -31,12 +31,12 @@ export class ConnectionsListComponent {
 
   @Input() private connections: Connection[];
   @Input() private selectedConnections: Connection[];
-  @Output() private onConnectionSelected: EventEmitter<Connection> = new EventEmitter<Connection>();
-  @Output() private onConnectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();
-  @Output() private onTagSelected: EventEmitter<string> = new EventEmitter<string>();
-  @Output() private onEditConnection: EventEmitter<string> = new EventEmitter<string>();
-  @Output() private onPingConnection: EventEmitter<string> = new EventEmitter<string>();
-  @Output() private onDeleteConnection: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private connectionSelected: EventEmitter<Connection> = new EventEmitter<Connection>();
+  @Output() private connectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();
+  @Output() private tagSelected: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private editConnection: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private pingConnection: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private deleteConnection: EventEmitter<string> = new EventEmitter<string>();
 
   /**
    * Constructor.
@@ -47,9 +47,9 @@ export class ConnectionsListComponent {
 
   public toggleConnectionSelected(connection: Connection): void {
     if (this.isSelected(connection)) {
-      this.onConnectionDeselected.emit(connection);
+      this.connectionDeselected.emit(connection);
     } else {
-      this.onConnectionSelected.emit(connection);
+      this.connectionSelected.emit(connection);
     }
   }
 
@@ -57,22 +57,22 @@ export class ConnectionsListComponent {
     return this.selectedConnections.indexOf(connection) !== -1;
   }
 
-  public pingConnection(connectionName: string): void {
-    this.onPingConnection.emit(connectionName);
+  public onPingConnection(connectionName: string): void {
+    this.pingConnection.emit(connectionName);
   }
 
-  public editConnection(connectionName: string): void {
-    this.onEditConnection.emit(connectionName);
+  public onEditConnection(connectionName: string): void {
+    this.editConnection.emit(connectionName);
   }
 
-  public deleteConnection(connectionName: string): void {
-    this.onDeleteConnection.emit(connectionName);
+  public onDeleteConnection(connectionName: string): void {
+    this.deleteConnection.emit(connectionName);
   }
 
-  public selectTag(tag: string, event: MouseEvent): void {
+  public onSelectTag(tag: string, event: MouseEvent): void {
     event.stopPropagation();
     event.preventDefault();
-    this.onTagSelected.emit(tag);
+    this.tagSelected.emit(tag);
   }
 
 }

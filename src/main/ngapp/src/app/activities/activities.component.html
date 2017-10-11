@@ -90,11 +90,11 @@
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('activities')">
         <app-activities-list *ngIf="isListLayout" [activities]="filteredActivities" [selectedActivities]="selectedActivities"
-                             (onEditActivity)="onEdit($event)" (onStartActivity)="onStart($event)" (onDeleteActivity)="onDelete($event)"
-                             (onActivitySelected)="onSelected($event)" (onActivityDeselected)="onDeselected($event)"></app-activities-list>
+                             (editActivity)="onEdit($event)" (startActivity)="onStart($event)" (deleteActivity)="onDelete($event)"
+                             (activitySelected)="onSelected($event)" (activityDeselected)="onDeselected($event)"></app-activities-list>
         <app-activities-cards *ngIf="isCardLayout" [activities]="filteredActivities" [selectedActivities]="selectedActivities"
-                              (onEditActivity)="onEdit($event)" (onStartActivity)="onStart($event)" (onDeleteActivity)="onDelete($event)"
-                              (onActivitySelected)="onSelected($event)" (onActivityDeselected)="onDeselected($event)"></app-activities-cards>
+                              (editActivity)="onEdit($event)" (startActivity)="onStart($event)" (deleteActivity)="onDelete($event)"
+                              (activitySelected)="onSelected($event)" (activityDeselected)="onDeselected($event)"></app-activities-cards>
       </div>
 
     </div>
@@ -102,6 +102,6 @@
   </div>
 
 </div>
-<app-confirm-delete #confirmDeleteDialog (onDelete)="deleteActivity()">
+<app-confirm-delete #confirmDeleteDialog (deleteSelected)="onDeleteActivity()">
   <p>Do you really want to delete the selected Activity?</p>
 </app-confirm-delete>

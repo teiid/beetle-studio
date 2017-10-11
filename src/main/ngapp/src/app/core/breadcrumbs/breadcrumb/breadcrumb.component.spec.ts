@@ -11,7 +11,9 @@ describe("BreadcrumbComponent", () => {
       imports: [ RouterTestingModule ],
       declarations: [ BreadcrumbComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

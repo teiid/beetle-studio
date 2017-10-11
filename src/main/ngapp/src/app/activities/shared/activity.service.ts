@@ -21,6 +21,7 @@ import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { ApiService } from "@core/api.service";
+import { LoggerService } from "@core/logger.service";
 
 @Injectable()
 export class ActivityService extends ApiService {
@@ -32,8 +33,8 @@ export class ActivityService extends ApiService {
   private newActivity1 = new NewActivity();
   private http: Http;
 
-  constructor( http: Http ) {
-    super();
+  constructor( http: Http, logger: LoggerService ) {
+    super( logger );
     this.http = http;
     this.activity1.setId("activity1");
     this.activity1.setSourceConnection("activity1SrcConn");

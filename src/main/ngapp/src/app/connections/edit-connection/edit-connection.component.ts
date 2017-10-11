@@ -19,9 +19,9 @@ import { ViewChild } from "@angular/core";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
-
 import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { LoggerService } from "@core/logger.service";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
@@ -34,15 +34,15 @@ import { PropertyFormComponent } from "@shared/property-form/property-form.compo
 })
 export class EditConnectionComponent extends AbstractPageComponent {
 
-  public readonly connectionsLink = ConnectionsConstants.connectionsRootPath;
+  public readonly connectionsLink: string = ConnectionsConstants.connectionsRootPath;
 
   private router: Router;
   private connectionService: ConnectionService;
   private properties: Array<PropertyDefinition<any>> = [];
   @ViewChild(PropertyFormComponent) private connectionForm: PropertyFormComponent;
 
-  constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService) {
-    super(route);
+  constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService, logger: LoggerService) {
+    super(route, logger);
     this.router = router;
     this.connectionService = connectionService;
   }

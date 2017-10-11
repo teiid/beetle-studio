@@ -2,7 +2,7 @@
   padding: 15px
 }
 
-.edit-connection-form .form-instructions {
+.edit-connection-form /*.form-instructions*/ {
   font-size: 15px;
   padding-top: 10px
 }

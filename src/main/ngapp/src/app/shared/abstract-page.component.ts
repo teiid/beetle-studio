@@ -17,6 +17,7 @@
 
 import {OnInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
+import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/combineLatest";
 import {Observable} from "rxjs/Observable";
 
@@ -25,13 +26,16 @@ export abstract class AbstractPageComponent implements OnInit {
   public dataLoaded: Map<string, boolean> = new Map<string, boolean>();
   public pageError: any;
   protected route: ActivatedRoute;
+  protected logger: LoggerService;
 
   /**
    * C'tor.
    * @param {ActivatedRoute} route
+   * @param {LoggerService} logger the logging service
    */
-  constructor(route: ActivatedRoute) {
+  constructor(route: ActivatedRoute, logger: LoggerService) {
     this.route = route;
+    this.logger = logger;
   }
 
   /**
@@ -60,7 +64,7 @@ export abstract class AbstractPageComponent implements OnInit {
    * @param error
    */
   public error(error: any): void {
-    console.error("    Error: %o", error);
+    this.logger.error("    Error: %o", error);
     this.pageError = error;
   }
 

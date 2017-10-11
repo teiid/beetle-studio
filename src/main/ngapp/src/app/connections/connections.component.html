@@ -90,11 +90,11 @@
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('connections')">
         <app-connections-list *ngIf="isListLayout" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
-                              (onEditConnection)="onEdit($event)" (onPingConnection)="onPing($event)" (onDeleteConnection)="onDelete($event)"
-                              (onConnectionSelected)="onSelected($event)" (onConnectionDeselected)="onDeselected($event)"></app-connections-list>
+                              (editConnection)="onEdit($event)" (pingConnection)="onPing($event)" (deleteConnection)="onDelete($event)"
+                              (connectionSelected)="onSelected($event)" (connectionDeselected)="onDeselected($event)"></app-connections-list>
         <app-connections-cards *ngIf="isCardLayout" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
-                               (onEditConnection)="onEdit($event)" (onPingConnection)="onPing($event)" (onDeleteConnection)="onDelete($event)"
-                               (onConnectionSelected)="onSelected($event)" (onConnectionDeselected)="onDeselected($event)"></app-connections-cards>
+                               (editConnection)="onEdit($event)" (pingConnection)="onPing($event)" (deleteConnection)="onDelete($event)"
+                               (connectionSelected)="onSelected($event)" (connectionDeselected)="onDeselected($event)"></app-connections-cards>
       </div>
 
     </div>
@@ -102,6 +102,6 @@
   </div>
 
 </div>
-<app-confirm-delete (onDelete)="deleteConnection()">
+<app-confirm-delete (deleteSelected)="onDeleteConnection()">
   <p>Do you really want to delete the selected Connection?</p>
 </app-confirm-delete>

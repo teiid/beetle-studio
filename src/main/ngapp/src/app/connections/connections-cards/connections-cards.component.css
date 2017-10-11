@@ -27,7 +27,7 @@
 .connection-card {
   -webkit-transition: background-color 300ms;
   -moz-transition: background-color 300ms;
-  -ms-transition: background-color 300ms;
+  //-ms-transition: background-color 300ms;
   -o-transition: background-color 300ms;
   transition: background-color 300ms;
   height: 220px;
@@ -40,10 +40,12 @@
   background-color: rgb(221, 234, 255);
 }
 
+/*
 .connection-description {
   font-size: 13px;
   overflow-y: auto;
 }
+*/
 
 .connection-card .connection-tags {
   margin-bottom: 8px;
@@ -52,7 +54,7 @@
   font-weight: bold;
   margin-right: 5px;
 }
-.connection-card .connection-tags .connection-tag {
+.connection-card .connection-tags /*.connection-tag*/ {
   margin-right: 5px;
   border: 1px solid #ccc;
   -webkit-border-radius: 2px;
@@ -60,7 +62,7 @@
   border-radius: 2px;
   padding: 2px 4px;
 }
-.connection-card .connection-tags .connection-tag:hover {
+.connection-card .connection-tags /*.connection-tag:hover*/ {
   cursor: pointer;
   background-color: #0088ce;
   border-color: #00659c;

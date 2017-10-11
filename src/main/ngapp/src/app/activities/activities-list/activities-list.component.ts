@@ -31,12 +31,12 @@ export class ActivitiesListComponent {
 
   @Input() private activities: Activity[];
   @Input() private selectedActivities: Activity[];
-  @Output() private onActivitySelected: EventEmitter<Activity> = new EventEmitter<Activity>();
-  @Output() private onActivityDeselected: EventEmitter<Activity> = new EventEmitter<Activity>();
-  @Output() private onTagSelected: EventEmitter<string> = new EventEmitter<string>();
-  @Output() private onEditActivity: EventEmitter<string> = new EventEmitter<string>();
-  @Output() private onStartActivity: EventEmitter<string> = new EventEmitter<string>();
-  @Output() private onDeleteActivity: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private activitySelected: EventEmitter<Activity> = new EventEmitter<Activity>();
+  @Output() private activityDeselected: EventEmitter<Activity> = new EventEmitter<Activity>();
+  @Output() private tagSelected: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private editActivity: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private startActivity: EventEmitter<string> = new EventEmitter<string>();
+  @Output() private deleteActivity: EventEmitter<string> = new EventEmitter<string>();
 
   /**
    * Constructor.
@@ -47,9 +47,9 @@ export class ActivitiesListComponent {
 
   public toggleActivitySelected(activity: Activity): void {
     if (this.isSelected(activity)) {
-      this.onActivityDeselected.emit(activity);
+      this.activityDeselected.emit(activity);
     } else {
-      this.onActivitySelected.emit(activity);
+      this.activitySelected.emit(activity);
     }
   }
 
@@ -57,22 +57,22 @@ export class ActivitiesListComponent {
     return this.selectedActivities.indexOf(activity) !== -1;
   }
 
-  public startActivity(activityName: string): void {
-    this.onStartActivity.emit(activityName);
+  public onStartActivity(activityName: string): void {
+    this.startActivity.emit(activityName);
   }
 
-  public editActivity(activityName: string): void {
-    this.onEditActivity.emit(activityName);
+  public onEditActivity(activityName: string): void {
+    this.editActivity.emit(activityName);
   }
 
-  public deleteActivity(activityName: string): void {
-    this.onDeleteActivity.emit(activityName);
+  public onDeleteActivity(activityName: string): void {
+    this.deleteActivity.emit(activityName);
   }
 
   public selectTag(tag: string, event: MouseEvent): void {
     event.stopPropagation();
     event.preventDefault();
-    this.onTagSelected.emit(tag);
+    this.tagSelected.emit(tag);
   }
 
 }

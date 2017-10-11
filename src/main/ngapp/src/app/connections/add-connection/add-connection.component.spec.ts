@@ -20,7 +20,9 @@ describe("AddConnectionComponent", () => {
         { provide: ConnectionService, useClass: MockConnectionService },
       ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

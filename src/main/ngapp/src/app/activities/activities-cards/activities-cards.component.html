@@ -8,8 +8,8 @@
           <h2 class="activity-card-title">
             <span class="fa fa-fw fa-cog activity-card-icon"></span>
             <span><a [routerLink]="[activity.getId()]">{{ activity.getId() }}</a></span>
-            <span class="pull-right fa fa-fw fa-close activity-card-action-icon" style="color:darkred;" (click)="deleteActivity(activity.getId())"></span>
-            <span class="pull-right fa fa-fw fa-edit activity-card-action-icon" (click)="editActivity(activity.getId())"></span>
+            <span class="pull-right fa fa-fw fa-close activity-card-action-icon" style="color:darkred;" (click)="onDeleteActivity(activity.getId())"></span>
+            <span class="pull-right fa fa-fw fa-edit activity-card-action-icon" (click)="onEditActivity(activity.getId())"></span>
           </h2>
           <hr/>
           <div class="activity-tags">

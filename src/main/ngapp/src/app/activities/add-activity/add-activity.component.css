@@ -2,7 +2,7 @@
   padding: 15px
 }
 
-.add-activity-form .form-instructions {
+.add-activity-form /*.form-instructions*/ {
   font-size: 15px;
   padding-top: 10px
 }

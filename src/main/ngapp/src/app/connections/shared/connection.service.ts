@@ -21,6 +21,7 @@ import { Connection } from "@connections/shared/connection.model";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { ApiService } from "@core/api.service";
+import { LoggerService } from "@core/logger.service";
 import { environment } from "@environments/environment";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
 import { Observable } from "rxjs/Observable";
@@ -30,8 +31,8 @@ export class ConnectionService extends ApiService {
 
   private http: Http;
 
-  constructor( http: Http ) {
-    super();
+  constructor( http: Http, logger: LoggerService ) {
+    super( logger );
     this.http = http;
   }
 
@@ -87,7 +88,7 @@ export class ConnectionService extends ApiService {
       .get( environment.komodoTeiidUrl + "/templates/" + templateName + "/entries", this.getAuthRequestOptions())
       .map((response) => {
         const entries = response.json() as Array<PropertyDefinition<any>>;
-        return entries.map((entry) => {const ent = PropertyDefinition.create( entry ); return ent; });
+        return entries.map((entry) => PropertyDefinition.create( entry ));
       })
       .catch(this.handleError);
   }

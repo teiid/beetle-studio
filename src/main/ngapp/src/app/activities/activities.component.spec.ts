@@ -18,7 +18,9 @@ describe("ActivitiesComponent", () => {
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), RouterTestingModule, SharedModule ],
       declarations: [ ActivitiesComponent, ActivitiesListComponent, ActivitiesCardsComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

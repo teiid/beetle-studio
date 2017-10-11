@@ -16,6 +16,7 @@
  */
 
 import {Component} from "@angular/core";
+import { LoggerService } from "@core/logger.service";
 
 @Component({
   moduleId: module.id,
@@ -27,18 +28,21 @@ export class NavHeaderComponent {
 
   private version = "N/A";
   private builtOn: Date = new Date();
+  private logger: LoggerService;
   private projectUrl = "http://jboss.org/teiiddesigner/";
   private userId = "user";
 
-  constructor() {
+  constructor( logger: LoggerService ) {
+    this.logger = logger;
+
     // TODO this does not work
     if (window["BeetleStudio"]) {
-      console.log("[NavHeaderComponent] Found app info: %o", window["BeetleStudio"]);
+      this.logger.log("[NavHeaderComponent] Found app info: %o", window["BeetleStudio"]);
       this.version = window["BeetleStudio"].version;
       this.builtOn = new Date(window["BeetleStudio"].builtOn);
       this.projectUrl = window["BeetleStudio"].url;
     } else {
-      console.log("[NavHeaderComponent] App info not found.");
+      this.logger.log("[NavHeaderComponent] App info not found.");
     }
   }
 

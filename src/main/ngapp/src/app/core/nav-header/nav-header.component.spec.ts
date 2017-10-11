@@ -1,5 +1,6 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, inject, TestBed } from "@angular/core/testing";
 import { NavHeaderComponent } from "@core/nav-header/nav-header.component";
+import { LoggerService } from "@core/logger.service";
 
 describe("NavHeaderComponent", () => {
   let component: NavHeaderComponent;
@@ -7,9 +8,12 @@ describe("NavHeaderComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NavHeaderComponent ]
+      declarations: [ NavHeaderComponent ],
+      providers: [ LoggerService ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {
@@ -18,7 +22,8 @@ describe("NavHeaderComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should be created", () => {
+  it("should be created", inject([ LoggerService ],
+                                            (logger: LoggerService ) => {
     expect(component).toBeTruthy();
-  });
+  }));
 });

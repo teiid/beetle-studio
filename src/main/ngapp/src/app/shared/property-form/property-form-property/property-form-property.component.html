@@ -4,12 +4,13 @@
   <div class="col-md-10" [ngSwitch]="property.getControlType()">
 
     <input *ngSwitchCase="'textbox'" class="form-control" [formControlName]="property.getId()"
-           [id]="property.getId()" type="textbox">
+           [id]="property.getId()" type="text" title="A text value">
 
     <input *ngSwitchCase="'checkbox'" [formControlName]="property.getId()"
-           [id]="property.getId()" type="checkbox">
+           [id]="property.getId()" type="checkbox" title="A boolean value">
 
-    <select [id]="property.getId()" *ngSwitchCase="'dropdown'" [(ngModel)]="property.theDefaultValue" class="form-control" [formControlName]="property.getId()">
+    <select [id]="property.getId()" *ngSwitchCase="'dropdown'" [(ngModel)]="property.theDefaultValue" class="form-control"
+            [formControlName]="property.getId()" title="A value with allowed values">
       <option *ngFor="let allowedValue of property.getAllowedValues()" [selected]="allowedValue === property.theDefaultValue" [value]="allowedValue">{{ allowedValue }}</option>
     </select>
 

@@ -2,16 +2,18 @@ import {inject, TestBed} from "@angular/core/testing";
 
 import {HttpModule} from "@angular/http";
 import {ConnectionService} from "./connection.service";
+import { LoggerService } from "@core/logger.service";
 
 describe("ConnectionService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ HttpModule ],
-      providers: [ConnectionService]
+      providers: [ConnectionService, LoggerService]
     });
   });
 
-  it("should be created", inject([ConnectionService], (service: ConnectionService) => {
+  it("should be created", inject([ConnectionService, LoggerService],
+                                            (service: ConnectionService, logger: LoggerService ) => {
     expect(service).toBeTruthy();
   }));
 });
