@@ -1,7 +1,8 @@
-import {async, ComponentFixture, TestBed} from "@angular/core/testing";
+import { async, ComponentFixture, inject, TestBed } from "@angular/core/testing";
 import {FormsModule} from "@angular/forms";
 import {RouterTestingModule} from "@angular/router/testing";
 import {AddConnectionFormComponent} from "./add-connection-form.component";
+import { LoggerService } from "@core/logger.service";
 
 describe("AddConnectionFormComponent", () => {
   let component: AddConnectionFormComponent;
@@ -10,7 +11,8 @@ describe("AddConnectionFormComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, RouterTestingModule ],
-      declarations: [ AddConnectionFormComponent ]
+      declarations: [ AddConnectionFormComponent ],
+      providers: [ LoggerService ]
     })
     .compileComponents().then(() => {
       // nothing to do
@@ -23,7 +25,7 @@ describe("AddConnectionFormComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should be created", () => {
+  it("should be created", inject([ LoggerService ], ( logger: LoggerService ) => {
     expect(component).toBeTruthy();
-  });
+  }));
 });
