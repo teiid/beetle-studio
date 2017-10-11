@@ -11,7 +11,9 @@ describe("VerticalNavComponent", () => {
       imports: [RouterTestingModule],
       declarations: [ VerticalNavComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

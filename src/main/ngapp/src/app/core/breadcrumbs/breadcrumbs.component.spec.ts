@@ -9,7 +9,9 @@ describe("BreadcrumbsComponent", () => {
     TestBed.configureTestingModule({
       declarations: [ BreadcrumbsComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

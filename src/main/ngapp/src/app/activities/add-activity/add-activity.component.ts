@@ -57,7 +57,9 @@ export class AddActivityComponent extends AbstractPageComponent {
     this.activityService.createActivity(activity);
     const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
     this.logger.log("[AddActivityComponent] Navigating to: %o", link);
-    this.router.navigate(link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
 }

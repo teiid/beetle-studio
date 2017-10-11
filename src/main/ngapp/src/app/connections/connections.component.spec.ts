@@ -18,7 +18,9 @@ describe("ConnectionsComponent", () => {
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), RouterTestingModule, SharedModule ],
       declarations: [ ConnectionsComponent, ConnectionsListComponent, ConnectionsCardsComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

@@ -16,9 +16,10 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { NgModule} from "@angular/core";
+import { NgModule, Optional, SkipSelf } from "@angular/core";
 import {HttpModule} from "@angular/http";
 import {RouterModule} from "@angular/router";
+import { ApiService } from "@core/api.service";
 import { BreadcrumbComponent } from "@core/breadcrumbs/breadcrumb/breadcrumb.component";
 import { BreadcrumbsComponent } from "@core/breadcrumbs/breadcrumbs.component";
 import { LoggerService } from "@core/logger.service";
@@ -44,7 +45,16 @@ import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component"
     VerticalNavComponent
   ],
   providers: [
+    ApiService,
     LoggerService
   ]
 })
-export class CoreModule { }
+export class CoreModule {
+
+  constructor( @Optional() @SkipSelf() parentModule: CoreModule ) {
+    if ( parentModule ) {
+      throw new Error( "CoreModule is already loaded and should only be mported by the AppModule." );
+    }
+  }
+
+}

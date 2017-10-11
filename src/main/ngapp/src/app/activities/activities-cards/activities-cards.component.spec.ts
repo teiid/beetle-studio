@@ -11,7 +11,9 @@ describe("ActivitiesCardsComponent", () => {
       imports: [RouterModule],
       declarations: [ ActivitiesCardsComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

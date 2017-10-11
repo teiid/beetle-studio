@@ -61,7 +61,9 @@ export class AddConnectionComponent extends AbstractPageComponent {
         this.form.connectionCreated();
         const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
         this.logger.log("[AddConnectionComponent] Navigating to: %o", link);
-        this.router.navigate(link);
+        this.router.navigate(link).then(() => {
+          // nothing to do
+        });
       }
     );
 

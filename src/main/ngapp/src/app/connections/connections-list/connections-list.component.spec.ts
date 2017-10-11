@@ -11,7 +11,9 @@ describe("ConnectionsListComponent", () => {
       imports: [ RouterTestingModule ],
       declarations: [ ConnectionsListComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

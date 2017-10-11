@@ -11,7 +11,9 @@ describe("ConfirmDeleteComponent", () => {
       imports: [ModalModule.forRoot()],
       declarations: [ ConfirmDeleteComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

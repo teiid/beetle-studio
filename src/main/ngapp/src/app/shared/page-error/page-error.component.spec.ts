@@ -11,7 +11,9 @@ describe("PageErrorComponent", () => {
       imports: [ HttpModule ],
       declarations: [ PageErrorComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

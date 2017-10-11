@@ -12,7 +12,9 @@ describe("AddConnectionFormComponent", () => {
       imports: [ FormsModule, RouterTestingModule ],
       declarations: [ AddConnectionFormComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

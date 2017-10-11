@@ -22,6 +22,7 @@ export interface Identifiable< T > {
 
   /**
    * @returns {T} the object identifier (can be null)
+   * @template T the identifier type
    */
   getId(): T;
 

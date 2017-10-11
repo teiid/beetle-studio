@@ -13,7 +13,9 @@ describe("PropertyFormComponent", () => {
       imports: [ FormsModule ],
       declarations: [ PropertyFormComponent, PropertyFormPropertyComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

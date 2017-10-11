@@ -10,7 +10,9 @@ describe("AppComponent", () => {
       declarations: [
         AppComponent
       ],
-    }).compileComponents();
+    }).compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   it("should create the app", async(() => {

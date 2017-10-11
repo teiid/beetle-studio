@@ -46,6 +46,7 @@ export class PropertyDefinition<T> {
 
    /**
     * @returns {T} the property value (can be null)
+    * @template T the type of the value
     */
   public getValue(): T {
      return this.value;
@@ -152,6 +153,7 @@ export class PropertyDefinition<T> {
 
   /**
    * @param {T} value the property value
+   * @template T the type of the value
    */
   public setValue( value?: T ): void {
     this.value = value ? value : null;

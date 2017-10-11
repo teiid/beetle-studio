@@ -2,7 +2,7 @@
 .list-group-item {
   -webkit-transition: background-color 300ms;
   -moz-transition: background-color 300ms;
-  -ms-transition: background-color 300ms;
+  //-ms-transition: background-color 300ms;
   -o-transition: background-color 300ms;
   transition: background-color 300ms;
 }
@@ -20,7 +20,7 @@
   font-weight: bold;
   margin-right: 5px;
 }
-.list-group-item .activity-tags .activity-tag {
+.list-group-item .activity-tags /*.activity-tag*/ {
   margin-right: 5px;
   border: 1px solid #ccc;
   -webkit-border-radius: 2px;
@@ -28,7 +28,7 @@
   border-radius: 2px;
   padding: 2px 4px;
 }
-.list-group-item .activity-tags .activity-tag:hover {
+.list-group-item .activity-tags /*.activity-tag:hover*/ {
   cursor: pointer;
   background-color: #0088ce;
   border-color: #00659c;

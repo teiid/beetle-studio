@@ -13,7 +13,9 @@ describe("AddActivityFormComponent", () => {
       imports: [ CoreModule, FormsModule, RouterTestingModule ],
       declarations: [ AddActivityFormComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

@@ -81,7 +81,9 @@ export class ActivitiesComponent extends AbstractPageComponent {
 
   public onEdit(activityName: string): void {
     const link: string[] = [ ActivitiesConstants.editActivityPath ];
-    this.router.navigate(link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
   public onDelete(activityName: string): void {
@@ -157,7 +159,7 @@ export class ActivitiesComponent extends AbstractPageComponent {
   /**
    * Called to doDelete all selected APIs.
    */
-  public deleteActivity(): void {
+  public onDeleteActivity(): void {
     const selectedActivity =  this.filterActivities().find((x) => x.getId() === this.activityNameForDelete);
 
     const activityToDelete: NewActivity = new NewActivity();

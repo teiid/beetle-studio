@@ -134,7 +134,9 @@ export class ConnectionsComponent extends AbstractPageComponent {
 
   public onEdit(connName: string): void {
     const link: string[] = [ ConnectionsConstants.editConnectionPath ];
-    this.router.navigate(link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
   public onDelete(connName: string): void {
@@ -171,7 +173,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
   /**
    * Called to doDelete all selected APIs.
    */
-  public deleteConnection(): void {
+  public onDeleteConnection(): void {
     const selectedConn =  this.filterConnections().find((x) => x.getId() === this.connectionNameForDelete);
 
     // const itemsToDelete: Connection[] = ArrayUtils.intersect(this.selectedConnections, this.filteredConnections);
@@ -189,7 +191,9 @@ export class ConnectionsComponent extends AbstractPageComponent {
           this.removeConnectionFromList(selectedConn);
           const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
           this.logger.log("[CreateApiPageComponent] Navigating to: %o", link);
-          this.router.navigate(link);
+          this.router.navigate(link).then(() => {
+            // nothing to do
+          });
         }
       );
   }

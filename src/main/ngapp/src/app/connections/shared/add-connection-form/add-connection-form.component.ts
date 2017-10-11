@@ -29,7 +29,7 @@ import { LoggerService } from "@core/logger.service";
 })
 export class AddConnectionFormComponent {
 
-  private creatingConnection = false;
+  private creating = false;
   private logger: LoggerService;
   private model = new NewConnection();
   private router: Router;
@@ -113,19 +113,28 @@ export class AddConnectionFormComponent {
 
     this.logger.log("[AddConnectionFormComponent] Firing create-connection event: %o", connection);
 
-    this.creatingConnection = true;
+    this.creating = true;
     this.createConnection.emit(connection);
   }
 
   public cancelAdd(): void {
     const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
-    this.router.navigate(link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
+  }
+
+  /**
+   * @returns {boolean} 'true' if the connection is being created
+   */
+  public get creatingConnection(): boolean {
+    return this.creating;
   }
 
   /**
    * Called when the connection has been created.
    */
   public connectionCreated(): void {
-    this.creatingConnection = false;
+    this.creating = false;
   }
 }

@@ -20,7 +20,9 @@ describe("AddActivityComponent", () => {
         { provide: ActivityService, useClass: MockActivityService },
       ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

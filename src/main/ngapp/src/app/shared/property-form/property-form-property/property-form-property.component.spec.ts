@@ -12,7 +12,9 @@ describe("PropertyFormPropertyComponent", () => {
       imports: [ ReactiveFormsModule ],
       declarations: [ PropertyFormPropertyComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

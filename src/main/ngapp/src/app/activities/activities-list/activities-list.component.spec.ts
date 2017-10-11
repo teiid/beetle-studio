@@ -11,7 +11,9 @@ describe("ActivitiesListComponent", () => {
       imports: [ RouterModule ],
       declarations: [ ActivitiesListComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

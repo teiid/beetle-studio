@@ -27,6 +27,7 @@ import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { ConnectionsModule } from "@connections/connections.module";
+import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 
 @NgModule({
@@ -34,6 +35,7 @@ import { SharedModule } from "@shared/shared.module";
     ActivitiesRoutingModule,
     CommonModule,
     ConnectionsModule,
+    CoreModule,
     SharedModule,
     RouterModule,
     FormsModule

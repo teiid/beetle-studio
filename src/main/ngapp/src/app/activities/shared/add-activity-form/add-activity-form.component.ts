@@ -122,7 +122,9 @@ export class AddActivityFormComponent {
 
   public cancelAdd(): void {
     const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
-    this.router.navigate(link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
 }

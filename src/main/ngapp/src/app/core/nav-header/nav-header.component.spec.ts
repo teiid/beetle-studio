@@ -9,7 +9,9 @@ describe("NavHeaderComponent", () => {
     TestBed.configureTestingModule({
       declarations: [ NavHeaderComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {
