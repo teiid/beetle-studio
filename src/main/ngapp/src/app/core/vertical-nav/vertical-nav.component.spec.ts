@@ -1,7 +1,7 @@
 import { async, ComponentFixture, inject, TestBed } from "@angular/core/testing";
 import { RouterTestingModule } from "@angular/router/testing";
-import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component";
 import { LoggerService } from "@core/logger.service";
+import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component";
 
 describe("VerticalNavComponent", () => {
   let component: VerticalNavComponent;

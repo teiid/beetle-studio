@@ -1,6 +1,6 @@
 import { async, ComponentFixture, inject, TestBed } from "@angular/core/testing";
-import { NavHeaderComponent } from "@core/nav-header/nav-header.component";
 import { LoggerService } from "@core/logger.service";
+import { NavHeaderComponent } from "@core/nav-header/nav-header.component";
 
 describe("NavHeaderComponent", () => {
   let component: NavHeaderComponent;

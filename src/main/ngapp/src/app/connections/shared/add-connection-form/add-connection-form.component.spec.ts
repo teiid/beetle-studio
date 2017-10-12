@@ -1,7 +1,7 @@
 import { async, ComponentFixture, inject, TestBed } from "@angular/core/testing";
-import {FormsModule} from "@angular/forms";
-import {RouterTestingModule} from "@angular/router/testing";
-import {AddConnectionFormComponent} from "./add-connection-form.component";
+import { FormsModule } from "@angular/forms";
+import { RouterTestingModule } from "@angular/router/testing";
+import { AddConnectionFormComponent } from "@connections/shared/add-connection-form/add-connection-form.component";
 import { LoggerService } from "@core/logger.service";
 
 describe("AddConnectionFormComponent", () => {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Component} from "@angular/core";
+import { Component } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 
 @Component({

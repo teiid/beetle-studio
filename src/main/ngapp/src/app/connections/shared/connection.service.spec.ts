@@ -1,7 +1,6 @@
-import {inject, TestBed} from "@angular/core/testing";
-
-import {HttpModule} from "@angular/http";
-import {ConnectionService} from "./connection.service";
+import { inject, TestBed } from "@angular/core/testing";
+import { HttpModule } from "@angular/http";
+import { ConnectionService } from "@connections/shared/connection.service";
 import { LoggerService } from "@core/logger.service";
 
 describe("ConnectionService", () => {

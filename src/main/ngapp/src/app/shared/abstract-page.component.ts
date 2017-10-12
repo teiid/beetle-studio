@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {OnInit} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
+import { OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/combineLatest";
-import {Observable} from "rxjs/Observable";
+import { Observable } from "rxjs/Observable";
 
 export abstract class AbstractPageComponent implements OnInit {
 
