@@ -1,6 +1,6 @@
-import {ActivitiesListComponent} from "@activities/activities-list/activities-list.component";
-import {async, ComponentFixture, TestBed} from "@angular/core/testing";
-import {RouterModule} from "@angular/router";
+import { ActivitiesListComponent } from "@activities/activities-list/activities-list.component";
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { RouterModule } from "@angular/router";
 
 describe("ActivitiesListComponent", () => {
   let component: ActivitiesListComponent;

@@ -68,7 +68,7 @@
     "no-access-missing-member": true,
     "no-arg": true,
     "no-bitwise": true,
-    "no-consecutive-blank-lines": true,
+    "no-consecutive-blank-lines": [ true ],
     "no-console": [
       true,
       "debug",
@@ -79,7 +79,7 @@
     ],
     "no-construct": true,
     "no-debugger": true,
-    "no-duplicate-imports": true,
+    "no-duplicate-imports": false,
     "no-duplicate-super": true,
     "no-empty": true,
     "no-empty-interface": true,
@@ -101,10 +101,7 @@
     "no-unnecessary-initializer": true,
     "no-unused-expression": true,
     "no-use-before-declare": true,
-    "no-var-keyword": [
-      true,
-      "as-needed"
-    ],
+    "no-var-keyword": true,
     "object-literal-key-quotes": false,
     "object-literal-sort-keys": false,
     "one-line": [

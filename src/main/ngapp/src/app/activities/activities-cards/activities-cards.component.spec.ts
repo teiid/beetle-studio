@@ -1,6 +1,6 @@
-import {ActivitiesCardsComponent} from "@activities/activities-cards/activities-cards.component";
-import {async, ComponentFixture, TestBed} from "@angular/core/testing";
-import {RouterModule} from "@angular/router";
+import { ActivitiesCardsComponent } from "@activities/activities-cards/activities-cards.component";
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { RouterModule } from "@angular/router";
 
 describe("ActivitiesCardsComponent", () => {
   let component: ActivitiesCardsComponent;

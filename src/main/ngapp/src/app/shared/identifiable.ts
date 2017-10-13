@@ -21,8 +21,8 @@
 export interface Identifiable< T > {
 
   /**
+   * @typedef { object } T the type of the property that is used to identify the object
    * @returns {T} the object identifier (can be null)
-   * @template T the identifier type
    */
   getId(): T;
 

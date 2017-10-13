@@ -1,9 +1,9 @@
-import {Activity } from "@activities/shared/activity.model";
-import {NewActivity } from "@activities/shared/new-activity.model";
-import {Injectable } from "@angular/core";
-import {Http} from "@angular/http";
-import {Connection} from "@connections/shared/connection.model";
-import {NewConnection} from "@connections/shared/new-connection.model";
+import { Activity } from "@activities/shared/activity.model";
+import { NewActivity } from "@activities/shared/new-activity.model";
+import { Injectable } from "@angular/core";
+import { Http } from "@angular/http";
+import { Connection } from "@connections/shared/connection.model";
+import { NewConnection } from "@connections/shared/new-connection.model";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";

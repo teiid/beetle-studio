@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {Component, EventEmitter, Output, QueryList, ViewChildren} from "@angular/core";
-import {ModalDirective} from "ngx-bootstrap";
+import { Component, EventEmitter, Output, QueryList, ViewChildren } from "@angular/core";
+import { ModalDirective } from "ngx-bootstrap";
 
 @Component({
   moduleId: module.id,
