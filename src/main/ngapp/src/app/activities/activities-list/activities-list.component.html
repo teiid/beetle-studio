@@ -14,13 +14,11 @@
           -->
         </div>
         <div class="list-view-pf-additional-info">
-          <div class="activity-tags">
-            <span class="activity-tags-label">Source:</span>
-            <span class="activity-tags-label">{{ activity.getSourceConnection() }}&nbsp;&nbsp;&nbsp;</span>
+          <div>
+            <span><b>Source:</b>&nbsp;&nbsp;{{ activity.getSourceConnection() }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
           </div>
-          <div class="activity-tags">
-            <span class="activity-tags-label">Target:</span>
-            <span class="activity-tags-label">{{ activity.getTargetConnection() }}&nbsp;&nbsp;&nbsp;</span>
+          <div>
+            <span><b>Target:</b>&nbsp;&nbsp;{{ activity.getTargetConnection() }}</span>
           </div>
           <!--
           <div class="activity-tags" *ngIf="activity.tags && activity.tags.length > 0">

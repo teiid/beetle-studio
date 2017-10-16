@@ -43,7 +43,8 @@ import { PropertyFormComponent } from "./property-form/property-form.component";
     ConfirmDeleteComponent,
     PageErrorComponent,
     PageNotFoundComponent,
-    PropertyFormComponent
+    PropertyFormComponent,
+    PropertyFormPropertyComponent
   ]
 })
 export class SharedModule {

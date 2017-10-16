@@ -20,6 +20,7 @@ import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
+import { TemplateDefinition } from "@connections/shared/template-definition.model";
 import { ApiService } from "@core/api.service";
 import { LoggerService } from "@core/logger.service";
 import { environment } from "@environments/environment";
@@ -75,6 +76,20 @@ export class ConnectionService extends ApiService {
       .delete(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath + "/" + connection.getName(),
                this.getAuthRequestOptions())
       .map((response) => null)
+      .catch(this.handleError);
+  }
+
+  /**
+   * Get the connection templates from the komodo rest interface
+   * @returns {Observable<Array<TemplateDefinition<any>>>}
+   */
+  public getConnectionTemplates(): Observable<TemplateDefinition[]> {
+    return this.http
+      .get( environment.komodoTeiidUrl + "/templates", this.getAuthRequestOptions())
+      .map((response) => {
+        const templates = response.json();
+        return templates.map((template) => TemplateDefinition.create( template ));
+      })
       .catch(this.handleError);
   }
 

@@ -7,10 +7,11 @@
   </div>
   <div class="container-fluid" *ngIf="!pageError">
     <div class="row">
-      <h2>Add Connection</h2>
+      <h2></h2>
     </div>
-    <div class="add-connection-form row">
-      <app-add-connection-form (createConnection)="onCreateConnection($event)" #createConnectionForm></app-add-connection-form>
+    <!-- Add Connection Wizard -->
+    <div class="row">
+      <app-add-connection-wizard></app-add-connection-wizard>
     </div>
   </div>
 </div>

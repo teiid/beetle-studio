@@ -1,12 +1,9 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormsModule } from "@angular/forms";
-import { HttpModule } from "@angular/http";
+
 import { RouterTestingModule } from "@angular/router/testing";
-import { AddConnectionComponent } from "@connections/add-connection/add-connection.component";
-import { AddConnectionFormComponent } from "@connections/shared/add-connection-form/add-connection-form.component";
-import { ConnectionService } from "@connections/shared/connection.service";
-import { MockConnectionService } from "@connections/shared/mock-connection.service";
+import { AddConnectionWizardComponent } from "@connections/add-connection-wizard/add-connection-wizard.component";
 import { CoreModule } from "@core/core.module";
+import { AddConnectionComponent } from "./add-connection.component";
 
 describe("AddConnectionComponent", () => {
   let component: AddConnectionComponent;
@@ -14,11 +11,8 @@ describe("AddConnectionComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, HttpModule, RouterTestingModule ],
-      declarations: [ AddConnectionComponent, AddConnectionFormComponent ],
-      providers: [
-        { provide: ConnectionService, useClass: MockConnectionService },
-      ]
+      imports: [ CoreModule, RouterTestingModule ],
+      declarations: [ AddConnectionComponent, AddConnectionWizardComponent ]
     })
     .compileComponents().then(() => {
       // nothing to do

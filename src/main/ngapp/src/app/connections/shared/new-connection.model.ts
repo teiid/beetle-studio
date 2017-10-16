@@ -106,7 +106,17 @@ export class NewConnection {
       jndiName: this.jndiName,
       driverName: this.driverName,
       jdbc: this.jdbc,
-      parameters: this.properties
+      parameters: this.strMapToObj(this.properties)
     };
+  }
+
+  private strMapToObj(strMap: Map<string, string>): any {
+    const obj = Object.create(null);
+    for (const [k, v] of Array.from(strMap)) {
+      // We don’t escape the key '__proto__'
+      // which can cause problems on older engines
+      obj[k] = v;
+    }
+    return obj;
   }
 }

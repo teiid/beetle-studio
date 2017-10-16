@@ -32,7 +32,6 @@ export class ConnectionsCardsComponent {
   @Output() private connectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();
   @Output() private tagSelected: EventEmitter<string> = new EventEmitter<string>();
   @Output() private pingConnection: EventEmitter<string> = new EventEmitter<string>();
-  @Output() private editConnection: EventEmitter<string> = new EventEmitter<string>();
   @Output() private deleteConnection: EventEmitter<string> = new EventEmitter<string>();
 
   /**
@@ -56,10 +55,6 @@ export class ConnectionsCardsComponent {
 
   public onPingConnection(connectionName: string): void {
     this.pingConnection.emit(connectionName);
-  }
-
-  public onEditConnection(connectionName: string): void {
-    this.editConnection.emit(connectionName);
   }
 
   public onDeleteConnection(connectionName: string): void {

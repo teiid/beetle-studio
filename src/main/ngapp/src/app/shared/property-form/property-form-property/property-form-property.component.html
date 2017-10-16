@@ -6,6 +6,9 @@
     <input *ngSwitchCase="'textbox'" class="form-control" [formControlName]="property.getId()"
            [id]="property.getId()" type="text" title="A text value">
 
+    <input *ngSwitchCase="'maskedTextbox'" class="form-control" [formControlName]="property.getId()"
+           [id]="property.getId()" type="password" title="A text value">
+
     <input *ngSwitchCase="'checkbox'" [formControlName]="property.getId()"
            [id]="property.getId()" type="checkbox" title="A boolean value">
 
