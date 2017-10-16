@@ -25,8 +25,8 @@ import { Component } from "@angular/core";
 })
 export class AppComponent {
 
-  private routerOutletWrapperId: string;
-  private routerOutletWrapperClass: string;
+  public routerOutletWrapperId: string;
+  public routerOutletWrapperClass: string;
 
   constructor() {
     this.routerOutletWrapperId = "studio-page-body";

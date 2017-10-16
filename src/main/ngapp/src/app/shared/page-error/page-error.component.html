@@ -8,24 +8,24 @@
         <div class="card-pf-heading">
           <h2 class="card-pf-title">
             <span class="fa fa-fw fa-warning"></span>
-            <span>Server Error Encountered</span>
+            <span i18n="@@pageError.serverError" >Server Error Encountered</span>
           </h2>
         </div>
         <div class="card-pf-body">
-          <p>
+          <p i18n="@@pageError.errorEncounteredPleaseReload">
             Error was encountered communicating with the server.  Please reload the page.
           </p>
           <div class="actions">
-            <button class="btn btn-default" (click)="reloadPage()">Reload Page</button>
+            <button  i18n="@@pageError.reloadPage" class="btn btn-default" (click)="reloadPage()">Reload Page</button>
           </div>
           <div class="details" *ngIf="shouldShowDetails()">
             <hr />
-            <h3>Server Error Details</h3>
+            <h3  i18n="@@pageError.serverErrorDetails">Server Error Details</h3>
             <pre>{{ stackTrace() }}</pre>
           </div>
         </div>
         <div class="card-pf-footer" style="text-align: right">
-          <button class="btn btn-default btn-xs" (click)="toggleDetails()">Toggle Details</button>
+          <button  i18n="@@pageError.toggleDetails" class="btn btn-default btn-xs" (click)="toggleDetails()">Toggle Details</button>
         </div>
       </div>
 
@@ -34,16 +34,16 @@
         <div class="card-pf-heading">
           <h2 class="card-pf-title">
             <span class="fa fa-fw fa-search-minus"></span>
-            <span>Page Not Found</span>
+            <span  i18n="@@pageError.pageNotFound">Page Not Found</span>
           </h2>
         </div>
         <div class="card-pf-body">
-          <p>
+          <p  i18n="@@pageError.attemptedToReloadAPageThatDoesNotExist">
             You attempted to navigate to a page that does not exist!  Please hit the back button
             or go back to home (button below).
           </p>
           <div class="actions">
-            <a class="btn btn-primary" routerLink="/">Back to Home</a>
+            <a  i18n="@@pageError.backToHome" class="btn btn-primary" routerLink="/">Back to Home</a>
           </div>
         </div>
       </div>
@@ -53,17 +53,17 @@
         <div class="card-pf-heading">
           <h2 class="card-pf-title">
             <span class="fa fa-fw fa-exclamation-triangle"></span>
-            <span>Data Already Exists</span>
+            <span i18n="@@pageError.dataAlreadyExists">Data Already Exists</span>
           </h2>
         </div>
         <div class="card-pf-body">
-          <p>
+          <p  i18n="@@pageError.itAppearsYouAttemptedToAddOrCreate">
             It appears you attempted to add or create something that already exists. Instead of adding it again,
             try finding the existing resource and editing.
           </p>
           <div class="actions">
             <a class="btn btn-primary" routerLink="/">Back to Home</a>
-            <button class="btn btn-default" (click)="reloadPage()">Reload Page</button>
+            <button  i18n="@@pageError.reloadPage" class="btn btn-default" (click)="reloadPage()">Reload Page</button>
           </div>
         </div>
       </div>
@@ -73,16 +73,16 @@
         <div class="card-pf-heading">
           <h2 class="card-pf-title">
             <span class="fa fa-fw fa-plug"></span>
-            <span>Connection Error</span>
-            <span>(Could Not Reach Server)</span>
+            <span i18n="@@pageError.connectionError">Connection Error</span>
+            <span i18n="@@pageError.couldNotReachServer">(Could Not Reach Server)</span>
           </h2>
         </div>
         <div class="card-pf-body">
-          <p>
+          <p  i18n="@@pageError.couldNotReachServerTryReloading">
             We couldn't reach the server. Try reloading the page in a few minutes or check your internet connection.
           </p>
           <div class="actions">
-            <button class="btn btn-default" (click)="reloadPage()">Reload Page</button>
+            <button i18n="@@pageError.reloadPage" class="btn btn-default" (click)="reloadPage()">Reload Page</button>
           </div>
         </div>
       </div>
@@ -92,20 +92,20 @@
         <div class="card-pf-heading">
           <h2 class="card-pf-title">
             <span class="fa fa-fw fa-exclamation"></span>
-            <span>Unexpected Error on Page</span>
+            <span i18n="@@pageError.unexpectedErrorOnPage">Unexpected Error on Page</span>
             <span>(</span>
             <span>{{ errorMessage() }}</span>
             <span>)</span>
           </h2>
         </div>
         <div class="card-pf-body">
-          <p>
+          <p i18n="@@pageError.somethingUnexpectedHappenedTryReloadingPage">
             Something unexpected happened.  Please try reloading the page, or you could just go back to Home.
             See the buttons below...
           </p>
           <div class="actions">
-            <a class="btn btn-primary" routerLink="/">Back to Dashboard</a>
-            <button class="btn btn-default" (click)="reloadPage()">Reload Page</button>
+            <a i18n="@@pageError.backToDashboard" class="btn btn-primary" routerLink="/">Back to Dashboard</a>
+            <button i18n="@@pageError.reloadPage" class="btn btn-default" (click)="reloadPage()">Reload Page</button>
           </div>
         </div>
       </div>

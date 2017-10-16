@@ -27,6 +27,6 @@ export class BreadcrumbComponent {
 
   @Input() private label: string;
   @Input() private icon: string;
-  @Input() private route: string[];
+  @Input() public route: string[];
 
 }

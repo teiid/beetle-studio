@@ -3,7 +3,7 @@
   <div class="panel-body">
     <form id="create-activity-form" class="form-horizontal" (submit)="onCreateActivity()" #createActivityForm="ngForm">
       <div class="form-group">
-        <label class="col-sm-1 control-label" for="name">Name</label>
+        <label i18n="@@addActivityForm.name" class="col-sm-1 control-label" for="name">Name</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="name" required [(ngModel)]="activityName" name="name">
         </div>
@@ -15,13 +15,13 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-1 control-label" for="sourceConnection">Source Connection</label>
+        <label i18n="@@addActivity.sourceConnection" class="col-sm-1 control-label" for="sourceConnection">Source Connection</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="sourceConnection" [(ngModel)]="activitySource" name="sourceConnection">
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-1 control-label" for="targetConnection">Target Connection</label>
+        <label i18n="@@addActivity.targetConnection" class="col-sm-1 control-label" for="targetConnection">Target Connection</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="targetConnection" [(ngModel)]="activityTarget" name="targetConnection">
         </div>
@@ -35,7 +35,7 @@
             <span *ngIf="creatingActivity" class="spinner spinner-xs spinner-inline"></span>
             <span *ngIf="creatingActivity">Creating</span>
           </button>
-          <button class="btn btn-default" (click)="cancelAdd()">Cancel</button>
+          <button i18n="@@addActivity.cancel" class="btn btn-default" (click)="cancelAdd()">Cancel</button>
         </div>
       </div>
     </form>

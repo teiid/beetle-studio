@@ -6,14 +6,14 @@
         <button type="button" class="close" aria-hidden="true" (click)="cancel()">
           <span class="pficon pficon-close"></span>
         </button>
-        <h4 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h4>
+        <h4 i18n="@@confirmDelete.confirmDelete" class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h4>
       </div>
       <div class="modal-body">
         <ng-content></ng-content>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" (click)="onCancelSelected()">Cancel</button>
-        <button type="button" class="btn btn-danger" (click)="onDeleteSelected()">Delete</button>
+        <button i18n="@@confirmDelete.cancel" type="button" class="btn btn-default" (click)="onCancelSelected()">Cancel</button>
+        <button i18n="@@confirmDelete.delete" type="button" class="btn btn-danger" (click)="onDeleteSelected()">Delete</button>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <nav class="navbar navbar-default navbar-pf" role="navigation">
   <div class="navbar-header">
     <a class="navbar-brand" href="" style="">
-      <div id="navbar-logo" class="navbar-brand-logo">BeETLe Studio</div>
+      <div i18n="@@navHeader.beetleStudio" id="navbar-logo" class="navbar-brand-logo">BeETLe Studio</div>
     </a>
   </div>
   <div class="collapse navbar-collapse navbar-collapse-1">
@@ -13,9 +13,9 @@
           <b class="caret"></b>
         </a>
         <ul class="dropdown-menu">
-          <li><a data-toggle="modal" data-target="#about-modal">About</a></li>
+          <li><a i18n="@@navHeader.about" data-toggle="modal" data-target="#about-modal">About</a></li>
           <li class="divider"></li>
-          <li><a (click)="logout()">Logout</a></li>
+          <li><a i18n="@@navHeader.logout" (click)="logout()">Logout</a></li>
         </ul></li>
     </ul>
   </div>
@@ -29,25 +29,25 @@
         </button>
       </div>
       <div class="modal-body">
-        <h1>BeETLe Studio</h1>
+        <h1 i18n="@@navHeader.beetleStudio">BeETLe Studio</h1>
         <div class="product-versions-pf">
           <table>
             <tr>
-              <td><strong>Version</strong></td>
-              <td>version</td>
+              <td><strong i18n="@@navHeader.version">Version</strong></td>
+              <td>version-fixme</td>
             </tr>
             <tr>
-              <td><strong>Built On</strong></td>
-              <td>builtOnDate</td>
+              <td><strong i18n="@@navHeader.builtOn">Built On</strong></td>
+              <td>builtOnDate-fixme</td>
             </tr>
             <tr>
-              <td><strong>Project URL</strong></td>
+              <td><strong i18n="@@navHeader.projectUrl">Project URL</strong></td>
               <td></td>
               <!-- <td><a href="{{ projectUrl }}" target="_blank">{{ projectUrl }} <span class="fa fa-external-link"></span></a></td> -->
             </tr>
           </table>
         </div>
-        <div class="trademark-pf">
+        <div i18n="@@navHeader.trademark" class="trademark-pf">
           &copy; 2016 Red Hat, Inc (JBoss Middleware)
         </div>
       </div>

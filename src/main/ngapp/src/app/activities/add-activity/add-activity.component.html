@@ -1,13 +1,13 @@
 <div style="margin-left: 150px">
   <div id="activities-breadcrumb-bar">
     <app-breadcrumbs>
-      <li app-breadcrumb label="Activities" icon="cog" [route]="[ activitiesLink ]"></li>
-      <li app-breadcrumb label="Add Activity" icon="plus" class="active"></li>
+      <li app-breadcrumb i18n="@@addActivity.Activities" label="Activities" icon="cog" [route]="[ activitiesLink ]"></li>
+      <li app-breadcrumb i18n="@@addActivity.addActivity" label="Add Activity" icon="plus" class="active"></li>
     </app-breadcrumbs>
   </div>
   <div class="container-fluid" *ngIf="!pageError">
     <div class="row">
-      <h2>Add Activity</h2>
+      <h2 i18n="@@addActivity.addActivity">Add Activity</h2>
     </div>
     <div class="add-activity-form row">
       <app-add-activity-form (createActivity)="onCreateActivity($event)" #createActivityForm></app-add-activity-form>

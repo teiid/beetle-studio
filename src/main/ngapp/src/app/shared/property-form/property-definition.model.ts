@@ -102,6 +102,9 @@ export class PropertyDefinition<T> {
     if (this.isConstrainedToAllowedValues()) {
       return "dropdown";
     } else if (className === "java.lang.String") {
+      if (this.isMasked() || this.getId() === "password") {
+        return "maskedTextbox";
+      }
       return "textbox";
     } else if (className === "java.lang.Boolean") {
       return "checkbox";

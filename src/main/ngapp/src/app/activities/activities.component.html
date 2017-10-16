@@ -10,13 +10,13 @@
 
   <div class="container-fluid activity-list-activities" *ngIf="!pageError">
     <div class="row">
-      <h2>Activities</h2>
+      <h2 i18n="@@activities.Activities" >Activities</h2>
     </div>
     <div class="row toolbar-pf">
       <div class="col-sm-12">
         <form class="toolbar-pf-actions" (submit)="filterActivities()" #filterForm="ngForm">
           <div class="form-group toolbar-pf-filter">
-            <label class="sr-only" for="filter">Name</label>
+            <label i18n="@@activity.Name" class="sr-only" for="filter">Name</label>
             <div class="input-group" style="width: 100%">
               <input name="name-filter" [(ngModel)]="nameFilter" type="text" class="form-control name-filter" id="filter" placeholder="Filter by name...">
             </div>
@@ -28,7 +28,7 @@
             </button>
           </div>
           <div class="form-group">
-            <a class="btn btn-primary" [routerLink]="[ addActivityLink ]">Add Activity</a>
+            <a i18n="@@activities.addActivity" class="btn btn-primary" [routerLink]="[ addActivityLink ]">Add Activity</a>
           </div>
           <div class="form-group toolbar-pf-view-selector">
             <ul class="list-inline">
@@ -54,8 +54,8 @@
           <div class="blank-slate-pf-icon">
             <span class="pficon pficon pficon-add-circle-o"></span>
           </div>
-          <h1>No Activities Found</h1>
-          <p>
+          <h1 i18n="@@activities.noActivitiesFound" >No Activities Found</h1>
+          <p i18n="@@activities.noActivitiesFoundPleaseClick" >
             No Activities were found - please click below to create a new Activity!
           </p>
           <div class="blank-slate-pf-main-action">
@@ -68,7 +68,7 @@
       <div class="col-md-8 none-matched-state" *ngIf="filteredActivities.length === 0 && isFiltered()">
         <div class="alert alert-info">
           <span class="pficon pficon-info"></span>
-          <strong>No Activities matched the filter!</strong>&nbsp;&nbsp;Please try changing your filter criteria...
+          <strong i18n="@@activities.noActivitiesMatcheFilter">No Activities matched the filter! &nbsp;Please try changing your filter criteria..</strong>&nbsp;.
         </div>
       </div>
 
@@ -78,8 +78,8 @@
           <div class="row row-cards-pf">
             <div class="card-pf card-pf-accented">
               <div class="card-pf-heading">
-                <h1 class="card-pf-title">
-                  <span class="spinner spinner-xs spinner-inline"></span> Loading Activities...
+                <h1  class="card-pf-title">
+                  <span i18n="@@activities.loadingActivities" class="spinner spinner-xs spinner-inline">Loading Activities...</span>
                 </h1>
               </div>
             </div>
@@ -103,5 +103,5 @@
 
 </div>
 <app-confirm-delete #confirmDeleteDialog (deleteSelected)="onDeleteActivity()">
-  <p>Do you really want to delete the selected Activity?</p>
+  <p i18n="@@activities.doYouReallyWantToDelete" >Do you really want to delete the selected Activity?</p>
 </app-confirm-delete>
