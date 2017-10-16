@@ -132,13 +132,6 @@ export class ConnectionsComponent extends AbstractPageComponent {
     // this.selectedConnections.splice(this.selectedConnections.indexOf(connection), 1);
   }
 
-  public onEdit(connName: string): void {
-    const link: string[] = [ ConnectionsConstants.editConnectionPath ];
-    this.router.navigate(link).then(() => {
-      // nothing to do
-    });
-  }
-
   public onDelete(connName: string): void {
     this.connectionNameForDelete = connName;
     this.confirmDeleteDialog.open();

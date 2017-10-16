@@ -1,16 +1,7 @@
 <div>
-  <form class="form-horizontal" (ngSubmit)="onSubmit()" [formGroup]="form">
-
+  <form class="form-horizontal" [formGroup]="form">
     <div *ngFor="let property of formProperties">
       <app-form-property [property]="property" [form]="form"></app-form-property>
     </div>
-
-    <div>
-      <button class="btn btn-primary" type="submit" [disabled]="form.invalid">Save</button>
-    </div>
   </form>
-
-  <div *ngIf="payLoad">
-    <strong>Saved the following values</strong><br>{{ payLoad }}
-  </div>
 </div>

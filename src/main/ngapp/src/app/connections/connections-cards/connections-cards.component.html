@@ -9,16 +9,13 @@
             <span class="fa fa-fw fa-plug connection-card-icon"></span>
             <span><a [routerLink]="[connection.getId()]">{{ connection.getId() }}</a></span>
             <span class="pull-right fa fa-fw fa-close connection-card-action-icon" style="color:darkred;" (click)="onDeleteConnection(connection.getId())"></span>
-            <span class="pull-right fa fa-fw fa-edit connection-card-action-icon" (click)="onEditConnection(connection.getId())"></span>
           </h2>
           <hr/>
-          <div class="connection-tags">
-            <span class="connection-tags-label">JNDI:</span>
-            <span class="connection-tags-label">{{ connection.getJndiName() }}&nbsp;&nbsp;&nbsp;</span>
+          <div>
+            <span><b>JNDI:</b>&nbsp;&nbsp;{{ connection.getJndiName() }}</span>
           </div>
-          <div class="connection-tags">
-            <span class="connection-tags-label">Driver:</span>
-            <span class="connection-tags-label">{{ connection.getDriverName() }}&nbsp;&nbsp;&nbsp;</span>
+          <div>
+            <span><b>Driver:</b>&nbsp;&nbsp;{{ connection.getDriverName() }}</span>
           </div>
           <!--
           <div class="connection-tags" *ngIf="connection.tags && connection.tags.length > 0">

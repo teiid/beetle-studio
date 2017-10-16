@@ -17,18 +17,18 @@
 
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { AddConnectionComponent } from "@connections/add-connection/add-connection.component";
 import { ConnectionsCardsComponent } from "@connections/connections-cards/connections-cards.component";
 import { ConnectionsListComponent } from "@connections/connections-list/connections-list.component";
 import { ConnectionsRoutingModule } from "@connections/connections-routing.module";
 import { ConnectionsComponent } from "@connections/connections.component";
-import { EditConnectionComponent } from "@connections/edit-connection/edit-connection.component";
-import { AddConnectionFormComponent } from "@connections/shared/add-connection-form/add-connection-form.component";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
+import { PatternFlyNgModule } from "patternfly-ng";
+import { AddConnectionComponent } from "./add-connection/add-connection.component";
+import { AddConnectionWizardComponent } from "./add-connection-wizard/add-connection-wizard.component";
 
 @NgModule({
   imports: [
@@ -37,15 +37,16 @@ import { SharedModule } from "@shared/shared.module";
     CoreModule,
     SharedModule,
     FormsModule,
-    RouterModule
+    ReactiveFormsModule,
+    RouterModule,
+    PatternFlyNgModule
   ],
   declarations: [
-    AddConnectionComponent,
-    AddConnectionFormComponent,
     ConnectionsCardsComponent,
     ConnectionsComponent,
     ConnectionsListComponent,
-    EditConnectionComponent
+    AddConnectionWizardComponent,
+    AddConnectionComponent
   ],
   providers: [
     ConnectionService

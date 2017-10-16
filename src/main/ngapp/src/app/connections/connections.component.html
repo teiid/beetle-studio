@@ -90,10 +90,10 @@
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('connections')">
         <app-connections-list *ngIf="isListLayout" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
-                              (editConnection)="onEdit($event)" (pingConnection)="onPing($event)" (deleteConnection)="onDelete($event)"
+                              (pingConnection)="onPing($event)" (deleteConnection)="onDelete($event)"
                               (connectionSelected)="onSelected($event)" (connectionDeselected)="onDeselected($event)"></app-connections-list>
         <app-connections-cards *ngIf="isCardLayout" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
-                               (editConnection)="onEdit($event)" (pingConnection)="onPing($event)" (deleteConnection)="onDelete($event)"
+                               (pingConnection)="onPing($event)" (deleteConnection)="onDelete($event)"
                                (connectionSelected)="onSelected($event)" (connectionDeselected)="onDeselected($event)"></app-connections-cards>
       </div>
 

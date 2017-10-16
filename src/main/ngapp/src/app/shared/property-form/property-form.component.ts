@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 
+import {ObjectUtils} from "@core/utils/object-utils";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
 
 @Component({
@@ -12,7 +13,6 @@ export class PropertyFormComponent implements OnInit {
 
   @Input() private formProperties: Array<PropertyDefinition<any>> = [];
   private form: FormGroup;
-  private payLoad = "";
 
   constructor( ) {
     // Nothing to do
@@ -26,12 +26,42 @@ export class PropertyFormComponent implements OnInit {
     this.form = this.toFormGroup(this.formProperties);
   }
 
-  public onSubmit(): void {
-    this.payLoad = JSON.stringify(this.form.value);
-  }
-
   public setFormProperties( props: Array<PropertyDefinition<any>> ): void {
     this.formProperties = props;
+  }
+
+  /*
+   * Get the properties from the form that have values that aren't default values
+   */
+  public get propertyValuesNonDefault(): Map<string, string> {
+    const propertyMap: Map<string, string> = new Map<string, string>();
+    for (const property of this.formProperties) {
+      const theValue = this.form.controls[property.getId()].value;
+      if (!ObjectUtils.isNullOrUndefined(theValue)) {
+        if (typeof theValue === "string" && theValue.length > 0) {
+          if (theValue !== property.theDefaultValue) {
+            propertyMap.set(property.getId(), theValue);
+          }
+        } else if (typeof theValue === "boolean") {
+          if (theValue.toString() !== property.theDefaultValue) {
+            propertyMap.set(property.getId(), theValue.toString());
+          }
+        }
+      }
+    }
+    return propertyMap;
+  }
+
+  /*
+   * Get the property value
+   */
+  public getPropertyValue(name: string): string {
+    const theValue = this.form.controls[name].value;
+    if (typeof theValue === "string") {
+      return theValue;
+    } else {
+      return theValue.toString();
+    }
   }
 
   /*

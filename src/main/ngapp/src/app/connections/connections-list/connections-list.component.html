@@ -14,13 +14,11 @@
           -->
         </div>
         <div class="list-view-pf-additional-info">
-          <div class="connection-tags">
-            <span class="connection-tags-label">JNDI:</span>
-            <span class="connection-tags-label">{{ connection.getDriverName() }}&nbsp;&nbsp;&nbsp;</span>
+          <div>
+            <span><b>JNDI:</b>&nbsp;&nbsp;{{ connection.getJndiName() }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
           </div>
-          <div class="connection-tags">
-            <span class="connection-tags-label">Driver:</span>
-            <span class="connection-tags-label">{{ connection.getDriverName() }}&nbsp;&nbsp;&nbsp;</span>
+          <div>
+            <span><b>Driver:</b>&nbsp;&nbsp;{{ connection.getDriverName() }}</span>
           </div>
           <!--
           <div class="connection-tags" *ngIf="connection.tags && connection.tags.length > 0">
@@ -32,7 +30,6 @@
       </div>
       <div class="list-view-pf-actions">
         <button class="btn btn-default" type="button" (click)="onPingConnection(connection.getId())">Ping</button>
-        <button class="btn btn-default" type="button" (click)="onEditConnection(connection.getId())">Edit</button>
         <button class="btn btn-danger" type="button" (click)="onDeleteConnection(connection.getId())">Delete</button>
       </div>
     </div>
