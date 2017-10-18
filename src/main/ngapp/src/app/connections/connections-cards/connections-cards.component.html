@@ -12,10 +12,10 @@
           </h2>
           <hr/>
           <div>
-            <span><b>JNDI:</b>&nbsp;&nbsp;{{ connection.getJndiName() }}</span>
+            <span><b i18n="@@connectionTagsLabel.jndi" >JNDI:</b>&nbsp;&nbsp;{{ connection.getJndiName() }}</span>
           </div>
           <div>
-            <span><b>Driver:</b>&nbsp;&nbsp;{{ connection.getDriverName() }}</span>
+            <span><b i18n="@@connectionTagsLabel.driver" >Driver:</b>&nbsp;&nbsp;{{ connection.getDriverName() }}</span>
           </div>
           <!--
           <div class="connection-tags" *ngIf="connection.tags && connection.tags.length > 0">

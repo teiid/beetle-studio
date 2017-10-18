@@ -1,8 +1,8 @@
 <div style="margin-left: 150px">
   <div id="connections-breadcrumb-bar">
     <app-breadcrumbs>
-      <li app-breadcrumb label="Connections" icon="plug" [route]="[ connectionsLink ]"></li>
-      <li app-breadcrumb label="Add Connection" icon="plus" class="active"></li>
+      <li i18n="@@activitiesCards.connections" app-breadcrumb label="Connections" icon="plug" [route]="[ connectionsLink ]"></li>
+      <li i18n="@@activitiesCards.addConnection" app-breadcrumb label="Add Connection" icon="plus" class="active"></li>
     </app-breadcrumbs>
   </div>
   <div class="container-fluid" *ngIf="!pageError">
@@ -15,3 +15,4 @@
     </div>
   </div>
 </div>
+

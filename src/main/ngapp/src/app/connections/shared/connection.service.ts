@@ -33,7 +33,7 @@ export class ConnectionService extends ApiService {
   private http: Http;
 
   constructor( http: Http, logger: LoggerService ) {
-    super( logger );
+    super( logger  );
     this.http = http;
   }
 

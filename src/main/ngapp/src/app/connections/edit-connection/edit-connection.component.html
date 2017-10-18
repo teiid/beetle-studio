@@ -1,0 +1,21 @@
+<div style="margin-left: 150px">
+  <div id="connections-breadcrumb-bar">
+    <app-breadcrumbs>
+      <li i18n="@@editConnection.connections" app-breadcrumb label="Connections" icon="plug" [route]="[ connectionsLink ]"></li>
+      <li i18n="@@editConnection.editConnections" app-breadcrumb label="Edit Connection" icon="pencil" class="active"></li>
+    </app-breadcrumbs>
+  </div>
+  <div class="container-fluid" *ngIf="!pageError">
+    <div class="row">
+      <h2 i18n="@@editConnection.editConnections">Connection Properties</h2>
+    </div>
+    <div class="edit-connection-form row">
+        <app-property-form [formProperties]="getPropertyDefinitions()"></app-property-form>
+    </div>
+    <!--
+    <div class="add-connection-form row">
+      <app-add-connection-form (onCreateConnection)="onCreateConnection($event)" #createConnectionForm></app-add-connection-form>
+    </div>
+    -->
+  </div>
+</div>

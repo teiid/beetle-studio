@@ -26,7 +26,7 @@ import { Connection } from "@connections/shared/connection.model";
 })
 export class ConnectionsCardsComponent {
 
-  @Input() private connections: Connection[];
+  @Input() public connections: Connection[];
   @Input() private selectedConnections: Connection[];
   @Output() private connectionSelected: EventEmitter<Connection> = new EventEmitter<Connection>();
   @Output() private connectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();

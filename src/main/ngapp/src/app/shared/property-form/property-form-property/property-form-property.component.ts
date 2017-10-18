@@ -27,8 +27,8 @@ import { PropertyDefinition } from "@shared/property-form/property-definition.mo
 
 export class PropertyFormPropertyComponent {
 
-  @Input() private property: PropertyDefinition<any>;
-  @Input() private form: FormGroup;
+  @Input() public property: PropertyDefinition<any>;
+  @Input() public form: FormGroup;
 
   /*
    * Return the property valid state

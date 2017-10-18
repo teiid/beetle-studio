@@ -32,8 +32,8 @@ import { LoggerService } from "@core/logger.service";
 })
 export class AddActivityFormComponent {
 
+  public creatingActivity = false;
   private model = new NewActivity();
-  private creatingActivity = false;
   private logger: LoggerService;
   private router: Router;
 

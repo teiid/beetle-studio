@@ -15,10 +15,10 @@
         </div>
         <div class="list-view-pf-additional-info">
           <div>
-            <span><b>JNDI:</b>&nbsp;&nbsp;{{ connection.getJndiName() }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span><b i18n="@@connectionsList.jndi" >JNDI:</b>&nbsp;&nbsp;{{ connection.getJndiName() }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
           </div>
           <div>
-            <span><b>Driver:</b>&nbsp;&nbsp;{{ connection.getDriverName() }}</span>
+            <span><b i18n="@@connectionsList.driver" >Driver:</b>&nbsp;&nbsp;{{ connection.getDriverName() }}</span>
           </div>
           <!--
           <div class="connection-tags" *ngIf="connection.tags && connection.tags.length > 0">
@@ -31,6 +31,9 @@
       <div class="list-view-pf-actions">
         <button class="btn btn-default" type="button" (click)="onPingConnection(connection.getId())">Ping</button>
         <button class="btn btn-danger" type="button" (click)="onDeleteConnection(connection.getId())">Delete</button>
+        <button i18n="@@connectionsList.ping" class="btn btn-default" type="button" (click)="onPingConnection(connection.getId())">Ping</button>
+        <button i18n="@@connectionsList.edit" class="btn btn-default" type="button" (click)="onEditConnection(connection.getId())">Edit</button>
+        <button i18n="@@connectionsList.delete" class="btn btn-danger" type="button" (click)="onDeleteConnection(connection.getId())">Delete</button>
       </div>
     </div>
   </div>

@@ -29,7 +29,7 @@ import { Output } from "@angular/core";
 })
 export class ActivitiesCardsComponent {
 
-  @Input() private activities: Activity[];
+  @Input() public activities: Activity[];
   @Input() private selectedActivities: Activity[];
   @Output() private activitySelected: EventEmitter<Activity> = new EventEmitter<Activity>();
   @Output() private activityDeselected: EventEmitter<Activity> = new EventEmitter<Activity>();

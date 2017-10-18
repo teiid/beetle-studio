@@ -9,6 +9,7 @@ import {ConnectionsConstants} from "@connections/shared/connections-constants";
 export class AddConnectionComponent implements OnInit {
 
   public readonly connectionsLink = ConnectionsConstants.connectionsRootPath;
+  public pageError: any = "";
 
   constructor() {
     // Nothing

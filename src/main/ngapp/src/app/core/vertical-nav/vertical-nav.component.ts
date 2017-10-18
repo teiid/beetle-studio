@@ -88,7 +88,7 @@ export class VerticalNavComponent implements OnInit {
     /**
      * Called when the user clicks the vertical menu Activities item.
      */
-  private onActivitiesClick(): void {
+  public onActivitiesClick(): void {
       this.currentMenu = VerticalNavType.Activities;
       const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
       this.router.navigate(link).then(() => {
@@ -99,7 +99,7 @@ export class VerticalNavComponent implements OnInit {
     /**
      * Called when the user clicks the vertical menu Connections item.
      */
-  private onConnectionsClick(): void {
+  public onConnectionsClick(): void {
       this.currentMenu = VerticalNavType.Connections;
       const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
       this.router.navigate(link).then(() => {

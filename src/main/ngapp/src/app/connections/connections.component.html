@@ -2,7 +2,7 @@
 
   <div id="connections-breadcrumb-bar">
     <app-breadcrumbs>
-      <li app-breadcrumb label="Connections" icon="plug" class="active"></li>
+      <li i18n="@@connections.connections" app-breadcrumb label="Connections" icon="plug" class="active"></li>
     </app-breadcrumbs>
   </div>
 
@@ -10,13 +10,13 @@
 
   <div class="container-fluid connection-list-connections" *ngIf="!pageError">
     <div class="row">
-      <h2>Connections</h2>
+      <h2 i18n="@@connections.connections">Connections</h2>
     </div>
     <div class="row toolbar-pf">
       <div class="col-sm-12">
         <form class="toolbar-pf-actions" (submit)="filterConnections()" #filterForm="ngForm">
           <div class="form-group toolbar-pf-filter">
-            <label class="sr-only" for="filter">Name</label>
+            <label i18n="@@connections.name" class="sr-only" for="filter">Name</label>
             <div class="input-group" style="width: 100%">
               <input name="name-filter" [(ngModel)]="nameFilter" type="text" class="form-control name-filter" id="filter" placeholder="Filter by name...">
             </div>
@@ -28,7 +28,7 @@
             </button>
           </div>
           <div class="form-group">
-            <a class="btn btn-primary" [routerLink]="[addConnectionLink]">Add Connection</a>
+            <a i18n="@@connections.addConnection" class="btn btn-primary" [routerLink]="[addConnectionLink]">Add Connection</a>
           </div>
           <div class="form-group toolbar-pf-view-selector">
             <ul class="list-inline">
@@ -39,7 +39,7 @@
         </form>
         <div class="row toolbar-pf-results">
           <div class="col-sm-12">
-            <h5>{{ filteredConnections.length }} Connections found
+            <h5 i18n="@@connections.connectionsFound" >{{ filteredConnections.length }} Connections found
               <a *ngIf="allConnections.length != filteredConnections.length"
                  class="clear-filters" (click)="clearFilters()">(out of {{
               allConnections.length }} total)</a></h5>
@@ -54,13 +54,13 @@
           <div class="blank-slate-pf-icon">
             <span class="pficon pficon pficon-add-circle-o"></span>
           </div>
-          <h1>No Connections Found</h1>
-          <p>
+          <h1 i18n="@@connections.noConnectionsFound">No Connections Found</h1>
+          <p i18n="@@connections.noConnectionsFoundPleaseClick">
             No Connections were found - please click below to create a new Connection!
           </p>
           <div class="blank-slate-pf-main-action">
             <div class="btn-group">
-              <a class="btn btn-primary btn-lg" [routerLink]="[ addConnectionLink ]">Add Connection</a>
+              <a i18n="@@connections.addConnection" class="btn btn-primary btn-lg" [routerLink]="[ addConnectionLink ]">Add Connection</a>
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@
       <div class="col-md-8 none-matched-state" *ngIf="filteredConnections.length === 0 && isFiltered()">
         <div class="alert alert-info">
           <span class="pficon pficon-info"></span>
-          <strong>No Connections matched the filter!</strong>&nbsp;&nbsp;Please try changing your filter criteria...
+          <strong i18n="@@connections.noConnectionsMatchedFilter">No Connections matched the filter!&nbsp;&nbsp;Please try changing your filter criteria... </strong>
         </div>
       </div>
 
@@ -79,7 +79,7 @@
             <div class="card-pf card-pf-accented">
               <div class="card-pf-heading">
                 <h1 class="card-pf-title">
-                  <span class="spinner spinner-xs spinner-inline"></span> Loading Connections...
+                  <span i18n="@@connections.loadingConnections" class="spinner spinner-xs spinner-inline"></span> Loading Connections...
                 </h1>
               </div>
             </div>
@@ -103,5 +103,5 @@
 
 </div>
 <app-confirm-delete (deleteSelected)="onDeleteConnection()">
-  <p>Do you really want to delete the selected Connection?</p>
+  <p i18n="@@connections.doYouReallyWantToDeleteSelectedConnection" >Do you really want to delete the selected Connection?</p>
 </app-confirm-delete>

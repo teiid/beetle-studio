@@ -37,25 +37,25 @@ export class AddConnectionWizardComponent implements OnInit {
 
   private connectionService: ConnectionService;
   private allTemplates: TemplateDefinition[] = [];
-  private templatesLoaded = false;
-  private detailPropertiesLoaded = false;
+  public templatesLoaded = false;
+  public detailPropertiesLoaded = false;
   private basicPropertyForm: FormGroup;
   private detailProperties: Array<PropertyDefinition<any>> = [];
   private requiredPropValues: Array<[string, string]> = [];
 
-  private createComplete = true;
-  private createSuccessful = false;
+  public createComplete = true;
+  public createSuccessful = false;
 
   // Wizard Step 1
-  private step1Config: WizardStepConfig;
+  public step1Config: WizardStepConfig;
 
   // Wizard Step 2
-  private step2Config: WizardStepConfig;
+  public step2Config: WizardStepConfig;
 
   // Wizard Step 3
-  private step3Config: WizardStepConfig;
-  private step3aConfig: WizardStepConfig;
-  private step3bConfig: WizardStepConfig;
+  public step3Config: WizardStepConfig;
+  public step3aConfig: WizardStepConfig;
+  public step3bConfig: WizardStepConfig;
   private logger: LoggerService;
   private router: Router;
 

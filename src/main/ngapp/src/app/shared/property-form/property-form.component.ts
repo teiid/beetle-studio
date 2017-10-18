@@ -11,8 +11,8 @@ import { PropertyDefinition } from "@shared/property-form/property-definition.mo
 })
 export class PropertyFormComponent implements OnInit {
 
-  @Input() private formProperties: Array<PropertyDefinition<any>> = [];
-  private form: FormGroup;
+  @Input() public formProperties: Array<PropertyDefinition<any>> = [];
+  public form: FormGroup;
 
   constructor( ) {
     // Nothing to do
