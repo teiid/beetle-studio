@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="confirmDelete.confirmDelete" datatype="html">
+        <source>Confirm Delete</source>
+        <target>Confirmar Eliminación</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/confirm-delete/confirm-delete.component.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirmDelete.cancel" datatype="html">
+        <source>Cancel</source>
+        <target>Cancelar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/confirm-delete/confirm-delete.component.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirmDelete.delete" datatype="html">
+        <source>Delete</source>
+        <target>Borrar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/confirm-delete/confirm-delete.component.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activities.Activities" datatype="html">
+        <source>Activities</source>
+        <target>Ocupaciones</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activity.Name" datatype="html">
+        <source>Name</source>
+        <target>Nombre</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activities.addActivity" datatype="html">
+        <source>Add Activity</source>
+        <target>Agregar Actividad</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities.component.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activities.noActivitiesFound" datatype="html">
+        <source>No Activities Found</source>
+        <target>Sin Actividades</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities.component.ts</context>
+          <context context-type="linenumber">57</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activities.noActivitiesFoundPleaseClick" datatype="html">
+        <source>
+            No Activities were found - please click below to create a new Activity!
+          </source>
+        <target>No se encontraron actividades: haga clic a continuación para crear una nueva actividad!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities.component.ts</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activities.noActivitiesMatcheFilter" datatype="html">
+        <source>No Activities matched the filter!  Please try changing your filter criteria..</source>
+        <target>No Activities matched the filter!  Please try changing your filter criteria..</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activities.loadingActivities" datatype="html">
+        <source>Loading Activities...</source>
+        <target>Cargando actividades ...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities.component.ts</context>
+          <context context-type="linenumber">81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activities.doYouReallyWantToDelete" datatype="html">
+        <source>Do you really want to delete the selected Activity?</source>
+        <target>¿Realmente quieres eliminar la actividad seleccionada?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities.component.ts</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addActivityForm.name" datatype="html">
+        <source>Name</source>
+        <target>Nombre</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/shared/add-activity-form/add-activity-form.component.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addActivity.sourceConnection" datatype="html">
+        <source>Source Connection</source>
+        <target>Conexión de fuente</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/shared/add-activity-form/add-activity-form.component.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addActivity.targetConnection" datatype="html">
+        <source>Target Connection</source>
+        <target>Conexión de destino</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/shared/add-activity-form/add-activity-form.component.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addActivity.cancel" datatype="html">
+        <source>Cancel</source>
+        <target>Cancelar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/shared/add-activity-form/add-activity-form.component.ts</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addActivity.addActivity" datatype="html">
+        <source>Add Activity</source>
+        <target>Agregar actividad</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/add-activity/add-activity.component.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activitiesCards.Source" datatype="html">
+        <source>Source:</source>
+        <target>Fuente:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities-cards/activities-cards.component.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activitiesCards.Target" datatype="html">
+        <source>Target:</source>
+        <target>Objetivo:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities-cards/activities-cards.component.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activitiesList.Source" datatype="html">
+        <source>Source:</source>
+        <target>Fuente:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities-list/activities-list.component.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activitiesList.Target" datatype="html">
+        <source>Target:</source>
+        <target>Objetivo:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/activities/activities-list/activities-list.component.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addConnectionForm.connectionProperties" datatype="html">
+        <source>Connection Properties</source>
+        <target>Propiedades de conexión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/shared/add-connection-form/add-connection-form.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <note priority="1" from="description">Properties for a connection</note>
+        <note priority="1" from="meaning">Connection Properties</note>
+      </trans-unit>
+      <trans-unit id="addConnectionForm.name" datatype="html">
+        <source>Name</source>
+        <target>Nombre</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/shared/add-connection-form/add-connection-form.component.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addConnectionForm.jndiName" datatype="html">
+        <source>JNDI Name</source>
+        <target>Nombre JNDI</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/shared/add-connection-form/add-connection-form.component.ts</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addConnectionForm.driver" datatype="html">
+        <source>Driver</source>
+        <target>Conductor</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/shared/add-connection-form/add-connection-form.component.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addConnectionForm.jdbc" datatype="html">
+        <source>JDBC</source>
+        <target>JDBC</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/shared/add-connection-form/add-connection-form.component.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addConnectionForm.createConnection" datatype="html">
+        <source>Create Connection</source>
+        <target>Crear Conexión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/shared/add-connection-form/add-connection-form.component.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addConnectionForm.creating" datatype="html">
+        <source>Creating</source>
+        <target>Crear</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/shared/add-connection-form/add-connection-form.component.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addConnectionForm.cancel" datatype="html">
+        <source>Cancel</source>
+        <target>Cancelar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/shared/add-connection-form/add-connection-form.component.ts</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="activitiesCards.addConnection" datatype="html">
+        <source>Add Connection</source>
+        <target>Agregar Conexión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/add-connection/add-connection.component.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connectionTagsLabel.jndi" datatype="html">
+        <source>JNDI:</source>
+        <target>JNDI:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections-cards/connections-cards.component.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connectionTagsLabel.driver" datatype="html">
+        <source>Driver:</source>
+        <target>Conductor:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections-cards/connections-cards.component.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connectionsList.jndi" datatype="html">
+        <source>JNDI:</source>
+         <target>JNDI:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections-list/connections-list.component.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connectionsList.driver" datatype="html">
+        <source>Driver:</source>
+         <target>Conductor:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections-list/connections-list.component.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connectionsList.ping" datatype="html">
+        <source>Ping</source>
+         <target>Silbido</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections-list/connections-list.component.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connectionsList.edit" datatype="html">
+        <source>Edit</source>
+         <target>Editar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections-list/connections-list.component.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connectionsList.delete" datatype="html">
+        <source>Delete</source>
+        <target>Borrar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections-list/connections-list.component.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connections.connections" datatype="html">
+        <source>Connections</source>
+        <target>Conexiones</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connections.name" datatype="html">
+        <source>Name</source>
+        <target>Nombre</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connections.addConnection" datatype="html">
+        <source>Add Connection</source>
+        <target>Agregar Conexión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections.component.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections.component.ts</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connections.connectionsFound" datatype="html">
+        <source><x id="INTERPOLATION"/> Connections found
+              <x id="START_LINK" ctype="x-a"/>(out of <x id="INTERPOLATION_1"/> total)<x id="CLOSE_LINK" ctype="x-a"/></source>
+        <target><x id="INTERPOLATION"/> Connections found
+                      <x id="START_LINK" ctype="x-a"/>(fuera de <x id="INTERPOLATION_1"/> total)<x id="CLOSE_LINK" ctype="x-a"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections.component.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connections.noConnectionsFound" datatype="html">
+        <source>No Connections Found</source>
+        <target>Sin Conexiones Encontradas</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections.component.ts</context>
+          <context context-type="linenumber">57</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connections.noConnectionsFoundPleaseClick" datatype="html">
+        <source>
+            No Connections were found - please click below to create a new Connection!
+          </source>
+        <target>No se encontraron conexiones: ¡haga clic a continuación para crear una nueva conexión!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections.component.ts</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connections.noConnectionsMatchedFilter" datatype="html">
+        <source>No Connections matched the filter!  Please try changing your filter criteria... </source>
+        <target>Sin conexiones coincidió con el filtro! Intente cambiar sus criterios de filtro ...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="connections.doYouReallyWantToDeleteSelectedConnection" datatype="html">
+        <source>Do you really want to delete the selected Connection?</source>
+        <target>¿Realmente quieres eliminar la conexión seleccionada?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/connections.component.ts</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="editConnection.editConnections" datatype="html">
+        <source>Edit Connection</source>
+        <target>Editar Conexión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/connections/edit-connection/edit-connection.component.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navHeader.beetleStudio" datatype="html">
+        <source>BeETLe Studio</source>
+        <target>BeETLE Studio</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/nav-header/nav-header.component.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/nav-header/nav-header.component.ts</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navHeader.about" datatype="html">
+        <source>About</source>
+        <target>Acerca de</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/nav-header/nav-header.component.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navHeader.logout" datatype="html">
+        <source>Logout</source>
+        <target>Cerrar Sesión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/nav-header/nav-header.component.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navHeader.version" datatype="html">
+        <source>version</source>
+        <target>versión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/nav-header/nav-header.component.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navHeader.builtOn" datatype="html">
+        <source>Built On</source>
+        <target>Construida Sobre</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/nav-header/nav-header.component.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navHeader.projectUrl" datatype="html">
+        <source>Project URL</source>
+        <target>URL del proyecto</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/nav-header/nav-header.component.ts</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="navHeader.trademark" datatype="html">
+        <source>
+          © 2016 Red Hat, Inc (JBoss Middleware)
+        </source>
+        <target>© 2016 Red Hat, Inc (JBoss Middleware)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/nav-header/nav-header.component.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="verticlaNav.activities" datatype="html">
+        <source>Activities</source>
+        <target>Ocupaciones</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/vertical-nav/vertical-nav.component.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="verticlaNav.connections" datatype="html">
+        <source>Connections</source>
+        <target>Conexiones</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/vertical-nav/vertical-nav.component.ts</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.serverError" datatype="html">
+        <source>Server Error Encountered</source>
+        <target>Error del servidor encontrado</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.errorEncounteredPleaseReload" datatype="html">
+        <source>
+            Error was encountered communicating with the server.  Please reload the page.
+          </source>
+        <target>Se ha encontrado un error al comunicarse con el servidor. Por favor recarga la página.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.reloadPage" datatype="html">
+        <source>Reload Page</source>
+        <target>Recargar Página</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">66</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">108</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.serverErrorDetails" datatype="html">
+        <source>Server Error Details</source>
+        <target>Detalles de error del servidor</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.toggleDetails" datatype="html">
+        <source>Toggle Details</source>
+        <target>Toggle Details</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.pageNotFound" datatype="html">
+        <source>Page Not Found</source>
+        <target>Página No Encontrada</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-not-found/page-not-found.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.attemptedToReloadAPageThatDoesNotExist" datatype="html">
+        <source>
+            You attempted to navigate to a page that does not exist!  Please hit the back button
+            or go back to home (button below).
+          </source>
+        <target>¡Intentaste navegar a una página que no existe! Por favor, presiona el botón Atrás o regrese a su hogar (botón a continuación)..</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.backToHome" datatype="html">
+        <source>Back to Home</source>
+        <target>De Vuelta a Casa</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.dataAlreadyExists" datatype="html">
+        <source>Data Already Exists</source>
+        <target>Los Datos Ya Existen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.itAppearsYouAttmeptedToAddOrCreate" datatype="html">
+        <source>
+            It appears you attempted to add or create something that already exists. Instead of adding it again,
+            try finding the existing resource and editing.
+          </source>
+        <target>Parece que intentaste agregar o crear algo que ya existe. En lugar de agregarlo nuevamente,
+        intenta encontrar el recurso y la edición existentes.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.connectionError" datatype="html">
+        <source>Connection Error</source>
+        <target>Error de Conexión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.couldNotReachServer" datatype="html">
+        <source>(Could Not Reach Server)</source>
+        <target>(No se pudo alcanzar el servidor)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.couldNotReachServerTryReloading" datatype="html">
+        <source>
+            We couldn&apos;t reach the server. Try reloading the page in a few minutes or check your internet connection.
+          </source>
+          <target>No pudimos llegar al servidor. Intente volver a cargar la página en unos pocos minutos o consulte su conexión a Internet.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.unexpectedErrorOnPage" datatype="html">
+        <source>Unexpected Error on Page</source>
+        <target>Error Inesperado en la Página</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">95</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.somethingUnexpetedHappenedTryReloadingPage" datatype="html">
+        <source>
+            Something unexpected happened.  Please try reloading the page, or you could just go back to Home.
+            See the buttons below...
+          </source>
+         <target>Algo inesperado sucedió. Intente volver a cargar la página o simplemente vuelva a Inicio.
+         Mira los botones a continuación ...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">102</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pageError.backToDashboard" datatype="html">
+        <source>Back to Dashboard</source>
+        <target>Volver al Tablero</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/page-error/page-error.component.ts</context>
+          <context context-type="linenumber">107</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
