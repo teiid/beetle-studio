@@ -25,12 +25,26 @@ import { Component } from "@angular/core";
 })
 export class AppComponent {
 
-  public routerOutletWrapperId: string;
-  public routerOutletWrapperClass: string;
+  private routerOutletDivId: string;
+  private routerOutletDivClass: string;
 
   constructor() {
-    this.routerOutletWrapperId = "studio-page-body";
-    this.routerOutletWrapperClass = "";
+    this.routerOutletDivId = "studio-page-body";
+    this.routerOutletDivClass = "";
+  }
+
+  /**
+   * @returns {string} the identifier of the div containing the router outlet
+   */
+  public get routerOutletWrapperId(): string {
+    return this.routerOutletDivId;
+  }
+
+  /**
+   * @returns {string} the class name of the div containing the router outlet
+   */
+  public get routerOutletWrapperClass(): string {
+    return this.routerOutletDivClass;
   }
 
 }

@@ -1,3 +1,20 @@
+/**
+ * @license
+ * Copyright 2017 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {
   Component,
   OnInit,
@@ -5,17 +22,17 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 
-import { FormControl, FormGroup} from "@angular/forms";
+import { FormControl, FormGroup } from "@angular/forms";
 import { AbstractControl } from "@angular/forms";
 import { Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { ConnectionService} from "@connections/shared/connection.service";
+import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
-import { TemplateDefinition} from "@connections/shared/template-definition.model";
+import { TemplateDefinition } from "@connections/shared/template-definition.model";
 import { LoggerService } from "@core/logger.service";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
-import {PropertyFormComponent} from "@shared/property-form/property-form.component";
+import { PropertyFormComponent } from "@shared/property-form/property-form.component";
 import { WizardComponent } from "patternfly-ng";
 import { WizardEvent } from "patternfly-ng";
 import { WizardStepConfig } from "patternfly-ng";
@@ -32,19 +49,12 @@ export class AddConnectionWizardComponent implements OnInit {
   // Wizard Config
   public wizardConfig: WizardConfig;
 
-  @ViewChild("wizard") private wizard: WizardComponent;
-  @ViewChild(PropertyFormComponent) private detailPropForm: PropertyFormComponent;
-
-  private connectionService: ConnectionService;
-  private allTemplates: TemplateDefinition[] = [];
-  public templatesLoaded = false;
-  public detailPropertiesLoaded = false;
-  private basicPropertyForm: FormGroup;
-  private detailProperties: Array<PropertyDefinition<any>> = [];
-  private requiredPropValues: Array<[string, string]> = [];
-
+  public basicPropertyForm: FormGroup;
   public createComplete = true;
   public createSuccessful = false;
+  public detailPropertiesLoaded = false;
+  public requiredPropValues: Array<[string, string]> = [];
+  public templatesLoaded = false;
 
   // Wizard Step 1
   public step1Config: WizardStepConfig;
@@ -56,6 +66,13 @@ export class AddConnectionWizardComponent implements OnInit {
   public step3Config: WizardStepConfig;
   public step3aConfig: WizardStepConfig;
   public step3bConfig: WizardStepConfig;
+
+  @ViewChild("wizard") public wizard: WizardComponent;
+  @ViewChild(PropertyFormComponent) public detailPropForm: PropertyFormComponent;
+
+  private connectionService: ConnectionService;
+  private allTemplates: TemplateDefinition[] = [];
+  private detailProperties: Array<PropertyDefinition<any>> = [];
   private logger: LoggerService;
   private router: Router;
 

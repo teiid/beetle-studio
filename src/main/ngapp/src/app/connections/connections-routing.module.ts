@@ -29,7 +29,7 @@ const connectionsRoutes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot( connectionsRoutes )
+    RouterModule.forChild( connectionsRoutes )
   ],
   exports: [
     RouterModule

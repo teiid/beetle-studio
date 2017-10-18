@@ -25,10 +25,10 @@ import { Component, Input } from "@angular/core";
 })
 export class PageErrorComponent {
 
+  @Input() public error: any = "";
+
   private eobj: any = null;
   private showDetails = false;
-
-  @Input() private error: any = "";
 
   /**
    * Returns whether details should be shown.

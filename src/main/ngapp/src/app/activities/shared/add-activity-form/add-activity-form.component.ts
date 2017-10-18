@@ -32,12 +32,12 @@ import { LoggerService } from "@core/logger.service";
 })
 export class AddActivityFormComponent {
 
-  public creatingActivity = false;
+  @Output() public createActivity = new EventEmitter<NewActivity>();
+
   private model = new NewActivity();
+  private creating = false;
   private logger: LoggerService;
   private router: Router;
-
-  @Output() private createActivity = new EventEmitter<NewActivity>();
 
   constructor( router: Router, logger: LoggerService ) {
     this.router = router;
@@ -105,6 +105,13 @@ export class AddActivityFormComponent {
   }
 
   /**
+   * @returns {boolean} 'true' if the activity is being created
+   */
+  public get creatingActivity(): boolean {
+    return this.creating;
+  }
+
+  /**
    * Called when the user clicks the "Create Activity" submit button on the form.
    */
   public onCreateActivity(): void {
@@ -116,7 +123,7 @@ export class AddActivityFormComponent {
 
     this.logger.log("[AddActivityFormComponent] Firing create-activity event: %o", activity);
 
-    this.creatingActivity = true;
+    this.creating = true;
     this.createActivity.emit(activity);
   }
 
