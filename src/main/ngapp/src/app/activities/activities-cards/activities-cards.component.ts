@@ -30,13 +30,13 @@ import { Output } from "@angular/core";
 export class ActivitiesCardsComponent {
 
   @Input() public activities: Activity[];
-  @Input() private selectedActivities: Activity[];
-  @Output() private activitySelected: EventEmitter<Activity> = new EventEmitter<Activity>();
-  @Output() private activityDeselected: EventEmitter<Activity> = new EventEmitter<Activity>();
-  @Output() private tagSelected: EventEmitter<string> = new EventEmitter<string>();
-  @Output() private startActivity: EventEmitter<string> = new EventEmitter<string>();
-  @Output() private editActivity: EventEmitter<string> = new EventEmitter<string>();
-  @Output() private deleteActivity: EventEmitter<string> = new EventEmitter<string>();
+  @Input() public selectedActivities: Activity[];
+  @Output() public activitySelected: EventEmitter<Activity> = new EventEmitter<Activity>();
+  @Output() public activityDeselected: EventEmitter<Activity> = new EventEmitter<Activity>();
+  @Output() public tagSelected: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public startActivity: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public editActivity: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public deleteActivity: EventEmitter<string> = new EventEmitter<string>();
 
   /**
    * Constructor.

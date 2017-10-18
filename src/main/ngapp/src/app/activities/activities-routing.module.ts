@@ -25,7 +25,7 @@ const activitiesRoutes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot( activitiesRoutes )
+    RouterModule.forChild( activitiesRoutes )
   ],
   exports: [
     RouterModule

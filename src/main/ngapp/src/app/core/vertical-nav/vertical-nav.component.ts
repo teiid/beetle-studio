@@ -57,19 +57,25 @@ export class VerticalNavComponent implements OnInit {
   }
 
   /**
-   * Returns true if the currently active route is /activities/*
-   * @returns {boolean}
+   * Called when the user clicks the vertical menu Activities item.
    */
-  private isActivitiesRoute(): boolean {
-    return this.router.isActive( "/activities", true );
+  public onActivitiesClick(): void {
+    this.currentMenu = VerticalNavType.Activities;
+    const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
-    /**
-     * Returns true if the currently active route is /connections/*
-     * @returns {boolean}
-     */
-  private isConnectionsRoute(): boolean {
-    return this.router.isActive("/connections", true);
+  /**
+   * Called when the user clicks the vertical menu Connections item.
+   */
+  public onConnectionsClick(): void {
+    this.currentMenu = VerticalNavType.Connections;
+    const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
    /**
@@ -83,28 +89,6 @@ export class VerticalNavComponent implements OnInit {
             this.currentSubMenu = VerticalNavSubMenuType.None;
         }, 180);
         */
-    }
-
-    /**
-     * Called when the user clicks the vertical menu Activities item.
-     */
-  public onActivitiesClick(): void {
-      this.currentMenu = VerticalNavType.Activities;
-      const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
-      this.router.navigate(link).then(() => {
-        // nothing to do
-      });
-    }
-
-    /**
-     * Called when the user clicks the vertical menu Connections item.
-     */
-  public onConnectionsClick(): void {
-      this.currentMenu = VerticalNavType.Connections;
-      const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
-      this.router.navigate(link).then(() => {
-        // nothing to do
-      });
     }
 
     /**

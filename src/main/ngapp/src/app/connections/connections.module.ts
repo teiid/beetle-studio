@@ -17,7 +17,7 @@
 
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { ConnectionsCardsComponent } from "@connections/connections-cards/connections-cards.component";
 import { ConnectionsListComponent } from "@connections/connections-list/connections-list.component";
@@ -27,8 +27,8 @@ import { ConnectionService } from "@connections/shared/connection.service";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
-import { AddConnectionComponent } from "./add-connection/add-connection.component";
 import { AddConnectionWizardComponent } from "./add-connection-wizard/add-connection-wizard.component";
+import { AddConnectionComponent } from "./add-connection/add-connection.component";
 
 @NgModule({
   imports: [

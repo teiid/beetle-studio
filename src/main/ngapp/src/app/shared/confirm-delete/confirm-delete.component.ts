@@ -29,8 +29,8 @@ export class ConfirmDeleteComponent {
 
   protected dialogIsOpen = false;
 
-  @Output() private deleteSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @ViewChildren("confirmDeleteModal") private confirmDeleteModal: QueryList<ModalDirective>;
+  @Output() public deleteSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @ViewChildren("confirmDeleteModal") public confirmDeleteModal: QueryList<ModalDirective>;
 
   /**
    * Called to open the dialog.

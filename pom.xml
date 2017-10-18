@@ -1,0 +1,240 @@
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+
+    <!-- ================================================================== -->
+    <!-- Self -->
+    <!-- ================================================================== -->
+    <artifactId>beetle-studio</artifactId>
+    <description>Web tooling supporting the Teiid project.</description>
+    <groupId>org.jboss.teiid</groupId>
+    <modelVersion>4.0.0</modelVersion>
+    <name>BeETLe Studio</name>
+    <packaging>war</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <url>http://http://teiid.jboss.org/</url>
+
+    <!-- ================================================================== -->
+    <!-- Organization -->
+    <!-- ================================================================== -->
+    <organization>
+        <name>JBoss, a division of Red Hat</name>
+        <url>http://www.jboss.org</url>
+    </organization>
+
+    <!-- ================================================================== -->
+    <!-- Licenses -->
+    <!-- ================================================================== -->
+    <licenses>
+        <license>
+            <name>Apache License Version 2.0</name>
+            <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <!-- ================================================================== -->
+    <!-- SCM and Issue Management-->
+    <!-- ================================================================== -->
+    <scm>
+        <connection>scm:git:git@github.com:teiid/beetle-studio.git</connection>
+        <developerConnection>scm:git:git@github.com:teiid/beetle-studio.git</developerConnection>
+        <url>scm:git:git@github.com:teiid/beetle-studio.git</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/teiid/beetle-studio/issues</url>
+    </issueManagement>
+
+    <!-- ================================================================== -->
+    <!-- Developers -->
+    <!-- ================================================================== -->
+    <developers>
+        <developer>
+            <name>Mark Drilling</name>
+            <id>mdrillin</id>
+            <email>mdrillin@redhat.com</email>
+            <organization>Red Hat</organization>
+            <roles>
+                <role>Project Lead</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+        <developer>
+            <name>Dan Florian</name>
+            <id>elvisisking</id>
+            <email>dflorian@redhat.com</email>
+            <organization>Red Hat</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+        <developer>
+            <name>Ted Jones</name>
+            <id>tejones</id>
+            <email>tejones@redhat.com</email>
+            <organization>Red Hat</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+    </developers>
+
+    <!-- ================================================================== -->
+    <!-- Properties -->
+    <!-- ================================================================== -->
+    <properties>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <version.exec-maven-plugin>1.5.0</version.exec-maven-plugin>
+        <version.maven-antrun-plugin>1.8</version.maven-antrun-plugin>
+        <version.maven-clean-plugin>3.0.0</version.maven-clean-plugin>
+        <version.maven-compiler-plugin>3.5.1</version.maven-compiler-plugin>
+        <version.maven-resources-plugin>2.7</version.maven-resources-plugin>
+        <version.maven-war-plugin>2.6</version.maven-war-plugin>
+        <finalName>beetle-studio</finalName>
+    </properties>
+
+    <!-- ================================================================== -->
+    <!-- Dependency Management -->
+    <!-- ================================================================== -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- ================================================================== -->
+    <!-- Build -->
+    <!-- ================================================================== -->
+    <build>
+        <finalName>${finalName}</finalName>
+
+        <plugins>
+            <!-- Copy the Angular UI sources to target to build. -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>${version.maven-resources-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>copy-angular-sources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/beetle-studio-web</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/ngapp</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Make the 'ng' command executable. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${version.maven-antrun-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>chmod-ng-cmd</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo>run chmod in ${basedir}</echo>
+                                <chmod file="${basedir}/target/beetle-studio-web/node_modules/@angular/cli/bin/ng" perm="777"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Call npm install to resolve the dependencies of the Angular UI in package.json. -->
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>${version.exec-maven-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>npm-install</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>generate-ng-modules</phase>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                            <workingDirectory>${basedir}/target/beetle-studio-web</workingDirectory>
+                            <target>
+                                <echo message="npm install" />
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <!-- Build the Angular UI with Angular CLI. -->
+                    <execution>
+                        <id>angular-cli-build</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <executable>node_modules/@angular/cli/bin/ng</executable>
+                            <arguments>
+                                <argument>build</argument>
+                                <argument>--prod</argument>
+                                <argument>--bh</argument>
+                                <argument>./</argument>
+                            </arguments>
+                            <workingDirectory>${basedir}/target/beetle-studio-web</workingDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Build the war. -->
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>${version.maven-war-plugin}</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/target/beetle-studio-web/dist</directory>
+                            <includes>
+                                <include>**/*.*</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
