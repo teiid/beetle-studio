@@ -24,6 +24,7 @@ import { ConnectionsListComponent } from "@connections/connections-list/connecti
 import { ConnectionsRoutingModule } from "@connections/connections-routing.module";
 import { ConnectionsComponent } from "@connections/connections.component";
 import { ConnectionService } from "@connections/shared/connection.service";
+import {MockConnectionService} from "@connections/shared/mock-connection.service";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -49,7 +50,8 @@ import { AddConnectionComponent } from "./add-connection/add-connection.componen
     AddConnectionComponent
   ],
   providers: [
-    ConnectionService
+    ConnectionService,
+    MockConnectionService
   ],
   exports: [
   ]

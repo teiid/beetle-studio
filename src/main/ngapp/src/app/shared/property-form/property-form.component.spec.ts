@@ -16,7 +16,7 @@
  */
 
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
 
@@ -26,7 +26,7 @@ describe("PropertyFormComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ ReactiveFormsModule ],
       declarations: [ PropertyFormComponent, PropertyFormPropertyComponent ]
     })
     .compileComponents().then(() => {
