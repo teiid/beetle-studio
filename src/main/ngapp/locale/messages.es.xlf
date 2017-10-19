@@ -81,7 +81,7 @@
         <target>Cargando actividades ...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/activities/activities.component.ts</context>
-          <context context-type="linenumber">81</context>
+          <context context-type="linenumber">82</context>
         </context-group>
       </trans-unit>
       <trans-unit id="activities.doYouReallyWantToDelete" datatype="html">
@@ -145,7 +145,7 @@
         <target>Objetivo:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/activities/activities-cards/activities-cards.component.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="activitiesList.Source" datatype="html">
@@ -161,7 +161,7 @@
         <target>Objetivo:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/activities/activities-list/activities-list.component.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="addConnectionForm.connectionProperties" datatype="html">
@@ -243,7 +243,7 @@
         <target>JNDI:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/connections/connections-cards/connections-cards.component.ts</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="connectionTagsLabel.driver" datatype="html">
@@ -251,7 +251,7 @@
         <target>Conductor:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/connections/connections-cards/connections-cards.component.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="connectionsList.jndi" datatype="html">
@@ -267,7 +267,7 @@
          <target>Conductor:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/connections/connections-list/connections-list.component.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="connectionsList.ping" datatype="html">
@@ -403,7 +403,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="navHeader.version" datatype="html">
-        <source>version</source>
+        <source>Version</source>
         <target>versión</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/nav-header/nav-header.component.ts</context>
@@ -436,7 +436,7 @@
           <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="verticlaNav.activities" datatype="html">
+      <trans-unit id="verticalNav.activities" datatype="html">
         <source>Activities</source>
         <target>Ocupaciones</target>
         <context-group purpose="location">
@@ -444,7 +444,7 @@
           <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="verticlaNav.connections" datatype="html">
+      <trans-unit id="verticalNav.connections" datatype="html">
         <source>Connections</source>
         <target>Conexiones</target>
         <context-group purpose="location">
@@ -545,7 +545,7 @@
           <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="pageError.itAppearsYouAttmeptedToAddOrCreate" datatype="html">
+      <trans-unit id="pageError.itAppearsYouAttemptedToAddOrCreate" datatype="html">
         <source>
             It appears you attempted to add or create something that already exists. Instead of adding it again,
             try finding the existing resource and editing.
@@ -591,7 +591,7 @@
           <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="pageError.somethingUnexpetedHappenedTryReloadingPage" datatype="html">
+      <trans-unit id="pageError.somethingUnexpectedHappenedTryReloadingPage" datatype="html">
         <source>
             Something unexpected happened.  Please try reloading the page, or you could just go back to Home.
             See the buttons below...
