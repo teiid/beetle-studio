@@ -59,10 +59,10 @@ TBD
 ## Developer Guidelines
 
 - IDE - The [WebStorm IDE](https://www.jetbrains.com/webstorm/) is the preferred development environment. See our
-[BeETLe Studio WebStorm IDE Guide](https://github.com/teiid/beetle-studio/documentation/ide/webstorm-guide.md) for IDE development practices.
+[BeETLe Studio WebStorm IDE Guide](https://github.com/teiid/beetle-studio/blob/master/documentation/ide/webstorm-guide.md) for IDE development practices.
 - Style and Coding Guide - In general, we try to follow the style outlined by Angular defined
 in their [style guide](https://angular.io/guide/styleguide). More specific syntax, conventions,
-project structure, and formatting can be found in our [BeETLe Studio Style Guide](https://github.com/teiid/beetle-studio/documentation/style-guide/style-guide.md).
+project structure, and formatting can be found in our [BeETLe Studio Style Guide](https://github.com/teiid/beetle-studio/blob/master/documentation/style-guide/style-guide.md).
 - Internationalization (i18n) - All text visible to the user should be internationlized.
-The [Internalization in BeETLe Studio](https://github.com/teiid/beetle-studio/documentation/i18n/README.md)
+The [Internalization in BeETLe Studio](https://github.com/teiid/beetle-studio/blob/master/documentation/i18n/README.md)
 document describes the internationalization practices that should be followed.
