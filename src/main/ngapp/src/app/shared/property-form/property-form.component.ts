@@ -16,7 +16,7 @@
  */
 
 import { Component, Input, OnInit } from "@angular/core";
-import { Form, FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 
 import { ObjectUtils } from "@core/utils/object-utils";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
