@@ -18,7 +18,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Routes } from "@angular/router";
-import { AddConnectionComponent} from "@connections/add-connection/add-connection.component";
+import { AddConnectionComponent } from "@connections/add-connection/add-connection.component";
 import { ConnectionsComponent } from "@connections/connections.component";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 

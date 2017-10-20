@@ -1,12 +1,12 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import {FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {RouterTestingModule} from "@angular/router/testing";
-import {CoreModule} from "@core/core.module";
-import {PropertyFormPropertyComponent} from "@shared/property-form/property-form-property/property-form-property.component";
-import {PropertyFormComponent} from "@shared/property-form/property-form.component";
-import {SharedModule} from "@shared/shared.module";
-import {PatternFlyNgModule, WizardConfig, WizardStepComponent} from "patternfly-ng";
+import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { RouterTestingModule } from "@angular/router/testing";
+import { CoreModule } from "@core/core.module";
+import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
+import { PropertyFormComponent } from "@shared/property-form/property-form.component";
+import { SharedModule } from "@shared/shared.module";
+import { PatternFlyNgModule, WizardConfig, WizardStepComponent } from "patternfly-ng";
 import { AddConnectionWizardComponent } from "./add-connection-wizard.component";
 
 describe("AddConnectionWizardComponent", () => {
