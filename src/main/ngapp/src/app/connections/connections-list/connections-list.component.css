@@ -1,4 +1,7 @@
-
+.list-view-pf-main-info {
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
 .list-group-item {
   -webkit-transition: background-color 300ms;
   -moz-transition: background-color 300ms;

@@ -40,15 +40,15 @@ export class ConnectionsComponent extends AbstractPageComponent {
 
   public readonly addConnectionLink: string = ConnectionsConstants.addConnectionPath;
 
-  private allConnections: Connection[] = [];
-  private filteredConnections: Connection[] = [];
-  private selectedConnections: Connection[] = [];
+  private allConns: Connection[] = [];
+  private filteredConns: Connection[] = [];
+  private selectedConns: Connection[] = [];
   private connectionNameForDelete: string;
   private router: Router;
   private connectionService: ConnectionService;
   private filter: IdFilter = new IdFilter();
   private layout: LayoutType = LayoutType.CARD;
-  private sortDirection: SortDirection;
+  private sortDirection: SortDirection = SortDirection.ASC;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
@@ -63,8 +63,8 @@ export class ConnectionsComponent extends AbstractPageComponent {
       .getAllConnections()
       .subscribe(
         (connections) => {
-          this.allConnections = connections;
-          this.filteredConnections = this.filterConnections();
+          this.allConns = connections;
+          this.filteredConns = this.filterConnections();
           this.loaded("connections");
         },
         (error) => {
@@ -103,8 +103,51 @@ export class ConnectionsComponent extends AbstractPageComponent {
   }
 
   /**
-   * @returns {string} the pattern the connection names are being matched to (can be null or empty)
+   * @returns {Connection[]} the array of all connections
    */
+  public get allConnections(): Connection[] {
+    return this.allConns;
+  }
+
+  /**
+   * @returns {Connection[]} the array of filtered connections
+   */
+  public get filteredConnections(): Connection[] {
+    return this.filteredConns;
+  }
+
+  /**
+   * @returns {Connection[]} the array of selected connections
+   */
+  public get selectedConnections(): Connection[] {
+    return this.selectedConns;
+  }
+
+  public onPing( connName: string): void {
+    alert("Ping connection " + connName);
+  }
+
+  public onSelected(connection: Connection): void {
+    // Only allow one item to be selected
+    this.selectedConns.shift();
+    this.selectedConns.push(connection);
+  }
+
+  public onDeselected(connection: Connection): void {
+    // Only one item is selected at a time
+    this.selectedConns.shift();
+    // this.selectedConns.splice(this.selectedConns.indexOf(connection), 1);
+  }
+
+  public onDelete(connName: string): void {
+    this.connectionNameForDelete = connName;
+    this.confirmDeleteDialog.open();
+  }
+
+  public isFiltered(): boolean {
+    return this.allConns.length !== this.filteredConns.length;
+  }
+
   public get nameFilter(): string {
     return this.filter.getPattern();
   }
@@ -114,31 +157,6 @@ export class ConnectionsComponent extends AbstractPageComponent {
    */
   public set nameFilter( pattern: string ) {
     this.filter.setFilter( pattern );
-  }
-
-  public onPing( connName: string): void {
-    alert("Ping connection " + connName);
-  }
-
-  public onSelected(connection: Connection): void {
-    // Only allow one item to be selected
-    this.selectedConnections.shift();
-    this.selectedConnections.push(connection);
-  }
-
-  public onDeselected(connection: Connection): void {
-    // Only one item is selected at a time
-    this.selectedConnections.shift();
-    // this.selectedConnections.splice(this.selectedConnections.indexOf(connection), 1);
-  }
-
-  public onDelete(connName: string): void {
-    this.connectionNameForDelete = connName;
-    this.confirmDeleteDialog.open();
-  }
-
-  public isFiltered(): boolean {
-    return this.allConnections.length !== this.filteredConnections.length;
   }
 
   public toggleSortDirection(): void {
@@ -155,11 +173,11 @@ export class ConnectionsComponent extends AbstractPageComponent {
     this.filterConnections();
   }
 
-  public onListLayout(): void {
+  public setListLayout(): void {
     this.layout = LayoutType.LIST;
   }
 
-  public onCardLayout(): void {
+  public setCardLayout(): void {
     this.layout = LayoutType.CARD;
   }
 
@@ -169,7 +187,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
   public onDeleteConnection(): void {
     const selectedConn =  this.filterConnections().find((x) => x.getId() === this.connectionNameForDelete);
 
-    // const itemsToDelete: Connection[] = ArrayUtils.intersect(this.selectedConnections, this.filteredConnections);
+    // const itemsToDelete: Connection[] = ArrayUtils.intersect(this.selectedConns, this.filteredConns);
     // const selectedConn = itemsToDelete[0];
 
     const connectionToDelete: NewConnection = new NewConnection();
@@ -194,15 +212,15 @@ export class ConnectionsComponent extends AbstractPageComponent {
   /**
    * Filters and sorts the list of connections based on the user input
    */
-  private filterConnections(): Connection[] {
+  public filterConnections(): Connection[] {
     // Clear the array first.
-    this.filteredConnections.splice(0, this.filteredConnections.length);
-    for (const connection of this.allConnections) {
+    this.filteredConns.splice(0, this.filteredConns.length);
+    for (const connection of this.allConns) {
       if (this.filter.accepts(connection)) {
-        this.filteredConnections.push(connection);
+        this.filteredConns.push(connection);
       }
     }
-    this.filteredConnections.sort( (c1: Connection, c2: Connection) => {
+    this.filteredConns.sort( (c1: Connection, c2: Connection) => {
       let rval: number = c1.getId().localeCompare(c2.getId());
       if (this.sortDirection === SortDirection.DESC) {
         rval *= -1;
@@ -210,13 +228,13 @@ export class ConnectionsComponent extends AbstractPageComponent {
       return rval;
     });
 
-    this.selectedConnections = ArrayUtils.intersect(this.selectedConnections, this.filteredConnections);
+    this.selectedConns = ArrayUtils.intersect(this.selectedConns, this.filteredConns);
 
-    return this.filteredConnections;
+    return this.filteredConns;
   }
 
   private removeConnectionFromList(connection: Connection): void {
-    this.allConnections.splice(this.allConnections.indexOf(connection), 1);
+    this.allConns.splice(this.allConns.indexOf(connection), 1);
     this.filterConnections();
   }
 }
