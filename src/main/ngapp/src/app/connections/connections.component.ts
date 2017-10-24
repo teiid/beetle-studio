@@ -221,10 +221,25 @@ export class ConnectionsComponent extends AbstractPageComponent {
       }
     }
     this.filteredConns.sort( (c1: Connection, c2: Connection) => {
-      let rval: number = c1.getId().localeCompare(c2.getId());
-      if (this.sortDirection === SortDirection.DESC) {
+      let rval = 0;
+
+      if ( c1.getId() ) {
+        if ( c2.getId() ) {
+          // both connections have an ID
+          rval = c1.getId().localeCompare( c2.getId() );
+        } else {
+          // c2 does not have an ID
+          rval = 1;
+        }
+      } else if ( c2.getId() ) {
+        // c1 does not have an ID and c2 does
+        rval = -1;
+      }
+
+      if ( this.sortDirection === SortDirection.DESC ) {
         rval *= -1;
       }
+
       return rval;
     });
 
