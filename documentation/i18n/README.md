@@ -34,6 +34,6 @@ You will then need to add the correct translation:
   <note priority="1" from="meaning">User welcome</note>
 </trans-unit>
 
-3. Generate the war for each language. Run `ng serve --aot --locale es --i18n-format xlf --i18n-file src/locale/messages.{languageCode}.xlf`
+3. Generate the war for each language. Run `ng serve --aot --locale es --i18n-format xlf --i18n-file ./locale/messages.{languageCode}.xlf`
 Running the maven build will likely handle this step as well.
 
