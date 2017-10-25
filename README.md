@@ -28,14 +28,17 @@ The general idea is to keep your 'master' branch in-sync with the 'upstream/mast
 
 ### Requirements
 
-- Maven 3.x
-- Java 8+
+- Node.js 8.4.x ([installation instructions](https://nodejs.org/en/download/))
+- Angular CLI 1.3.x [installation instructions](https://github.com/angular/angular-cli/wiki)
+- Maven 3.x ([installation instructions](https://maven.apache.org/install.html))
+- Java 8.x
 - Running Komodo Server (an easy way to install a Komodo server is by using 
 a [Data Service Builder kit](https://developer.jboss.org/wiki/GettingStartedWithDataServicesBuilder))
 
 ### Maven Build
 
-Run the following command in the project's root dirrectory to generate the `beetle-studio.war` file:
+Make sure [Node.js]((https://nodejs.org/en/download/)) and [Angular CLI](https://github.com/angular/angular-cli/wiki) 
+are installed; then run the following command in the project's root directory to generate the `beetle-studio.war` file:
 ```bash
   $ mvn clean install
 ```
