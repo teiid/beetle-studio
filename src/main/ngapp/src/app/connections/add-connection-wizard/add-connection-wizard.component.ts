@@ -129,8 +129,6 @@ export class AddConnectionWizardComponent implements OnInit {
       loadingTitle: "Add Connection Wizard loading",
       loadingSecondaryInfo: "Please wait for the wizard to finish loading...",
       title: "Add Connection",
-      sidebarStyleClass: "example-wizard-sidebar",
-      stepStyleClass: "example-wizard-step"
     } as WizardConfig;
 
     // Load the templates for the first step

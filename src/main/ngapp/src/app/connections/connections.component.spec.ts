@@ -19,21 +19,22 @@ describe("ConnectionsComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), RouterTestingModule, SharedModule ],
-      declarations: [ ConnectionsComponent, ConnectionsListComponent, ConnectionsCardsComponent ],
-      providers: [
-        { provide: ConnectionService, useValue: MockConnectionService },
-      ]
-    })
-    .compileComponents().then(() => {
-      // Nothing
+      declarations: [ ConnectionsComponent, ConnectionsListComponent, ConnectionsCardsComponent ]
     });
-  }));
 
-  beforeEach(() => {
+    // use mock service
+    TestBed.overrideComponent( ConnectionsComponent, {
+      set: {
+        providers: [
+          { provide: ConnectionService, useClass: MockConnectionService },
+        ]
+      }
+    });
+
     fixture = TestBed.createComponent(ConnectionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
+  }));
 
   it("should be created", () => {
     expect(component).toBeTruthy();
@@ -52,27 +53,27 @@ describe("ConnectionsComponent", () => {
     expect(de).toBeDefined();
   });
 
-  // it("should have Connections", () => {
-  //   // Check component object
-  //   const connections = component.allConnections;
-  //   expect(connections.length).toEqual(3);
-  //
-  //   // Check html has the same number of connection cards
-  //   const cardDebugElems = fixture.debugElement.queryAll(By.css(".connection-card-title"));
-  //   expect(cardDebugElems).toBeDefined();
-  //   expect(cardDebugElems.length).toEqual(3);
-  // });
+  it("should have Connections", () => {
+    // Check component object
+    const connections = component.allConnections;
+    expect(connections.length).toEqual(3);
 
-  // it("should have initial card layout", () => {
-  //   // app-connections-cards should be present
-  //   let debugEl = fixture.debugElement.query(By.css("app-connections-cards"));
-  //   const element = debugEl.nativeElement;
-  //   expect(element).toBeDefined();
-  //
-  //   // app-connections-list should not be present
-  //   debugEl = fixture.debugElement.query(By.css("app-connections-list"));
-  //   expect(debugEl).toBeNull();
-  // });
+    // Check html has the same number of connection cards
+    const cardDebugElems = fixture.debugElement.queryAll(By.css(".connection-card-title"));
+    expect(cardDebugElems).toBeDefined();
+    expect(cardDebugElems.length).toEqual(3);
+  });
+
+  it("should have initial card layout", () => {
+    // app-connections-cards should be present
+    let debugEl = fixture.debugElement.query(By.css("app-connections-cards"));
+    const element = debugEl.nativeElement;
+    expect(element).toBeDefined();
+
+    // app-connections-list should not be present
+    debugEl = fixture.debugElement.query(By.css("app-connections-list"));
+    expect(debugEl).toBeNull();
+  });
 
   // it("should toggle layout", () => {
   //   // Initial layout should be Card Layout
