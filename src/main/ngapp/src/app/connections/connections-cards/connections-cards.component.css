@@ -30,7 +30,7 @@
   //-ms-transition: background-color 300ms;
   -o-transition: background-color 300ms;
   transition: background-color 300ms;
-  height: 220px;
+  height: 160px;
 }
 .connection-card:hover {
   background-color: rgb(237, 237, 237);

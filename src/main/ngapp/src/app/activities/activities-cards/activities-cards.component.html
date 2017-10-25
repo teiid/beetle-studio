@@ -1,7 +1,7 @@
 <div class="container-fluid container-cards-pf">
   <div class="row row-cards-pf">
 
-    <div class="col-xs-12 col-sm-4 col-md-4" *ngFor="let activity of activities">
+    <div class="col-xs-12 col-sm-3 col-md-3" *ngFor="let activity of activities">
       <div class="card-pf card-pf-accented card-pf-aggregate-status activity-card" [class.active]="isSelected(activity)" (click)="toggleActivitySelected(activity)">
         <div class="card-pf-body">
           <!-- title -->

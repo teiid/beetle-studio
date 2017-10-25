@@ -42,15 +42,15 @@ export class ActivitiesComponent extends AbstractPageComponent {
 
   public readonly addActivityLink = ActivitiesConstants.addActivityPath;
 
-  private allActivities: Activity[] = [];
-  private filteredActivities: Activity[] = [];
-  private selectedActivities: Activity[] = [];
+  private allActs: Activity[] = [];
+  private filteredActs: Activity[] = [];
+  private selectedActs: Activity[] = [];
   private activityNameForDelete: string;
   private router: Router;
   private activityService: ActivityService;
   private filter: IdFilter = new IdFilter();
   private layout: LayoutType = LayoutType.CARD;
-  private sortDirection: SortDirection;
+  private sortDirection: SortDirection = SortDirection.ASC;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
@@ -62,20 +62,20 @@ export class ActivitiesComponent extends AbstractPageComponent {
   }
 
   public loadAsyncPageData(): void {
-    this.allActivities = this.activityService.getAllActivities();
-    this.filteredActivities = this.filterActivities();
+    this.allActs = this.activityService.getAllActivities();
+    this.filteredActs = this.filterActivities();
     this.loaded("activities");
   }
 
   public onSelected(activity: Activity): void {
     // Only allow one item to be selected
-    this.selectedActivities.shift();
-    this.selectedActivities.push(activity);
+    this.selectedActs.shift();
+    this.selectedActs.push(activity);
   }
 
   public onDeselected(activity: Activity): void {
     // Only one item is selected at a time
-    this.selectedActivities.shift();
+    this.selectedActs.shift();
     // this.selectedConnections.splice(this.selectedConnections.indexOf(connection), 1);
   }
 
@@ -96,7 +96,18 @@ export class ActivitiesComponent extends AbstractPageComponent {
   }
 
   public isFiltered(): boolean {
-    return this.allActivities.length !== this.filteredActivities.length;
+    return this.allActs.length !== this.filteredActs.length;
+  }
+
+  public get nameFilter(): string {
+    return this.filter.getPattern();
+  }
+
+  /**
+   * @param {string} pattern the new pattern for the connection name filter (can be null or empty)
+   */
+  public set nameFilter( pattern: string ) {
+    this.filter.setFilter( pattern );
   }
 
   public toggleSortDirection(): void {
@@ -142,17 +153,37 @@ export class ActivitiesComponent extends AbstractPageComponent {
   }
 
   /**
-   * @returns {string} the pattern the activity names are being matched to (can be null or empty)
+   * @returns {Activity[]} the array of all activities
    */
-  public get nameFilter(): string {
-    return this.filter.getPattern();
+  public get allActivities(): Activity[] {
+    return this.allActs;
   }
 
-  public onListLayout(): void {
+  /**
+   * @returns {Activity[]} the array of filtered activities
+   */
+  public get filteredActivities(): Activity[] {
+    return this.filteredActs;
+  }
+
+  /**
+   * @returns {Activity[]} the array of selected activities
+   */
+  public get selectedActivities(): Activity[] {
+    return this.selectedActs;
+  }
+
+  /**
+   * Set the layout type to LIST
+   */
+  public setListLayout(): void {
     this.layout = LayoutType.LIST;
   }
 
-  public onCardLayout(): void {
+  /**
+   * Set the layout type to CARD
+   */
+  public setCardLayout(): void {
     this.layout = LayoutType.CARD;
   }
 
@@ -185,15 +216,15 @@ export class ActivitiesComponent extends AbstractPageComponent {
   /**
    * Filters and sorts the list of activities based on the user input
    */
-  private filterActivities(): Activity[] {
+  public filterActivities(): Activity[] {
     // Clear the array first.
-    this.filteredActivities.splice(0, this.filteredActivities.length);
-    for (const activity of this.allActivities) {
+    this.filteredActs.splice(0, this.filteredActs.length);
+    for (const activity of this.allActs) {
       if (this.filter.accepts(activity)) {
-        this.filteredActivities.push(activity);
+        this.filteredActs.push(activity);
       }
     }
-    this.filteredActivities.sort( (a1: Activity, a2: Activity) => {
+    this.filteredActs.sort( (a1: Activity, a2: Activity) => {
       let rval: number = a1.getId().localeCompare(a2.getId());
       if (this.sortDirection === SortDirection.DESC) {
         rval *= -1;
@@ -201,13 +232,13 @@ export class ActivitiesComponent extends AbstractPageComponent {
       return rval;
     });
 
-    this.selectedActivities = ArrayUtils.intersect(this.selectedActivities, this.filteredActivities);
+    this.selectedActs = ArrayUtils.intersect(this.selectedActs, this.filteredActs);
 
-    return this.filteredActivities;
+    return this.filteredActs;
   }
 
   private removeActivityFromList(activity: Activity): void {
-    this.allActivities.splice(this.allActivities.indexOf(activity), 1);
+    this.allActs.splice(this.allActs.indexOf(activity), 1);
     this.filterActivities();
   }
 }

@@ -1,12 +1,13 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { MockConnectionService } from "@connections/shared/mock-connection.service";
 import { CoreModule } from "@core/core.module";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
-import { SharedModule } from "@shared/shared.module";
-import { PatternFlyNgModule, WizardConfig, WizardStepComponent } from "patternfly-ng";
+import { PatternFlyNgModule } from "patternfly-ng";
 import { AddConnectionWizardComponent } from "./add-connection-wizard.component";
 
 describe("AddConnectionWizardComponent", () => {
@@ -15,9 +16,11 @@ describe("AddConnectionWizardComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule, SharedModule ],
-      declarations: [ AddConnectionWizardComponent, FormGroup, PropertyFormComponent, PropertyFormPropertyComponent,
-                      WizardConfig, WizardStepComponent ]
+      imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule ],
+      declarations: [ AddConnectionWizardComponent, PropertyFormComponent, PropertyFormPropertyComponent ],
+      providers: [
+        { provide: ConnectionService, useClass: MockConnectionService },
+      ]
     })
     .compileComponents().then(() => {
       // nothing to do

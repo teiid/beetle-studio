@@ -30,6 +30,14 @@ export class PropertyFormPropertyComponent {
   @Input() public property: PropertyDefinition<any>;
   @Input() public form: FormGroup;
 
+  public setPropertyDefinition(prop: PropertyDefinition<any>): void {
+    this.property = prop;
+  }
+
+  public setFormGroup(fg: FormGroup): void {
+    this.form = fg;
+  }
+
   /*
    * Return the property valid state
    */
