@@ -66,3 +66,7 @@ project structure, and formatting can be found in our [BeETLe Studio Style Guide
 - Internationalization (i18n) - All text visible to the user should be internationlized.
 The [Internalization in BeETLe Studio](https://github.com/teiid/beetle-studio/documentation/i18n/README.md)
 document describes the internationalization practices that should be followed.
+- The [BeETLe Studio Developer Notes](https://github.com/teiid/beetle-studio/blob/master/documentation/dev-notes/dev-notes.md)
+document contains information that developers may find useful in performing their daily tasks. For 
+instance, there might be a note on how to track down a certain problem, or a note on common issues
+with unit tests.
