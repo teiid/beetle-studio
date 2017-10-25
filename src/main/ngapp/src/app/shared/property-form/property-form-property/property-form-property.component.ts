@@ -19,6 +19,7 @@ import { Component, Input } from "@angular/core";
 import { AbstractControl, FormGroup } from "@angular/forms";
 
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
+import { PropertyControlType } from "@shared/property-form/property-control-type.enum";
 
 @Component({
   selector: "app-form-property",
@@ -26,6 +27,8 @@ import { PropertyDefinition } from "@shared/property-form/property-definition.mo
 })
 
 export class PropertyFormPropertyComponent {
+
+  public controlType = PropertyControlType; // need local ref of enum for html to use
 
   @Input() public property: PropertyDefinition<any>;
   @Input() public form: FormGroup;

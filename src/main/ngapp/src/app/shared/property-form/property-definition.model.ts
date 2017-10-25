@@ -95,24 +95,6 @@ export class PropertyDefinition<T> {
   }
 
   /**
-   * @returns {string} the type of control for this property definition
-   */
-  public getControlType(): string {
-    const className = this.getTypeClassName();
-    if (this.isConstrainedToAllowedValues()) {
-      return "dropdown";
-    } else if (className === "java.lang.String") {
-      if (this.isMasked() || this.getId() === "password") {
-        return "maskedTextbox";
-      }
-      return "textbox";
-    } else if (className === "java.lang.Boolean") {
-      return "checkbox";
-    }
-    return "textbox";
-  }
-
-  /**
    * @returns {boolean} 'true' if required
    */
   public isRequired(): boolean {
