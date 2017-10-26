@@ -14,7 +14,7 @@
     <form [formGroup]=basicPropertyForm class="form-horizontal" *ngIf="templatesLoaded">
       <div [ngClass]="driverValid ? 'form-group' : 'form-group has-error'">
         <label class="col-sm-2 control-label">Connection Type</label>
-        <div class="col-sm-10">
+        <div class="col-sm-5">
           <select class="form-control" formControlName="driver" title="">
             <option value="" selected hidden>-- Select a Connection Type ---</option>
             <option *ngFor="let driver of templateNames" [value]="driver">{{ driver }}</option>
@@ -25,14 +25,14 @@
 
       <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
         <label class="col-sm-2 control-label">Name</label>
-        <div class="col-sm-10">
+        <div class="col-sm-5">
           <input class="form-control" formControlName="name" title="">
           <div class="help-block" *ngIf="!nameValid">{{ getBasicPropertyErrorMessage("name") }}</div>
         </div>
       </div>
       <div [ngClass]="jndiValid ? 'form-group' : 'form-group has-error'">
         <label class="col-sm-2 control-label">JNDI Identifier</label>
-        <div class="col-sm-10">
+        <div class="col-sm-5">
           <input class="form-control" formControlName="jndi" title="">
           <div class="help-block" *ngIf="!jndiValid">{{ getBasicPropertyErrorMessage("jndi") }}</div>
         </div>
@@ -48,7 +48,8 @@
       <div class="spinner spinner-lg blank-slate-pf-icon"></div>
     </div>
     <div class="add-connection-form row" *ngIf="detailPropertiesLoaded">
-      <app-property-form [formProperties]="getPropertyDefinitions()"></app-property-form>
+      <app-property-form [formProperties]="getPropertyDefinitions()" (formInitialized)="onDetailPropertyInit($event)"
+                         (formChanged)="onDetailPropertyChanged($event)"></app-property-form>
     </div>
   </pfng-wizard-step>
   <!-- -------------------------- -->

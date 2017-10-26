@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { Observable } from "rxjs/Observable";
 
 import { ObjectUtils } from "@core/utils/object-utils";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
@@ -29,6 +30,8 @@ import { PropertyDefinition } from "@shared/property-form/property-definition.mo
 export class PropertyFormComponent implements OnInit {
 
   @Input() public formProperties: Array<PropertyDefinition<any>> = [];
+  @Output() public formInitialized: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() public formChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
   public form: FormGroup;
 
   constructor( ) {
@@ -41,10 +44,14 @@ export class PropertyFormComponent implements OnInit {
 
   public ngOnInit(): void {
     this.form = this.toFormGroup(this.formProperties);
+    this.formInitialized.emit(this.form.valid);
+    this.form.valueChanges.subscribe((val) => {
+      this.formChanged.emit(this.form.valid);
+    });
   }
 
-  public setFormProperties( props: Array<PropertyDefinition<any>> ): void {
-    this.formProperties = props;
+  public get valid( ): boolean {
+    return this.form.valid;
   }
 
   /*

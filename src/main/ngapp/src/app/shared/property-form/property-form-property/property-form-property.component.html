@@ -1,16 +1,16 @@
 <div [ngClass]="isValid ? 'form-group' : 'form-group has-error'" [formGroup]="form">
   <label class="col-md-2 control-label" [attr.for]="property.getId()" data-toggle="tooltip" [title]="property.getDescription()">{{ property.getDisplayName() }}</label>
 
-  <div class="col-md-10" [ngSwitch]="controlType.toControlType(property)">
+  <div class="col-md-5" [ngSwitch]="controlType.toControlType(property)">
 
     <input *ngSwitchCase="controlType.TEXT" class="form-control" [formControlName]="property.getId()"
-           [id]="property.getId()" type="text" title="A text value">
+           [id]="property.getId()" type="text" title="A text value" [(ngModel)]="property.theDefaultValue">
 
     <input *ngSwitchCase="controlType.PASSWORD" class="form-control" [formControlName]="property.getId()"
-           [id]="property.getId()" type="password" title="A text value">
+           [id]="property.getId()" type="password" title="A text value" [(ngModel)]="property.theDefaultValue">
 
     <input *ngSwitchCase="controlType.CHECKBOX" [formControlName]="property.getId()"
-           [id]="property.getId()" type="checkbox" title="A boolean value">
+           [id]="property.getId()" type="checkbox" title="A boolean value" [(ngModel)]="property.theDefaultValue">
 
     <select [id]="property.getId()" *ngSwitchCase="controlType.DROPDOWN" [(ngModel)]="property.theDefaultValue" class="form-control"
             [formControlName]="property.getId()" title="A value with allowed values">
