@@ -26,6 +26,9 @@ export class MockConnectionService extends ConnectionService {
 
   constructor( http: Http, logger: LoggerService ) {
     super(http, logger);
+    this.conn1.setId("conn1");
+    this.conn2.setId("conn2");
+    this.conn3.setId("conn3");
   }
 
   /**

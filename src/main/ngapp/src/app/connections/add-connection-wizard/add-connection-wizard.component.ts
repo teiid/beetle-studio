@@ -53,6 +53,7 @@ export class AddConnectionWizardComponent implements OnInit {
   public createComplete = true;
   public createSuccessful = false;
   public detailPropertiesLoaded = false;
+  public detailPropertiesLoadedType = "";
   public requiredPropValues: Array<[string, string]> = [];
   public templatesLoaded = false;
 
@@ -106,7 +107,7 @@ export class AddConnectionWizardComponent implements OnInit {
     // Step 3 - Review and Create
     this.step3Config = {
       id: "step3",
-      priority: 2,
+      priority: 0,
       title: "Review and Create",
       allowClickNav: false
     } as WizardStepConfig;
@@ -129,6 +130,7 @@ export class AddConnectionWizardComponent implements OnInit {
       loadingTitle: "Add Connection Wizard loading",
       loadingSecondaryInfo: "Please wait for the wizard to finish loading...",
       title: "Add Connection",
+      contentHeight: "500px"
     } as WizardConfig;
 
     // Load the templates for the first step
@@ -151,7 +153,6 @@ export class AddConnectionWizardComponent implements OnInit {
   // ----------------
   // Public Methods
   // ----------------
-
   /*
    * Return the name valid state
    */
@@ -230,7 +231,10 @@ export class AddConnectionWizardComponent implements OnInit {
   public nextClicked($event: WizardEvent): void {
     // When leaving page 1, load the driver-specific property definitions
     if ($event.step.config.id === "step1") {
-      this.loadPropertyDefinitions(this.basicPropertyForm.controls["driver"].value);
+      const selectedDriver = this.basicPropertyForm.controls["driver"].value;
+      if(!this.detailPropertiesLoaded || (this.detailPropertiesLoadedType!==selectedDriver)) {
+        this.loadPropertyDefinitions(selectedDriver);
+      }
     }
   }
 
@@ -299,9 +303,20 @@ export class AddConnectionWizardComponent implements OnInit {
     }
   }
 
-  public updatePage1ValidStatus( ): void {
-    this.step1Config.nextEnabled = this.basicPropertyForm.valid;
-    this.setNavAway(this.step1Config.nextEnabled);
+  /**
+   * Handler for property form initialization
+   * @param {boolean} isValid form valid state
+   */
+  public onDetailPropertyInit(isValid: boolean): void {
+    this.updatePage2ValidStatus(isValid);
+  }
+
+  /**
+   * Handler for property form changes
+   * @param {boolean} isValid form valid state
+   */
+  public onDetailPropertyChanged(isValid: boolean): void {
+    this.updatePage2ValidStatus(isValid);
   }
 
   /**
@@ -345,13 +360,7 @@ export class AddConnectionWizardComponent implements OnInit {
       jndi: new FormControl("", Validators.required),
       driver: new FormControl("", Validators.required)
     });
-    this.onChanges();
-  }
-
-  /*
-   * React to basic property changes - update the page 1 status
-   */
-  private onChanges(): void {
+    // Responds to basic property changes - updates the page status
     this.basicPropertyForm.valueChanges.subscribe((val) => {
       this.updatePage1ValidStatus( );
     });
@@ -359,6 +368,16 @@ export class AddConnectionWizardComponent implements OnInit {
 
   private setNavAway(allow: boolean): void {
     this.step1Config.allowNavAway = allow;
+  }
+
+  private updatePage1ValidStatus( ): void {
+    this.step1Config.nextEnabled = this.basicPropertyForm.valid;
+    this.setNavAway(this.step1Config.nextEnabled);
+  }
+
+  private updatePage2ValidStatus(formValid: boolean): void {
+    this.step2Config.nextEnabled = formValid;
+    this.setNavAway(this.step2Config.nextEnabled);
   }
 
   /**
@@ -371,8 +390,22 @@ export class AddConnectionWizardComponent implements OnInit {
       .getConnectionTemplateProperties(driverName)
       .subscribe(
         (props) => {
-          that.detailProperties = props;
+          // Sort the properties.  (Required properties first)
+          const firstProps: any[] = [];
+          const nextProps: any[] = [];
+          let sortedProps: any[] = [];
+          for (const prop of props) {
+            if (prop.isRequired()) {
+              firstProps.push(prop);
+            } else {
+              nextProps.push(prop);
+            }
+          }
+          sortedProps = firstProps.concat(nextProps);
+
+          that.detailProperties = sortedProps;
           this.detailPropertiesLoaded = true;
+          this.detailPropertiesLoadedType = driverName;
         },
         (error) => {
           this.logger.error("[AddConnectionWizardComponent] Error: %o", error);

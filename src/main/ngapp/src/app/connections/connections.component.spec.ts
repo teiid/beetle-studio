@@ -75,41 +75,41 @@ describe("ConnectionsComponent", () => {
     expect(debugEl).toBeNull();
   });
 
-  // it("should toggle layout", () => {
-  //   // Initial layout should be Card Layout
-  //   let cardDebugElem = fixture.debugElement.query(By.css("app-connections-cards"));
-  //   let listDebugElem = fixture.debugElement.query(By.css("app-connections-list"));
-  //   expect(cardDebugElem).toBeDefined();
-  //   expect(listDebugElem).toBeNull();
-  //   const cardElem = cardDebugElem.nativeElement;
-  //   expect(cardElem).toBeDefined();
-  //
-  //   // Change the layout to ListLayout
-  //   component.setListLayout();
-  //   fixture.detectChanges();
-  //
-  //   // Verify that the layout has changed
-  //   cardDebugElem = fixture.debugElement.query(By.css("app-connections-cards"));
-  //   listDebugElem = fixture.debugElement.query(By.css("app-connections-list"));
-  //   expect(cardDebugElem).toBeNull();
-  //   expect(listDebugElem).toBeDefined();
-  //   const listElem = listDebugElem.nativeElement;
-  //   expect(listElem).toBeDefined();
-  // });
+  it("should toggle layout", () => {
+    // Initial layout should be Card Layout
+    let cardDebugElem = fixture.debugElement.query(By.css("app-connections-cards"));
+    let listDebugElem = fixture.debugElement.query(By.css("app-connections-list"));
+    expect(cardDebugElem).toBeDefined();
+    expect(listDebugElem).toBeNull();
+    const cardElem = cardDebugElem.nativeElement;
+    expect(cardElem).toBeDefined();
 
-  // it("should filter connections", () => {
-  //   // Expect 3 connections initially.
-  //   let connections = component.filteredConnections;
-  //   expect(connections.length).toEqual(3);
-  //
-  //   // Set a name filter which satisfies none of the connections
-  //   component.nameFilter = "g";
-  //   component.filterConnections();
-  //   fixture.detectChanges();
-  //
-  //   // Now expect 0 activities match
-  //   connections = component.filteredConnections;
-  //   expect(connections.length).toEqual(0);
-  // });
+    // Change the layout to ListLayout
+    component.setListLayout();
+    fixture.detectChanges();
+
+    // Verify that the layout has changed
+    cardDebugElem = fixture.debugElement.query(By.css("app-connections-cards"));
+    listDebugElem = fixture.debugElement.query(By.css("app-connections-list"));
+    expect(cardDebugElem).toBeNull();
+    expect(listDebugElem).toBeDefined();
+    const listElem = listDebugElem.nativeElement;
+    expect(listElem).toBeDefined();
+  });
+
+  it("should filter connections", () => {
+    // Expect 3 connections initially.
+    let connections = component.filteredConnections;
+    expect(connections.length).toEqual(3);
+
+    // Set a name filter which satisfies none of the connections
+    component.nameFilter = "g";
+    component.filterConnections();
+    fixture.detectChanges();
+
+    // Now expect 0 activities match
+    connections = component.filteredConnections;
+    expect(connections.length).toEqual(0);
+  });
 
 });

@@ -19,21 +19,23 @@ describe("ActivitiesComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), RouterTestingModule, SharedModule],
-      declarations: [ActivitiesComponent, ActivitiesListComponent, ActivitiesCardsComponent],
-      providers: [
-        {provide: ActivityService, useClass: MockActivityService}
-      ]
-    })
-    .compileComponents().then(() => {
-      // nothing to do
+      declarations: [ActivitiesComponent, ActivitiesListComponent, ActivitiesCardsComponent]
     });
-  }));
 
-  beforeEach(() => {
+    // use mock service
+    TestBed.overrideComponent( ActivitiesComponent, {
+      set: {
+        providers: [
+          { provide: ActivityService, useClass: MockActivityService },
+        ]
+      }
+    });
+
     fixture = TestBed.createComponent(ActivitiesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
+
+  }));
 
   it("should be created", () => {
     expect(component).toBeTruthy();
