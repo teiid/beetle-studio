@@ -29,6 +29,9 @@ import { RouterModule } from "@angular/router";
 import { ConnectionsModule } from "@connections/connections.module";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
+import { AddActivityWizardComponent } from './add-activity-wizard/add-activity-wizard.component';
+import { ReactiveFormsModule } from "@angular/forms";
+import { PatternFlyNgModule } from "patternfly-ng";
 
 @NgModule({
   imports: [
@@ -38,14 +41,18 @@ import { SharedModule } from "@shared/shared.module";
     CoreModule,
     SharedModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    PatternFlyNgModule
   ],
   declarations: [
     ActivitiesCardsComponent,
     ActivitiesComponent,
     ActivitiesListComponent,
     AddActivityComponent,
-    AddActivityFormComponent
+    AddActivityFormComponent,
+    AddActivityWizardComponent
   ],
   providers: [
     ActivityService

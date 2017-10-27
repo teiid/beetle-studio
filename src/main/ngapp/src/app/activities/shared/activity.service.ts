@@ -19,53 +19,29 @@ import { Activity } from "@activities/shared/activity.model";
 import { NewActivity } from "@activities/shared/new-activity.model";
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
-import { NewConnection } from "@connections/shared/new-connection.model";
 import { ApiService } from "@core/api.service";
 import { LoggerService } from "@core/logger.service";
+import { Observable } from "rxjs/Observable";
 
 @Injectable()
 export class ActivityService extends ApiService {
 
-  private activity1 = new Activity();
-  private activity2 = new Activity();
-  private activity3 = new Activity();
-  private activities: Activity[] = [this.activity1, this.activity2, this.activity3];
-  private newActivity1 = new NewActivity();
   private http: Http;
 
   constructor( http: Http, logger: LoggerService ) {
     super( logger );
     this.http = http;
-    this.activity1.setId("activity1");
-    this.activity1.setSourceConnection("activity1SrcConn");
-    this.activity1.setTargetConnection("activity1TgtConn");
-    this.activity2.setId("activity2");
-    this.activity2.setSourceConnection("activity2SrcConn");
-    this.activity2.setTargetConnection("activity2TgtConn");
-    this.activity3.setId("activity3");
-    this.activity3.setSourceConnection("activity3SrcConn");
-    this.activity3.setTargetConnection("activity3TgtConn");
-    this.newActivity1.setName("newActivity1");
-    const srcConn = new NewConnection();
-    srcConn.setName("new1Src");
-    srcConn.setJndiName("new1SrcJndi");
-    srcConn.setDriverName("new1SrcDriver");
-    srcConn.setJdbc(true);
-    this.newActivity1.setSourceConnection(srcConn);
-    const tgtConn = new NewConnection();
-    tgtConn.setName("new1Tgt");
-    tgtConn.setJndiName("new1TgtJndi");
-    tgtConn.setDriverName("new1TgtDriver");
-    tgtConn.setJdbc(false);
-    this.newActivity1.setTargetConnection(tgtConn);
   }
 
   /**
    * Get the activities from the komodo rest interface
    * @returns {Activity[]}
    */
-  public getAllActivities(): Activity[] {
-    return this.activities;
+  public getAllActivities(): Observable<Activity[]> {
+    let activities = JSON.parse(localStorage.getItem('activities'));
+
+    if (!activities) activities = [];
+    return Observable.of(this.convertObjectArray(activities));
     /*
     return this.http
       .get(komodoWorkspaceUrl + '/activities', this.getAuthRequestOptions())
@@ -82,9 +58,19 @@ export class ActivityService extends ApiService {
    * @param {NewActivity} activity
    * @returns {Activity}
    */
-  public createActivity(activity: NewActivity): NewActivity {
+  public createActivity(activity: NewActivity): Observable<NewActivity> {
+    let act = new Activity();
+    act.setId(activity.getName());
+    act.setSourceConnection(activity.getSourceConnection().getName());
+    act.setTargetConnection(activity.getTargetConnection().getName());
+
+    let activities = JSON.parse(localStorage.getItem('activities'));
+    if (!activities) activities = [];
+    activities.push(act);
+    localStorage.setItem('activities', JSON.stringify(activities));
+
     // TODO implement createActivity()
-    return this.newActivity1;
+    return Observable.of(activity);
     /*
     return this.http
       .post(komodoWorkspaceUrl + '/activities/' + activity.name, activity, this.getAuthRequestOptions())
@@ -99,7 +85,15 @@ export class ActivityService extends ApiService {
    * Delete an activity via the komodo rest interface
    * @param {NewActivity} activity
    */
-  public deleteActivity(activity: NewActivity): NewActivity {
+  public deleteActivity(activity: NewActivity): Observable<NewActivity> {
+    let activities = JSON.parse(localStorage.getItem('activities'));
+    if (!activities) activities = [];
+
+    let indexOfDeleted = activities.findIndex(i => i.keng__id === activity.getName());
+    activities.splice(indexOfDeleted,1);
+
+    localStorage.setItem('activities', JSON.stringify(activities));
+
     // TODO implement deleteActivity()
     /*
     return this.http
@@ -107,7 +101,25 @@ export class ActivityService extends ApiService {
       .map(response => null)
       .catch(this.handleError);
       */
-    return null;
+    return Observable.of(null);
   }
 
+  /*
+   * TODO: Remove after komodo REST is available
+   * This is a helper method to convert Object array to Activity array.
+   * This can be removed once we connect to the komodo rest service
+   */
+  private convertObjectArray(objArray: [any]): Activity[] {
+    let activityArray = [];
+
+    for (const obj of objArray) {
+      let act: Activity = new Activity();
+      act.setId(obj.keng__id);
+      act.setSourceConnection(obj.dv__sourceConnection);
+      act.setTargetConnection(obj.dv__targetConnection);
+      activityArray.push(act);
+    }
+
+    return activityArray;
+  }
 }

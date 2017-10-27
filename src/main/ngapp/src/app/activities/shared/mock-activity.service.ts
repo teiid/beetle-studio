@@ -3,13 +3,13 @@ import { ActivityService } from "@activities/shared/activity.service";
 import { NewActivity } from "@activities/shared/new-activity.model";
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
-import { Connection } from "@connections/shared/connection.model";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
+import {Observable} from "rxjs/Observable";
 
 @Injectable()
 export class MockActivityService extends ActivityService {
@@ -19,12 +19,6 @@ export class MockActivityService extends ActivityService {
   private act3 = new Activity();
   private acts: Activity[] = [this.act1, this.act2, this.act3];
   private newAct1 = new NewActivity();
-
-  private newConnection = new NewConnection();
-  private conn1 = new Connection();
-  private conn2 = new Connection();
-  private conn3 = new Connection();
-  private conns: Connection[] = [this.conn1, this.conn2, this.conn3];
 
   constructor( http: Http, logger: LoggerService ) {
     super(http, logger);
@@ -57,8 +51,8 @@ export class MockActivityService extends ActivityService {
    * Get the activities from the komodo rest interface
    * @returns {Activity[]}
    */
-  public getAllActivities(): Activity[] {
-    return this.acts;
+  public getAllActivities(): Observable<Activity[]> {
+    return Observable.of(this.acts);
   }
 
   /**
@@ -66,16 +60,16 @@ export class MockActivityService extends ActivityService {
    * @param {NewActivity} activity
    * @returns {Activity}
    */
-  public createActivity(activity: NewActivity): NewActivity {
-    return this.newAct1;
+  public createActivity(activity: NewActivity): Observable<NewActivity> {
+    return Observable.of(this.newAct1);
   }
 
   /**
    * Delete an activity via the komodo rest interface
    * @param {NewActivity} activity
    */
-  public deleteActivity(activity: NewActivity): NewActivity {
-    return null;
+  public deleteActivity(activity: NewActivity): Observable<NewActivity> {
+    return Observable.of(null);
   }
 
 }

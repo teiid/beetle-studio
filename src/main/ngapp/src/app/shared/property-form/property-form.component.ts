@@ -17,7 +17,6 @@
 
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { Observable } from "rxjs/Observable";
 
 import { ObjectUtils } from "@core/utils/object-utils";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
