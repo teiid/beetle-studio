@@ -9,6 +9,8 @@ import { PropertyFormPropertyComponent } from "@shared/property-form/property-fo
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddActivityWizardComponent } from "./add-activity-wizard.component";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { MockConnectionService } from "@connections/shared/mock-connection.service";
 
 describe("AddActivityWizardComponent", () => {
   let component: AddActivityWizardComponent;
@@ -20,6 +22,7 @@ describe("AddActivityWizardComponent", () => {
       declarations: [ AddActivityWizardComponent, PropertyFormComponent, PropertyFormPropertyComponent ],
       providers: [
         { provide: ActivityService, useClass: MockActivityService },
+        { provide: ConnectionService, useClass: MockConnectionService }
       ]
     })
       .compileComponents().then(() => {
