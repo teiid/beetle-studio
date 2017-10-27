@@ -1,0 +1,92 @@
+<pfng-wizard #wizard
+             [config]="wizardConfig"
+             (onCancel)="cancelClicked($event)"
+             (onNext)="nextClicked($event)"
+             (onStepChange)="stepChanged($event)">
+  <!-- ------------------------- -->
+  <!-- Step 1 : Basic Properties -->
+  <!-- ------------------------- -->
+  <pfng-wizard-step [config]="step1Config">
+    <h3><i>{{ step1InstructionMessage }}</i></h3>
+    <div *ngIf="!connectionsLoaded">
+      <div class="spinner spinner-lg blank-slate-pf-icon"></div>
+    </div>
+    <form [formGroup]=basicPropertyForm class="form-horizontal" *ngIf="connectionsLoaded">
+      <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
+        <label class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-5">
+          <input class="form-control" formControlName="name" title="">
+          <div class="help-block" *ngIf="!nameValid">{{ getBasicPropertyErrorMessage("name") }}</div>
+        </div>
+      </div>
+      <div [ngClass]="sourceConnectionValid ? 'form-group' : 'form-group has-error'">
+        <label class="col-sm-2 control-label">Source Connection</label>
+        <div class="col-sm-5">
+          <select class="form-control" formControlName="sourceConnection" title="">
+            <option value="" selected hidden>-- Select a Source Connection ---</option>
+            <option *ngFor="let sourceConnection of connectionNames" [value]="sourceConnection">{{ sourceConnection }}</option>
+          </select>
+          <div class="help-block" *ngIf="!sourceConnectionValid">{{ getBasicPropertyErrorMessage("sourceConnection") }}</div>
+        </div>
+      </div>
+      <div [ngClass]="targetConnectionValid ? 'form-group' : 'form-group has-error'">
+        <label class="col-sm-2 control-label">Target Connection</label>
+        <div class="col-sm-5">
+          <select class="form-control" formControlName="targetConnection" title="">
+            <option value="" selected hidden>-- Select a Target Connection ---</option>
+            <option *ngFor="let targetConnection of connectionNames" [value]="targetConnection">{{ targetConnection }}</option>
+          </select>
+          <div class="help-block" *ngIf="!targetConnectionValid">{{ getBasicPropertyErrorMessage("targetConnection") }}</div>
+        </div>
+      </div>
+    </form>
+  </pfng-wizard-step>
+  <!-- -------------------------- -->
+  <!-- Step 2 : Review and Create -->
+  <!-- -------------------------- -->
+  <pfng-wizard-step [config]="step2Config">
+    <!-- Step 2A: Review -->
+    <pfng-wizard-substep [config]="step2aConfig">
+      <h3><i>{{ step2InstructionMessage }}</i></h3>
+      <h4>Activity Properties:</h4>
+      <form class="form-horizontal">
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Name:</label>
+          <label class="col-sm-5">{{ activityName }}</label>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Source Connection:</label>
+          <label class="col-sm-5">{{ sourceConnectionName }}</label>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Target Connection:</label>
+          <label class="col-sm-5">{{ targetConnectionName }}</label>
+        </div>
+      </form>
+    </pfng-wizard-substep>
+    <!-- Step 2B: Create -->
+    <pfng-wizard-substep [config]="step2bConfig" (onShow)="createActivity()">
+      <div class="wizard-pf-contents">
+        <!-- In progress -->
+        <div class="wizard-pf-process blank-slate-pf" *ngIf="!createComplete">
+          <div class="spinner spinner-lg blank-slate-pf-icon"></div>
+          <h3 class="blank-slate-pf-main-action">Creation in progress</h3>
+          <p class="blank-slate-pf-secondary-action">The activity is being created. </p>
+        </div>
+        <!-- Create Successful -->
+        <div class="wizard-pf-complete blank-slate-pf" *ngIf="createComplete && createSuccessful">
+          <div class="wizard-pf-success-icon"><span class="glyphicon glyphicon-ok-circle"></span></div>
+          <h3 class="blank-slate-pf-main-action">Creation was successful</h3>
+          <p class="blank-slate-pf-secondary-action">The activity was created successfully. Click on the button to see all activities.</p>
+          <a class="btn btn-lg btn-primary" [routerLink]="[activitySummaryLink]">View All Activities</a>
+        </div>
+        <!-- Create Failed -->
+        <div class="wizard-pf-complete blank-slate-pf" *ngIf="createComplete && !createSuccessful">
+          <div class="wizard-pf-failed-icon"><span class="glyphicon glyphicon-remove-circle"></span></div>
+          <h3 class="blank-slate-pf-main-action">Creation failed</h3>
+          <p class="blank-slate-pf-secondary-action">The activity creation failed.  Correct any properties and retry.</p>
+        </div>
+      </div>
+    </pfng-wizard-substep>
+  </pfng-wizard-step>
+</pfng-wizard>

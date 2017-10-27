@@ -62,9 +62,19 @@ export class ActivitiesComponent extends AbstractPageComponent {
   }
 
   public loadAsyncPageData(): void {
-    this.allActs = this.activityService.getAllActivities();
-    this.filteredActs = this.filterActivities();
-    this.loaded("activities");
+    this.activityService
+      .getAllActivities()
+      .subscribe(
+        (activities) => {
+          this.allActs = activities;
+          this.filteredActs = this.filterActivities();
+          this.loaded("activities");
+        },
+        (error) => {
+          this.logger.error("[ActivitiesComponent] Error getting activities.");
+          this.error(error);
+        }
+      );
   }
 
   public onSelected(activity: Activity): void {
@@ -198,19 +208,19 @@ export class ActivitiesComponent extends AbstractPageComponent {
 
     // Note: we can only doDelete selected items that we can see in the UI.
     this.logger.log("[ActivitiesPageComponent] Deleting selected Activity.");
-    this.activityService.deleteActivity(activityToDelete);
-    /*
-    this.apiService
+    // this.activityService.deleteActivity(activityToDelete);
+    this.activityService
       .deleteActivity(activityToDelete)
       .subscribe(
         () => {
-          this.removeActivityFromList(selectedActiv);
-          const link: string[] = [ '/activities' ];
-          this.logger.log('[CreateApiPageComponent] Navigating to: %o', link);
-          this.router.navigate(link);
+          this.removeActivityFromList(selectedActivity);
+          const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
+          this.logger.log("[ActivitiesComponent] Navigating to: %o", link);
+          this.router.navigate(link).then(() => {
+            // nothing to do
+          });
         }
       );
-      */
   }
 
   /**

@@ -10,6 +10,7 @@
             <span><a [routerLink]="[activity.getId()]">{{ activity.getId() }}</a></span>
             <span class="pull-right fa fa-fw fa-close activity-card-action-icon" style="color:darkred;" (click)="onDeleteActivity(activity.getId())"></span>
             <span class="pull-right fa fa-fw fa-edit activity-card-action-icon" (click)="onEditActivity(activity.getId())"></span>
+            <span class="pull-right fa fa-fw fa-play activity-card-action-icon" style="color:darkgreen;" (click)="onStartActivity(activity.getId())"></span>
           </h2>
           <hr/>
           <div>

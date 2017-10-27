@@ -393,7 +393,6 @@ export class AddConnectionWizardComponent implements OnInit {
           // Sort the properties.  (Required properties first)
           const firstProps: any[] = [];
           const nextProps: any[] = [];
-          let sortedProps: any[] = [];
           for (const prop of props) {
             if (prop.isRequired()) {
               firstProps.push(prop);
@@ -401,9 +400,8 @@ export class AddConnectionWizardComponent implements OnInit {
               nextProps.push(prop);
             }
           }
-          sortedProps = firstProps.concat(nextProps);
 
-          that.detailProperties = sortedProps;
+          that.detailProperties = firstProps.concat(nextProps);
           this.detailPropertiesLoaded = true;
           this.detailPropertiesLoadedType = driverName;
         },

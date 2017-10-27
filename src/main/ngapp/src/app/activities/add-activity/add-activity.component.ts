@@ -15,51 +15,26 @@
  * limitations under the License.
  */
 
+import { Component, OnInit } from "@angular/core";
 import { ActivitiesConstants } from "@activities/shared/activities-constants";
-import { ActivityService } from "@activities/shared/activity.service";
-import { AddActivityFormComponent } from "@activities/shared/add-activity-form/add-activity-form.component";
-import { NewActivity } from "@activities/shared/new-activity.model";
-import { Component } from "@angular/core";
-import { ViewChild } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { Router } from "@angular/router";
-import { LoggerService } from "@core/logger.service";
-import { AbstractPageComponent } from "@shared/abstract-page.component";
 
 @Component({
-  moduleId: module.id,
-  selector: "app-add-activity",
+  selector: "app-add-activity-page",
   templateUrl: "./add-activity.component.html",
   styleUrls: ["./add-activity.component.css"]
 })
-export class AddActivityComponent extends AbstractPageComponent {
+export class AddActivityComponent implements OnInit {
 
   public readonly activitiesLink = ActivitiesConstants.activitiesRootPath;
 
-  private router: Router;
-  private activityService: ActivityService;
+  public pageError: any = "";
 
-  @ViewChild(AddActivityFormComponent) private form: AddActivityFormComponent;
-
-  constructor(router: Router, route: ActivatedRoute, activityService: ActivityService, logger: LoggerService ) {
-    super(route, logger);
-    this.router = router;
-    this.activityService = activityService;
+  constructor() {
+    // Nothing
   }
 
-  /**
-   * Called when the Add Activity form (component) emits a "add-activity" event.  This is bound to
-   * from the add-activity.page.html template.
-   * @param {NewActivity} activity
-   */
-  public onCreateActivity(activity: NewActivity): void {
-    this.logger.log("[AddActivityComponent] onCreateActivity(): " + JSON.stringify(activity));
-    this.activityService.createActivity(activity);
-    const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
-    this.logger.log("[AddActivityComponent] Navigating to: %o", link);
-    this.router.navigate(link).then(() => {
-      // nothing to do
-    });
+  public ngOnInit(): void {
+    // Nothing
   }
 
 }
