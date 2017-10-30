@@ -35,8 +35,7 @@ import { SortDirection } from "@shared/sort-direction.enum";
   moduleId: module.id,
   selector: "app-activities",
   templateUrl: "./activities.component.html",
-  styleUrls: ["./activities.component.css"],
-  providers: [ ActivityService ]
+  styleUrls: ["./activities.component.css"]
 })
 export class ActivitiesComponent extends AbstractPageComponent {
 

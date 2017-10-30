@@ -1,12 +1,14 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
 import { AddConnectionWizardComponent } from "@connections/add-connection-wizard/add-connection-wizard.component";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddConnectionComponent } from "./add-connection.component";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { MockConnectionService } from "@connections/shared/mock-connection.service";
 
 describe("AddConnectionComponent", () => {
   let component: AddConnectionComponent;
@@ -14,8 +16,11 @@ describe("AddConnectionComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule, SharedModule ],
-      declarations: [ AddConnectionComponent, AddConnectionWizardComponent ]
+      imports: [ CoreModule, PatternFlyNgModule, FormsModule, ReactiveFormsModule, RouterTestingModule, SharedModule ],
+      declarations: [ AddConnectionComponent, AddConnectionWizardComponent ],
+      providers: [
+        { provide: ConnectionService, useClass: MockConnectionService },
+      ]
     })
     .compileComponents().then(() => {
       // nothing to do
@@ -28,8 +33,7 @@ describe("AddConnectionComponent", () => {
     fixture.detectChanges();
   });
 
-  // TODO: Figure out how to setup this test.
-  // it("should be created", () => {
-  //   expect(component).toBeTruthy();
-  // });
+  it("should be created", () => {
+    expect(component).toBeTruthy();
+  });
 });

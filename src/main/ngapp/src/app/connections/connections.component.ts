@@ -33,8 +33,7 @@ import { SortDirection } from "@shared/sort-direction.enum";
   moduleId: module.id,
   selector: "app-connections",
   templateUrl: "./connections.component.html",
-  styleUrls: ["./connections.component.css"],
-  providers: [ConnectionService]
+  styleUrls: ["./connections.component.css"]
 })
 export class ConnectionsComponent extends AbstractPageComponent {
 
