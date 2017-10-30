@@ -90,6 +90,7 @@
     <!-- Properties -->
     <!-- ================================================================== -->
     <properties>
+        <target.src.dir>${basedir}/target/copy-src</target.src.dir>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <timestamp>${maven.build.timestamp}</timestamp>
@@ -122,7 +123,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/beetle-studio-web</outputDirectory>
+                            <outputDirectory>${target.src.dir}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/ngapp</directory>
@@ -151,7 +152,7 @@
                         <configuration>
                             <target>
                                 <echo>run chmod in ${basedir}</echo>
-                                <chmod file="${basedir}/target/beetle-studio-web/node_modules/@angular/cli/bin/ng" perm="777"/>
+                                <chmod file="${target.src.dir}/node_modules/@angular/cli/bin/ng" perm="777"/>
                             </target>
                         </configuration>
                     </execution>
@@ -175,10 +176,26 @@
                             <arguments>
                                 <argument>install</argument>
                             </arguments>
-                            <workingDirectory>${basedir}/target/beetle-studio-web</workingDirectory>
+                            <workingDirectory>${target.src.dir}</workingDirectory>
                             <target>
                                 <echo message="npm install" />
                             </target>
+                        </configuration>
+                    </execution>
+
+                    <!-- Run tests. -->
+                    <execution>
+                        <id>karmaTest</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>test</phase>
+                        <configuration>
+                            <executable>ng</executable>
+                            <arguments>
+                                <argument>test</argument>
+                            </arguments>
+                            <workingDirectory>${target.src.dir}</workingDirectory>
                         </configuration>
                     </execution>
 
@@ -197,7 +214,7 @@
                                 <argument>--bh</argument>
                                 <argument>./</argument>
                             </arguments>
-                            <workingDirectory>${basedir}/target/beetle-studio-web</workingDirectory>
+                            <workingDirectory>${target.src.dir}</workingDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -212,7 +229,7 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <webResources>
                         <resource>
-                            <directory>${basedir}/target/beetle-studio-web/dist</directory>
+                            <directory>${target.src.dir}/dist</directory>
                             <includes>
                                 <include>**/*.*</include>
                             </includes>

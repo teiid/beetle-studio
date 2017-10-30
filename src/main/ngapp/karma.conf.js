@@ -7,27 +7,17 @@ module.exports = function (config) {
     frameworks: ['jasmine', '@angular/cli'],
     plugins: [
       require('karma-jasmine'),
-      require('karma-chrome-launcher'),
-      require('karma-jasmine-html-reporter'),
-      require('karma-coverage-istanbul-reporter'),
+      require('karma-phantomjs-launcher' ),
+      require('karma-junit-reporter'),
       require('@angular/cli/plugins/karma')
     ],
-    client:{
-      clearContext: false // leave Jasmine Spec Runner output visible in browser
+    junitReporter : {
+      // .../beetle-studio/target/karma-reports/*.xml
+      outputDir : '../../target/karma-reports/'
     },
-    coverageIstanbulReporter: {
-      reports: [ 'html', 'lcovonly' ],
-      fixWebpackSourcePaths: true
-    },
-    angularCli: {
-      environment: 'dev'
-    },
-    reporters: ['progress', 'kjhtml'],
-    port: 9876,
-    colors: true,
-    logLevel: config.LOG_INFO,
-    autoWatch: true,
-    browsers: ['Chrome'],
-    singleRun: false
+    reporters: ['junit'],
+    autoWatch: false,
+    browsers: [ 'PhantomJS' ],
+    singleRun: true
   });
 };
