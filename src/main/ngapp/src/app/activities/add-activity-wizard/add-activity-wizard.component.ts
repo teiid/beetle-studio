@@ -246,6 +246,7 @@ export class AddActivityWizardComponent implements OnInit {
   public stepChanged($event: WizardEvent): void {
     if ($event.step.config.id === "step1") {
       this.updatePage1ValidStatus();
+      this.wizardConfig.nextTitle = "Next >";
     } else if ($event.step.config.id === "step2a") {
       this.wizardConfig.nextTitle = "Create";
     } else if ($event.step.config.id === "step2b") {
