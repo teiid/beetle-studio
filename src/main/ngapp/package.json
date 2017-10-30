@@ -23,9 +23,9 @@
     "@angular/router": "^4.4.6",
     "core-js": "^2.4.1",
     "ngx-bootstrap": "^1.9.3",
-    "patternfly": "^3.28.3",
-    "patternfly-ng": "^0.13.5",
-    "rxjs": "^5.5.0",
+    "patternfly": "^3.29.9",
+    "patternfly-ng": "^0.13.7",
+    "rxjs": "^5.5.2",
     "zone.js": "^0.8.14"
   },
   "devDependencies": {
@@ -44,6 +44,8 @@
     "karma-coverage-istanbul-reporter": "^1.2.1",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "karma-junit-reporter": "^1.2.0",
+    "karma-phantomjs-launcher": "^1.0.4",
     "protractor": "~5.1.2",
     "ts-node": "~3.2.0",
     "tslint": "~5.7.0",
