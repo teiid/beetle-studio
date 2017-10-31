@@ -18,7 +18,7 @@ module.exports = function (config) {
     angularCli: {
       environment: 'dev'
     },
-    reporters: ['junit'],
+    reporters: ['junit', 'progress'],
     autoWatch: false,
     browsers: [ 'PhantomJS' ],
     singleRun: true
