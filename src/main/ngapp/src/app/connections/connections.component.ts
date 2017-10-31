@@ -58,17 +58,19 @@ export class ConnectionsComponent extends AbstractPageComponent {
   }
 
   public loadAsyncPageData(): void {
+    const self = this;
+
     this.connectionService
       .getAllConnections()
       .subscribe(
         (connections) => {
-          this.allConns = connections;
-          this.filteredConns = this.filterConnections();
-          this.loaded("connections");
+          self.allConns = connections;
+          self.filteredConns = this.filterConnections();
+          self.loaded("connections");
         },
         (error) => {
-          this.logger.error("[ConnectionsComponent] Error getting connections.");
-          this.error(error);
+          self.logger.error("[ConnectionsComponent] Error getting connections.");
+          self.error(error);
         }
       );
   }
@@ -194,14 +196,15 @@ export class ConnectionsComponent extends AbstractPageComponent {
 
     // Note: we can only doDelete selected items that we can see in the UI.
     this.logger.log("[ConnectionsPageComponent] Deleting selected Connection.");
+    const self = this;
     this.connectionService
       .deleteConnection(connectionToDelete)
       .subscribe(
         () => {
-          this.removeConnectionFromList(selectedConn);
+          self.removeConnectionFromList(selectedConn);
           const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
-          this.logger.log("[CreateApiPageComponent] Navigating to: %o", link);
-          this.router.navigate(link).then(() => {
+          self.logger.log("[CreateApiPageComponent] Navigating to: %o", link);
+          self.router.navigate(link).then(() => {
             // nothing to do
           });
         }

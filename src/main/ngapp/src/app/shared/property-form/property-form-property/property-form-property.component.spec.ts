@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { FormGroup } from "@angular/forms";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
 import { PropertyFormPropertyComponent } from "./property-form-property.component";

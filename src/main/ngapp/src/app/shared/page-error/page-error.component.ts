@@ -16,6 +16,7 @@
  */
 
 import { Component, Input } from "@angular/core";
+import { Response } from "@angular/http";
 
 @Component({
   moduleId: module.id,
@@ -25,7 +26,7 @@ import { Component, Input } from "@angular/core";
 })
 export class PageErrorComponent {
 
-  @Input() public error: any = "";
+  @Input() public error: Response;
 
   private eobj: any = null;
   private showDetails = false;
@@ -48,7 +49,7 @@ export class PageErrorComponent {
    * Returns the error code.
    */
   public errorCode(): number {
-    return this.error.status;
+    return this.error ? this.error.status : 0;
   }
 
   /**

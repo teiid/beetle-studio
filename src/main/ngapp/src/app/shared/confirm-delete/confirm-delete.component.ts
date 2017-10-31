@@ -37,9 +37,10 @@ export class ConfirmDeleteComponent {
    */
   public open(): void {
     this.dialogIsOpen = true;
+    const self = this;
     this.confirmDeleteModal.changes.subscribe( (thing) => {
-      if (this.confirmDeleteModal.first) {
-        this.confirmDeleteModal.first.show();
+      if (self.confirmDeleteModal.first) {
+        self.confirmDeleteModal.first.show();
       }
     });
   }

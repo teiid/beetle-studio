@@ -1,16 +1,16 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
+import { AddActivityWizardComponent } from "@activities/add-activity-wizard/add-activity-wizard.component";
+import { ActivityService } from "@activities/shared/activity.service";
+import { MockActivityService } from "@activities/shared/mock-activity.service";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
-import { AddActivityWizardComponent } from "@activities/add-activity-wizard/add-activity-wizard.component";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { MockConnectionService } from "@connections/shared/mock-connection.service";
 import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddActivityComponent } from "./add-activity.component";
-import { ActivityService } from "@activities/shared/activity.service";
-import { MockActivityService } from "@activities/shared/mock-activity.service";
-import { ConnectionService } from "@connections/shared/connection.service";
-import { MockConnectionService } from "@connections/shared/mock-connection.service";
 
 describe("AddActivityComponent", () => {
   let component: AddActivityComponent;

@@ -21,6 +21,7 @@ import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { ApiService } from "@core/api.service";
 import { LoggerService } from "@core/logger.service";
+import "rxjs/add/observable/of";
 import { Observable } from "rxjs/Observable";
 
 @Injectable()
@@ -38,9 +39,10 @@ export class ActivityService extends ApiService {
    * @returns {Activity[]}
    */
   public getAllActivities(): Observable<Activity[]> {
-    let activities = JSON.parse(localStorage.getItem('activities'));
-
-    if (!activities) activities = [];
+    let activities = JSON.parse(localStorage.getItem("activities"));
+    if (!activities) {
+      activities = [];
+    }
     return Observable.of(this.convertObjectArray(activities));
     /*
     return this.http
@@ -59,15 +61,17 @@ export class ActivityService extends ApiService {
    * @returns {Activity}
    */
   public createActivity(activity: NewActivity): Observable<NewActivity> {
-    let act = new Activity();
+    const act = new Activity();
     act.setId(activity.getName());
     act.setSourceConnection(activity.getSourceConnection().getName());
     act.setTargetConnection(activity.getTargetConnection().getName());
 
-    let activities = JSON.parse(localStorage.getItem('activities'));
-    if (!activities) activities = [];
+    let activities = JSON.parse(localStorage.getItem("activities"));
+    if (!activities) {
+      activities = [];
+    }
     activities.push(act);
-    localStorage.setItem('activities', JSON.stringify(activities));
+    localStorage.setItem("activities", JSON.stringify(activities));
 
     // TODO implement createActivity()
     return Observable.of(activity);
@@ -86,13 +90,15 @@ export class ActivityService extends ApiService {
    * @param {NewActivity} activity
    */
   public deleteActivity(activity: NewActivity): Observable<NewActivity> {
-    let activities = JSON.parse(localStorage.getItem('activities'));
-    if (!activities) activities = [];
+    let activities = JSON.parse(localStorage.getItem("activities"));
+    if (!activities) {
+      activities = [];
+    }
 
-    let indexOfDeleted = activities.findIndex(i => i.keng__id === activity.getName());
-    activities.splice(indexOfDeleted,1);
+    const indexOfDeleted = activities.findIndex((i) => i.keng__id === activity.getName());
+    activities.splice(indexOfDeleted, 1);
 
-    localStorage.setItem('activities', JSON.stringify(activities));
+    localStorage.setItem("activities", JSON.stringify(activities));
 
     // TODO implement deleteActivity()
     /*
@@ -110,10 +116,10 @@ export class ActivityService extends ApiService {
    * This can be removed once we connect to the komodo rest service
    */
   private convertObjectArray(objArray: [any]): Activity[] {
-    let activityArray = [];
+    const activityArray = [];
 
     for (const obj of objArray) {
-      let act: Activity = new Activity();
+      const act: Activity = new Activity();
       act.setId(obj.keng__id);
       act.setSourceConnection(obj.dv__sourceConnection);
       act.setTargetConnection(obj.dv__targetConnection);

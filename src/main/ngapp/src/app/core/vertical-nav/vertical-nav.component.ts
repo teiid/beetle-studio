@@ -49,9 +49,10 @@ export class VerticalNavComponent implements OnInit {
 
   public ngOnInit(): void {
     this.logger.log("Subscribing to router events.");
+    const self = this;
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.onShadeClick();
+        self.onShadeClick();
       }
     });
   }

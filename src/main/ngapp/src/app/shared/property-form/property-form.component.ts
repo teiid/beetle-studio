@@ -44,8 +44,9 @@ export class PropertyFormComponent implements OnInit {
   public ngOnInit(): void {
     this.form = this.toFormGroup(this.formProperties);
     this.formInitialized.emit(this.form.valid);
+    const self = this;
     this.form.valueChanges.subscribe((val) => {
-      this.formChanged.emit(this.form.valid);
+      self.formChanged.emit(this.form.valid);
     });
   }
 

@@ -15,6 +15,9 @@ module.exports = function (config) {
       // .../beetle-studio/target/karma-reports/*.xml
       outputDir : '../../target/karma-reports/'
     },
+    angularCli: {
+      environment: 'dev'
+    },
     reporters: ['junit'],
     autoWatch: false,
     browsers: [ 'PhantomJS' ],

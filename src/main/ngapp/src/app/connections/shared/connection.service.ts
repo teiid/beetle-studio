@@ -48,7 +48,7 @@ export class ConnectionService extends ApiService {
         const connections = response.json();
         return connections.map((connection) => Connection.create( connection ));
       })
-      .catch(this.handleError);
+      .catch( ( error ) => this.handleError( error ) );
   }
 
   /**
@@ -63,7 +63,7 @@ export class ConnectionService extends ApiService {
       .map((response) => {
         return new Connection();
       })
-      .catch(this.handleError);
+      .catch( ( error ) => this.handleError( error ) );
   }
 
   /**
@@ -76,7 +76,7 @@ export class ConnectionService extends ApiService {
       .delete(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath + "/" + connection.getName(),
                this.getAuthRequestOptions())
       .map((response) => null)
-      .catch(this.handleError);
+      .catch( ( error ) => this.handleError( error ) );
   }
 
   /**
@@ -90,7 +90,7 @@ export class ConnectionService extends ApiService {
         const templates = response.json();
         return templates.map((template) => TemplateDefinition.create( template ));
       })
-      .catch(this.handleError);
+      .catch( ( error ) => this.handleError( error ) );
   }
 
   /**
@@ -105,7 +105,7 @@ export class ConnectionService extends ApiService {
         const entries = response.json() as Array<PropertyDefinition<any>>;
         return entries.map((entry) => PropertyDefinition.create( entry ));
       })
-      .catch(this.handleError);
+      .catch( ( error ) => this.handleError( error ) );
   }
 
 }
