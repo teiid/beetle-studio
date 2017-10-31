@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Headers, RequestOptions } from "@angular/http";
+import { Headers, RequestOptions, Response } from "@angular/http";
 import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
@@ -24,10 +24,9 @@ import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
 import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 
-@Injectable()
-export class ApiService {
+export abstract class ApiService {
 
-  private logger: LoggerService;
+  protected logger: LoggerService;
 
   constructor( logger: LoggerService ) {
     this.logger = logger;
@@ -43,8 +42,8 @@ export class ApiService {
     return new RequestOptions({ headers });
   }
 
-  protected handleError(error: Response | any): ErrorObservable {
-    this.logger.error("ApiService::handleError", error);
+  protected handleError(error: Response): ErrorObservable {
+    this.logger.error( this.constructor.name + "::handleError" );
     return Observable.throw(error);
   }
 

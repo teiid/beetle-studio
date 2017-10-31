@@ -22,21 +22,21 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 
-import { FormControl, FormGroup } from "@angular/forms";
-import { AbstractControl } from "@angular/forms";
-import { Validators } from "@angular/forms";
-import { Router } from "@angular/router";
-import { ActivityService } from "@activities/shared/activity.service";
 import { ActivitiesConstants } from "@activities/shared/activities-constants";
+import { ActivityService } from "@activities/shared/activity.service";
 import { NewActivity } from "@activities/shared/new-activity.model";
+import { FormControl, FormGroup } from "@angular/forms";
+import { Validators } from "@angular/forms";
+import { AbstractControl } from "@angular/forms";
+import { Router } from "@angular/router";
+import { Connection } from "@connections/shared/connection.model";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { NewConnection } from "@connections/shared/new-connection.model";
 import { LoggerService } from "@core/logger.service";
-import { WizardComponent } from "patternfly-ng";
-import { WizardEvent } from "patternfly-ng";
 import { WizardStepConfig } from "patternfly-ng";
 import { WizardConfig } from "patternfly-ng";
-import { ConnectionService } from "@connections/shared/connection.service";
-import { Connection } from "@connections/shared/connection.model";
-import {NewConnection} from "@connections/shared/new-connection.model";
+import { WizardEvent } from "patternfly-ng";
+import { WizardComponent } from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -121,15 +121,16 @@ export class AddActivityWizardComponent implements OnInit {
 
     // Load the connections for the first step
     this.connectionsLoaded = false;
+    const self = this;
     this.connectionService
       .getAllConnections()
       .subscribe(
         (conns) => {
-          this.allConnections = conns;
-          this.connectionsLoaded = true;
+          self.allConnections = conns;
+          self.connectionsLoaded = true;
         },
         (error) => {
-          this.logger.error("[AddActivityWizardComponent] Error getting connections: %o", error);
+          self.logger.error("[AddActivityWizardComponent] Error getting connections: %o", error);
         }
       );
 
@@ -221,24 +222,25 @@ export class AddActivityWizardComponent implements OnInit {
 
     // Activity basic properties from step 1
     activity.setName(this.activityName);
-    let srcConn: NewConnection = new NewConnection();
+    const srcConn: NewConnection = new NewConnection();
     srcConn.setName(this.sourceConnectionName);
     activity.setSourceConnection(srcConn);
-    let tgtConn: NewConnection = new NewConnection();
+    const tgtConn: NewConnection = new NewConnection();
     tgtConn.setName(this.targetConnectionName);
     activity.setTargetConnection(tgtConn);
 
+    const self = this;
     this.activityService
       .createActivity(activity)
       .subscribe(
         () => {
-          this.createComplete = true;
-          this.createSuccessful = true;
-          this.step2bConfig.nextEnabled = false;
+          self.createComplete = true;
+          self.createSuccessful = true;
+          self.step2bConfig.nextEnabled = false;
         },
         (error) => {
-          this.createComplete = true;
-          this.createSuccessful = false;
+          self.createComplete = true;
+          self.createSuccessful = false;
         }
       );
   }
@@ -314,8 +316,9 @@ export class AddActivityWizardComponent implements OnInit {
    * React to basic property changes - update the page 1 status
    */
   private onChanges(): void {
+    const self = this;
     this.basicPropertyForm.valueChanges.subscribe((val) => {
-      this.updatePage1ValidStatus( );
+      self.updatePage1ValidStatus( );
     });
   }
 

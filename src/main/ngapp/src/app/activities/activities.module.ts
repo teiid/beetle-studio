@@ -19,18 +19,19 @@ import { ActivitiesCardsComponent } from "@activities/activities-cards/activitie
 import { ActivitiesListComponent } from "@activities/activities-list/activities-list.component";
 import { ActivitiesRoutingModule } from "@activities/activities-routing.module";
 import { ActivitiesComponent } from "@activities/activities.component";
+import { AddActivityWizardComponent } from "@activities/add-activity-wizard/add-activity-wizard.component";
 import { AddActivityComponent } from "@activities/add-activity/add-activity.component";
 import { ActivityService } from "@activities/shared/activity.service";
 import { AddActivityFormComponent } from "@activities/shared/add-activity-form/add-activity-form.component";
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
+import { ReactiveFormsModule } from "@angular/forms";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { ConnectionsModule } from "@connections/connections.module";
 import { CoreModule } from "@core/core.module";
+import { LoggerService } from "@core/logger.service";
 import { SharedModule } from "@shared/shared.module";
-import { AddActivityWizardComponent } from './add-activity-wizard/add-activity-wizard.component';
-import { ReactiveFormsModule } from "@angular/forms";
 import { PatternFlyNgModule } from "patternfly-ng";
 
 @NgModule({
@@ -55,7 +56,8 @@ import { PatternFlyNgModule } from "patternfly-ng";
     AddActivityWizardComponent
   ],
   providers: [
-    ActivityService
+    ActivityService,
+    LoggerService
   ]
 })
 export class ActivitiesModule {}

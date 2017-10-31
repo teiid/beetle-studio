@@ -135,15 +135,16 @@ export class AddConnectionWizardComponent implements OnInit {
 
     // Load the templates for the first step
     this.templatesLoaded = false;
+    const self = this;
     this.connectionService
       .getConnectionTemplates()
       .subscribe(
         (templates) => {
-          this.allTemplates = templates;
-          this.templatesLoaded = true;
+          self.allTemplates = templates;
+          self.templatesLoaded = true;
         },
         (error) => {
-          this.logger.error("[AddConnectionWizardComponent] Error getting templates: %o", error);
+          self.logger.error("[AddConnectionWizardComponent] Error getting templates: %o", error);
         }
       );
 
@@ -232,7 +233,7 @@ export class AddConnectionWizardComponent implements OnInit {
     // When leaving page 1, load the driver-specific property definitions
     if ($event.step.config.id === "step1") {
       const selectedDriver = this.basicPropertyForm.controls["driver"].value;
-      if(!this.detailPropertiesLoaded || (this.detailPropertiesLoadedType!==selectedDriver)) {
+      if (!this.detailPropertiesLoaded || (this.detailPropertiesLoadedType !== selectedDriver)) {
         this.loadPropertyDefinitions(selectedDriver);
       }
     }
@@ -274,17 +275,18 @@ export class AddConnectionWizardComponent implements OnInit {
     const propMap: Map<string, string> = this.detailPropForm.propertyValuesNonDefault;
     connection.setProperties(propMap);
 
+    const self = this;
     this.connectionService
       .createConnection(connection)
       .subscribe(
         () => {
-          this.createComplete = true;
-          this.createSuccessful = true;
-          this.step3bConfig.nextEnabled = false;
+          self.createComplete = true;
+          self.createSuccessful = true;
+          self.step3bConfig.nextEnabled = false;
         },
         (error) => {
-          this.createComplete = true;
-          this.createSuccessful = false;
+          self.createComplete = true;
+          self.createSuccessful = false;
         }
       );
   }
@@ -361,8 +363,9 @@ export class AddConnectionWizardComponent implements OnInit {
       driver: new FormControl("", Validators.required)
     });
     // Responds to basic property changes - updates the page status
+    const self = this;
     this.basicPropertyForm.valueChanges.subscribe((val) => {
-      this.updatePage1ValidStatus( );
+      self.updatePage1ValidStatus( );
     });
   }
 
@@ -385,7 +388,7 @@ export class AddConnectionWizardComponent implements OnInit {
    */
   private loadPropertyDefinitions( driverName ): void {
     this.detailPropertiesLoaded = false;
-    const that = this;
+    const self = this;
     this.connectionService
       .getConnectionTemplateProperties(driverName)
       .subscribe(
@@ -401,14 +404,14 @@ export class AddConnectionWizardComponent implements OnInit {
             }
           }
 
-          that.detailProperties = firstProps.concat(nextProps);
-          this.detailPropertiesLoaded = true;
-          this.detailPropertiesLoadedType = driverName;
+          self.detailProperties = firstProps.concat(nextProps);
+          self.detailPropertiesLoaded = true;
+          self.detailPropertiesLoadedType = driverName;
         },
         (error) => {
-          this.logger.error("[AddConnectionWizardComponent] Error: %o", error);
+          self.logger.error("[AddConnectionWizardComponent] Error: %o", error);
           // this.error(error);
-          this.detailPropertiesLoaded = false;
+          self.detailPropertiesLoaded = false;
         }
       );
   }

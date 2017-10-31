@@ -7,12 +7,20 @@ describe("ApiService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpModule],
-      providers: [ApiService, LoggerService]
+      providers: [LoggerService]
     });
   });
 
-  it("should be created", inject([ApiService, LoggerService],
-                                            (service: ApiService, logger: LoggerService) => {
+  it("should be created", inject([LoggerService],
+                                            (service: MockService ) => {
     expect(service).toBeTruthy();
   }));
 });
+
+class MockService extends ApiService {
+
+  constructor( logger: LoggerService ) {
+    super( logger );
+  }
+
+}

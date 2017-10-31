@@ -12,7 +12,7 @@ describe("ConnectionService", () => {
   });
 
   it("should be created", inject([ConnectionService, LoggerService],
-                                            (service: ConnectionService, logger: LoggerService ) => {
+                                            (service: ConnectionService ) => {
     expect(service).toBeTruthy();
   }));
 });

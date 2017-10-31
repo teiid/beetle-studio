@@ -16,6 +16,7 @@
  */
 
 import { OnInit } from "@angular/core";
+import { Response } from "@angular/http";
 import { ActivatedRoute } from "@angular/router";
 import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/combineLatest";
@@ -24,9 +25,9 @@ import { Observable } from "rxjs/Observable";
 export abstract class AbstractPageComponent implements OnInit {
 
   public dataLoaded: Map<string, boolean> = new Map<string, boolean>();
-  public pageError: any;
+  public pageError: Response;
   protected route: ActivatedRoute;
-  protected logger: LoggerService;
+  public logger: LoggerService;
 
   /**
    * C'tor.
@@ -44,26 +45,30 @@ export abstract class AbstractPageComponent implements OnInit {
    */
   public ngOnInit(): void {
     const combined = Observable.combineLatest(this.route.params, this.route.queryParams, (params, qparams) => ({params, qparams}));
+    const self = this;
     combined.subscribe( (ap) => {
-      this.loadAsyncPageData(ap.params, ap.qparams);
+      self.loadAsyncPageData(ap.params, ap.qparams);
     });
   }
 
   /**
    * Called to kick off loading the page's async data.  Subclasses should
    * override to provide page-specific data loading.
+   *
+   * If you are referencing the component instance in the callback handler code, make sure to save the component
+   * reference in a constant and use that object in the handler code.
    * @param pathParams
    * @param queryParams
    */
   public loadAsyncPageData(pathParams: any, queryParams: any): void {
-    // TODO is this method needed
+    // nothing to do
   }
 
   /**
    * Called by a subclass (page) to report an error during loading of data.
    * @param error
    */
-  public error(error: any): void {
+  public error(error: Response): void {
     this.logger.error("    Error: %o", error);
     this.pageError = error;
   }

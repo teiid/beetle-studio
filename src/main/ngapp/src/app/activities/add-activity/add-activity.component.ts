@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
 import { ActivitiesConstants } from "@activities/shared/activities-constants";
+import { Component, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-add-activity-page",
