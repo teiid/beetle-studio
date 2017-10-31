@@ -46,11 +46,11 @@ the object and related objects (test, css, html) in the recommended directories.
 `Run/Debug Configurations` dialog, select the `+` in the menubar and then the `JavaScript Debug` type. Name the 
 configuration and set the `URL` to `http://localhost:4200/`.
 1. Start the debug server by opening a terminal in the `.../beetle-studio/src/main/ngapp` directory 
-and runing the following command: `ng serve`.
+and running the following command: `ng serve`.
 1. Set your breakpoints by clicking in the left margin of the line of code you want the breakpoint to be on.
 1. Open browser to `http://localhost:4200/` to see _BeETLe Studio_.
-1. Select the `Run > Debug...` menu item and then on the popup select your debug configutation. _Shortcut: the "bug"
-in the toolbar starts the last debug configution that was run._
+1. Select the `Run > Debug...` menu item and then on the popup select your debug configuration. _Shortcut: the "bug"
+in the toolbar starts the last debug configuration that was run._
 1. Now interact with _BeETLe Studio_ so that your breakpoints are hit.
 
 ## TODO Comments

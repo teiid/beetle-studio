@@ -107,7 +107,7 @@ describe("ConnectionsComponent", () => {
     component.filterConnections();
     fixture.detectChanges();
 
-    // Now expect 0 activities match
+    // Now expect 0 connections match
     connections = component.filteredConnections;
     expect(connections.length).toEqual(0);
   });

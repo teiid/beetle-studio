@@ -1,0 +1,29 @@
+<div class="container-fluid container-cards-pf">
+  <div class="row row-cards-pf">
+
+    <div class="col-xs-12 col-sm-3 col-md-3" *ngFor="let dataservice of dataservices">
+      <div class="card-pf card-pf-accented card-pf-aggregate-status dataservice-card" [class.active]="isSelected(dataservice)" (click)="toggleDataserviceSelected(dataservice)">
+        <div class="card-pf-body">
+          <!-- title -->
+          <h2 class="dataservice-card-title">
+            <span class="fa fa-fw fa-table dataservice-card-icon"></span>
+            <span><a [routerLink]="[dataservice.getId()]">{{ dataservice.getId() }}</a></span>
+            <span class="pull-right fa fa-fw fa-close dataservice-card-action-icon" style="color:darkred;" (click)="onDeleteDataservice(dataservice.getId())"></span>
+          </h2>
+          <hr/>
+          <!--
+          <div>
+            <span><b i18n="@@dataservicesCards.Connection" >Connection:</b>&nbsp;&nbsp;{{ dataservice.getConnection() }}</span>
+          </div>
+          <div class="dataservice-tags" *ngIf="dataservice.tags && dataservice.tags.length > 0">
+            <span class="dataservice-tags-label">Tags:</span>
+            <span class="dataservice-tag" *ngFor="let tag of dataservice.tags" (click)="selectTag(tag, $event)">{{ tag }}</span>
+          </div>
+          <p class="dataservice-description">{{dataservice.description}}</p>
+          -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

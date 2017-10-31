@@ -20,6 +20,7 @@ import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Routes } from "@angular/router";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { environment } from "@environments/environment";
 import { PageNotFoundComponent } from "@shared/page-not-found/page-not-found.component";
 
@@ -27,6 +28,7 @@ const appRoutes: Routes = [
   { path: "", redirectTo: environment.homePagePath, pathMatch: "full" },
   { path: ConnectionsConstants.connectionsRootRoute, loadChildren: "@connections/connections.module#ConnectionsModule" },
   { path: ActivitiesConstants.activitiesRootRoute, loadChildren: "@activities/activities.module#ActivitiesModule" },
+  { path: DataservicesConstants.dataservicesRootRoute, loadChildren: "@dataservices/dataservices.module#DataservicesModule" },
   { path: "**", component: PageNotFoundComponent }, // always last
 ];
 

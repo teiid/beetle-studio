@@ -6,6 +6,11 @@
       <span class="fa fa-fw fa-cog"></span>
       <div i18n="@@verticalNav.activities">Activities</div>
     </div>
+    <div id="studio-nav-item-dataservices" class="studio-nav-item" [class.active]="currentMenu === menuTypes.Dataservices"
+         (click)="onDataservicesClick()">
+      <span class="fa fa-fw fa-table"></span>
+      <div i18n="@@verticalNav.dataservices">DataServices</div>
+    </div>
     <div id="studio-nav-item-connections" class="studio-nav-item" [class.active]="currentMenu === menuTypes.Connections"
          (click)="onConnectionsClick()">
       <span class="fa fa-fw fa-plug"></span>

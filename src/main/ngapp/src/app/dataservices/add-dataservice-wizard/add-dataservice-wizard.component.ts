@@ -22,29 +22,28 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 
-import { ActivitiesConstants } from "@activities/shared/activities-constants";
-import { ActivityService } from "@activities/shared/activity.service";
-import { NewActivity } from "@activities/shared/new-activity.model";
 import { FormControl, FormGroup } from "@angular/forms";
-import { Validators } from "@angular/forms";
 import { AbstractControl } from "@angular/forms";
+import { Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
-import { NewConnection } from "@connections/shared/new-connection.model";
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
+import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { LoggerService } from "@core/logger.service";
+import { WizardComponent } from "patternfly-ng";
+import { WizardEvent } from "patternfly-ng";
 import { WizardStepConfig } from "patternfly-ng";
 import { WizardConfig } from "patternfly-ng";
-import { WizardEvent } from "patternfly-ng";
-import { WizardComponent } from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
-  selector: "app-add-activity-wizard",
-  templateUrl: "./add-activity-wizard.component.html"
+  selector: "app-add-dataservice-wizard",
+  templateUrl: "./add-dataservice-wizard.component.html"
 })
-export class AddActivityWizardComponent implements OnInit {
-  public readonly activitySummaryLink: string = ActivitiesConstants.activitiesRootPath;
+export class AddDataserviceWizardComponent implements OnInit {
+  public readonly dataserviceSummaryLink: string = DataservicesConstants.dataservicesRootPath;
 
   // Wizard Config
   public wizardConfig: WizardConfig;
@@ -64,15 +63,15 @@ export class AddActivityWizardComponent implements OnInit {
 
   @ViewChild("wizard") public wizard: WizardComponent;
 
-  private activityService: ActivityService;
   private connectionService: ConnectionService;
+  private dataserviceService: DataserviceService;
   private allConnections: Connection[] = [];
   private logger: LoggerService;
   private router: Router;
 
-  constructor( router: Router, activityService: ActivityService, connectionService: ConnectionService, logger: LoggerService ) {
-    this.activityService = activityService;
+  constructor( router: Router, connectionService: ConnectionService, dataserviceService: DataserviceService, logger: LoggerService ) {
     this.connectionService = connectionService;
+    this.dataserviceService = dataserviceService;
     this.router = router;
     this.logger = logger;
     this.createBasicPropertyForm();
@@ -93,7 +92,7 @@ export class AddActivityWizardComponent implements OnInit {
     // Step 2 - Review and Create
     this.step2Config = {
       id: "step2",
-      priority: 2,
+      priority: 0,
       title: "Review and Create",
       allowClickNav: false
     } as WizardStepConfig;
@@ -113,9 +112,9 @@ export class AddActivityWizardComponent implements OnInit {
     // Wizard Configuration
     this.wizardConfig = {
       embedInPage: true,
-      loadingTitle: "Add Activity Wizard loading",
+      loadingTitle: "Add Dataservice Wizard loading",
       loadingSecondaryInfo: "Please wait for the wizard to finish loading...",
-      title: "Add Activity",
+      title: "Add Dataservice",
       contentHeight: "500px"
     } as WizardConfig;
 
@@ -130,7 +129,7 @@ export class AddActivityWizardComponent implements OnInit {
           self.connectionsLoaded = true;
         },
         (error) => {
-          self.logger.error("[AddActivityWizardComponent] Error getting connections: %o", error);
+          self.logger.error("[AddDataserviceWizardComponent] Error getting connections: %o", error);
         }
       );
 
@@ -140,7 +139,6 @@ export class AddActivityWizardComponent implements OnInit {
   // ----------------
   // Public Methods
   // ----------------
-
   /*
    * Return the name valid state
    */
@@ -149,17 +147,10 @@ export class AddActivityWizardComponent implements OnInit {
   }
 
   /*
-   * Return the source connection valid state
+   * Return the connection valid state
    */
-  public get sourceConnectionValid(): boolean {
-    return this.basicPropertyForm.controls["sourceConnection"].valid;
-  }
-
-  /*
-   * Return the target connection valid state
-   */
-  public get targetConnectionValid(): boolean {
-    return this.basicPropertyForm.controls["targetConnection"].valid;
+  public get connectionValid(): boolean {
+    return this.basicPropertyForm.controls["connection"].valid;
   }
 
   /*
@@ -167,11 +158,9 @@ export class AddActivityWizardComponent implements OnInit {
    */
   public get step1InstructionMessage(): string {
     if (!this.nameValid) {
-      return "Please enter a name for the Activity";
-    } else if (!this.sourceConnectionValid) {
-      return "Please choose a source connection for the Activity";
-    } else if (!this.targetConnectionValid) {
-      return "Please choose a target connection for the Activity";
+      return "Please enter a name for the Dataservice";
+    } else if (!this.connectionValid) {
+      return "Please choose a connection for the Dataservice";
     } else {
       return "When finished entering properties, click Next to continue";
     }
@@ -181,7 +170,7 @@ export class AddActivityWizardComponent implements OnInit {
    * Step 2 instruction message
    */
   public get step2InstructionMessage(): string {
-    return "Review your entries.  When finished, click Create to create the Activity";
+    return "Review your entries.  When finished, click Create to create the Dataservice";
   }
 
   /*
@@ -199,39 +188,35 @@ export class AddActivityWizardComponent implements OnInit {
   }
 
   public nextClicked($event: WizardEvent): void {
-    // Nothing to do
+    // When leaving page 1, load the driver-specific property definitions
+    if ($event.step.config.id === "step1") {
+    }
   }
 
   public cancelClicked($event: WizardEvent): void {
-    const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
-    this.logger.log("[AddActivityWizardComponent] Navigating to: %o", link);
+    const link: string[] = [ DataservicesConstants.dataservicesRootPath ];
+    this.logger.log("[AddDataserviceWizardComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do
     });
   }
 
   /*
-   * Create the Activity via komodo REST interface,
+   * Create the Dataservice via komodo REST interface,
    * using the currently entered properties
    */
-  public createActivity(): void {
+  public createDataservice(): void {
     this.createComplete = false;
     this.wizardConfig.done = true;
 
-    const activity: NewActivity = new NewActivity();
+    const dataservice: NewDataservice = new NewDataservice();
 
-    // Activity basic properties from step 1
-    activity.setName(this.activityName);
-    const srcConn: NewConnection = new NewConnection();
-    srcConn.setName(this.sourceConnectionName);
-    activity.setSourceConnection(srcConn);
-    const tgtConn: NewConnection = new NewConnection();
-    tgtConn.setName(this.targetConnectionName);
-    activity.setTargetConnection(tgtConn);
+    // Dataservice basic properties from step 1
+    dataservice.setId(this.dataserviceName);
 
     const self = this;
-    this.activityService
-      .createActivity(activity)
+    this.dataserviceService
+      .createDataservice(dataservice)
       .subscribe(
         () => {
           self.createComplete = true;
@@ -239,7 +224,7 @@ export class AddActivityWizardComponent implements OnInit {
           self.step2bConfig.nextEnabled = false;
         },
         (error) => {
-          self.logger.error("[AddActivityWizardComponent] Error: %o", error);
+          self.logger.error("[AddDataserviceWizardComponent] Error: %o", error);
           self.createComplete = true;
           self.createSuccessful = false;
         }
@@ -260,30 +245,34 @@ export class AddActivityWizardComponent implements OnInit {
     }
   }
 
-  public updatePage1ValidStatus( ): void {
-    this.step1Config.nextEnabled = this.basicPropertyForm.valid;
-    this.setNavAway(this.step1Config.nextEnabled);
+  /**
+   * Handler for property form initialization
+   * @param {boolean} isValid form valid state
+   */
+  public onDetailPropertyInit(isValid: boolean): void {
+    this.updatePage2ValidStatus(isValid);
   }
 
   /**
-   * @returns {string} the name of the activity
+   * Handler for property form changes
+   * @param {boolean} isValid form valid state
    */
-  public get activityName(): string {
+  public onDetailPropertyChanged(isValid: boolean): void {
+    this.updatePage2ValidStatus(isValid);
+  }
+
+  /**
+   * @returns {string} the name of the dataservice
+   */
+  public get dataserviceName(): string {
     return this.basicPropertyForm.controls["name"].value;
   }
 
   /**
-   * @returns {string} the source connection name of the activity
+   * @returns {string} the connection name of the dataservice
    */
-  public get sourceConnectionName(): string {
-    return this.basicPropertyForm.controls["sourceConnection"].value;
-  }
-
-  /**
-   * @returns {string} the target connection name of the activity
-   */
-  public get targetConnectionName(): string {
-    return this.basicPropertyForm.controls["targetConnection"].value;
+  public get connectionName(): string {
+    return this.basicPropertyForm.controls["connection"].value;
   }
 
   /*
@@ -307,24 +296,26 @@ export class AddActivityWizardComponent implements OnInit {
   private createBasicPropertyForm(): void {
     this.basicPropertyForm = new FormGroup({
       name: new FormControl("", Validators.required),
-      sourceConnection: new FormControl("", Validators.required),
-      targetConnection: new FormControl("", Validators.required),
+      connection: new FormControl("", Validators.required)
     });
-    this.onChanges();
-  }
-
-  /*
-   * React to basic property changes - update the page 1 status
-   */
-  private onChanges(): void {
-    const self = this;
+    // Responds to basic property changes - updates the page status
     this.basicPropertyForm.valueChanges.subscribe((val) => {
-      self.updatePage1ValidStatus( );
+      this.updatePage1ValidStatus( );
     });
   }
 
   private setNavAway(allow: boolean): void {
     this.step1Config.allowNavAway = allow;
+  }
+
+  private updatePage1ValidStatus( ): void {
+    this.step1Config.nextEnabled = this.basicPropertyForm.valid;
+    this.setNavAway(this.step1Config.nextEnabled);
+  }
+
+  private updatePage2ValidStatus(formValid: boolean): void {
+    this.step2Config.nextEnabled = formValid;
+    this.setNavAway(this.step2Config.nextEnabled);
   }
 
 }

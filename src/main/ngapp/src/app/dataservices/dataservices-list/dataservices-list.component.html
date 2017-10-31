@@ -1,0 +1,33 @@
+<div class="list-group list-view-pf">
+  <div class="list-group-item list-view-pf-stacked" *ngFor="let dataservice of dataservices" [class.active]="isSelected(dataservice)" (click)="toggleDataserviceSelected(dataservice)">
+    <div class="list-view-pf-main-info">
+      <div class="list-view-pf-left">
+        <span class="fa fa-table list-view-pf-icon-sm"></span>
+      </div>
+      <div class="list-view-pf-body">
+        <div class="list-view-pf-description">
+          <div class="list-group-item-heading">
+            <a [routerLink]="[dataservice.getId()]">{{ dataservice.getId() }}</a>
+          </div>
+          <!--
+          <div class="list-group-item-text">{{ dataservice.description }}</div>
+          -->
+        </div>
+        <div class="list-view-pf-additional-info">
+          <!--
+          <div>
+            <span><b i18n="@@dataservicesList.Connection" >Connection:</b>&nbsp&nbsp;&nbsp;{{ dataservice.getConnection() }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          </div>
+          <div class="dataservice-tags" *ngIf="dataservice.tags && dataservice.tags.length > 0">
+            <span class="dataservice-tags-label">Tags:</span>
+            <span class="dataservice-tag" *ngFor="let tag of dataservice.tags" (click)="selectTag(tag, $event)">{{ tag }}</span>
+          </div>
+          -->
+        </div>
+      </div>
+      <div class="list-view-pf-actions">
+        <button i18n="@@dataservicesList.delete" class="btn btn-danger" type="button" (click)="onDeleteDataservice(dataservice.getId())">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

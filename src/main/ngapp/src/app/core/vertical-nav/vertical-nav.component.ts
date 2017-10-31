@@ -19,13 +19,14 @@ import { ActivitiesConstants } from "@activities/shared/activities-constants";
 import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { LoggerService } from "@core/logger.service";
 
 /**
  * Models the menus off the main left-hand vertical nav.
  */
 enum VerticalNavType {
-  Home, Activities, Connections
+  Home, Activities, Connections, Dataservices
 }
 
 @Component({
@@ -79,7 +80,18 @@ export class VerticalNavComponent implements OnInit {
     });
   }
 
-   /**
+  /**
+   * Called when the user clicks the vertical menu Dataservices item.
+   */
+  public onDataservicesClick(): void {
+    this.currentMenu = VerticalNavType.Dataservices;
+    const link: string[] = [ DataservicesConstants.dataservicesRootPath ];
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
+  }
+
+  /**
     * Called when the user clicks the vertical menu shade (the grey shaded area behind the submenu div that
     * is displayed when a sub-menu is selected).  Clicking the shade makes the sub-menu div go away.
     */

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
 import { Headers, RequestOptions, Response } from "@angular/http";
 import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/throw";
