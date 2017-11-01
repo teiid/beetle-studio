@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import { ActivitiesConstants } from "@activities/shared/activities-constants";
 import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
@@ -26,7 +25,7 @@ import { LoggerService } from "@core/logger.service";
  * Models the menus off the main left-hand vertical nav.
  */
 enum VerticalNavType {
-  Home, Activities, Connections, Dataservices
+  Home, Connections, Dataservices
 }
 
 @Component({
@@ -55,17 +54,6 @@ export class VerticalNavComponent implements OnInit {
       if (event instanceof NavigationEnd) {
         self.onShadeClick();
       }
-    });
-  }
-
-  /**
-   * Called when the user clicks the vertical menu Activities item.
-   */
-  public onActivitiesClick(): void {
-    this.currentMenu = VerticalNavType.Activities;
-    const link: string[] = [ ActivitiesConstants.activitiesRootPath ];
-    this.router.navigate(link).then(() => {
-      // nothing to do
     });
   }
 

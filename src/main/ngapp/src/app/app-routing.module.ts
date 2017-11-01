@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import { ActivitiesConstants } from "@activities/shared/activities-constants";
 import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Routes } from "@angular/router";
@@ -27,7 +26,6 @@ import { PageNotFoundComponent } from "@shared/page-not-found/page-not-found.com
 const appRoutes: Routes = [
   { path: "", redirectTo: environment.homePagePath, pathMatch: "full" },
   { path: ConnectionsConstants.connectionsRootRoute, loadChildren: "@connections/connections.module#ConnectionsModule" },
-  { path: ActivitiesConstants.activitiesRootRoute, loadChildren: "@activities/activities.module#ActivitiesModule" },
   { path: DataservicesConstants.dataservicesRootRoute, loadChildren: "@dataservices/dataservices.module#DataservicesModule" },
   { path: "**", component: PageNotFoundComponent }, // always last
 ];
