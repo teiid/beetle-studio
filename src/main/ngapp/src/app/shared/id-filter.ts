@@ -19,9 +19,13 @@ import { Identifiable } from "@shared/identifiable";
 
 const emptyPattern = "";
 
+/**
+ * A string identifier filter.
+ */
 export class IdFilter {
 
   private pattern: string = emptyPattern;
+  private regex: string = emptyPattern;
 
   constructor() {
     // nothing to do
@@ -32,13 +36,12 @@ export class IdFilter {
    * @returns {boolean} true if the ID matches the filter
    */
   public accepts( obj: Identifiable< string > ): boolean {
-    if ( this.pattern === "" ) {
+    if ( this.pattern === emptyPattern ) {
       return true;
     }
 
-    const id: string = obj.getId().toLocaleLowerCase();
-    const localized: string = this.pattern.toLocaleLowerCase();
-    return id.indexOf( localized ) >= 0;
+    const id: string = obj.getId();
+    return id.match( this.regex ) != null;
   }
 
   /**
@@ -53,6 +56,7 @@ export class IdFilter {
    */
   public reset(): void {
     this.pattern = emptyPattern;
+    this.regex = emptyPattern;
   }
 
   /**
@@ -61,8 +65,11 @@ export class IdFilter {
   public setFilter( pattern?: string ): void {
     if ( pattern ) {
       this.pattern = pattern;
+      this.regex = pattern.replace( ".", "\\." );
+      this.regex = "^" + this.regex.replace( "*", ".*" );
     } else {
       this.pattern = emptyPattern;
+      this.regex = emptyPattern;
     }
   }
 

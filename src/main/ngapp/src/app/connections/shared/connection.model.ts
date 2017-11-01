@@ -16,6 +16,7 @@
  */
 
 import { Identifiable } from "@shared/identifiable";
+import { SortDirection } from "@shared/sort-direction.enum";
 
 export class Connection implements Identifiable< string > {
 
@@ -34,8 +35,47 @@ export class Connection implements Identifiable< string > {
     return conn;
   }
 
+  /**
+   * @param {Connection[]} connections the connections being sorted
+   * @param {SortDirection} sortDirection the sort direction
+   */
+  public static sort( connections: Connection[],
+                      sortDirection: SortDirection ): void {
+    connections.sort( ( thisConnection: Connection, thatConnection: Connection ) => {
+      const result = thisConnection.compareTo( thatConnection );
+
+      if ( sortDirection === SortDirection.DESC ) {
+        return result * -1;
+      }
+
+      return result;
+    } );
+  }
+
   constructor() {
     // nothing to do
+  }
+
+  /**
+   * See {Identifiable}.
+   */
+  public compareTo( that: Connection ): number {
+    let result = 0;
+
+    if ( this.getId() ) {
+      if ( that.getId() ) {
+        // both have an ID
+        result = this.getId().localeCompare( that.getId() );
+      } else {
+        // thatItem does not have an ID
+        result = 1;
+      }
+    } else if ( that.getId() ) {
+      // thisItem does not have an ID and thatItem does
+      result = -1;
+    }
+
+    return result;
   }
 
   /**

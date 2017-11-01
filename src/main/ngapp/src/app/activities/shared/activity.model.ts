@@ -15,7 +15,10 @@
  * limitations under the License.
  */
 
-export class Activity {
+import { Identifiable } from "@shared/identifiable";
+import { SortDirection } from "@shared/sort-direction.enum";
+
+export class Activity implements Identifiable< string > {
 
   private keng__id: string;
   private dv__sourceConnection: string;
@@ -31,8 +34,47 @@ export class Activity {
     return activity;
   }
 
+  /**
+   * @param {Activity[]} activities the activities being sorted
+   * @param {SortDirection} sortDirection the sort direction
+   */
+  public static sort( activities: Activity[],
+                      sortDirection: SortDirection ): void {
+    activities.sort( ( thisActivity: Activity, thatActivity: Activity ) => {
+      const result = thisActivity.compareTo( thatActivity );
+
+      if ( sortDirection === SortDirection.DESC ) {
+        return result * -1;
+      }
+
+      return result;
+    } );
+  }
+
   constructor() {
     // nothing to do
+  }
+
+  /**
+   * See {Identifiable}.
+   */
+  public compareTo( that: Activity ): number {
+    let result = 0;
+
+    if ( this.getId() ) {
+      if ( that.getId() ) {
+        // both have an ID
+        result = this.getId().localeCompare( that.getId() );
+      } else {
+        // thatItem does not have an ID
+        result = 1;
+      }
+    } else if ( that.getId() ) {
+      // thisItem does not have an ID and thatItem does
+      result = -1;
+    }
+
+    return result;
   }
 
   /**

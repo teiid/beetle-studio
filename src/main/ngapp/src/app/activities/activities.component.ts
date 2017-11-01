@@ -119,6 +119,7 @@ export class ActivitiesComponent extends AbstractPageComponent {
    */
   public set nameFilter( pattern: string ) {
     this.filter.setFilter( pattern );
+    this.filterActivities();
   }
 
   public toggleSortDirection(): void {
@@ -233,19 +234,16 @@ export class ActivitiesComponent extends AbstractPageComponent {
   public filterActivities(): Activity[] {
     // Clear the array first.
     this.filteredActs.splice(0, this.filteredActs.length);
+
+    // filter
     for (const activity of this.allActs) {
       if (this.filter.accepts(activity)) {
         this.filteredActs.push(activity);
       }
     }
-    this.filteredActs.sort( (a1: Activity, a2: Activity) => {
-      let rval: number = a1.getId().localeCompare(a2.getId());
-      if (this.sortDirection === SortDirection.DESC) {
-        rval *= -1;
-      }
-      return rval;
-    });
 
+    // sort
+    Activity.sort( this.filteredActs, this.sortDirection );
     this.selectedActs = ArrayUtils.intersect(this.selectedActs, this.filteredActs);
 
     return this.filteredActs;
