@@ -17,12 +17,12 @@
 
 import { Component, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { LoggerService } from "@core/logger.service";
+import { ArrayUtils } from "@core/utils/array-utils";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
-import { LoggerService } from "@core/logger.service";
-import { ArrayUtils } from "@core/utils/array-utils";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { IdFilter } from "@shared/id-filter";
@@ -153,6 +153,7 @@ export class DataservicesComponent extends AbstractPageComponent {
    */
   public set nameFilter( pattern: string ) {
     this.filter.setFilter( pattern );
+    this.filterDataservices();
   }
 
   public toggleSortDirection(): void {
@@ -212,34 +213,16 @@ export class DataservicesComponent extends AbstractPageComponent {
   public filterDataservices(): Dataservice[] {
     // Clear the array first.
     this.filteredServices.splice(0, this.filteredServices.length);
+
+    // filter
     for (const dataservice of this.allServices) {
       if (this.filter.accepts(dataservice)) {
         this.filteredServices.push(dataservice);
       }
     }
-    this.filteredServices.sort( (c1: Dataservice, c2: Dataservice) => {
-      let rval = 0;
 
-      if ( c1.getId() ) {
-        if ( c2.getId() ) {
-          // both dataservices have an ID
-          rval = c1.getId().localeCompare( c2.getId() );
-        } else {
-          // c2 does not have an ID
-          rval = 1;
-        }
-      } else if ( c2.getId() ) {
-        // c1 does not have an ID and c2 does
-        rval = -1;
-      }
-
-      if ( this.sortDirection === SortDirection.DESC ) {
-        rval *= -1;
-      }
-
-      return rval;
-    });
-
+    // sort
+    Dataservice.sort( this.filteredDataservices, this.sortDirection );
     this.selectedServices = ArrayUtils.intersect(this.selectedServices, this.filteredServices);
 
     return this.filteredServices;

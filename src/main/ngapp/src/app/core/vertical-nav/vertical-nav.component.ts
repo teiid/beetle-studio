@@ -18,8 +18,8 @@
 import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
-import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { LoggerService } from "@core/logger.service";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 
 /**
  * Models the menus off the main left-hand vertical nav.
@@ -80,9 +80,9 @@ export class VerticalNavComponent implements OnInit {
   }
 
   /**
-    * Called when the user clicks the vertical menu shade (the grey shaded area behind the submenu div that
-    * is displayed when a sub-menu is selected).  Clicking the shade makes the sub-menu div go away.
-    */
+   * Called when the user clicks the vertical menu shade (the grey shaded area behind the submenu div that
+   * is displayed when a sub-menu is selected).  Clicking the shade makes the sub-menu div go away.
+   */
   private onShadeClick(): void {
       /*
         this.subMenuOut = false;

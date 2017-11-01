@@ -19,17 +19,17 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { CoreModule } from "@core/core.module";
+import { LoggerService } from "@core/logger.service";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
 import { DataservicesRoutingModule } from "@dataservices/dataservices-routing.module";
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
-import { CoreModule } from "@core/core.module";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddDataserviceWizardComponent } from "./add-dataservice-wizard/add-dataservice-wizard.component";
 import { AddDataserviceComponent } from "./add-dataservice/add-dataservice.component";
-import { LoggerService } from "@core/logger.service";
 
 @NgModule({
   imports: [

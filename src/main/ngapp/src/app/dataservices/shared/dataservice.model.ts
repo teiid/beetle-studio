@@ -16,6 +16,7 @@
  */
 
 import { Identifiable } from "@shared/identifiable";
+import { SortDirection } from "@shared/sort-direction.enum";
 
 export class Dataservice implements Identifiable< string > {
 
@@ -30,6 +31,23 @@ export class Dataservice implements Identifiable< string > {
     const svc = new Dataservice();
     svc.setValues( json );
     return svc;
+  }
+
+  /**
+   * @param {Dataservice[]} dataservices the dataservices being sorted
+   * @param {SortDirection} sortDirection the sort direction
+   */
+  public static sort( dataservices: Dataservice[],
+                      sortDirection: SortDirection ): void {
+    dataservices.sort( ( thisDataservice: Dataservice, thatDataservice: Dataservice ) => {
+      const result = thisDataservice.compareTo( thatDataservice );
+
+      if ( sortDirection === SortDirection.DESC ) {
+        return result * -1;
+      }
+
+      return result;
+    } );
   }
 
   constructor() {

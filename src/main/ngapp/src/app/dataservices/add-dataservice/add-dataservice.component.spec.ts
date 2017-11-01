@@ -2,15 +2,15 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
-import { AddDataserviceWizardComponent } from "@dataservices/add-dataservice-wizard/add-dataservice-wizard.component";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { MockConnectionService } from "@connections/shared/mock-connection.service";
 import { CoreModule } from "@core/core.module";
+import { AddDataserviceWizardComponent } from "@dataservices/add-dataservice-wizard/add-dataservice-wizard.component";
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddDataserviceComponent } from "./add-dataservice.component";
-import { DataserviceService } from "@dataservices/shared/dataservice.service";
-import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
-import { ConnectionService } from "@connections/shared/connection.service";
-import { MockConnectionService } from "@connections/shared/mock-connection.service";
 
 describe("AddDataserviceComponent", () => {
   let component: AddDataserviceComponent;

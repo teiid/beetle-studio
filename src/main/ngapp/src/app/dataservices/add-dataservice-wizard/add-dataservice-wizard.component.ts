@@ -23,15 +23,15 @@ import {
 } from "@angular/core";
 
 import { FormControl, FormGroup } from "@angular/forms";
-import { AbstractControl } from "@angular/forms";
 import { Validators } from "@angular/forms";
+import { AbstractControl } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
+import { LoggerService } from "@core/logger.service";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
-import { LoggerService } from "@core/logger.service";
 import { WizardComponent } from "patternfly-ng";
 import { WizardEvent } from "patternfly-ng";
 import { WizardStepConfig } from "patternfly-ng";
@@ -190,6 +190,7 @@ export class AddDataserviceWizardComponent implements OnInit {
   public nextClicked($event: WizardEvent): void {
     // When leaving page 1, load the driver-specific property definitions
     if ($event.step.config.id === "step1") {
+      // TODO implement nextClicked
     }
   }
 
