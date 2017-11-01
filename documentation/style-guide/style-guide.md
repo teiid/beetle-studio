@@ -39,9 +39,9 @@ Our _TSLint_ configuration file (`tslint.json`) inherits recommended rules. We a
 rules. _Note: Rules can be overridden on a case by case if needed by adding a special comment to the 
 offending line of code. WebStorm has a quick fix that will do this for you._
 
-Here are a **few** of the TSLint rules defined in our configuation file used:
+Here are a **few** of the TSLint rules defined in our configuration file used:
 
-- **align** - used to align member properties and statments.
+- **align** - used to align member properties and statements.
 - **component-class-suffix** - all components need to have `Component` as the name suffix.
 - **directive-class-suffix** - all directives need to have `Directive` as the name suffix.
 - **max-classes-per-file** - value is set to one so that classes, enums, types, etc. can easily be found.

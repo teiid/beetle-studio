@@ -285,6 +285,7 @@ export class AddConnectionWizardComponent implements OnInit {
           self.step3bConfig.nextEnabled = false;
         },
         (error) => {
+          self.logger.error("[AddConnectionWizardComponent] Error: %o", error);
           self.createComplete = true;
           self.createSuccessful = false;
         }
