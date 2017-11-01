@@ -37,6 +37,28 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
+   * See {Identifiable}.
+   */
+  public compareTo( that: Dataservice ): number {
+    let result = 0;
+
+    if ( this.getId() ) {
+      if ( that.getId() ) {
+        // both have an ID
+        result = this.getId().localeCompare( that.getId() );
+      } else {
+        // thatItem does not have an ID
+        result = 1;
+      }
+    } else if ( that.getId() ) {
+      // thisItem does not have an ID and thatItem does
+      result = -1;
+    }
+
+    return result;
+  }
+
+  /**
    * @returns {string} the dataservice identifier (can be null)
    */
   public getId(): string {
@@ -72,7 +94,7 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
-   * @param {string} id the dataservice description (optional)
+   * @param {string} description the dataservice description (optional)
    */
   public setDescription( description?: string ): void {
     this.tko__description = description ? description : null;

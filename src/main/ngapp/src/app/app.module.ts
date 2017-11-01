@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-import { ActivitiesRoutingModule } from "@activities/activities-routing.module";
-import { ActivitiesModule } from "@activities/activities.module";
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { RouterModule } from "@angular/router";
@@ -34,14 +32,12 @@ import { SharedModule } from "@shared/shared.module";
     AppComponent
   ],
   imports: [
-    ActivitiesModule,
     BrowserModule,
     ConnectionsModule,
     CoreModule,
     DataservicesModule,
     RouterModule,
     SharedModule,
-    ActivitiesRoutingModule,
     ConnectionsRoutingModule,
     DataservicesRoutingModule,
     AppRoutingModule // last so its routes are check after all other routes
