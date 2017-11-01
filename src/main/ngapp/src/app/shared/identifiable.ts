@@ -22,6 +22,13 @@ export interface Identifiable< T > {
 
   /**
    * @typedef { object } T the type of the property that is used to identify the object
+   * @param {Identifiable<T>} that the object being compared to
+   * @returns {number} 0 if IDs are equal, -1 if this ID is less than, or 1 if this ID is greater than
+   */
+  compareTo( that: Identifiable< T > ): number;
+
+  /**
+   * @typedef { object } T the type of the property that is used to identify the object
    * @returns {T} the object identifier (can be null)
    */
   getId(): T;
