@@ -23,8 +23,8 @@ import { AppComponent } from "@app/app.component";
 import { ConnectionsRoutingModule } from "@connections/connections-routing.module";
 import { ConnectionsModule } from "@connections/connections.module";
 import { CoreModule } from "@core/core.module";
-import { DataservicesModule } from "@dataservices/dataservices.module";
 import { DataservicesRoutingModule } from "@dataservices/dataservices-routing.module";
+import { DataservicesModule } from "@dataservices/dataservices.module";
 import { SharedModule } from "@shared/shared.module";
 
 @NgModule({
