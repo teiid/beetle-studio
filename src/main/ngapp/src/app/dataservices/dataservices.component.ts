@@ -22,7 +22,6 @@ import { ArrayUtils } from "@core/utils/array-utils";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
-import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { IdFilter } from "@shared/id-filter";
@@ -68,8 +67,7 @@ export class DataservicesComponent extends AbstractPageComponent {
           self.loaded("dataservices");
         },
         (error) => {
-          self.logger.error("[DataservicesComponent] Error getting dataservices.");
-          self.error(error);
+          self.error(error, "Error getting dataservices");
         }
       );
   }
@@ -187,22 +185,22 @@ export class DataservicesComponent extends AbstractPageComponent {
     // const itemsToDelete: Dataservice[] = ArrayUtils.intersect(this.selectedServices, this.filteredServices);
     // const selectedService = itemsToDelete[0];
 
-    const dataserviceToDelete: NewDataservice = new NewDataservice();
-    dataserviceToDelete.setId(selectedService.getId());
-
     // Note: we can only doDelete selected items that we can see in the UI.
     this.logger.log("[DataservicesPageComponent] Deleting selected Dataservice.");
     const self = this;
     this.dataserviceService
-      .deleteDataservice(dataserviceToDelete)
+      .deleteDataservice(selectedService.getId())
       .subscribe(
-        () => {
+        (wasSuccess) => {
           self.removeDataserviceFromList(selectedService);
           const link: string[] = [ DataservicesConstants.dataservicesRootPath ];
           self.logger.log("[CreateApiPageComponent] Navigating to: %o", link);
           self.router.navigate(link).then(() => {
             // nothing to do
           });
+        },
+        (error) => {
+          self.error(error, "Error deleting the dataservice");
         }
       );
   }

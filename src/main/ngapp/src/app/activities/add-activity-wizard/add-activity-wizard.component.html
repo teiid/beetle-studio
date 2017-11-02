@@ -7,11 +7,25 @@
   <!-- Step 1 : Basic Properties -->
   <!-- ------------------------- -->
   <pfng-wizard-step [config]="step1Config">
-    <h3><i>{{ step1InstructionMessage }}</i></h3>
-    <div *ngIf="!connectionsLoaded">
+    <div *ngIf="connectionsLoading">
       <div class="spinner spinner-lg blank-slate-pf-icon"></div>
     </div>
-    <form [formGroup]=basicPropertyForm class="form-horizontal" *ngIf="connectionsLoaded">
+    <!-- Connections failed to load -->
+    <div class="card-pf card-pf-accented card-pf-error" *ngIf="!connectionsLoading && !connectionsLoadSuccess">
+      <div class="card-pf-heading">
+        <h2 class="card-pf-title">
+          <span class="fa fa-fw fa-exclamation"></span>
+          <span i18n="@@addActivityWizard.stepInitError">Step Initialization Error</span>
+        </h2>
+      </div>
+      <div class="card-pf-body">
+        <p i18n="@@addActivityWizard.couldNotLoadConnections">
+          Could not load the connections.  Please Try relaunching the wizard or check the console log.
+        </p>
+      </div>
+    </div>
+    <h3 *ngIf="!connectionsLoading && connectionsLoadSuccess"><i>{{ step1InstructionMessage }}</i></h3>
+    <form [formGroup]=basicPropertyForm class="form-horizontal" *ngIf="!connectionsLoading && connectionsLoadSuccess">
       <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
         <label class="col-sm-2 control-label">Name</label>
         <div class="col-sm-5">

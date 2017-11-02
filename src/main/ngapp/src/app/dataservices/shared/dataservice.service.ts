@@ -52,28 +52,30 @@ export class DataserviceService extends ApiService {
   /**
    * Create a dataservice via the komodo rest interface
    * @param {NewDataservice} dataservice
-   * @returns {Observable<Dataservice>}
+   * @returns {Observable<boolean>}
    */
-  public createDataservice(dataservice: NewDataservice): Observable<NewDataservice> {
+  public createDataservice(dataservice: NewDataservice): Observable<boolean> {
     return this.http
       .post(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRootPath + "/" + dataservice.getId(),
              dataservice, this.getAuthRequestOptions())
       .map((response) => {
-        return new Dataservice();
+        return response.ok;
       })
       .catch( ( error ) => this.handleError( error ) );
   }
 
   /**
    * Delete a dataservice via the komodo rest interface
-   * @param {NewDataservice} dataservice
-   * @returns {Observable<Dataservice>}
+   * @param {string} dataserviceId
+   * @returns {Observable<boolean>}
    */
-  public deleteDataservice(dataservice: NewDataservice): Observable<NewDataservice> {
+  public deleteDataservice(dataserviceId: string): Observable<boolean> {
     return this.http
-      .delete(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRootPath + "/" + dataservice.getId(),
+      .delete(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRootPath + "/" + dataserviceId,
                this.getAuthRequestOptions())
-      .map((response) => null)
+      .map((response) => {
+        return response.ok;
+      })
       .catch( ( error ) => this.handleError( error ) );
   }
 

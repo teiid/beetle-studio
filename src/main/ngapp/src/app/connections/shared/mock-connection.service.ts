@@ -42,19 +42,19 @@ export class MockConnectionService extends ConnectionService {
   /**
    * Create a connection via the komodo rest interface
    * @param {NewConnection} connection
-   * @returns {Observable<Connection>}
+   * @returns {Observable<boolean>}
    */
-  public createConnection(connection: NewConnection): Observable<NewConnection> {
-    return Observable.of(this.newConnection);
+  public createConnection(connection: NewConnection): Observable<boolean> {
+    return Observable.of(true);
   }
 
   /**
    * Delete a connection via the komodo rest interface
-   * @param {NewConnection} connection
-   * @returns {Observable<Connection>}
+   * @param {string} connectionId
+   * @returns {Observable<boolean>}
    */
-  public deleteConnection(connection: NewConnection): Observable<NewConnection> {
-    return Observable.of(this.newConnection);
+  public deleteConnection(connectionId: string): Observable<boolean> {
+    return Observable.of(true);
   }
 
   /**

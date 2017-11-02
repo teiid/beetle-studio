@@ -13,7 +13,6 @@ import { Observable } from "rxjs/Observable";
 @Injectable()
 export class MockDataserviceService extends DataserviceService {
 
-  private newDataservice = new NewDataservice();
   private serv1 = new Dataservice();
   private serv2 = new Dataservice();
   private serv3 = new Dataservice();
@@ -37,19 +36,19 @@ export class MockDataserviceService extends DataserviceService {
   /**
    * Create a dataservice via the komodo rest interface
    * @param {NewDataservice} dataservice
-   * @returns {Observable<Dataservice>}
+   * @returns {Observable<boolean>}
    */
-  public createDataservice(dataservice: NewDataservice): Observable<NewDataservice> {
-    return Observable.of(this.newDataservice);
+  public createDataservice(dataservice: NewDataservice): Observable<boolean> {
+    return Observable.of(true);
   }
 
   /**
    * Delete a dataservice via the komodo rest interface
-   * @param {NewDataservice} dataservice
-   * @returns {Observable<Dataservice>}
+   * @param {string} dataserviceId
+   * @returns {Observable<boolean>}
    */
-  public deleteDataservice(dataservice: NewDataservice): Observable<NewDataservice> {
-    return Observable.of(this.newDataservice);
+  public deleteDataservice(dataserviceId: string): Observable<boolean> {
+    return Observable.of(true);
   }
 
 }

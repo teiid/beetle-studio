@@ -41,7 +41,8 @@ import { WizardConfig } from "patternfly-ng";
 @Component({
   encapsulation: ViewEncapsulation.None,
   selector: "app-add-connection-wizard",
-  templateUrl: "./add-connection-wizard.component.html"
+  templateUrl: "./add-connection-wizard.component.html",
+  styleUrls: ["./add-connection-wizard.component.css"]
 })
 export class AddConnectionWizardComponent implements OnInit {
   public readonly connectionSummaryLink: string = ConnectionsConstants.connectionsRootPath;
@@ -52,10 +53,12 @@ export class AddConnectionWizardComponent implements OnInit {
   public basicPropertyForm: FormGroup;
   public createComplete = true;
   public createSuccessful = false;
-  public detailPropertiesLoaded = false;
+  public detailPropertiesLoading = true;
+  public detailPropertiesLoadSuccess = false;
   public detailPropertiesLoadedType = "";
   public requiredPropValues: Array<[string, string]> = [];
-  public templatesLoaded = false;
+  public templatesLoading = true;
+  public templatesLoadSuccess = false;
 
   // Wizard Step 1
   public step1Config: WizardStepConfig;
@@ -130,21 +133,26 @@ export class AddConnectionWizardComponent implements OnInit {
       loadingTitle: "Add Connection Wizard loading",
       loadingSecondaryInfo: "Please wait for the wizard to finish loading...",
       title: "Add Connection",
-      contentHeight: "500px"
+      contentHeight: "500px",
+      done: false
     } as WizardConfig;
 
     // Load the templates for the first step
-    this.templatesLoaded = false;
+    this.templatesLoading = true;
+    this.templatesLoadSuccess = true;
     const self = this;
     this.connectionService
       .getConnectionTemplates()
       .subscribe(
         (templates) => {
           self.allTemplates = templates;
-          self.templatesLoaded = true;
+          self.templatesLoading = false;
+          self.templatesLoadSuccess = true;
         },
         (error) => {
           self.logger.error("[AddConnectionWizardComponent] Error getting templates: %o", error);
+          self.templatesLoading = false;
+          self.templatesLoadSuccess = false;
         }
       );
 
@@ -233,7 +241,7 @@ export class AddConnectionWizardComponent implements OnInit {
     // When leaving page 1, load the driver-specific property definitions
     if ($event.step.config.id === "step1") {
       const selectedDriver = this.basicPropertyForm.controls["driver"].value;
-      if (!this.detailPropertiesLoaded || (this.detailPropertiesLoadedType !== selectedDriver)) {
+      if (!this.detailPropertiesLoadSuccess || (this.detailPropertiesLoadedType !== selectedDriver)) {
         this.loadPropertyDefinitions(selectedDriver);
       }
     }
@@ -261,7 +269,7 @@ export class AddConnectionWizardComponent implements OnInit {
    */
   public createConnection(): void {
     this.createComplete = false;
-    this.wizardConfig.done = true;
+    this.createSuccessful = false;
 
     const connection: NewConnection = new NewConnection();
 
@@ -279,15 +287,16 @@ export class AddConnectionWizardComponent implements OnInit {
     this.connectionService
       .createConnection(connection)
       .subscribe(
-        () => {
+        (wasSuccess) => {
           self.createComplete = true;
-          self.createSuccessful = true;
+          self.createSuccessful = wasSuccess;
           self.step3bConfig.nextEnabled = false;
         },
         (error) => {
           self.logger.error("[AddConnectionWizardComponent] Error: %o", error);
           self.createComplete = true;
           self.createSuccessful = false;
+          self.step3bConfig.nextEnabled = false;
         }
       );
   }
@@ -388,7 +397,8 @@ export class AddConnectionWizardComponent implements OnInit {
    * Load the driver-specific property definitions
    */
   private loadPropertyDefinitions( driverName ): void {
-    this.detailPropertiesLoaded = false;
+    this.detailPropertiesLoading = false;
+    this.detailPropertiesLoadSuccess = false;
     const self = this;
     this.connectionService
       .getConnectionTemplateProperties(driverName)
@@ -406,13 +416,14 @@ export class AddConnectionWizardComponent implements OnInit {
           }
 
           self.detailProperties = firstProps.concat(nextProps);
-          self.detailPropertiesLoaded = true;
+          self.detailPropertiesLoading = false;
+          self.detailPropertiesLoadSuccess = true;
           self.detailPropertiesLoadedType = driverName;
         },
         (error) => {
           self.logger.error("[AddConnectionWizardComponent] Error: %o", error);
-          // this.error(error);
-          self.detailPropertiesLoaded = false;
+          self.detailPropertiesLoading = false;
+          self.detailPropertiesLoadSuccess = false;
         }
       );
   }
