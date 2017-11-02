@@ -7,11 +7,25 @@
   <!-- Step 1 : Basic Properties -->
   <!-- ------------------------- -->
   <pfng-wizard-step [config]="step1Config">
-    <h3><i>{{ step1InstructionMessage }}</i></h3>
-    <div *ngIf="!templatesLoaded">
+    <div *ngIf="templatesLoading">
       <div class="spinner spinner-lg blank-slate-pf-icon"></div>
     </div>
-    <form [formGroup]=basicPropertyForm class="form-horizontal" *ngIf="templatesLoaded">
+    <!-- Connection Templates failed to load -->
+    <div class="card-pf card-pf-accented card-pf-error" *ngIf="!templatesLoading && !templatesLoadSuccess">
+      <div class="card-pf-heading">
+        <h2 class="card-pf-title">
+          <span class="fa fa-fw fa-exclamation"></span>
+          <span i18n="@@addConnectionWizard.step1InitError">Step Initialization Error</span>
+        </h2>
+      </div>
+      <div class="card-pf-body">
+        <p i18n="@@addConnectionWizard.couldNotLoadConnections">
+          Could not load the connection types.  Please Try relaunching the wizard or check the console log.
+        </p>
+      </div>
+    </div>
+    <h3 *ngIf="!templatesLoading && templatesLoadSuccess"><i>{{ step1InstructionMessage }}</i></h3>
+    <form [formGroup]=basicPropertyForm class="form-horizontal" *ngIf="!templatesLoading && templatesLoadSuccess">
       <div [ngClass]="driverValid ? 'form-group' : 'form-group has-error'">
         <label class="col-sm-2 control-label">Connection Type</label>
         <div class="col-sm-5">
@@ -43,11 +57,25 @@
   <!-- Step 2 : Advanced Properties -->
   <!-- ---------------------------- -->
   <pfng-wizard-step [config]="step2Config">
-    <h3><i>{{ step2InstructionMessage }}</i></h3>
-    <div *ngIf="!detailPropertiesLoaded">
+    <div *ngIf="detailPropertiesLoading">
       <div class="spinner spinner-lg blank-slate-pf-icon"></div>
     </div>
-    <div class="add-connection-form row" *ngIf="detailPropertiesLoaded">
+    <!-- Detail properties failed to load -->
+    <div class="card-pf card-pf-accented card-pf-error" *ngIf="!detailPropertiesLoading && !detailPropertiesLoadSuccess">
+      <div class="card-pf-heading">
+        <h2 class="card-pf-title">
+          <span class="fa fa-fw fa-exclamation"></span>
+          <span i18n="@@addConnectionWizard.step2InitError">Step Initialization Error</span>
+        </h2>
+      </div>
+      <div class="card-pf-body">
+        <p i18n="@@addConnectionWizard.couldNotLoadConnections">
+          Could not load the detail properties.  Please Try relaunching the wizard or check the console log.
+        </p>
+      </div>
+    </div>
+    <h3 *ngIf="!detailPropertiesLoading && detailPropertiesLoadSuccess"><i>{{ step2InstructionMessage }}</i></h3>
+    <div class="add-connection-form row" *ngIf="!detailPropertiesLoading && detailPropertiesLoadSuccess">
       <app-property-form [formProperties]="getPropertyDefinitions()" (formInitialized)="onDetailPropertyInit($event)"
                          (formChanged)="onDetailPropertyChanged($event)"></app-property-form>
     </div>

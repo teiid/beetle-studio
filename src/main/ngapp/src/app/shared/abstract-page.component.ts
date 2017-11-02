@@ -67,9 +67,16 @@ export abstract class AbstractPageComponent implements OnInit {
   /**
    * Called by a subclass (page) to report an error during loading of data.
    * @param error
+   * @param errorMsg optional message for the logger
    */
-  public error(error: Response): void {
-    this.logger.error("    Error: %o", error);
+  public error(error: Response, errorMsg?: string): void {
+    let logMessage = "[" + this.constructor.name + "] ";
+    if (errorMsg) {
+      logMessage = logMessage.concat(errorMsg + ": %o");
+    } else {
+      logMessage = logMessage.concat(" Error: %o");
+    }
+    this.logger.error(logMessage, error);
     this.pageError = error;
   }
 

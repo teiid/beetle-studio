@@ -41,7 +41,8 @@ import { WizardComponent } from "patternfly-ng";
 @Component({
   encapsulation: ViewEncapsulation.None,
   selector: "app-add-activity-wizard",
-  templateUrl: "./add-activity-wizard.component.html"
+  templateUrl: "./add-activity-wizard.component.html",
+  styleUrls: ["./add-activity-wizard.component.css"]
 })
 export class AddActivityWizardComponent implements OnInit {
   public readonly activitySummaryLink: string = ActivitiesConstants.activitiesRootPath;
@@ -52,7 +53,8 @@ export class AddActivityWizardComponent implements OnInit {
   public basicPropertyForm: FormGroup;
   public createComplete = true;
   public createSuccessful = false;
-  public connectionsLoaded = false;
+  public connectionsLoading = true;
+  public connectionsLoadSuccess = false;
 
   // Wizard Step 1
   public step1Config: WizardStepConfig;
@@ -116,21 +118,26 @@ export class AddActivityWizardComponent implements OnInit {
       loadingTitle: "Add Activity Wizard loading",
       loadingSecondaryInfo: "Please wait for the wizard to finish loading...",
       title: "Add Activity",
-      contentHeight: "500px"
+      contentHeight: "500px",
+      done: false
     } as WizardConfig;
 
     // Load the connections for the first step
-    this.connectionsLoaded = false;
+    this.connectionsLoading = true;
+    this.connectionsLoadSuccess = false;
     const self = this;
     this.connectionService
       .getAllConnections()
       .subscribe(
         (conns) => {
           self.allConnections = conns;
-          self.connectionsLoaded = true;
+          self.connectionsLoading = false;
+          self.connectionsLoadSuccess = true;
         },
         (error) => {
           self.logger.error("[AddActivityWizardComponent] Error getting connections: %o", error);
+          self.connectionsLoading = false;
+          self.connectionsLoadSuccess = false;
         }
       );
 
@@ -216,7 +223,6 @@ export class AddActivityWizardComponent implements OnInit {
    */
   public createActivity(): void {
     this.createComplete = false;
-    this.wizardConfig.done = true;
 
     const activity: NewActivity = new NewActivity();
 
@@ -242,6 +248,7 @@ export class AddActivityWizardComponent implements OnInit {
           self.logger.error("[AddActivityWizardComponent] Error: %o", error);
           self.createComplete = true;
           self.createSuccessful = false;
+          self.step2bConfig.nextEnabled = false;
         }
       );
   }

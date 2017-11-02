@@ -40,7 +40,8 @@ import { WizardConfig } from "patternfly-ng";
 @Component({
   encapsulation: ViewEncapsulation.None,
   selector: "app-add-dataservice-wizard",
-  templateUrl: "./add-dataservice-wizard.component.html"
+  templateUrl: "./add-dataservice-wizard.component.html",
+  styleUrls: ["./add-dataservice-wizard.component.css"]
 })
 export class AddDataserviceWizardComponent implements OnInit {
   public readonly dataserviceSummaryLink: string = DataservicesConstants.dataservicesRootPath;
@@ -51,7 +52,8 @@ export class AddDataserviceWizardComponent implements OnInit {
   public basicPropertyForm: FormGroup;
   public createComplete = true;
   public createSuccessful = false;
-  public connectionsLoaded = false;
+  public connectionsLoading = true;
+  public connectionsLoadSuccess = false;
 
   // Wizard Step 1
   public step1Config: WizardStepConfig;
@@ -115,21 +117,26 @@ export class AddDataserviceWizardComponent implements OnInit {
       loadingTitle: "Add Dataservice Wizard loading",
       loadingSecondaryInfo: "Please wait for the wizard to finish loading...",
       title: "Add Dataservice",
-      contentHeight: "500px"
+      contentHeight: "500px",
+      done: false
     } as WizardConfig;
 
     // Load the connections for the first step
-    this.connectionsLoaded = false;
+    this.connectionsLoading = true;
+    this.connectionsLoadSuccess = false;
     const self = this;
     this.connectionService
       .getAllConnections()
       .subscribe(
         (conns) => {
           self.allConnections = conns;
-          self.connectionsLoaded = true;
+          self.connectionsLoading = false;
+          self.connectionsLoadSuccess = true;
         },
         (error) => {
           self.logger.error("[AddDataserviceWizardComponent] Error getting connections: %o", error);
+          self.connectionsLoading = false;
+          self.connectionsLoadSuccess = false;
         }
       );
 
@@ -208,7 +215,7 @@ export class AddDataserviceWizardComponent implements OnInit {
    */
   public createDataservice(): void {
     this.createComplete = false;
-    this.wizardConfig.done = true;
+    this.createSuccessful = false;
 
     const dataservice: NewDataservice = new NewDataservice();
 
@@ -219,15 +226,16 @@ export class AddDataserviceWizardComponent implements OnInit {
     this.dataserviceService
       .createDataservice(dataservice)
       .subscribe(
-        () => {
+        (wasSuccess) => {
           self.createComplete = true;
-          self.createSuccessful = true;
+          self.createSuccessful = wasSuccess;
           self.step2bConfig.nextEnabled = false;
         },
         (error) => {
           self.logger.error("[AddDataserviceWizardComponent] Error: %o", error);
           self.createComplete = true;
           self.createSuccessful = false;
+          self.step2bConfig.nextEnabled = false;
         }
       );
   }

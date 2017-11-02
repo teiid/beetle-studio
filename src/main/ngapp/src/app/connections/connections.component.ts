@@ -20,7 +20,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
-import { NewConnection } from "@connections/shared/new-connection.model";
 import { LoggerService } from "@core/logger.service";
 import { ArrayUtils } from "@core/utils/array-utils";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
@@ -69,8 +68,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
           self.loaded("connections");
         },
         (error) => {
-          self.logger.error("[ConnectionsComponent] Error getting connections.");
-          self.error(error);
+          self.error(error, "Error getting connections");
         }
       );
   }
@@ -192,22 +190,22 @@ export class ConnectionsComponent extends AbstractPageComponent {
     // const itemsToDelete: Connection[] = ArrayUtils.intersect(this.selectedConns, this.filteredConns);
     // const selectedConn = itemsToDelete[0];
 
-    const connectionToDelete: NewConnection = new NewConnection();
-    connectionToDelete.setName(selectedConn.getId());
-
     // Note: we can only doDelete selected items that we can see in the UI.
     this.logger.log("[ConnectionsPageComponent] Deleting selected Connection.");
     const self = this;
     this.connectionService
-      .deleteConnection(connectionToDelete)
+      .deleteConnection(selectedConn.getId())
       .subscribe(
-        () => {
+        (wasSuccess) => {
           self.removeConnectionFromList(selectedConn);
           const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
           self.logger.log("[CreateApiPageComponent] Navigating to: %o", link);
           self.router.navigate(link).then(() => {
             // nothing to do
           });
+        },
+        (error) => {
+          self.error(error, "Error deleting the connection");
         }
       );
   }

@@ -54,28 +54,30 @@ export class ConnectionService extends ApiService {
   /**
    * Create a connection via the komodo rest interface
    * @param {NewConnection} connection
-   * @returns {Observable<Connection>}
+   * @returns {Observable<boolean>}
    */
-  public createConnection(connection: NewConnection): Observable<NewConnection> {
+  public createConnection(connection: NewConnection): Observable<boolean> {
     return this.http
       .post(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath + "/" + connection.getName(),
              connection, this.getAuthRequestOptions())
       .map((response) => {
-        return new Connection();
+        return response.ok;
       })
       .catch( ( error ) => this.handleError( error ) );
   }
 
   /**
    * Delete a connection via the komodo rest interface
-   * @param {NewConnection} connection
-   * @returns {Observable<Connection>}
+   * @param {string} connectionId
+   * @returns {Observable<boolean>}
    */
-  public deleteConnection(connection: NewConnection): Observable<NewConnection> {
+  public deleteConnection(connectionId: string): Observable<boolean> {
     return this.http
-      .delete(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath + "/" + connection.getName(),
+      .delete(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath + "/" + connectionId,
                this.getAuthRequestOptions())
-      .map((response) => null)
+      .map((response) => {
+        return response.ok;
+      })
       .catch( ( error ) => this.handleError( error ) );
   }
 

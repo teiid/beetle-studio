@@ -72,8 +72,7 @@ export class ActivitiesComponent extends AbstractPageComponent {
           self.loaded("activities");
         },
         (error) => {
-          self.logger.error("[ActivitiesComponent] Error getting activities.");
-          self.error(error);
+          self.error(error, "Error getting activities");
         }
       );
   }
@@ -224,6 +223,9 @@ export class ActivitiesComponent extends AbstractPageComponent {
           self.router.navigate(link).then(() => {
             // nothing to do
           });
+        },
+        (error) => {
+          self.error(error, "Error deleting the activity");
         }
       );
   }

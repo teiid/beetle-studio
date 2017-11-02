@@ -44,15 +44,6 @@ export class ActivityService extends ApiService {
       activities = [];
     }
     return Observable.of(this.convertObjectArray(activities));
-    /*
-    return this.http
-      .get(komodoWorkspaceUrl + '/activities', this.getAuthRequestOptions())
-      .map(response => {
-        const activities = response.json();
-        return activities.map((activity) => {const activ = new Activity(); activ.setValues(activity); return activ; });
-      })
-      .catch(this.handleError);
-      */
   }
 
   /**
@@ -73,16 +64,7 @@ export class ActivityService extends ApiService {
     activities.push(act);
     localStorage.setItem("activities", JSON.stringify(activities));
 
-    // TODO implement createActivity()
     return Observable.of(activity);
-    /*
-    return this.http
-      .post(komodoWorkspaceUrl + '/activities/' + activity.name, activity, this.getAuthRequestOptions())
-      .map(response => {
-        return new Activity();
-      })
-      .catch(this.handleError);
-      */
   }
 
   /**
@@ -100,13 +82,6 @@ export class ActivityService extends ApiService {
 
     localStorage.setItem("activities", JSON.stringify(activities));
 
-    // TODO implement deleteActivity()
-    /*
-    return this.http
-      .doDelete(komodoWorkspaceUrl + '/activities/' + activity.name, this.getAuthRequestOptions())
-      .map(response => null)
-      .catch(this.handleError);
-      */
     return Observable.of(null);
   }
 
