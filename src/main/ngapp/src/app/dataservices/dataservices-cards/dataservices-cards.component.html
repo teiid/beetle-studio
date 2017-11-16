@@ -9,11 +9,16 @@
             <span class="fa fa-fw fa-table dataservice-card-icon"></span>
             <span><a [routerLink]="[dataservice.getId()]">{{ dataservice.getId() }}</a></span>
             <span class="pull-right fa fa-fw fa-close dataservice-card-action-icon" style="color:darkred;" (click)="onDeleteDataservice(dataservice.getId())"></span>
+            <span class="pull-right fa fa-fw fa-arrow-up dataservice-card-action-icon" (click)="onPublishDataservice(dataservice.getId())"></span>
+            <span class="pull-right fa fa-fw fa-play dataservice-card-action-icon" style="color:darkgreen;" (click)="onTestDataservice(dataservice.getId())"></span>
           </h2>
           <hr/>
+          <div>
+            <span>{{ dataservice.getDescription() }}</span>
+          </div>
           <!--
           <div>
-            <span><b i18n="@@dataservicesCards.Connection" >Connection:</b>&nbsp;&nbsp;{{ dataservice.getConnection() }}</span>
+            <span><b i18n="@@dataservicesCards.Connection" >Connection:</b>&nbsp;&nbsp;{{ dataservice.getConnection().getName() }}</span>
           </div>
           <div class="dataservice-tags" *ngIf="dataservice.tags && dataservice.tags.length > 0">
             <span class="dataservice-tags-label">Tags:</span>

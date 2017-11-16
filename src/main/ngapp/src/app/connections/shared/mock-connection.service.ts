@@ -1,9 +1,27 @@
+/**
+ * @license
+ * Copyright 2017 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { TemplateDefinition } from "@connections/shared/template-definition.model";
+import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
@@ -24,8 +42,8 @@ export class MockConnectionService extends ConnectionService {
   private templ3 = new TemplateDefinition();
   private templs: TemplateDefinition[] = [this.templ1, this.templ2, this.templ3];
 
-  constructor( http: Http, logger: LoggerService ) {
-    super(http, logger);
+  constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
+    super(http, appSettings, logger);
     this.conn1.setId("conn1");
     this.conn2.setId("conn2");
     this.conn3.setId("conn3");

@@ -133,6 +133,14 @@ export class DataservicesComponent extends AbstractPageComponent {
     // this.selectedServices.splice(this.selectedServices.indexOf(dataservice), 1);
   }
 
+  public onTest(svcName: string): void {
+    alert("Test Dataservice " + svcName);
+  }
+
+  public onPublish(svcName: string): void {
+    alert("Publish Dataservice " + svcName);
+  }
+
   public onDelete(svcName: string): void {
     this.dataserviceNameForDelete = svcName;
     this.confirmDeleteDialog.open();

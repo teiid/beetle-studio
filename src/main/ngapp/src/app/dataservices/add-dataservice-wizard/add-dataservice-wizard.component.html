@@ -3,29 +3,12 @@
              (onCancel)="cancelClicked($event)"
              (onNext)="nextClicked($event)"
              (onStepChange)="stepChanged($event)">
-  <!-- ------------------------- -->
-  <!-- Step 1 : Basic Properties -->
-  <!-- ------------------------- -->
+  <!-- ----------------------------- -->
+  <!-- Step 1 : Name and Description -->
+  <!-- ----------------------------- -->
   <pfng-wizard-step [config]="step1Config">
-    <div *ngIf="connectionsLoading">
-      <div class="spinner spinner-lg blank-slate-pf-icon"></div>
-    </div>
-    <!-- Connections failed to load -->
-    <div class="card-pf card-pf-accented card-pf-error" *ngIf="!connectionsLoading && !connectionsLoadSuccess">
-      <div class="card-pf-heading">
-        <h2 class="card-pf-title">
-          <span class="fa fa-fw fa-exclamation"></span>
-          <span i18n="@@addDataserviceWizard.stepInitError">Step Initialization Error</span>
-        </h2>
-      </div>
-      <div class="card-pf-body">
-        <p  i18n="@@addDataserviceWizard.couldNotLoadConnections">
-          Could not load the connections.  Please Try relaunching the wizard or check the console log.
-        </p>
-      </div>
-    </div>
-    <h3 *ngIf="!connectionsLoading && connectionsLoadSuccess"><i>{{ step1InstructionMessage }}</i></h3>
-    <form [formGroup]=basicPropertyForm class="form-horizontal" *ngIf="!connectionsLoading && connectionsLoadSuccess">
+    <h3><i>{{ step1InstructionMessage }}</i></h3>
+    <form [formGroup]=basicPropertyForm class="form-horizontal">
       <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
         <label class="col-sm-2 control-label">Name</label>
         <div class="col-sm-5">
@@ -33,39 +16,44 @@
           <div class="help-block" *ngIf="!nameValid">{{ getBasicPropertyErrorMessage("name") }}</div>
         </div>
       </div>
-      <div [ngClass]="connectionValid ? 'form-group' : 'form-group has-error'">
-        <label class="col-sm-2 control-label">Connection</label>
+      <div [ngClass]="'form-group'">
+        <label class="col-sm-2 control-label">Description</label>
         <div class="col-sm-5">
-          <select class="form-control" formControlName="connection" title="">
-            <option value="" selected hidden>-- Select a Connection ---</option>
-            <option *ngFor="let connection of connectionNames" [value]="connection">{{ connection }}</option>
-          </select>
-          <div class="help-block" *ngIf="!connectionValid">{{ getBasicPropertyErrorMessage("connection") }}</div>
+          <input class="form-control" formControlName="description" title="">
         </div>
       </div>
     </form>
   </pfng-wizard-step>
-  <!-- -------------------------- -->
-  <!-- Step 2 : Review and Create -->
-  <!-- -------------------------- -->
+  <!-- ------------------------- -->
+  <!-- Step 2 : Table Selection -->
+  <!-- ------------------------- -->
   <pfng-wizard-step [config]="step2Config">
-    <!-- Step 2A: Review -->
-    <pfng-wizard-substep [config]="step2aConfig">
-      <h3><i>{{ step2InstructionMessage }}</i></h3>
+    <h3><i>{{ step2InstructionMessage }}</i></h3>
+    <app-connection-table-selector (tableSelectionChanged)="updatePage2ValidStatus()"></app-connection-table-selector>
+  </pfng-wizard-step>
+  <!-- -------------------------- -->
+  <!-- Step 3 : Review and Create -->
+  <!-- -------------------------- -->
+  <pfng-wizard-step [config]="step3Config">
+    <!-- Step 3A: Review -->
+    <pfng-wizard-substep [config]="step3aConfig">
+      <h3><i>{{ step3InstructionMessage }}</i></h3>
       <h4>Dataservice Properties:</h4>
       <form class="form-horizontal">
         <div class="form-group">
           <label class="col-sm-2 control-label">Name:</label>
           <label class="col-sm-10">{{ dataserviceName }}</label>
         </div>
+        <!--
         <div class="form-group">
           <label class="col-sm-2 control-label">Connection:</label>
           <label class="col-sm-5">{{ connectionName }}</label>
         </div>
+        -->
       </form>
     </pfng-wizard-substep>
-    <!-- Step 2B: Create -->
-    <pfng-wizard-substep [config]="step2bConfig" (onShow)="createDataservice()">
+    <!-- Step 3B: Create -->
+    <pfng-wizard-substep [config]="step3bConfig" (onShow)="createDataservice()">
       <div class="wizard-pf-contents">
         <!-- In progress -->
         <div class="wizard-pf-process blank-slate-pf" *ngIf="!createComplete">

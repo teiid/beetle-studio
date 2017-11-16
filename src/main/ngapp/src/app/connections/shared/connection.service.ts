@@ -19,9 +19,12 @@ import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
 import { NewConnection } from "@connections/shared/new-connection.model";
+import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { TemplateDefinition } from "@connections/shared/template-definition.model";
 import { ApiService } from "@core/api.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { environment } from "@environments/environment";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
@@ -32,8 +35,8 @@ export class ConnectionService extends ApiService {
 
   private http: Http;
 
-  constructor( http: Http, logger: LoggerService ) {
-    super( logger  );
+  constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
+    super( appSettings, logger  );
     this.http = http;
   }
 
@@ -83,7 +86,7 @@ export class ConnectionService extends ApiService {
 
   /**
    * Get the connection templates from the komodo rest interface
-   * @returns {Observable<Array<TemplateDefinition<any>>>}
+   * @returns {Observable<TemplateDefinition[]>}
    */
   public getConnectionTemplates(): Observable<TemplateDefinition[]> {
     return this.http
@@ -106,6 +109,46 @@ export class ConnectionService extends ApiService {
       .map((response) => {
         const entries = response.json() as Array<PropertyDefinition<any>>;
         return entries.map((entry) => PropertyDefinition.create( entry ));
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Get the schema infos for a Jdbc Connection
+   * @param {string} connectionId
+   * @returns {Observable<SchemaInfo[]>}
+   */
+  public getConnectionSchemaInfos(connectionId: string): Observable<SchemaInfo[]> {
+    return this.http
+      .get( environment.komodoTeiidUrl + "/connections/" + connectionId + "/JdbcCatalogSchema", this.getAuthRequestOptions())
+      .map((response) => {
+        const infos = response.json();
+        return infos.map((info) => SchemaInfo.create( info ));
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Get the tables for the specified input (connection and filters) for a Jdbc Connection
+   * @param {JdbcTableFilter} tableFilter
+   * @returns {Observable<string>}
+   */
+  public getJdbcConnectionTables(tableFilter: JdbcTableFilter): Observable<string[]> {
+    return this.http
+      .post( environment.komodoTeiidUrl + "/connections/Tables", tableFilter, this.getAuthRequestOptions())
+      .map((response) => {
+        const info = response.json();
+        const tableNames = [];
+        let i = 1;
+        let tableKey = "Table" + i;
+        let tableName = info.Information[tableKey];
+        while ( tableName && tableName.length > 0 ) {
+          tableNames.push(tableName);
+          i++;
+          tableKey = "Table" + i;
+          tableName = info.Information[tableKey];
+        }
+        return tableNames;
       })
       .catch( ( error ) => this.handleError( error ) );
   }

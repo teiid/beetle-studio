@@ -87,10 +87,10 @@ export class NewConnection {
   }
 
   /**
-   * @param {boolean} isJdbc the jdbc status (optional)
+   * @param {boolean} isJdbc the jdbc state
    */
-  public setJdbc( isJdbc?: boolean ): void {
-    this.jdbc = isJdbc ? isJdbc : true;
+  public setJdbc( isJdbc ): void {
+    this.jdbc = isJdbc;
   }
 
   /**

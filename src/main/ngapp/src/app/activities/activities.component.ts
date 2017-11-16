@@ -101,6 +101,7 @@ export class ActivitiesComponent extends AbstractPageComponent {
     this.confirmDeleteDialog.open();
   }
 
+  // noinspection JSMethodCanBeStatic
   public onStart(activityName: string): void {
     alert("Start activity " + activityName);
   }

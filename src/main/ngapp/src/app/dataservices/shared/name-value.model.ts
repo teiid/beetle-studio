@@ -15,15 +15,17 @@
  * limitations under the License.
  */
 
-import { enableProdMode } from "@angular/core";
-import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-import { AppModule } from "@app/app.module";
-import { environment } from "@environments/environment";
+/**
+ * A model for holding simple name-value pairs.
+ */
+export class NameValue {
 
-if (environment.production) {
-  enableProdMode();
+  private name: string;
+  private value: string;
+
+  constructor(name: string, value: string) {
+    this.name = name;
+    this.value = value;
+  }
+
 }
-
-platformBrowserDynamic().bootstrapModule( AppModule )
-                        .then( (success) => console.log( `Bootstrap success` ) )
-                        .catch( (err) => console.error( err ) );

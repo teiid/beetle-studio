@@ -32,6 +32,8 @@ export class DataservicesListComponent {
   @Output() public dataserviceSelected: EventEmitter<Dataservice> = new EventEmitter<Dataservice>();
   @Output() public dataserviceDeselected: EventEmitter<Dataservice> = new EventEmitter<Dataservice>();
   @Output() public tagSelected: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public testDataservice: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public publishDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public deleteDataservice: EventEmitter<string> = new EventEmitter<string>();
 
   private router: Router;
@@ -55,14 +57,22 @@ export class DataservicesListComponent {
     return this.selectedDataservices.indexOf(dataservice) !== -1;
   }
 
+  public onTestDataservice(dataserviceName: string): void {
+    this.testDataservice.emit(dataserviceName);
+  }
+
+  public onPublishDataservice(dataserviceName: string): void {
+    this.publishDataservice.emit(dataserviceName);
+  }
+
   public onDeleteDataservice(dataserviceName: string): void {
     this.deleteDataservice.emit(dataserviceName);
   }
 
-  public onSelectTag(tag: string, event: MouseEvent): void {
-    event.stopPropagation();
-    event.preventDefault();
-    this.tagSelected.emit(tag);
-  }
+  // public onSelectTag(tag: string, event: MouseEvent): void {
+  //   event.stopPropagation();
+  //   event.preventDefault();
+  //   this.tagSelected.emit(tag);
+  // }
 
 }

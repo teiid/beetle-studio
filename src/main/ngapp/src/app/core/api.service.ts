@@ -16,6 +16,7 @@
  */
 
 import { Headers, RequestOptions, Response } from "@angular/http";
+import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
@@ -25,9 +26,11 @@ import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 
 export abstract class ApiService {
 
+  protected appSettings: AppSettingsService;
   protected logger: LoggerService;
 
-  constructor( logger: LoggerService ) {
+  constructor( appSettings: AppSettingsService, logger: LoggerService ) {
+    this.appSettings = appSettings;
     this.logger = logger;
   }
 
@@ -37,8 +40,17 @@ export abstract class ApiService {
    * @returns {RequestOptions}
    */
   protected getAuthRequestOptions(): RequestOptions {
-    const headers = new Headers({ "Authorization": "Basic " +  btoa("dsbUser:1demo-user1") });
+    const userPasswordStr = this.appSettings.getKomodoUser() + ":" + this.appSettings.getKomodoUserPassword();
+    const headers = new Headers({ "Authorization": "Basic " +  btoa(userPasswordStr) });
     return new RequestOptions({ headers });
+  }
+
+  /**
+   * Get the current user workspace path
+   * @returns {string} the current user workspace path
+   */
+  protected getKomodoUserWorkspacePath(): string {
+    return this.appSettings.getKomodoUserWorkspacePath();
   }
 
   protected handleError(error: Response): ErrorObservable {

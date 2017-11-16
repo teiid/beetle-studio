@@ -1,0 +1,28 @@
+.list-div {
+  position: relative;
+  height: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.jdbc-list .list-view-pf-main-info {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+.jdbc-list .list-view-pf-checkbox {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-right: 5px;
+  margin-bottom: 0;
+}
+
+.jdbc-list .list-group-item-heading {
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.jdbc-list .list-view-pf-description {
+  width: 95%;
+}

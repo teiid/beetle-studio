@@ -20,6 +20,7 @@ import { NewActivity } from "@activities/shared/new-activity.model";
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { ApiService } from "@core/api.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/of";
 import { Observable } from "rxjs/Observable";
@@ -29,8 +30,8 @@ export class ActivityService extends ApiService {
 
   private http: Http;
 
-  constructor( http: Http, logger: LoggerService ) {
-    super( logger );
+  constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
+    super( appSettings, logger );
     this.http = http;
   }
 

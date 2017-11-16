@@ -15,15 +15,24 @@
  * limitations under the License.
  */
 
-import { enableProdMode } from "@angular/core";
-import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-import { AppModule } from "@app/app.module";
-import { environment } from "@environments/environment";
+/**
+ * An enumeration of loading state
+ */
+export enum LoadingState {
 
-if (environment.production) {
-  enableProdMode();
+  /**
+   * loading
+   */
+  LOADING,
+
+  /**
+   * loaded and valid
+   */
+  LOADED_VALID,
+
+  /**
+   * loaded and invalid
+   */
+  LOADED_INVALID
+
 }
-
-platformBrowserDynamic().bootstrapModule( AppModule )
-                        .then( (success) => console.log( `Bootstrap success` ) )
-                        .catch( (err) => console.error( err ) );

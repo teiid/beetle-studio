@@ -1,0 +1,54 @@
+<div>
+  <!-- ---------------- -->
+  <!-- Connections List -->
+  <!-- ---------------- -->
+  <div class="list-div col-sm-3">
+    <strong>Connections</strong>
+    <div *ngIf="connectionsLoading">
+      <span class="spinner spinner-sm spinner-inline"></span>
+    </div>
+    <div *ngIf="connectionsLoadedInvalid">
+      <div class="alert alert-info">
+        <span class="pficon pficon-info"></span>
+        <strong>Problem Loading Connections!</strong>
+      </div>
+    </div>
+    <div class="connection-list list-group list-view-pf" *ngIf="connectionsLoadedValid">
+      <div class="list-group-item list-view-pf-stacked" *ngFor="let connection of getAllConnections()" [class.active]="isConnectionSelected(connection)" (click)="toggleConnectionSelected(connection)">
+        <div class="list-view-pf-main-info">
+          <div class="list-view-pf-left">
+            <span class="fa fa-plug list-view-pf-icon-sm"></span>
+          </div>
+          <div class="list-view-pf-body">
+            <div class="list-view-pf-description">
+              <div class="list-group-item-heading">
+                {{ connection.getId() }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ------------------------------------------- -->
+  <!-- Connection Content Area                     -->
+  <!-- 1) JDBC Connection selected                 -->
+  <!-- 2) Non-JDBC Connection selected             -->
+  <!-- 3) No Connection selected                   -->
+  <!-- ------------------------------------------- -->
+  <div class="col-sm-9">
+    <app-jdbc-table-selector [connection]="selectedConnection" (tableSelectionChanged)="onTableSelectionChanged()" *ngIf="hasJdbcConnectionSelected()"></app-jdbc-table-selector>
+  </div>
+  <div class="col-sm-9" *ngIf="hasNonJdbcConnectionSelected()">
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      <strong>Non-JDBC Connections are not supported</strong>
+    </div>
+  </div>
+  <div class="col-sm-9" *ngIf="!hasSelectedConnection()">
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      <strong>Please select a Connection</strong>
+    </div>
+  </div>
+</div>

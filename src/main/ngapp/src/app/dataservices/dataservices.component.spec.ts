@@ -9,6 +9,8 @@ import { DataservicesListComponent } from "@dataservices/dataservices-list/datas
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { SharedModule } from "@shared/shared.module";
 import { ModalModule } from "ngx-bootstrap";
 
@@ -19,7 +21,10 @@ describe("DataservicesComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), RouterTestingModule, SharedModule ],
-      declarations: [ DataservicesComponent, DataservicesListComponent, DataservicesCardsComponent ]
+      declarations: [ DataservicesComponent, DataservicesListComponent, DataservicesCardsComponent ],
+      providers: [
+        { provide: VdbService, useClass: MockVdbService },
+      ]
     });
 
     // use mock service

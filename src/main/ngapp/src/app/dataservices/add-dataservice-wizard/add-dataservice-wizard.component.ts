@@ -26,16 +26,20 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { Validators } from "@angular/forms";
 import { AbstractControl } from "@angular/forms";
 import { Router } from "@angular/router";
-import { Connection } from "@connections/shared/connection.model";
-import { ConnectionService } from "@connections/shared/connection.service";
 import { LoggerService } from "@core/logger.service";
+import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
+import { VdbStatus } from "@dataservices/shared/vdb-status.model";
+import { VdbService } from "@dataservices/shared/vdb.service";
+import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { LoadingState } from "@shared/loading-state.enum";
 import { WizardComponent } from "patternfly-ng";
 import { WizardEvent } from "patternfly-ng";
 import { WizardStepConfig } from "patternfly-ng";
 import { WizardConfig } from "patternfly-ng";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -45,6 +49,7 @@ import { WizardConfig } from "patternfly-ng";
 })
 export class AddDataserviceWizardComponent implements OnInit {
   public readonly dataserviceSummaryLink: string = DataservicesConstants.dataservicesRootPath;
+  public loadingState = LoadingState; // need local ref of enum for html to use
 
   // Wizard Config
   public wizardConfig: WizardConfig;
@@ -52,28 +57,32 @@ export class AddDataserviceWizardComponent implements OnInit {
   public basicPropertyForm: FormGroup;
   public createComplete = true;
   public createSuccessful = false;
-  public connectionsLoading = true;
-  public connectionsLoadSuccess = false;
+  public tableSelectorLoadingState = LoadingState.LOADING;
 
   // Wizard Step 1
   public step1Config: WizardStepConfig;
 
   // Wizard Step 2
   public step2Config: WizardStepConfig;
-  public step2aConfig: WizardStepConfig;
-  public step2bConfig: WizardStepConfig;
+
+  // Wizard Step 3
+  public step3Config: WizardStepConfig;
+  public step3aConfig: WizardStepConfig;
+  public step3bConfig: WizardStepConfig;
 
   @ViewChild("wizard") public wizard: WizardComponent;
+  @ViewChild(ConnectionTableSelectorComponent) public tableSelector: ConnectionTableSelectorComponent;
 
-  private connectionService: ConnectionService;
   private dataserviceService: DataserviceService;
-  private allConnections: Connection[] = [];
+  private vdbService: VdbService;
   private logger: LoggerService;
   private router: Router;
+  private deploymentChangeSubscription: Subscription;
 
-  constructor( router: Router, connectionService: ConnectionService, dataserviceService: DataserviceService, logger: LoggerService ) {
-    this.connectionService = connectionService;
+  constructor( router: Router, dataserviceService: DataserviceService,
+               logger: LoggerService, vdbService: VdbService ) {
     this.dataserviceService = dataserviceService;
+    this.vdbService = vdbService;
     this.router = router;
     this.logger = logger;
     this.createBasicPropertyForm();
@@ -83,29 +92,37 @@ export class AddDataserviceWizardComponent implements OnInit {
    * Initialization
    */
   public ngOnInit(): void {
-    // Step 1 - Basic Properties
+    // Step 1 - Name and Description
     this.step1Config = {
       id: "step1",
       priority: 0,
-      title: "Basic Properties",
+      title: "Name and Description",
       allowClickNav: false
     } as WizardStepConfig;
 
-    // Step 2 - Review and Create
+    // Step 2 - Tables
     this.step2Config = {
       id: "step2",
+      priority: 0,
+      title: "Table Selection",
+      allowClickNav: false
+    } as WizardStepConfig;
+
+    // Step 3 - Review and Create
+    this.step3Config = {
+      id: "step3",
       priority: 0,
       title: "Review and Create",
       allowClickNav: false
     } as WizardStepConfig;
-    this.step2aConfig = {
-      id: "step2a",
+    this.step3aConfig = {
+      id: "step3a",
       priority: 0,
       title: "Review",
       allowClickNav: false
     } as WizardStepConfig;
-    this.step2bConfig = {
-      id: "step2b",
+    this.step3bConfig = {
+      id: "step3b",
       priority: 1,
       title: "Create",
       allowClickNav: false
@@ -121,31 +138,35 @@ export class AddDataserviceWizardComponent implements OnInit {
       done: false
     } as WizardConfig;
 
-    // Load the connections for the first step
-    this.connectionsLoading = true;
-    this.connectionsLoadSuccess = false;
-    const self = this;
-    this.connectionService
-      .getAllConnections()
-      .subscribe(
-        (conns) => {
-          self.allConnections = conns;
-          self.connectionsLoading = false;
-          self.connectionsLoadSuccess = true;
-        },
-        (error) => {
-          self.logger.error("[AddDataserviceWizardComponent] Error getting connections: %o", error);
-          self.connectionsLoading = false;
-          self.connectionsLoadSuccess = false;
-        }
-      );
-
+    this.tableSelectorLoadingState = LoadingState.LOADING;
     this.setNavAway(false);
   }
 
   // ----------------
   // Public Methods
   // ----------------
+
+  /**
+   * Determine if table selector is loading
+   */
+  public get tableSelectorLoading( ): boolean {
+    return this.tableSelectorLoadingState === LoadingState.LOADING;
+  }
+
+  /**
+   * Determine if table selector is loaded and valid
+   */
+  public get tableSelectorLoadedValid( ): boolean {
+    return this.tableSelectorLoadingState === LoadingState.LOADED_VALID;
+  }
+
+  /**
+   * Determine if table selector is loaded and invalid
+   */
+  public get tableSelectorLoadedInvalid( ): boolean {
+    return this.tableSelectorLoadingState === LoadingState.LOADED_INVALID;
+  }
+
   /*
    * Return the name valid state
    */
@@ -154,22 +175,13 @@ export class AddDataserviceWizardComponent implements OnInit {
   }
 
   /*
-   * Return the connection valid state
-   */
-  public get connectionValid(): boolean {
-    return this.basicPropertyForm.controls["connection"].valid;
-  }
-
-  /*
    * Step 1 instruction message
    */
   public get step1InstructionMessage(): string {
     if (!this.nameValid) {
       return "Please enter a name for the Dataservice";
-    } else if (!this.connectionValid) {
-      return "Please choose a connection for the Dataservice";
     } else {
-      return "When finished entering properties, click Next to continue";
+      return "Click Next to continue";
     }
   }
 
@@ -177,6 +189,17 @@ export class AddDataserviceWizardComponent implements OnInit {
    * Step 2 instruction message
    */
   public get step2InstructionMessage(): string {
+    if (!this.tableSelector.valid) {
+      return "Please select tables for the Dataservice";
+    } else {
+      return "Select tables, then click Next to continue";
+    }
+  }
+
+  /*
+   * Step 3 instruction message
+   */
+  public get step3InstructionMessage(): string {
     return "Review your entries.  When finished, click Create to create the Dataservice";
   }
 
@@ -195,7 +218,6 @@ export class AddDataserviceWizardComponent implements OnInit {
   }
 
   public nextClicked($event: WizardEvent): void {
-    // When leaving page 1, load the driver-specific property definitions
     if ($event.step.config.id === "step1") {
       // TODO implement nextClicked
     }
@@ -217,57 +239,83 @@ export class AddDataserviceWizardComponent implements OnInit {
     this.createComplete = false;
     this.createSuccessful = false;
 
-    const dataservice: NewDataservice = new NewDataservice();
+    const sourceVdbName = this.tableSelector.getSelectedTables()[0].getConnection().getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
 
-    // Dataservice basic properties from step 1
-    dataservice.setId(this.dataserviceName);
+    // Before polling, subscribe to get status event
+    this.deploymentChangeSubscription = this.vdbService.deploymentStatus.subscribe((status) => {
+      this.onSourceVdbDeploymentStateChanged(status);
+    });
 
     const self = this;
-    this.dataserviceService
-      .createDataservice(dataservice)
+    this.vdbService
+      .deployVdbForTable(this.tableSelector.getSelectedTables()[0])
       .subscribe(
         (wasSuccess) => {
-          self.createComplete = true;
-          self.createSuccessful = wasSuccess;
-          self.step2bConfig.nextEnabled = false;
+          // Deployment succeeded - wait for source vdb to become active
+          if (wasSuccess) {
+            self.vdbService.pollForActiveVdb(sourceVdbName, 30, 5);
+          } else {
+            self.createComplete = true;
+            self.createSuccessful = false;
+            self.step3bConfig.nextEnabled = false;
+            self.vdbService.deploymentStatus.unsubscribe();
+          }
         },
         (error) => {
           self.logger.error("[AddDataserviceWizardComponent] Error: %o", error);
           self.createComplete = true;
           self.createSuccessful = false;
-          self.step2bConfig.nextEnabled = false;
+          self.step3bConfig.nextEnabled = false;
+          self.vdbService.deploymentStatus.unsubscribe();
         }
       );
+  }
+
+  /*
+   * Listens for the source VDB deployment completion.  If the source VDB is active, proceed with
+   * creation of the Dataservice
+   * @param status the VDB deployment status
+   */
+  public onSourceVdbDeploymentStateChanged(status: VdbStatus): void {
+    // if null received, ignore
+    if (!status) {
+      return;
+      // non-null received, unsubscribe to stop any further notifications
+    } else {
+      // Got the status change, unsubscribe
+      this.deploymentChangeSubscription.unsubscribe();
+    }
+
+    if (this.tableSelector.hasSelectedConnection()) {
+      const selectedConnectionName = this.tableSelector.selectedConnection.getId();
+      const selectedVdbName = selectedConnectionName + VdbsConstants.SOURCE_VDB_SUFFIX;
+      if (selectedVdbName === status.getName()) {
+        if (status.isActive()) {
+          this.createDataserviceForSingleTable();
+        } else if (status.isFailed()) {
+          this.createComplete = true;
+          this.createSuccessful = false;
+          this.step3bConfig.nextEnabled = false;
+        }
+      }
+    }
   }
 
   public stepChanged($event: WizardEvent): void {
     if ($event.step.config.id === "step1") {
       this.updatePage1ValidStatus();
       this.wizardConfig.nextTitle = "Next >";
-    } else if ($event.step.config.id === "step2a") {
+    } else if ($event.step.config.id === "step2") {
+      this.updatePage2ValidStatus();
+      this.wizardConfig.nextTitle = "Next >";
+    } else if ($event.step.config.id === "step3a") {
       this.wizardConfig.nextTitle = "Create";
-    } else if ($event.step.config.id === "step2b") {
+    } else if ($event.step.config.id === "step3b") {
       // Note: The next button is not disabled by default when wizard is done
-      this.step2Config.nextEnabled = false;
+      this.step3Config.nextEnabled = false;
     } else {
       this.wizardConfig.nextTitle = "Next >";
     }
-  }
-
-  /**
-   * Handler for property form initialization
-   * @param {boolean} isValid form valid state
-   */
-  public onDetailPropertyInit(isValid: boolean): void {
-    this.updatePage2ValidStatus(isValid);
-  }
-
-  /**
-   * Handler for property form changes
-   * @param {boolean} isValid form valid state
-   */
-  public onDetailPropertyChanged(isValid: boolean): void {
-    this.updatePage2ValidStatus(isValid);
   }
 
   /**
@@ -278,21 +326,15 @@ export class AddDataserviceWizardComponent implements OnInit {
   }
 
   /**
-   * @returns {string} the connection name of the dataservice
+   * @returns {string} the description of the dataservice
    */
-  public get connectionName(): string {
-    return this.basicPropertyForm.controls["connection"].value;
+  public get dataserviceDescription(): string {
+    return this.basicPropertyForm.controls["description"].value;
   }
 
-  /*
-   * Return the array of connection names
-   */
-  public get connectionNames(): string[] {
-    const connNames: string[] = [];
-    for ( const conn of this.allConnections ) {
-      connNames.push(conn.getId());
-    }
-    return connNames.sort();
+  public updatePage2ValidStatus( ): void {
+    this.step2Config.nextEnabled = this.tableSelector.valid();
+    this.setNavAway(this.step2Config.nextEnabled);
   }
 
   // ----------------
@@ -305,7 +347,7 @@ export class AddDataserviceWizardComponent implements OnInit {
   private createBasicPropertyForm(): void {
     this.basicPropertyForm = new FormGroup({
       name: new FormControl("", Validators.required),
-      connection: new FormControl("", Validators.required)
+      description: new FormControl("")
     });
     // Responds to basic property changes - updates the page status
     this.basicPropertyForm.valueChanges.subscribe((val) => {
@@ -322,9 +364,40 @@ export class AddDataserviceWizardComponent implements OnInit {
     this.setNavAway(this.step1Config.nextEnabled);
   }
 
-  private updatePage2ValidStatus(formValid: boolean): void {
-    this.step2Config.nextEnabled = formValid;
-    this.setNavAway(this.step2Config.nextEnabled);
-  }
+  /*
+   * Create the Dataservice for the selected source table.  This is invoked
+   * only after the source VDB has successfully deployed.
+   */
+  private createDataserviceForSingleTable(): void {
+    const dataservice: NewDataservice = new NewDataservice();
 
+    // Dataservice basic properties from step 1
+    dataservice.setId(this.dataserviceName);
+    dataservice.setDescription(this.dataserviceDescription);
+
+    const self = this;
+    this.dataserviceService
+      .createDataserviceForSingleTable(dataservice, this.tableSelector.getSelectedTables()[0])
+      .subscribe(
+        (wasSuccess) => {
+          // Deployment succeeded - wait for source vdb to become active
+          if (wasSuccess) {
+            self.createComplete = true;
+            self.createSuccessful = true;
+            self.step3bConfig.nextEnabled = false;
+          } else {
+            self.createComplete = true;
+            self.createSuccessful = false;
+            self.step3bConfig.nextEnabled = false;
+          }
+        },
+        (error) => {
+          self.logger.error("[AddDataserviceWizardComponent] Error: %o", error);
+          self.createComplete = true;
+          self.createSuccessful = false;
+          self.step3bConfig.nextEnabled = false;
+        }
+      );
+
+  }
 }

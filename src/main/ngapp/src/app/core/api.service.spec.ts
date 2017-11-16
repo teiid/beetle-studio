@@ -1,13 +1,14 @@
 import { inject, TestBed } from "@angular/core/testing";
 import { HttpModule } from "@angular/http";
 import { ApiService } from "@core/api.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 
 describe("ApiService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpModule],
-      providers: [LoggerService]
+      providers: [AppSettingsService, LoggerService]
     });
   });
 
@@ -19,8 +20,8 @@ describe("ApiService", () => {
 
 class MockService extends ApiService {
 
-  constructor( logger: LoggerService ) {
-    super( logger );
+  constructor( appSettings: AppSettingsService, logger: LoggerService ) {
+    super( appSettings, logger );
   }
 
 }
