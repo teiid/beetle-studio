@@ -1,19 +1,19 @@
 import { inject, TestBed } from "@angular/core/testing";
 import { HttpModule } from "@angular/http";
-import { ConnectionService } from "@connections/shared/connection.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 
-describe("ConnectionService", () => {
+describe("VdbService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ HttpModule ],
-      providers: [AppSettingsService, ConnectionService, LoggerService]
+      providers: [VdbService, AppSettingsService, LoggerService]
     });
   });
 
-  it("should be created", inject([ConnectionService, AppSettingsService, LoggerService],
-                                            (service: ConnectionService ) => {
+  it("should be created", inject([VdbService, AppSettingsService, LoggerService],
+                                            ( service: VdbService ) => {
     expect(service).toBeTruthy();
   }));
 });

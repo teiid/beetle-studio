@@ -1,0 +1,105 @@
+<!-- ------------- -->
+<!-- Column Titles -->
+<!-- ------------- -->
+<div class="col-sm-4">
+  <strong>Schemas</strong>
+</div>
+<div class="col-sm-4">
+  <strong>Tables</strong>
+</div>
+<div class="col-sm-4">
+  <strong>Selections</strong>
+</div>
+<!-- ------------- -->
+<!-- Schemas List  -->
+<!-- ------------- -->
+<div class="col-sm-4" *ngIf="schemasLoading">
+  <span class="spinner spinner-sm spinner-inline"></span>
+</div>
+<div class="col-sm-4" *ngIf="schemasLoadedInvalid">
+  <div class="alert alert-info">
+    <span class="pficon pficon-info"></span>
+    <strong>Unable to load schema</strong>
+  </div>
+</div>
+<div class="col-sm-4" *ngIf="schemasLoadedValidEmpty">
+  <div class="alert alert-info">
+    <span class="pficon pficon-info"></span>
+    <strong>No schema available</strong>
+  </div>
+</div>
+<div class="list-div col-sm-4" *ngIf="schemasLoadedValidNotEmpty">
+  <div class="jdbc-list list-group list-view-pf">
+    <div class="list-group-item list-view-pf-stacked" *ngFor="let schema of getSchemas()" [class.active]="isSchemaSelected(schema)" (click)="toggleSchemaSelected(schema)">
+      <div class="list-view-pf-main-info">
+        <div class="list-view-pf-body">
+          <div class="list-view-pf-description">
+            <div class="list-group-item-heading">
+              {{ schema.getDisplayName() }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ------------- -->
+<!--  Tables List  -->
+<!-- ------------- -->
+<div class="col-sm-4" *ngIf="hasSelectedSchema && tablesLoading">
+  <span class="spinner spinner-sm spinner-inline"></span>
+</div>
+<div class="col-sm-4" *ngIf="hasSelectedSchema && tablesLoadedInvalid">
+  <div class="alert alert-info">
+    <span class="pficon pficon-info"></span>
+    <strong>Unable to load tables</strong>
+  </div>
+</div>
+<div class="col-sm-4" *ngIf="hasSelectedSchema && tablesLoadedValidEmpty">
+  <div class="alert alert-info">
+    <span class="pficon pficon-info"></span>
+    <strong>No tables available</strong>
+  </div>
+</div>
+<div class = "list-div col-sm-4" *ngIf="hasSelectedSchema && tablesLoadedValidNotEmpty">
+  <div class="jdbc-list list-group list-view-pf">
+    <div class="list-group-item list-view-pf-stacked" *ngFor="let table of getTables()">
+      <div class="list-view-pf-checkbox">
+        <input type="checkbox" title="" [(ngModel)]="table.selected" (change)="selectedTablesChanged()">
+      </div>
+      <div class="list-view-pf-main-info">
+        <div class="list-view-pf-body">
+          <div class="list-view-pf-description">
+            <div class="list-group-item-heading">
+              {{ table.getName() }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ----------------------- -->
+<!--  Table Selections List  -->
+<!-- ----------------------- -->
+<div class="col-sm-4" *ngIf="hasSelectedSchema && !hasSelectedTables()">
+  <div class="alert alert-info">
+    <span class="pficon pficon-info"></span>
+    <strong>No tables selected</strong>
+  </div>
+</div>
+<div class = "list-div col-sm-4" *ngIf="hasSelectedSchema && hasSelectedTables()">
+  <div class="jdbc-list list-group list-view-pf">
+    <div class="list-group-item list-view-pf-stacked" *ngFor="let table of getSelectedTables()">
+      <div class="list-view-pf-main-info">
+        <div class="list-view-pf-body">
+          <div class="list-view-pf-description">
+            <div class="list-group-item-heading">
+              {{ table.getName() }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,8 +6,12 @@ import { ConnectionService } from "@connections/shared/connection.service";
 import { MockConnectionService } from "@connections/shared/mock-connection.service";
 import { CoreModule } from "@core/core.module";
 import { AddDataserviceWizardComponent } from "@dataservices/add-dataservice-wizard/add-dataservice-wizard.component";
+import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
+import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jdbc-table-selector.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddDataserviceComponent } from "./add-dataservice.component";
@@ -19,10 +23,12 @@ describe("AddDataserviceComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, PatternFlyNgModule, FormsModule, ReactiveFormsModule, RouterTestingModule, SharedModule ],
-      declarations: [ AddDataserviceComponent, AddDataserviceWizardComponent ],
+      declarations: [ AddDataserviceComponent, AddDataserviceWizardComponent,
+                      ConnectionTableSelectorComponent, JdbcTableSelectorComponent ],
       providers: [
         { provide: DataserviceService, useClass: MockDataserviceService },
-        { provide: ConnectionService, useClass: MockConnectionService }
+        { provide: ConnectionService, useClass: MockConnectionService },
+        { provide: VdbService, useClass: MockVdbService }
       ]
     })
     .compileComponents().then(() => {

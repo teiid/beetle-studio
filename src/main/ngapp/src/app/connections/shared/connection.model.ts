@@ -23,6 +23,7 @@ export class Connection implements Identifiable< string > {
   private keng__id: string;
   private dv__jndiName: string;
   private dv__driverName: string;
+  private dv__type: boolean;
   private keng__properties: Map< string, string > = new Map< string, string >();
 
   /**
@@ -100,6 +101,13 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
+   * @returns {boolean} the jdbc status (true == jdbc)
+   */
+  public isJdbc(): boolean {
+    return this.dv__type;
+  }
+
+  /**
    * @returns {Map<string, string>} the connection properties (never null)
    */
   public getProperties(): Map< string, string > {
@@ -125,6 +133,13 @@ export class Connection implements Identifiable< string > {
    */
   public setJndiName( jndiName?: string ): void {
     this.dv__jndiName = jndiName ? jndiName : null;
+  }
+
+  /**
+   * @param {boolean} jdbc the jdbc state
+   */
+  public setJdbc( jdbc: boolean ): void {
+    this.dv__type = jdbc;
   }
 
   /**

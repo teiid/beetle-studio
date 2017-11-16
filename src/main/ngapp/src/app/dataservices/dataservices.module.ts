@@ -26,10 +26,13 @@ import { DataservicesListComponent } from "@dataservices/dataservices-list/datas
 import { DataservicesRoutingModule } from "@dataservices/dataservices-routing.module";
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddDataserviceWizardComponent } from "./add-dataservice-wizard/add-dataservice-wizard.component";
 import { AddDataserviceComponent } from "./add-dataservice/add-dataservice.component";
+import { ConnectionTableSelectorComponent } from "./connection-table-selector/connection-table-selector.component";
+import { JdbcTableSelectorComponent } from "./jdbc-table-selector/jdbc-table-selector.component";
 
 @NgModule({
   imports: [
@@ -47,10 +50,13 @@ import { AddDataserviceComponent } from "./add-dataservice/add-dataservice.compo
     DataservicesComponent,
     DataservicesListComponent,
     AddDataserviceWizardComponent,
-    AddDataserviceComponent
+    AddDataserviceComponent,
+    ConnectionTableSelectorComponent,
+    JdbcTableSelectorComponent
   ],
   providers: [
     DataserviceService,
+    VdbService,
     LoggerService
   ],
   exports: [

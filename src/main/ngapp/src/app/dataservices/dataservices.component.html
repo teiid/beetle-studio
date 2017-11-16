@@ -90,11 +90,11 @@
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('dataservices')">
         <app-dataservices-list *ngIf="isListLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
-                              (deleteDataservice)="onDelete($event)"
-                              (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-list>
+                               (testDataservice)="onTest($event)" (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
+                               (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-list>
         <app-dataservices-cards *ngIf="isCardLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
-                               (deleteDataservice)="onDelete($event)"
-                               (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-cards>
+                                (testDataservice)="onTest($event)" (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
+                                (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-cards>
       </div>
 
     </div>

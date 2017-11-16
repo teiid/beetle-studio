@@ -356,7 +356,15 @@ export class AddConnectionWizardComponent implements OnInit {
    * @returns {boolean} 'true' if connection is JDBC
    */
   public get isJdbc(): boolean {
-    return true;
+    const driver = this.connectionDriverName;
+    let jdbc = true;
+    // TODO: this needs to be a hooked up to komodo call instead
+    if (driver === null || driver === "cassandra" || driver === "file" || driver === "google"
+                        || driver === "ldap" || driver === "mongodb" || driver === "salesforce"
+                        || driver === "salesforce-34" || driver === "solr" || driver === "webservice") {
+      jdbc = false;
+    }
+    return jdbc;
   }
 
   // ----------------

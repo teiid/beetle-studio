@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+import { ReflectiveInjector } from "@angular/core";
+import { AppSettingsService } from "@core/app-settings.service";
 import { Identifiable } from "@shared/identifiable";
 import { SortDirection } from "@shared/sort-direction.enum";
 
@@ -22,6 +24,7 @@ export class Dataservice implements Identifiable< string > {
 
   private keng__id: string;
   private tko__description: string;
+  private appSettings: AppSettingsService;
 
   /**
    * @param {Object} json the JSON representation of a Dataservice
@@ -50,8 +53,9 @@ export class Dataservice implements Identifiable< string > {
     } );
   }
 
-  constructor() {
-    // nothing to do
+  constructor( ) {
+    const injector = ReflectiveInjector.resolveAndCreate([AppSettingsService]);
+    this.appSettings = injector.get(AppSettingsService);
   }
 
   /**
@@ -94,7 +98,7 @@ export class Dataservice implements Identifiable< string > {
    * @returns {string} the dataservice dataPath (can be null)
    */
   public getDataPath(): string {
-    return "/tko:komodo/tko:workspace/dsbUser/" + this.keng__id;
+    return this.appSettings.getKomodoUserWorkspacePath() + "/" + this.keng__id;
   }
 
   /**
@@ -116,6 +120,14 @@ export class Dataservice implements Identifiable< string > {
    */
   public setDescription( description?: string ): void {
     this.tko__description = description ? description : null;
+  }
+
+  // overrides toJSON - we do not want the appSettings
+  public toJSON(): {} {
+    return {
+      keng__id: this.keng__id,
+      tko__description: this.tko__description
+    };
   }
 
   /**
