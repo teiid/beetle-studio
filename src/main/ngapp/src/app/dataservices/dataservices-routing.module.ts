@@ -21,10 +21,12 @@ import { Routes } from "@angular/router";
 import { AddDataserviceComponent } from "@dataservices/add-dataservice/add-dataservice.component";
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
+import { TestDataserviceComponent } from "@dataservices/test-dataservice/test-dataservice.component";
 
 const dataservicesRoutes: Routes = [
   { path: DataservicesConstants.dataservicesRootRoute, component: DataservicesComponent },
-  { path: DataservicesConstants.addDataserviceRoute, component: AddDataserviceComponent }
+  { path: DataservicesConstants.addDataserviceRoute, component: AddDataserviceComponent },
+  { path: DataservicesConstants.testDataserviceRoute, component: TestDataserviceComponent }
 ];
 
 @NgModule({

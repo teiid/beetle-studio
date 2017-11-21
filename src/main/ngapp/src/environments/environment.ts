@@ -27,6 +27,9 @@ export const environment = {
   // the home page path
   homePagePath: ConnectionsConstants.connectionsRootPath,
 
+  // REST URL - Komodo import export url
+  komodoImportExportUrl: "https://localhost:8443/vdb-builder/v1/importexport",
+
   // REST URL - Komodo workspace
   komodoWorkspaceUrl: "https://localhost:8443/vdb-builder/v1/workspace",
 

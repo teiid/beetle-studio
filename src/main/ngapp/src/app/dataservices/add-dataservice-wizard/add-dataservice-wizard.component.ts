@@ -332,6 +332,21 @@ export class AddDataserviceWizardComponent implements OnInit {
     return this.basicPropertyForm.controls["description"].value;
   }
 
+  /**
+   * @returns {string} the selected source table names in string form
+   */
+  public get dataserviceSourceTables(): string {
+    let tableStr = "None";
+    const tables = this.tableSelector.getSelectedTables();
+    if (tables.length > 0) {
+      tableStr = tables[0].getConnection().getId() + " [" + tables[0].getName() + "]";
+    }
+    if (tables.length === 2) {
+      tableStr = tableStr + ", " + tables[1].getConnection().getId() + " [" + tables[1].getName() + "]";
+    }
+    return tableStr;
+  }
+
   public updatePage2ValidStatus( ): void {
     this.step2Config.nextEnabled = this.tableSelector.valid();
     this.setNavAway(this.step2Config.nextEnabled);

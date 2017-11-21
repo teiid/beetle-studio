@@ -40,8 +40,17 @@ export class MockDataserviceService extends DataserviceService {
   constructor( http: Http, vdbService: VdbService, appSettings: AppSettingsService, logger: LoggerService ) {
     super(http, vdbService, appSettings, logger);
     this.serv1.setId("serv1");
+    this.serv1.setServiceViewTables(["table1", "table2"]);
+    this.serv1.setServiceViewModel("viewModel");
+    this.serv1.setServiceViewName("views");
     this.serv2.setId("serv2");
+    this.serv2.setServiceViewTables(["table1", "table2"]);
+    this.serv2.setServiceViewModel("viewModel");
+    this.serv2.setServiceViewName("views");
     this.serv3.setId("serv3");
+    this.serv3.setServiceViewTables(["table1", "table2"]);
+    this.serv3.setServiceViewModel("viewModel");
+    this.serv3.setServiceViewName("views");
   }
 
   /**
@@ -68,6 +77,14 @@ export class MockDataserviceService extends DataserviceService {
    */
   public deleteDataservice(dataserviceId: string): Observable<boolean> {
     return Observable.of(true);
+  }
+
+  /**
+   * Get the current Dataservice selection
+   * @returns {Dataservice} the selected Dataservice
+   */
+  public getSelectedDataservice( ): Dataservice {
+    return this.serv1;
   }
 
 }

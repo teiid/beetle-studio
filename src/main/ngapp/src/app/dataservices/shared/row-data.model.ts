@@ -15,22 +15,28 @@
  * limitations under the License.
  */
 
-import { ConnectionsConstants } from "@connections/shared/connections-constants";
+/**
+ * The RowData model
+ */
+export class RowData {
 
-export const environment = {
+  private row: string[] = [];
 
-  production: true,
+  /**
+   * Constructor
+   * @param {object} json the representation of the RowData
+   */
+  constructor(json: object = {}) {
+    for (const field of Object.keys(json)) {
+      this[field] = json[field];
+    }
+  }
 
-  // the home page path
-  homePagePath: ConnectionsConstants.connectionsRootPath,
+  /**
+   * @returns {string[]} the row data array
+   */
+  public getData( ): string[] {
+    return this.row;
+  }
 
-  // REST URL - Komodo import export url
-  komodoImportExportUrl: "https://localhost:8443/vdb-builder/v1/importexport",
-
-  // REST URL - Komodo workspace
-  komodoWorkspaceUrl: "https://localhost:8443/vdb-builder/v1/workspace",
-
-  // REST URL - Komodo teiid server
-  komodoTeiidUrl: "https://localhost:8443/vdb-builder/v1/teiid",
-
-};
+}

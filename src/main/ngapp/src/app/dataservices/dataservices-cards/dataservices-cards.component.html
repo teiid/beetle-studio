@@ -16,10 +16,12 @@
           <div>
             <span>{{ dataservice.getDescription() }}</span>
           </div>
-          <!--
           <div>
-            <span><b i18n="@@dataservicesCards.Connection" >Connection:</b>&nbsp;&nbsp;{{ dataservice.getConnection().getName() }}</span>
+            <span class="fa fa-database"></span>
+            <span *ngIf="dataservice.getServiceViewTables().length==1">{{dataservice.getServiceViewTables()[0]}}</span>
+            <span *ngIf="dataservice.getServiceViewTables().length==2">{{dataservice.getServiceViewTables()[0]}}, {{dataservice.getServiceViewTables()[1]}}</span>
           </div>
+          <!--
           <div class="dataservice-tags" *ngIf="dataservice.tags && dataservice.tags.length > 0">
             <span class="dataservice-tags-label">Tags:</span>
             <span class="dataservice-tag" *ngFor="let tag of dataservice.tags" (click)="selectTag(tag, $event)">{{ tag }}</span>

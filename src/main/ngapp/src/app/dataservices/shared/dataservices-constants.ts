@@ -12,9 +12,17 @@
 
 export class DataservicesConstants {
 
+  public static readonly dataservicesExport = "export";
+
+  public static readonly dataserviceRootRoute = "dataservice";
+  public static readonly dataserviceRootPath = "/" + DataservicesConstants.dataserviceRootRoute;
+
   public static readonly dataservicesRootRoute = "dataservices";
   public static readonly dataservicesRootPath = "/" + DataservicesConstants.dataservicesRootRoute;
 
   public static readonly addDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/add-dataservice";
   public static readonly addDataservicePath = DataservicesConstants.dataservicesRootPath + "/add-dataservice";
+
+  public static readonly testDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/test-dataservice";
+  public static readonly testDataservicePath = DataservicesConstants.dataservicesRootPath + "/test-dataservice";
 }

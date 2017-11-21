@@ -1,0 +1,23 @@
+
+.sql-control-control-title {
+  float: left;
+  color: grey;
+}
+.sql-control-controls-query {
+  float: right;
+  margin-bottom: 0.5em;
+}
+
+.sql-control-editor {
+  clear: both;
+  border: 1px inset grey;
+}
+
+.sql-control-controls-limit input[type=number] {
+  width: 5em;
+}
+
+.sql-control-controls-offset input[type=number] {
+  width: 5em;
+}
+
