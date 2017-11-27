@@ -9,7 +9,7 @@
   <app-page-error [error]="pageError" *ngIf="pageError"></app-page-error>
 
   <div class="container-fluid dataservice-list-dataservices" *ngIf="!pageError">
-    <div class="row">
+    <div class="col-sm-12">
       <h2 i18n="@@dataservices.dataservices">Dataservices</h2>
     </div>
     <div class="row toolbar-pf">
@@ -89,6 +89,14 @@
 
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('dataservices')">
+        <!-- Notification for Dataservice Export -->
+        <pfng-inline-notification [header]="exportNotificationHeader"
+                                  [message]="exportNotificationMessage"
+                                  [dismissable]="true"
+                                  [type]="exportNotificationType"
+                                  [hidden]="exportNotificationHidden">
+        </pfng-inline-notification>
+
         <app-dataservices-list *ngIf="isListLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
                                (testDataservice)="onTest($event)" (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
                                (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-list>
@@ -105,3 +113,4 @@
 <app-confirm-delete (deleteSelected)="onDeleteDataservice()">
   <p i18n="@@dataservices.doYouReallyWantToDeleteSelectedDataservice" >Do you really want to delete the selected Dataservice?</p>
 </app-confirm-delete>
+

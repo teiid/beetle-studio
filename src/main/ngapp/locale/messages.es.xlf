@@ -375,8 +375,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="navHeader.beetleStudio" datatype="html">
-        <source>BeETLe Studio</source>
-        <target>BeETLE Studio</target>
+        <source>Beetle Studio</source>
+        <target>BeetlE Studio</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/nav-header/nav-header.component.ts</context>
           <context context-type="linenumber">4</context>

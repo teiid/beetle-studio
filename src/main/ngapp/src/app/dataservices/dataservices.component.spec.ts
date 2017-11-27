@@ -13,6 +13,7 @@ import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SharedModule } from "@shared/shared.module";
 import { ModalModule } from "ngx-bootstrap";
+import { PatternFlyNgModule } from "patternfly-ng";
 
 describe("DataservicesComponent", () => {
   let component: DataservicesComponent;
@@ -20,7 +21,7 @@ describe("DataservicesComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), RouterTestingModule, SharedModule ],
+      imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), PatternFlyNgModule, RouterTestingModule, SharedModule ],
       declarations: [ DataservicesComponent, DataservicesListComponent, DataservicesCardsComponent ],
       providers: [
         { provide: VdbService, useClass: MockVdbService },

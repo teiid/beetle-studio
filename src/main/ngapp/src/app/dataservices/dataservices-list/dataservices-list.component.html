@@ -9,13 +9,15 @@
           <div class="list-group-item-heading">
             <a [routerLink]="[dataservice.getId()]">{{ dataservice.getId() }}</a>
           </div>
-          <!--
-          <div class="list-group-item-text">{{ dataservice.description }}</div>
-          -->
+          <div class="list-group-item-text">
+            {{ dataservice.getDescription() }}
+          </div>
         </div>
         <div class="list-view-pf-additional-info">
           <div>
-            <span>{{ dataservice.getDescription() }}</span>
+            <span class="fa fa-database"></span>
+            <span *ngIf="dataservice.getServiceViewTables().length==1">{{dataservice.getServiceViewTables()[0]}}</span>
+            <span *ngIf="dataservice.getServiceViewTables().length==2">{{dataservice.getServiceViewTables()[0]}}, {{dataservice.getServiceViewTables()[1]}}</span>
           </div>
           <!--
           <div class="dataservice-tags" *ngIf="dataservice.tags && dataservice.tags.length > 0">

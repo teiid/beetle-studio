@@ -24,6 +24,11 @@ export class Dataservice implements Identifiable< string > {
 
   private keng__id: string;
   private tko__description: string;
+  private serviceVdbName: string;
+  private serviceVdbVersion: string;
+  private serviceView: string;
+  private serviceViewModel: string;
+  private serviceViewTables: string[];
   private appSettings: AppSettingsService;
 
   /**
@@ -95,6 +100,41 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
+   * @returns {string} the dataservice Vdb name (can be null)
+   */
+  public getServiceVdbName(): string {
+    return this.serviceVdbName;
+  }
+
+  /**
+   * @returns {string} the dataservice Vdb version (can be null)
+   */
+  public getServiceVdbVersion(): string {
+    return this.serviceVdbVersion;
+  }
+
+  /**
+   * @returns {string} the dataservice view name (can be null)
+   */
+  public getServiceViewName(): string {
+    return this.serviceView;
+  }
+
+  /**
+   * @returns {string} the dataservice view model name (can be null)
+   */
+  public getServiceViewModel(): string {
+    return this.serviceViewModel;
+  }
+
+  /**
+   * @returns {string} the dataservice view table names array (can be null)
+   */
+  public getServiceViewTables(): string[] {
+    return this.serviceViewTables;
+  }
+
+  /**
    * @returns {string} the dataservice dataPath (can be null)
    */
   public getDataPath(): string {
@@ -122,11 +162,51 @@ export class Dataservice implements Identifiable< string > {
     this.tko__description = description ? description : null;
   }
 
+  /**
+   * @param {string} name the dataservice service vdb name
+   */
+  public setServiceVdbName( name: string ): void {
+    this.serviceVdbName = name;
+  }
+
+  /**
+   * @param {string} version the dataservice service vdb version
+   */
+  public setServiceVdbVersion( version: string ): void {
+    this.serviceVdbVersion = version;
+  }
+
+  /**
+   * @param {string} viewName the dataservice view name
+   */
+  public setServiceViewName( viewName: string ): void {
+    this.serviceView = viewName;
+  }
+
+  /**
+   * @param {string} viewModel the dataservice view model
+   */
+  public setServiceViewModel( viewModel: string ): void {
+    this.serviceViewModel = viewModel;
+  }
+
+  /**
+   * @param {string[]} viewTables the dataservice view tables
+   */
+  public setServiceViewTables( viewTables: string[] ): void {
+    this.serviceViewTables = viewTables;
+  }
+
   // overrides toJSON - we do not want the appSettings
   public toJSON(): {} {
     return {
       keng__id: this.keng__id,
-      tko__description: this.tko__description
+      tko__description: this.tko__description,
+      serviceVdbName: this.serviceVdbName,
+      serviceVdbVersion: this.serviceVdbVersion,
+      serviceView: this.serviceView,
+      serviceViewModel: this.serviceViewModel,
+      serviceViewTables: this.serviceViewTables
     };
   }
 

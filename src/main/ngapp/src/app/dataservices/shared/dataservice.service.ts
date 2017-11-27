@@ -23,6 +23,7 @@ import { LoggerService } from "@core/logger.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
+import { QueryResults } from "@dataservices/shared/query-results.model";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
@@ -36,11 +37,28 @@ export class DataserviceService extends ApiService {
 
   private http: Http;
   private vdbService: VdbService;
+  private selectedDataservice: Dataservice;
 
   constructor( http: Http, vdbService: VdbService, appSettings: AppSettingsService, logger: LoggerService ) {
     super( appSettings, logger  );
     this.http = http;
     this.vdbService = vdbService;
+  }
+
+  /**
+   * Set the current Dataservice selection
+   * @param {Dataservice} service the Dataservice
+   */
+  public setSelectedDataservice(service: Dataservice): void {
+    this.selectedDataservice = service;
+  }
+
+  /**
+   * Get the current Dataservice selection
+   * @returns {Dataservice} the selected Dataservice
+   */
+  public getSelectedDataservice( ): Dataservice {
+    return this.selectedDataservice;
   }
 
   /**
@@ -66,6 +84,22 @@ export class DataserviceService extends ApiService {
     return this.http
       .post(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRootPath + "/" + dataservice.getId(),
         dataservice, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Deploy a dataservice via the komodo rest interface
+   * @param {string} dataserviceName
+   * @returns {Observable<boolean>}
+   */
+  public deployDataservice(dataserviceName: string): Observable<boolean> {
+    const servicePath = this.getKomodoUserWorkspacePath() + "/" + dataserviceName;
+    return this.http
+      .post(environment.komodoTeiidUrl + DataservicesConstants.dataserviceRootPath,
+        { path: servicePath}, this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
       })
@@ -189,6 +223,74 @@ export class DataserviceService extends ApiService {
       .flatMap((res) => this.createReadonlyDataRole(dataservice.getId(), sourceModelName))
       .flatMap((res) => this.vdbService.undeployVdb(sourceVdbName))
       .flatMap((res) => this.vdbService.deleteVdb(sourceVdbName));
+  }
+
+  /**
+   * Export a dataservice to a git repository
+   * @param {string} dataserviceName the dataservice name
+   * @returns {Observable<boolean>}
+   */
+  public exportDataservice(dataserviceName: string): Observable<boolean> {
+    const repoPathKey = this.appSettings.GIT_REPO_PATH_KEY;
+    const repoBranchKey = this.appSettings.GIT_REPO_BRANCH_KEY;
+    const repoUsernameKey = this.appSettings.GIT_REPO_USERNAME_KEY;
+    const repoPasswordKey = this.appSettings.GIT_REPO_PASSWORD_KEY;
+    const repoAuthorEmailKey = this.appSettings.GIT_REPO_AUTHOR_EMAIL_KEY;
+    const repoAuthorNameKey = this.appSettings.GIT_REPO_AUTHOR_NAME_KEY;
+    const repoFilePathKey = this.appSettings.GIT_REPO_FILE_PATH_KEY;
+
+    // The payload for the rest call
+    const payload = {
+      "storageType": "git",
+      "dataPath": "/" + this.getKomodoUserWorkspacePath() + "/" + dataserviceName,
+      "parameters":
+        {
+          [repoPathKey] : this.appSettings.getGitRepoProperty(repoPathKey),
+          [repoBranchKey] : this.appSettings.getGitRepoProperty(repoBranchKey),
+          [repoFilePathKey] : dataserviceName,
+          [repoUsernameKey] : this.appSettings.getGitRepoProperty(repoUsernameKey),
+          [repoPasswordKey] : btoa(this.appSettings.getGitRepoProperty(repoPasswordKey)),
+          [repoAuthorNameKey] : this.appSettings.getGitRepoProperty(repoAuthorNameKey),
+          [repoAuthorEmailKey] : this.appSettings.getGitRepoProperty(repoAuthorEmailKey)
+        }
+    };
+
+    const url = environment.komodoImportExportUrl + "/" + DataservicesConstants.dataservicesExport;
+
+    return this.http
+      .post(url, payload, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Query a Dataservice via the komodo rest interface
+   * @param {string} query the SQL query
+   * @param {string} dataserviceName the dataservice name
+   * @param {number} limit the limit for the number of result rows
+   * @param {number} offset the offset for the result rows
+   * @returns {Observable<boolean>}
+   */
+  public queryDataservice(query: string, dataserviceName: string, limit: number, offset: number): Observable<any> {
+    // The payload for the rest call
+    const payload = {
+      "query": query,
+      "target": dataserviceName,
+      "limit": limit,
+      "offset": offset
+    };
+
+    const url = environment.komodoTeiidUrl + "/query";
+
+    return this.http
+      .post(url, payload, this.getAuthRequestOptions())
+      .map((response) => {
+        const queryResults = response.json();
+        return new QueryResults(queryResults);
+      })
+      .catch( ( error ) => this.handleError( error ) );
   }
 
 }

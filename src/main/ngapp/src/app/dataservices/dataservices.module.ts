@@ -33,6 +33,8 @@ import { AddDataserviceWizardComponent } from "./add-dataservice-wizard/add-data
 import { AddDataserviceComponent } from "./add-dataservice/add-dataservice.component";
 import { ConnectionTableSelectorComponent } from "./connection-table-selector/connection-table-selector.component";
 import { JdbcTableSelectorComponent } from "./jdbc-table-selector/jdbc-table-selector.component";
+import { SqlControlComponent } from "./sql-control/sql-control.component";
+import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.component";
 
 @NgModule({
   imports: [
@@ -52,7 +54,9 @@ import { JdbcTableSelectorComponent } from "./jdbc-table-selector/jdbc-table-sel
     AddDataserviceWizardComponent,
     AddDataserviceComponent,
     ConnectionTableSelectorComponent,
-    JdbcTableSelectorComponent
+    JdbcTableSelectorComponent,
+    TestDataserviceComponent,
+    SqlControlComponent
   ],
   providers: [
     DataserviceService,

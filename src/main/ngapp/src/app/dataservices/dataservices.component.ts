@@ -27,6 +27,7 @@ import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.co
 import { IdFilter } from "@shared/id-filter";
 import { LayoutType } from "@shared/layout-type.enum";
 import { SortDirection } from "@shared/sort-direction.enum";
+import { NotificationType } from "patternfly-ng";
 
 @Component({
   moduleId: module.id,
@@ -47,6 +48,10 @@ export class DataservicesComponent extends AbstractPageComponent {
   private filter: IdFilter = new IdFilter();
   private layout: LayoutType = LayoutType.CARD;
   private sortDirection: SortDirection = SortDirection.ASC;
+  private exportNotificationHeader: string;
+  private exportNotificationMessage: string;
+  private exportNotificationType = NotificationType.SUCCESS;
+  private exportNotificationHidden = true;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
@@ -134,11 +139,39 @@ export class DataservicesComponent extends AbstractPageComponent {
   }
 
   public onTest(svcName: string): void {
-    alert("Test Dataservice " + svcName);
+    const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
+    this.dataserviceService.setSelectedDataservice(selectedService);
+
+    const link: string[] = [ DataservicesConstants.testDataservicePath ];
+    this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
   public onPublish(svcName: string): void {
-    alert("Publish Dataservice " + svcName);
+    this.exportNotificationHeader = "Publishing:  ";
+    this.exportNotificationMessage = "Publishing " + svcName + "...";
+    this.exportNotificationType = NotificationType.INFO;
+    this.exportNotificationHidden = false;
+    this.logger.log("[DataservicesPageComponent] Publishing Dataservice: " + svcName);
+    const self = this;
+    this.dataserviceService
+      .exportDataservice(svcName)
+      .subscribe(
+        (wasSuccess) => {
+          self.exportNotificationHeader = "Publish Succeeded:  ";
+          self.exportNotificationMessage = "   " + svcName + " was published successfully!";
+          self.exportNotificationType = NotificationType.SUCCESS;
+          this.logger.log("[DataservicesPageComponent] Publish Dataservice was successful");
+        },
+        (error) => {
+          self.exportNotificationHeader = "Publish Failed:  ";
+          self.exportNotificationMessage = "   Failed to publish dataservice " + svcName + "!";
+          self.exportNotificationType = NotificationType.DANGER;
+          this.logger.log("[DataservicesPageComponent] Publish Dataservice failed.");
+        }
+      );
   }
 
   public onDelete(svcName: string): void {
@@ -202,7 +235,7 @@ export class DataservicesComponent extends AbstractPageComponent {
         (wasSuccess) => {
           self.removeDataserviceFromList(selectedService);
           const link: string[] = [ DataservicesConstants.dataservicesRootPath ];
-          self.logger.log("[CreateApiPageComponent] Navigating to: %o", link);
+          self.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
           self.router.navigate(link).then(() => {
             // nothing to do
           });
