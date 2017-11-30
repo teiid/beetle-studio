@@ -87,4 +87,19 @@ export class MockDataserviceService extends DataserviceService {
     return this.serv1;
   }
 
+  /**
+   * Updates the current Dataservice states - triggers update to be broadcast to interested components
+   */
+  public updateDataserviceStates(): void {
+    // Nothing to do
+  }
+
+  /**
+   * Polls the server and sends Dataservice state updates at the specified interval
+   * @param {number} pollIntervalSec the interval (sec) between polling attempts
+   */
+  public pollDataserviceStatus(pollIntervalSec: number): void {
+    // Nothing to do
+  }
+
 }

@@ -9,6 +9,12 @@
 
 .dataservice-card-action-icon {
   cursor: pointer;
+  margin-left: 7px;
+}
+
+.dataservice-card-action-disabled-icon {
+  color: lightgray;
+  margin-left: 7px;
 }
 
 .dataservice-card-icon {

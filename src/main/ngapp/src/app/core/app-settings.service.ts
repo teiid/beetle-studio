@@ -16,6 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
+import { LayoutType } from "@shared/layout-type.enum";
 
 @Injectable()
 export class AppSettingsService {
@@ -37,6 +38,10 @@ export class AppSettingsService {
 
   // Map to maintain the target git repository properties
   private readonly gitRepoProperties: Map<string, string>;
+
+  // page layouts
+  private svcPageLayout: LayoutType = LayoutType.CARD;
+  private connPageLayout: LayoutType = LayoutType.CARD;
 
   constructor() {
     // TODO: The git repository properties will be picked up based on the Openshift install location
@@ -79,6 +84,38 @@ export class AppSettingsService {
    */
   public getGitRepoProperty(propertyKey: string): string {
     return this.gitRepoProperties.get(propertyKey);
+  }
+
+  /*
+   * Get the LayoutType for the connections summary page
+   * @returns {LayoutType} the connections page layout
+   */
+  public get connectionsPageLayout( ): LayoutType {
+    return this.connPageLayout;
+  }
+
+  /*
+   * Sets the LayoutType for the connections summary page
+   * @param {LayoutType} layout the connections page layout
+   */
+  public set connectionsPageLayout( layout: LayoutType ) {
+    this.connPageLayout = layout;
+  }
+
+  /*
+   * Get the LayoutType for the dataservices summary page
+   * @returns {LayoutType} the dataservices page layout
+   */
+  public get dataservicesPageLayout( ): LayoutType {
+    return this.svcPageLayout;
+  }
+
+  /*
+   * Sets the LayoutType for the dataservices summary page
+   * @param {LayoutType} layout the dataservices page layout
+   */
+  public set dataservicesPageLayout( layout: LayoutType ) {
+    this.svcPageLayout = layout;
   }
 
 }

@@ -17,6 +17,7 @@
 
 import { ReflectiveInjector } from "@angular/core";
 import { AppSettingsService } from "@core/app-settings.service";
+import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { Identifiable } from "@shared/identifiable";
 import { SortDirection } from "@shared/sort-direction.enum";
 
@@ -29,6 +30,7 @@ export class Dataservice implements Identifiable< string > {
   private serviceView: string;
   private serviceViewModel: string;
   private serviceViewTables: string[];
+  private deploymentState: DeploymentState = DeploymentState.LOADING;
   private appSettings: AppSettingsService;
 
   /**
@@ -149,6 +151,53 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
+   * @returns {DeploymentState} the dataservice Deployment state
+   */
+  public getServiceDeploymentState(): DeploymentState {
+    return this.deploymentState;
+  }
+
+  /**
+   * Accessor to determine if service deployment is active
+   * @returns {boolean} the dataservice service deployment active state
+   */
+  public get serviceDeploymentActive(): boolean {
+    return this.deploymentState === DeploymentState.ACTIVE;
+  }
+
+  /**
+   * Accessor to determine if service deployment is inactive
+   * @returns {boolean} the dataservice service deployment inactive state
+   */
+  public get serviceDeploymentInactive(): boolean {
+    return this.deploymentState === DeploymentState.INACTIVE;
+  }
+
+  /**
+   * Accessor to determine if service deployment is loading
+   * @returns {boolean} the dataservice service deployment loading state
+   */
+  public get serviceDeploymentLoading(): boolean {
+    return this.deploymentState === DeploymentState.LOADING;
+  }
+
+  /**
+   * Accessor to determine if service deployment is failed
+   * @returns {boolean} the dataservice service deployment failed state
+   */
+  public get serviceDeploymentFailed(): boolean {
+    return this.deploymentState === DeploymentState.FAILED;
+  }
+
+  /**
+   * Accessor to determine if service is not deployed
+   * @returns {boolean} the dataservice service not deployed state
+   */
+  public get serviceDeploymentNotDeployed(): boolean {
+    return this.deploymentState === DeploymentState.NOT_DEPLOYED;
+  }
+
+  /**
    * @param {string} id the dataservice identifier (optional)
    */
   public setId( id?: string ): void {
@@ -195,6 +244,13 @@ export class Dataservice implements Identifiable< string > {
    */
   public setServiceViewTables( viewTables: string[] ): void {
     this.serviceViewTables = viewTables;
+  }
+
+  /**
+   * @param {DeploymentState} state the dataservice deployment state
+   */
+  public setServiceDeploymentState( state: DeploymentState ): void {
+    this.deploymentState = state;
   }
 
   // overrides toJSON - we do not want the appSettings

@@ -2,6 +2,11 @@
   <div class="list-group-item list-view-pf-stacked" *ngFor="let dataservice of dataservices" [class.active]="isSelected(dataservice)" (click)="toggleDataserviceSelected(dataservice)">
     <div class="list-view-pf-main-info">
       <div class="list-view-pf-left">
+        <span class="pull-left pficon-ok dataservice-list-state-icon" *ngIf="dataservice.serviceDeploymentActive"></span>
+        <span class="pull-left pficon-error-circle-o dataservice-list-state-icon" *ngIf="dataservice.serviceDeploymentFailed"></span>
+        <span class="pull-left pficon-warning-triangle-o dataservice-list-state-icon" *ngIf="dataservice.serviceDeploymentInactive"></span>
+        <span class="pull-left pficon-unknown dataservice-list-state-icon" *ngIf="dataservice.serviceDeploymentNotDeployed"></span>
+        <span class="pull-left fa fa-spinner fa-pulse dataservice-list-state-icon" *ngIf="dataservice.serviceDeploymentLoading"></span>
         <span class="fa fa-table list-view-pf-icon-sm"></span>
       </div>
       <div class="list-view-pf-body">
@@ -28,9 +33,14 @@
         </div>
       </div>
       <div class="list-view-pf-actions">
-        <button i18n="@@dataservicesList.test" class="btn btn-default" type="button" (click)="onTestDataservice(dataservice.getId())">Test</button>
-        <button i18n="@@dataservicesList.publish" class="btn btn-default" type="button" (click)="onPublishDataservice(dataservice.getId())">Publish</button>
-        <button i18n="@@dataservicesList.delete" class="btn btn-danger" type="button" (click)="onDeleteDataservice(dataservice.getId())">Delete</button>
+        <button i18n="@@dataservicesList.activate" class="btn btn-default" type="button"
+                (click)="onActivateDataservice(dataservice.getId())">Activate</button>
+        <button i18n="@@dataservicesList.test" class="btn btn-default" type="button"
+                (click)="onTestDataservice(dataservice.getId())" [disabled]="!dataservice.serviceDeploymentActive">Test</button>
+        <button i18n="@@dataservicesList.publish" class="btn btn-default" type="button"
+                (click)="onPublishDataservice(dataservice.getId())" [disabled]="dataservice.serviceDeploymentLoading">Publish</button>
+        <button i18n="@@dataservicesList.delete" class="btn btn-danger" type="button"
+                (click)="onDeleteDataservice(dataservice.getId())" [disabled]="dataservice.serviceDeploymentLoading">Delete</button>
       </div>
     </div>
   </div>

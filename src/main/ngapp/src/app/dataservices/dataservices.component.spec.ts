@@ -3,6 +3,7 @@ import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 import { By } from "@angular/platform-browser";
 import { RouterTestingModule } from "@angular/router/testing";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
@@ -24,7 +25,8 @@ describe("DataservicesComponent", () => {
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), PatternFlyNgModule, RouterTestingModule, SharedModule ],
       declarations: [ DataservicesComponent, DataservicesListComponent, DataservicesCardsComponent ],
       providers: [
-        { provide: VdbService, useClass: MockVdbService },
+        AppSettingsService,
+        { provide: VdbService, useClass: MockVdbService }
       ]
     });
 

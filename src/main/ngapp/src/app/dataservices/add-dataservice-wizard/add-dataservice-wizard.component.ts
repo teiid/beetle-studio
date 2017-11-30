@@ -241,6 +241,9 @@ export class AddDataserviceWizardComponent implements OnInit {
 
     const sourceVdbName = this.tableSelector.getSelectedTables()[0].getConnection().getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
 
+    this.step3bConfig.nextEnabled = false;
+    this.step3bConfig.previousEnabled = false;
+
     // Before polling, subscribe to get status event
     this.deploymentChangeSubscription = this.vdbService.deploymentStatus.subscribe((status) => {
       this.onSourceVdbDeploymentStateChanged(status);
@@ -258,6 +261,7 @@ export class AddDataserviceWizardComponent implements OnInit {
             self.createComplete = true;
             self.createSuccessful = false;
             self.step3bConfig.nextEnabled = false;
+            self.step3bConfig.previousEnabled = true;
             self.vdbService.deploymentStatus.unsubscribe();
           }
         },
@@ -266,9 +270,30 @@ export class AddDataserviceWizardComponent implements OnInit {
           self.createComplete = true;
           self.createSuccessful = false;
           self.step3bConfig.nextEnabled = false;
+          self.step3bConfig.previousEnabled = true;
           self.vdbService.deploymentStatus.unsubscribe();
         }
       );
+  }
+
+  public onDeployDataservice(): void {
+    // Start the deployment and then redirect to the dataservice summary page
+    this.dataserviceService
+      .deployDataservice(this.dataserviceName)
+      .subscribe(
+        (wasSuccess) => {
+          // Nothing to do
+        },
+        (error) => {
+          // Nothing to do
+        }
+      );
+
+    const link: string[] = [ DataservicesConstants.dataservicesRootPath ];
+    this.logger.log("[AddDataserviceWizardComponent] Navigating to: %o", link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
   /*
@@ -296,6 +321,7 @@ export class AddDataserviceWizardComponent implements OnInit {
           this.createComplete = true;
           this.createSuccessful = false;
           this.step3bConfig.nextEnabled = false;
+          this.step3bConfig.previousEnabled = true;
         }
       }
     }
@@ -400,10 +426,12 @@ export class AddDataserviceWizardComponent implements OnInit {
             self.createComplete = true;
             self.createSuccessful = true;
             self.step3bConfig.nextEnabled = false;
+            this.step3bConfig.previousEnabled = true;
           } else {
             self.createComplete = true;
             self.createSuccessful = false;
             self.step3bConfig.nextEnabled = false;
+            this.step3bConfig.previousEnabled = true;
           }
         },
         (error) => {
@@ -411,6 +439,7 @@ export class AddDataserviceWizardComponent implements OnInit {
           self.createComplete = true;
           self.createSuccessful = false;
           self.step3bConfig.nextEnabled = false;
+          this.step3bConfig.previousEnabled = true;
         }
       );
 
