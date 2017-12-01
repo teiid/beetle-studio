@@ -1,36 +1,40 @@
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-12">
     <div class="sql-control-control-title">Enter the SQL, then click Submit</div>
-    <div class="sql-control-controls-query">
-      <button class="btn btn-primary" (click)="submitCurrentQuery()">
-        <span class="fa fa-fw fa-search"></span>Submit
-      </button>
-    </div>
 
-    <div class="sql-control-editor">
-      <textarea [(ngModel)]="queryText" rows="10" cols="60" title="title"></textarea>
+    <div class="col-sm-12 sql-control-editor">
+      <textarea [(ngModel)]="queryText" rows="10" cols="120" title="title"></textarea>
+      <div class="sql-control-controls-query">
+        <button class="btn btn-primary" (click)="submitCurrentQuery()">
+          <span class="fa fa-fw fa-search"></span>Submit
+        </button>
+      </div>
     </div>
   </div>
 
-  <div class="col-sm-8" *ngIf="queryRunning">
+  <div class="col-sm-12" *ngIf="queryRunning">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <span class="spinner spinner-sm spinner-inline"></span>
       <strong>Submitting the Query...</strong>
     </div>
   </div>
-  <div class="col-sm-8" *ngIf="queryRanInvalid">
+  <div class="col-sm-12" *ngIf="queryRanInvalid">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <strong>There was an error running the Query!</strong>
     </div>
   </div>
-  <div class="col-sm-8" *ngIf="queryRanValid">
+  <div class="col-sm-12" *ngIf="queryRanValid">
     <h4>Query Results</h4>
-    <h6>TODO - use a datagrid component.  Currently, just titles are shown.</h6>
-    <div class="col-sm-2" *ngFor="let column of queryResults.getColumns()">
-      {{ column.getLabel() }}
-    </div>
+    <ngx-datatable [rows]="rows"
+                   [columns]="columns"
+                   [scrollbarV]="true"
+                   [scrollbarH]="true"
+                   [columnMode]="'force'"
+                   [reorderable]="true"
+                   [cssClasses]='customClasses'>
+    </ngx-datatable>
   </div>
 
 </div>

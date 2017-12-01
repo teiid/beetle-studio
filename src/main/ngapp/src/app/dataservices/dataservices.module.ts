@@ -28,6 +28,7 @@ import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SharedModule } from "@shared/shared.module";
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddDataserviceWizardComponent } from "./add-dataservice-wizard/add-dataservice-wizard.component";
 import { AddDataserviceComponent } from "./add-dataservice/add-dataservice.component";
@@ -43,6 +44,7 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
     CoreModule,
     SharedModule,
     FormsModule,
+    NgxDatatableModule,
     ReactiveFormsModule,
     RouterModule,
     PatternFlyNgModule
