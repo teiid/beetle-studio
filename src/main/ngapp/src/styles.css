@@ -1,1 +1,42 @@
 /* You can add global styles to this file, and also import other style files */
+
+.ngx-datatable {
+  position: absolute; top:0;left:0;right:0;bottom:0;
+}
+
+.datatable-header {
+  color: white;
+  background-color: #cccccc;
+  text-align: center;
+}
+
+.datatable-header-cell {
+  vertical-align: bottom;
+  border-bottom: 2px solid #ddd;
+  padding: 8px;
+  line-height: 1.42857143;
+  font-weight: bold;
+  color: rgb(51, 51, 51);
+}
+
+.datatable-body-row {
+  border-bottom: 1px solid #d8d8d8;
+}
+
+.datatable-row-even {
+  background-color: white;
+}
+
+.datatable-row-odd {
+  background-color: #f2f2f2;
+}
+
+.datatable-body-cell {
+  padding: 0.25em;
+  border-left: 1px solid #d8d8d8;
+  border-right: 1px solid #d8d8d8;
+}
+
+.datatable-body-cell:first-child {
+  text-align: center;
+}

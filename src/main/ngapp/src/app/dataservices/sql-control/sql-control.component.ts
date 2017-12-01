@@ -19,7 +19,18 @@ export class SqlControlComponent implements OnInit {
   private queryResultsLoading: LoadingState;
   private queryTxt: string;
   private queryResults: QueryResults;
-  private data: any[] = [];
+
+  public columns: any[] = [];
+  public rows: any[] = [];
+
+  public customClasses = {
+    sortAscending: 'fa fa-sort-asc',
+    sortDescending: 'fa fa-sort-desc',
+    pagerLeftArrow: 'fa fa-chevron-left',
+    pagerRightArrow: 'fa fa-chevron-right',
+    pagerPrevious: 'fa fa-step-backward',
+    pagerNext: 'fa fa-step-forward'
+  };
 
   constructor( dataserviceService: DataserviceService, logger: LoggerService ) {
     this.dataserviceService = dataserviceService;
@@ -125,30 +136,76 @@ export class SqlControlComponent implements OnInit {
       return;
     }
 
-    const columns: ColumnData[] = results.getColumns();
-    const rows: RowData[] = results.getRows();
-
-    //
-    // Get the column titles
-    //
-    const columnTitles = [];
-    for ( const column of columns ) {
-      const colLabel: string = column.getLabel();
-      columnTitles.push(colLabel);
-    }
+    const columnData: ColumnData[] = results.getColumns();
+    const rowData: RowData[] = results.getRows();
 
     //
     // Define the row data
     //
-    this.data = [];
-    let rowData;
-    for ( const row of rows ) {
-      rowData = row.getData();
-      const dataRow = {};
-      for (let i = 0; i < rowData.length; i++) {
-        dataRow[columnTitles[i]] = rowData[i];
+    let firstTime = true;
+    const rowNumHeader = "ROW #";
+    // const widths: Map< string, number > = new Map< string, number >();
+
+    for ( let rowIndex = 0; rowIndex < rowData.length; rowIndex++ ) {
+      const row = rowData[ rowIndex ];
+      const data = row.getData();
+
+      let dataRow = {};
+      dataRow[ rowNumHeader ] = rowIndex + 1;
+
+      for (let colIndex = 0; colIndex < data.length; colIndex++) {
+        const label = columnData[ colIndex ].getLabel();
+        dataRow[ label ] = data[ colIndex ];
+
+        // size column to largest width data of first 50 rows
+        // if ( rowIndex < 50 ) {
+        //   const value = "" + dataRow[ label ];
+        //   const width = value.length;
+        //   const labelWidth = label.length
+        //
+        //   if ( firstTime ) {
+        //     const max = Math.max( width, labelWidth );
+        //     widths.set( label, max );
+        //   } else {
+        //     const currVal: number = widths.get( label );
+        //     const max = Math.max( width, currVal, labelWidth );
+        //     widths.set( label, max );
+        //   }
+        // }
       }
-      this.data.push(dataRow);
+
+      this.rows.push( dataRow );
+      firstTime = false;
+    }
+
+    // setup row number column
+    const column = { canAutoResize: true,
+                     draggable: false,
+                     // flexGrow: rowNumHeader.length,
+                     maxWidth: 50,
+                     minWidth: 50,
+                     name: rowNumHeader,
+                     prop: rowNumHeader,
+                     resizable: true,
+                     sortable: true,
+                     width: 50 };
+    this.columns.push( column );
+
+    //
+    // Setup columns
+    //
+    for ( let i = 0; i < columnData.length; i++) {
+      const colData = columnData[ i ];
+      const label = colData.getLabel();
+      // const width = widths.get( label );
+      const column = { canAutoResize: true,
+                       draggable: false,
+                       // flexGrow: width,
+                       name: label.toUpperCase(),
+                       prop: label,
+                       resizable: true,
+                       sortable: true };
+      this.columns.push( column );
     }
   }
 

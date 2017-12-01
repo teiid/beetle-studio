@@ -8,7 +8,8 @@ import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.se
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
-import { TestDataserviceComponent } from "./test-dataservice.component";
+import { TestDataserviceComponent } from "@dataservices/test-dataservice/test-dataservice.component";
+import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 
 describe("TestDataserviceComponent", () => {
   let component: TestDataserviceComponent;
@@ -16,7 +17,7 @@ describe("TestDataserviceComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, RouterTestingModule ],
+      imports: [ CoreModule, FormsModule, RouterTestingModule, NgxDatatableModule ],
       declarations: [ SqlControlComponent, TestDataserviceComponent ],
       providers: [
         { provide: DataserviceService, useClass: MockDataserviceService },
