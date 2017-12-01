@@ -68,7 +68,7 @@
           <div class="wizard-pf-success-icon"><span class="glyphicon glyphicon-ok-circle"></span></div>
           <h3 class="blank-slate-pf-main-action">Creation was successful</h3>
           <p class="blank-slate-pf-secondary-action">The dataservice was created successfully. Click on the button to see all dataservices.</p>
-          <a class="btn btn-lg btn-primary" [routerLink]="[dataserviceSummaryLink]">View All Dataservices</a>
+          <button class="btn btn-lg btn-primary" type="button" (click)="onDeployDataservice()">View All Dataservices</button>
         </div>
         <!-- Create Failed -->
         <div class="wizard-pf-complete blank-slate-pf" *ngIf="createComplete && !createSuccessful">

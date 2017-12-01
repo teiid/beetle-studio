@@ -17,17 +17,21 @@
 
 import { Component, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { ArrayUtils } from "@core/utils/array-utils";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
+import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { IdFilter } from "@shared/id-filter";
 import { LayoutType } from "@shared/layout-type.enum";
 import { SortDirection } from "@shared/sort-direction.enum";
 import { NotificationType } from "patternfly-ng";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   moduleId: module.id,
@@ -44,21 +48,30 @@ export class DataservicesComponent extends AbstractPageComponent {
   private selectedServices: Dataservice[] = [];
   private dataserviceNameForDelete: string;
   private router: Router;
+  private appSettingsService: AppSettingsService;
   private dataserviceService: DataserviceService;
+  private vdbService: VdbService;
   private filter: IdFilter = new IdFilter();
-  private layout: LayoutType = LayoutType.CARD;
   private sortDirection: SortDirection = SortDirection.ASC;
   private exportNotificationHeader: string;
   private exportNotificationMessage: string;
   private exportNotificationType = NotificationType.SUCCESS;
   private exportNotificationHidden = true;
+  private dataserviceStateSubscription: Subscription;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
-  constructor(router: Router, route: ActivatedRoute, dataserviceService: DataserviceService, logger: LoggerService) {
+  constructor(router: Router, route: ActivatedRoute, dataserviceService: DataserviceService,
+              logger: LoggerService, appSettingsService: AppSettingsService, vdbService: VdbService ) {
     super(route, logger);
     this.router = router;
+    this.appSettingsService = appSettingsService;
     this.dataserviceService = dataserviceService;
+    this.vdbService = vdbService;
+    // Register for dataservice state changes
+    this.dataserviceStateSubscription = this.dataserviceService.dataserviceStateChange.subscribe((serviceStateMap) => {
+      this.onDataserviceStateChanged(serviceStateMap);
+    });
   }
 
   public loadAsyncPageData(): void {
@@ -69,6 +82,7 @@ export class DataservicesComponent extends AbstractPageComponent {
         (dataservices) => {
           self.allServices = dataservices;
           self.filteredServices = this.filterDataservices();
+          self.dataserviceService.updateDataserviceStates();  // trigger refresh in event of new deployment
           self.loaded("dataservices");
         },
         (error) => {
@@ -81,14 +95,14 @@ export class DataservicesComponent extends AbstractPageComponent {
    * @returns {boolean} true if dataservices are being represented by cards
    */
   public get isCardLayout(): boolean {
-    return this.layout === LayoutType.CARD;
+    return this.appSettingsService.dataservicesPageLayout === LayoutType.CARD;
   }
 
   /**
    * @returns {boolean} true if dataservices are being represented by items in a list
    */
   public get isListLayout(): boolean {
-    return this.layout === LayoutType.LIST;
+    return this.appSettingsService.dataservicesPageLayout === LayoutType.LIST;
   }
 
   /**
@@ -136,6 +150,24 @@ export class DataservicesComponent extends AbstractPageComponent {
     // Only one item is selected at a time
     this.selectedServices.shift();
     // this.selectedServices.splice(this.selectedServices.indexOf(dataservice), 1);
+  }
+
+  public onActivate(svcName: string): void {
+    const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
+    selectedService.setServiceDeploymentState(DeploymentState.LOADING);
+
+    const self = this;
+    // Start the deployment and then redirect to the dataservice summary page
+    this.dataserviceService
+      .deployDataservice(svcName)
+      .subscribe(
+        (wasSuccess) => {
+          self.dataserviceService.updateDataserviceStates();
+        },
+        (error) => {
+          self.dataserviceService.updateDataserviceStates();
+        }
+      );
   }
 
   public onTest(svcName: string): void {
@@ -210,11 +242,11 @@ export class DataservicesComponent extends AbstractPageComponent {
   }
 
   public setListLayout(): void {
-    this.layout = LayoutType.LIST;
+    this.appSettingsService.dataservicesPageLayout = LayoutType.LIST;
   }
 
   public setCardLayout(): void {
-    this.layout = LayoutType.CARD;
+    this.appSettingsService.dataservicesPageLayout = LayoutType.CARD;
   }
 
   /**
@@ -233,12 +265,8 @@ export class DataservicesComponent extends AbstractPageComponent {
       .deleteDataservice(selectedService.getId())
       .subscribe(
         (wasSuccess) => {
+          self.undeployVdb(selectedService.getServiceVdbName());
           self.removeDataserviceFromList(selectedService);
-          const link: string[] = [ DataservicesConstants.dataservicesRootPath ];
-          self.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
-          self.router.navigate(link).then(() => {
-            // nothing to do
-          });
         },
         (error) => {
           self.error(error, "Error deleting the dataservice");
@@ -267,8 +295,42 @@ export class DataservicesComponent extends AbstractPageComponent {
     return this.filteredServices;
   }
 
+  /*
+   * Undeploy the Vdb with the specified name
+   * @param {string} vdbName the name of the Vdb
+   */
+  private undeployVdb(vdbName: string): void {
+    this.vdbService
+      .undeployVdb(vdbName)
+      .subscribe(
+        (wasSuccess) => {
+          // nothing to do
+        },
+        (error) => {
+          // nothing to do
+        }
+      );
+  }
+
+  /*
+   * Remove the specified Dataservice from the list of dataservices
+   */
   private removeDataserviceFromList(dataservice: Dataservice): void {
     this.allServices.splice(this.allServices.indexOf(dataservice), 1);
     this.filterDataservices();
   }
+
+  /*
+   * Update the displayed dataservice states using the provided states
+   */
+  private onDataserviceStateChanged(stateMap: Map<string, DeploymentState>): void {
+      // For displayed dataservices, update the State using supplied services
+      for ( const dService of this.filteredDataservices ) {
+        const serviceId = dService.getId();
+        if (stateMap && stateMap.has(serviceId)) {
+          dService.setServiceDeploymentState(stateMap.get(serviceId));
+        }
+      }
+  }
+
 }

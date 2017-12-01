@@ -20,6 +20,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { ArrayUtils } from "@core/utils/array-utils";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
@@ -43,6 +44,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
   private selectedConns: Connection[] = [];
   private connectionNameForDelete: string;
   private router: Router;
+  private appSettingsService: AppSettingsService;
   private connectionService: ConnectionService;
   private filter: IdFilter = new IdFilter();
   private layout: LayoutType = LayoutType.CARD;
@@ -50,9 +52,11 @@ export class ConnectionsComponent extends AbstractPageComponent {
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
-  constructor(router: Router, route: ActivatedRoute, connectionService: ConnectionService, logger: LoggerService) {
+  constructor(router: Router, route: ActivatedRoute, appSettingsService: AppSettingsService,
+              connectionService: ConnectionService, logger: LoggerService) {
     super(route, logger);
     this.router = router;
+    this.appSettingsService = appSettingsService;
     this.connectionService = connectionService;
   }
 
@@ -77,14 +81,14 @@ export class ConnectionsComponent extends AbstractPageComponent {
    * @returns {boolean} true if connections are being represented by cards
    */
   public get isCardLayout(): boolean {
-    return this.layout === LayoutType.CARD;
+    return this.appSettingsService.connectionsPageLayout === LayoutType.CARD;
   }
 
   /**
    * @returns {boolean} true if connections are being represented by items in a list
    */
   public get isListLayout(): boolean {
-    return this.layout === LayoutType.LIST;
+    return this.appSettingsService.connectionsPageLayout === LayoutType.LIST;
   }
 
   /**
@@ -174,11 +178,11 @@ export class ConnectionsComponent extends AbstractPageComponent {
   }
 
   public setListLayout(): void {
-    this.layout = LayoutType.LIST;
+    this.appSettingsService.connectionsPageLayout = LayoutType.LIST;
   }
 
   public setCardLayout(): void {
-    this.layout = LayoutType.CARD;
+    this.appSettingsService.connectionsPageLayout = LayoutType.CARD;
   }
 
   /**

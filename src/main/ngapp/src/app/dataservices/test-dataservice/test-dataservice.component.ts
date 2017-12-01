@@ -21,7 +21,7 @@ export class TestDataserviceComponent extends AbstractPageComponent {
 
   private dataservice: Dataservice;
   private dataserviceService: DataserviceService;
-  private pageLoadingState: LoadingState = LoadingState.LOADING;
+  private pageLoadingState: LoadingState = LoadingState.LOADED_VALID;
 
   constructor( router: Router, route: ActivatedRoute, dataserviceService: DataserviceService, logger: LoggerService ) {
     super(route, logger);
@@ -29,24 +29,7 @@ export class TestDataserviceComponent extends AbstractPageComponent {
   }
 
   public loadAsyncPageData(): void {
-    this.pageLoadingState = LoadingState.LOADING;
     this.dataservice = this.dataserviceService.getSelectedDataservice();
-
-    if (this.dataservice) {
-      const self = this;
-      // The dataservice deployment waits for the service to deploy.
-      this.dataserviceService
-        .deployDataservice(this.dataservice.getId())
-        .subscribe(
-          (wasSuccess) => {
-            this.pageLoadingState = LoadingState.LOADED_VALID;
-          },
-          (error) => {
-            this.pageLoadingState = LoadingState.LOADED_INVALID;
-            self.error(error, "Error deploying the dataservice");
-          }
-        );
-    }
   }
 
   /**

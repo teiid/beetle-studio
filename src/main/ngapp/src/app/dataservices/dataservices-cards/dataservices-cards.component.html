@@ -6,11 +6,20 @@
         <div class="card-pf-body">
           <!-- title -->
           <h2 class="dataservice-card-title">
-            <span class="fa fa-fw fa-table dataservice-card-icon"></span>
+            <span class="pull-left pficon-ok" *ngIf="dataservice.serviceDeploymentActive"></span>
+            <span class="pull-left pficon-error-circle-o" *ngIf="dataservice.serviceDeploymentFailed"></span>
+            <span class="pull-left pficon-warning-triangle-o" *ngIf="dataservice.serviceDeploymentInactive"></span>
+            <span class="pull-left pficon-unknown" *ngIf="dataservice.serviceDeploymentNotDeployed"></span>
+            <span class="pull-left fa fa-spinner fa-pulse" *ngIf="dataservice.serviceDeploymentLoading"></span>
+            <span class="pull-left fa fa-refresh dataservice-card-action-icon" (click)="onActivateDataservice(dataservice.getId())"></span>
+            <span class="fa fa-table dataservice-card-icon"></span>
             <span><a [routerLink]="[dataservice.getId()]">{{ dataservice.getId() }}</a></span>
-            <span class="pull-right fa fa-fw fa-close dataservice-card-action-icon" style="color:darkred;" (click)="onDeleteDataservice(dataservice.getId())"></span>
-            <span class="pull-right fa fa-fw fa-arrow-up dataservice-card-action-icon" (click)="onPublishDataservice(dataservice.getId())"></span>
-            <span class="pull-right fa fa-fw fa-play dataservice-card-action-icon" style="color:darkgreen;" (click)="onTestDataservice(dataservice.getId())"></span>
+            <span *ngIf="!dataservice.serviceDeploymentLoading" class="pull-right pficon-delete dataservice-card-action-icon" style="color:darkred;" (click)="onDeleteDataservice(dataservice.getId())"></span>
+            <span *ngIf="dataservice.serviceDeploymentLoading" class="pull-right pficon-delete dataservice-card-action-disabled-icon"></span>
+            <span *ngIf="!dataservice.serviceDeploymentLoading" class="pull-right pficon-export dataservice-card-action-icon" (click)="onPublishDataservice(dataservice.getId())"></span>
+            <span *ngIf="dataservice.serviceDeploymentLoading" class="pull-right pficon-export dataservice-card-action-disabled-icon"></span>
+            <span *ngIf="dataservice.serviceDeploymentActive" class="pull-right fa fa-list-alt dataservice-card-action-icon" (click)="onTestDataservice(dataservice.getId())"></span>
+            <span *ngIf="!dataservice.serviceDeploymentActive" class="pull-right fa fa-list-alt dataservice-card-action-disabled-icon"></span>
           </h2>
           <hr/>
           <div>

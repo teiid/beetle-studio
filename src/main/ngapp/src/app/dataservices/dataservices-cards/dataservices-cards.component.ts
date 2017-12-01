@@ -31,6 +31,7 @@ export class DataservicesCardsComponent {
   @Output() public dataserviceSelected: EventEmitter<Dataservice> = new EventEmitter<Dataservice>();
   @Output() public dataserviceDeselected: EventEmitter<Dataservice> = new EventEmitter<Dataservice>();
   @Output() public tagSelected: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public activateDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public testDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public publishDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public deleteDataservice: EventEmitter<string> = new EventEmitter<string>();
@@ -52,6 +53,10 @@ export class DataservicesCardsComponent {
 
   public isSelected(dataservice: Dataservice): boolean {
     return this.selectedDataservices.indexOf(dataservice) !== -1;
+  }
+
+  public onActivateDataservice(dataserviceName: string): void {
+    this.activateDataservice.emit(dataserviceName);
   }
 
   public onTestDataservice(dataserviceName: string): void {

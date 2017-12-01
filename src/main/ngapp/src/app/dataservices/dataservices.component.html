@@ -98,10 +98,12 @@
         </pfng-inline-notification>
 
         <app-dataservices-list *ngIf="isListLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
-                               (testDataservice)="onTest($event)" (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
+                               (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
+                               (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
                                (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-list>
         <app-dataservices-cards *ngIf="isCardLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
-                                (testDataservice)="onTest($event)" (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
+                                (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
+                                (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
                                 (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-cards>
       </div>
 

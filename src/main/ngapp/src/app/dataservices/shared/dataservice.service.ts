@@ -22,27 +22,40 @@ import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
+import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { Table } from "@dataservices/shared/table.model";
+import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Observable";
+import { ReplaySubject } from "rxjs/ReplaySubject";
+import { Subject } from "rxjs/Subject";
+import { Subscription } from "rxjs/Subscription";
 
 @Injectable()
 export class DataserviceService extends ApiService {
+
+  // Observable dataservice state changes
+  // Using replay status with cache of 1, so subscribers dont get an initial value on subscription
+  public dataserviceStateChange: Subject< Map<string, DeploymentState> > = new ReplaySubject< Map<string, DeploymentState> >(1);
 
   public serviceVdbSuffix = "VDB";  // Don't change - must match komodo naming convention
 
   private http: Http;
   private vdbService: VdbService;
   private selectedDataservice: Dataservice;
+  private cachedDataserviceStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
+  private updatesSubscription: Subscription;
 
   constructor( http: Http, vdbService: VdbService, appSettings: AppSettingsService, logger: LoggerService ) {
     super( appSettings, logger  );
     this.http = http;
     this.vdbService = vdbService;
+    // Polls to fire Dataservice state updates every minute
+    this.pollDataserviceStatus(60);
   }
 
   /**
@@ -291,6 +304,101 @@ export class DataserviceService extends ApiService {
         return new QueryResults(queryResults);
       })
       .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Updates the current Dataservice states - triggers update to be broadcast to interested components
+   */
+  public updateDataserviceStates(): void {
+    const self = this;
+    this.getAllDataservices()
+      .subscribe(
+        (dataservices) => {
+          self.updateServiceStateMap(dataservices);
+        },
+        (error) => {
+          // On error, broadcast the cached states
+          self.broadcastDataservicesStateChange();
+        }
+      );
+  }
+
+  /**
+   * Polls the server and sends Dataservice state updates at the specified interval
+   * @param {number} pollIntervalSec the interval (sec) between polling attempts
+   */
+  public pollDataserviceStatus(pollIntervalSec: number): void {
+    const pollIntervalMillis = pollIntervalSec * 1000;
+
+    const self = this;
+    // start the timer
+    const timer = Observable.timer(500, pollIntervalMillis);
+    this.updatesSubscription = timer.subscribe((t: any) => {
+      self.updateDataserviceStates();
+    });
+  }
+
+  /*
+   * Get updates for the provided array of Dataservices and broadcast the map of states
+   * @param {Dataservice[]} services the array of Dataservices
+   */
+  private updateServiceStateMap(services: Dataservice[]): void {
+    const self = this;
+    this.vdbService.getTeiidVdbStatuses()
+      .subscribe(
+        (vdbStatuses) => {
+          self.cachedDataserviceStates = self.createDeploymentStateMap(services, vdbStatuses);
+          self.broadcastDataservicesStateChange();
+        },
+        (error) => {
+          // On error, broadcast the cached states
+          self.broadcastDataservicesStateChange();
+        }
+      );
+  }
+
+  /*
+   * Creates a Map of dataservice name to DeploymentState, given the list of dataservices and vdbStatuses
+   * @param {Dataservice[]} dataservices the Dataservice array
+   * @param {VdbStatus[]} vdbStatuses the VdbStatus array
+   * @returns {Map<string,DeploymentState>} the map of dataservice name to DeploymentState
+   */
+  private createDeploymentStateMap(dataservices: Dataservice[], vdbStatuses: VdbStatus[]): Map<string, DeploymentState> {
+    const dsStateMap: Map<string, DeploymentState> = new Map<string, DeploymentState>();
+
+    // For each dataservice, find the corresponding VDB status.  Add the map entry
+    for ( const dService of dataservices ) {
+      const serviceId = dService.getId();
+      const serviceVdbName = dService.getServiceVdbName();
+      let statusFound = false;
+      for ( const vdbStatus of vdbStatuses ) {
+        if ( vdbStatus.getName() === serviceVdbName ) {
+          statusFound = true;
+          if ( vdbStatus.isActive() ) {
+            dsStateMap.set(serviceId, DeploymentState.ACTIVE);
+          } else if ( vdbStatus.isFailed() ) {
+            dsStateMap.set(serviceId, DeploymentState.FAILED);
+          } else if ( vdbStatus.isLoading() ) {
+            dsStateMap.set(serviceId, DeploymentState.LOADING);
+          } else {
+            dsStateMap.set(serviceId, DeploymentState.INACTIVE);
+          }
+        }
+      }
+      if ( !statusFound ) {
+        dsStateMap.set(serviceId, DeploymentState.NOT_DEPLOYED);
+      }
+    }
+
+    return dsStateMap;
+  }
+
+  /*
+   * Broadcast of the Dataservice states
+   */
+  private broadcastDataservicesStateChange( ): void {
+    this.dataserviceStateChange.next(this.cachedDataserviceStates);
+    this.dataserviceStateChange.next(null);
   }
 
 }
