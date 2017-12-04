@@ -17,11 +17,13 @@ export class SqlControlComponent implements OnInit {
   private logger: LoggerService;
   private showResults = false;
   private queryResultsLoading: LoadingState;
-  private queryTxt: string;
+  private queryTxt ="SELECT firstName, lastName, middleInitial, gender, age \n\tFROM employees \n\tWHERE firstName='elvis'"; //: string;
   private queryResults: QueryResults;
 
   public columns: any[] = [];
   public rows: any[] = [];
+
+  public config = { lineNumbers: false, theme: 'eclipse', tabSize: 4 };
 
   public customClasses = {
     sortAscending: 'fa fa-sort-asc',
@@ -135,6 +137,9 @@ export class SqlControlComponent implements OnInit {
     if (!results) {
       return;
     }
+
+    this.columns.length = 0;
+    this.rows.length = 0;
 
     const columnData: ColumnData[] = results.getColumns();
     const rowData: RowData[] = results.getRows();

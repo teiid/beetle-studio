@@ -3,7 +3,7 @@
     <div class="sql-control-control-title">Enter the SQL, then click Submit</div>
 
     <div class="col-sm-12 sql-control-editor">
-      <textarea [(ngModel)]="queryText" rows="10" cols="120" title="title"></textarea>
+      <codemirror [(ngModel)]="queryText" [config]="config"></codemirror>
       <div class="sql-control-controls-query">
         <button class="btn btn-primary" (click)="submitCurrentQuery()">
           <span class="fa fa-fw fa-search"></span>Submit
