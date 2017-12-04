@@ -1,17 +1,20 @@
-@import '~@swimlane/ngx-datatable/release/index.css';
-@import '~@swimlane/ngx-datatable/release/themes/material.css';
-@import '~@swimlane/ngx-datatable/release/assets/icons.css';
-
 .sql-control-control-title {
+  margin: 0.5em;
   float: left;
   color: grey;
+  font-weight: bold;
 }
 .sql-control-controls-query {
-  float: right;
-  margin-bottom: 0.5em;
+  float: left;
+  margin: 0.5em;
 }
 
 .sql-control-editor {
+  clear: both;
+  border: 1px inset grey;
+}
+
+.sql-results-panel {
   clear: both;
   border: 1px inset grey;
 }

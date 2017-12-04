@@ -10,6 +10,7 @@ import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SqlControlComponent } from "./sql-control.component";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
+import { CodemirrorModule } from "ng2-codemirror";
 
 describe("SqlControlComponent", () => {
   let component: SqlControlComponent;
@@ -17,7 +18,7 @@ describe("SqlControlComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, HttpModule, NgxDatatableModule  ],
+      imports: [ FormsModule, HttpModule, NgxDatatableModule, CodemirrorModule  ],
       declarations: [ SqlControlComponent ],
       providers: [
         AppSettingsService, LoggerService,
