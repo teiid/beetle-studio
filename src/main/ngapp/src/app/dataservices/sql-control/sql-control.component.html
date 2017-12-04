@@ -1,10 +1,10 @@
 <div class="row">
   <div class="col-sm-12">
-    <div class="sql-control-control-title">Enter the SQL, then click Submit</div>
+    <div class="sql-control-control-title">Query Editor</div>
 
     <div class="col-sm-12 sql-control-editor">
       <codemirror [(ngModel)]="queryText" [config]="config"></codemirror>
-      <div class="sql-control-controls-query">
+      <div class="row sql-control-controls-query">
         <button class="btn btn-primary" (click)="submitCurrentQuery()">
           <span class="fa fa-fw fa-search"></span>Submit
         </button>
@@ -12,29 +12,38 @@
     </div>
   </div>
 
-  <div class="col-sm-12" *ngIf="queryRunning">
-    <div class="alert alert-info">
-      <span class="pficon pficon-info"></span>
-      <span class="spinner spinner-sm spinner-inline"></span>
-      <strong>Submitting the Query...</strong>
+  <div class="col-sm-12">
+    <div class="sql-control-control-title">Query Results</div>
+
+    <div class="col-sm-12" *ngIf="!queryRunning && !queryRanValid && !queryRanInvalid">
+      <div class="alert alert-info">
+        <span class="pficon pficon-info"></span>
+        <strong>No results to show. Click 'Submit' in query editor to obtain results.</strong>
+      </div>
     </div>
-  </div>
-  <div class="col-sm-12" *ngIf="queryRanInvalid">
-    <div class="alert alert-info">
-      <span class="pficon pficon-info"></span>
-      <strong>There was an error running the Query!</strong>
+    <div class="col-sm-12" *ngIf="queryRunning">
+      <div class="alert alert-info">
+        <span class="pficon pficon-info"></span>
+        <span class="spinner spinner-sm spinner-inline"></span>
+        <strong>Submitting the Query...</strong>
+      </div>
     </div>
-  </div>
-  <div class="col-sm-12" *ngIf="queryRanValid">
-    <h4>Query Results</h4>
-    <ngx-datatable [rows]="rows"
-                   [columns]="columns"
-                   [scrollbarV]="true"
-                   [scrollbarH]="true"
-                   [columnMode]="'force'"
-                   [reorderable]="true"
-                   [cssClasses]='customClasses'>
-    </ngx-datatable>
+    <div class="col-sm-12" *ngIf="queryRanInvalid">
+      <div class="alert alert-info">
+        <span class="pficon pficon-info"></span>
+        <strong>There was an error running the Query!</strong>
+      </div>
+    </div>
+    <div class="col-sm-12 sql-results-panel" *ngIf="queryRanValid">
+      <ngx-datatable [rows]="rows"
+                     [columns]="columns"
+                     [scrollbarV]="true"
+                     [scrollbarH]="true"
+                     [columnMode]="'force'"
+                     [reorderable]="true"
+                     [cssClasses]='customClasses'>
+      </ngx-datatable>
+    </div>
   </div>
 
 </div>

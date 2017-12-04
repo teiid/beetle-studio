@@ -1,7 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "~codemirror/theme/eclipse.css";
 @import "~codemirror/lib/codemirror.css";
+@import "~codemirror/theme/mdn-like.css";
+
+.CodeMirror {
+  height: 200px;
+}
 
 .ngx-datatable {
   position: absolute; top:0;left:0;right:0;bottom:0;

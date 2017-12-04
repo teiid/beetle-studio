@@ -1,3 +1,23 @@
+/**
+ * @license
+ * Copyright 2017 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import 'codemirror/mode/sql/sql.js';
+import 'codemirror/addon/display/placeholder.js';
+import 'codemirror/addon/selection/active-line.js';
 import { Component, OnInit } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ColumnData } from "@dataservices/shared/column-data.model";
@@ -17,13 +37,19 @@ export class SqlControlComponent implements OnInit {
   private logger: LoggerService;
   private showResults = false;
   private queryResultsLoading: LoadingState;
-  private queryTxt ="SELECT firstName, lastName, middleInitial, gender, age \n\tFROM employees \n\tWHERE firstName='elvis'"; //: string;
+  private queryTxt: string;
   private queryResults: QueryResults;
 
   public columns: any[] = [];
   public rows: any[] = [];
 
-  public config = { lineNumbers: false, theme: 'eclipse', tabSize: 4 };
+  public config = {
+    lineNumbers: true,
+    mode: "text/x-sql",
+    placeholder: "Enter the SQL, then click Submit",
+    styleActiveLine: true,
+    tabSize: 4,
+    theme: "mdn-like" };
 
   public customClasses = {
     sortAscending: 'fa fa-sort-asc',
