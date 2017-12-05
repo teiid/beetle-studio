@@ -35,6 +35,7 @@ export class DataservicesCardsComponent {
   @Output() public testDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public publishDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public deleteDataservice: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
 
   /**
    * Constructor.
@@ -69,6 +70,10 @@ export class DataservicesCardsComponent {
 
   public onDeleteDataservice(dataserviceName: string): void {
     this.deleteDataservice.emit(dataserviceName);
+  }
+
+  public onQuickLookDataservice(dataserviceName: string): void {
+    this.quickLookDataservice.emit(dataserviceName);
   }
 
   public onSelectTag(tag: string, event: MouseEvent): void {

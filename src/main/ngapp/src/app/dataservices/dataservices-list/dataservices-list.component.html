@@ -24,6 +24,9 @@
             <span *ngIf="dataservice.getServiceViewTables().length==1">{{dataservice.getServiceViewTables()[0]}}</span>
             <span *ngIf="dataservice.getServiceViewTables().length==2">{{dataservice.getServiceViewTables()[0]}}, {{dataservice.getServiceViewTables()[1]}}</span>
           </div>
+          <div>
+            <span class="fa fa-search dataservice-list-quicklook-icon" (click)="onQuickLookDataservice(dataservice.getId())"></span>
+          </div>
           <!--
           <div class="dataservice-tags" *ngIf="dataservice.tags && dataservice.tags.length > 0">
             <span class="dataservice-tags-label">Tags:</span>

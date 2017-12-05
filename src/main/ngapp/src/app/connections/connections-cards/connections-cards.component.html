@@ -8,7 +8,7 @@
           <h2 class="connection-card-title">
             <span class="fa fa-fw fa-plug connection-card-icon"></span>
             <span><a [routerLink]="[connection.getId()]">{{ connection.getId() }}</a></span>
-            <span class="pull-right fa fa-fw fa-close connection-card-action-icon" style="color:darkred;" (click)="onDeleteConnection(connection.getId())"></span>
+            <span class="pull-right pficon-delete connection-card-action-icon" style="color:darkred;" (click)="onDeleteConnection(connection.getId())"></span>
           </h2>
           <hr/>
           <div>

@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-import 'codemirror/mode/sql/sql.js';
-import 'codemirror/addon/display/placeholder.js';
-import 'codemirror/addon/selection/active-line.js';
+import { Input } from "@angular/core";
 import { Component, OnInit } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ColumnData } from "@dataservices/shared/column-data.model";
@@ -25,6 +23,9 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { RowData } from "@dataservices/shared/row-data.model";
 import { LoadingState } from "@shared/loading-state.enum";
+import "codemirror/addon/display/placeholder.js";
+import "codemirror/addon/selection/active-line.js";
+import "codemirror/mode/sql/sql.js";
 
 @Component({
   selector: "app-sql-control",
@@ -33,12 +34,7 @@ import { LoadingState } from "@shared/loading-state.enum";
 })
 export class SqlControlComponent implements OnInit {
 
-  private dataserviceService: DataserviceService;
-  private logger: LoggerService;
-  private showResults = false;
-  private queryResultsLoading: LoadingState;
-  private queryTxt: string;
-  private queryResults: QueryResults;
+  @Input() public editorVisible = true;
 
   public columns: any[] = [];
   public rows: any[] = [];
@@ -52,13 +48,20 @@ export class SqlControlComponent implements OnInit {
     theme: "mdn-like" };
 
   public customClasses = {
-    sortAscending: 'fa fa-sort-asc',
-    sortDescending: 'fa fa-sort-desc',
-    pagerLeftArrow: 'fa fa-chevron-left',
-    pagerRightArrow: 'fa fa-chevron-right',
-    pagerPrevious: 'fa fa-step-backward',
-    pagerNext: 'fa fa-step-forward'
+    sortAscending: "fa fa-sort-asc",
+    sortDescending: "fa fa-sort-desc",
+    pagerLeftArrow: "fa fa-chevron-left",
+    pagerRightArrow: "fa fa-chevron-right",
+    pagerPrevious: "fa fa-step-backward",
+    pagerNext: "fa fa-step-forward"
   };
+
+  private dataserviceService: DataserviceService;
+  private logger: LoggerService;
+  private showResults = false;
+  private queryResultsLoading: LoadingState;
+  private queryTxt: string;
+  private queryResults: QueryResults;
 
   constructor( dataserviceService: DataserviceService, logger: LoggerService ) {
     this.dataserviceService = dataserviceService;
@@ -66,6 +69,14 @@ export class SqlControlComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.initQueryText();
+    this.submitCurrentQuery();
+  }
+
+  /*
+   * Initialize the query text based on the selected dataservice
+   */
+  public initQueryText( ): void {
     this.queryTxt = this.getDataserviceInitialQueryText();
   }
 
@@ -181,7 +192,7 @@ export class SqlControlComponent implements OnInit {
       const row = rowData[ rowIndex ];
       const data = row.getData();
 
-      let dataRow = {};
+      const dataRow = {};
       dataRow[ rowNumHeader ] = rowIndex + 1;
 
       for (let colIndex = 0; colIndex < data.length; colIndex++) {
