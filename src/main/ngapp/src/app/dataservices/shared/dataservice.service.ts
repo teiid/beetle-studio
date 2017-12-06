@@ -24,6 +24,7 @@ import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
@@ -45,14 +46,17 @@ export class DataserviceService extends ApiService {
   public serviceVdbSuffix = "VDB";  // Don't change - must match komodo naming convention
 
   private http: Http;
+  private notifierService: NotifierService;
   private vdbService: VdbService;
   private selectedDataservice: Dataservice;
   private cachedDataserviceStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
   private updatesSubscription: Subscription;
 
-  constructor( http: Http, vdbService: VdbService, appSettings: AppSettingsService, logger: LoggerService ) {
+  constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
+              notifierService: NotifierService, logger: LoggerService ) {
     super( appSettings, logger  );
     this.http = http;
+    this.notifierService = notifierService;
     this.vdbService = vdbService;
     // Polls to fire Dataservice state updates every minute
     this.pollDataserviceStatus(60);
@@ -318,7 +322,7 @@ export class DataserviceService extends ApiService {
         },
         (error) => {
           // On error, broadcast the cached states
-          self.broadcastDataservicesStateChange();
+          this.notifierService.sendDataserviceStateMap(this.cachedDataserviceStates);
         }
       );
   }
@@ -348,11 +352,11 @@ export class DataserviceService extends ApiService {
       .subscribe(
         (vdbStatuses) => {
           self.cachedDataserviceStates = self.createDeploymentStateMap(services, vdbStatuses);
-          self.broadcastDataservicesStateChange();
+          this.notifierService.sendDataserviceStateMap(self.cachedDataserviceStates);
         },
         (error) => {
           // On error, broadcast the cached states
-          self.broadcastDataservicesStateChange();
+          this.notifierService.sendDataserviceStateMap(self.cachedDataserviceStates);
         }
       );
   }
@@ -391,14 +395,6 @@ export class DataserviceService extends ApiService {
     }
 
     return dsStateMap;
-  }
-
-  /*
-   * Broadcast of the Dataservice states
-   */
-  private broadcastDataservicesStateChange( ): void {
-    this.dataserviceStateChange.next(this.cachedDataserviceStates);
-    this.dataserviceStateChange.next(null);
   }
 
 }

@@ -22,6 +22,7 @@ import { LoggerService } from "@core/logger.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
@@ -37,8 +38,9 @@ export class MockDataserviceService extends DataserviceService {
   private serv3 = new Dataservice();
   private services: Dataservice[] = [this.serv1, this.serv2, this.serv3];
 
-  constructor( http: Http, vdbService: VdbService, appSettings: AppSettingsService, logger: LoggerService ) {
-    super(http, vdbService, appSettings, logger);
+  constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
+              notifierService: NotifierService, logger: LoggerService ) {
+    super(http, vdbService, appSettings, notifierService, logger);
     this.serv1.setId("serv1");
     this.serv1.setServiceViewTables(["table1", "table2"]);
     this.serv1.setServiceViewModel("viewModel");

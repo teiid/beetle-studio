@@ -2,6 +2,8 @@
 
 @import "~codemirror/lib/codemirror.css";
 @import "~codemirror/theme/mdn-like.css";
+@import "~patternfly/dist/css/patternfly.css";
+@import "~patternfly/dist/css/patternfly-additions.css";
 
 .CodeMirror {
   height: 200px;

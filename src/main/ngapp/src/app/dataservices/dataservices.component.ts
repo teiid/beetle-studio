@@ -24,6 +24,7 @@ import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
@@ -67,19 +68,22 @@ export class DataservicesComponent extends AbstractPageComponent {
   private exportNotificationType = NotificationType.SUCCESS;
   private exportNotificationVisible = false;
   private dataserviceStateSubscription: Subscription;
+  private notifierService: NotifierService;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
   @ViewChild(SqlControlComponent) private sqlControlComponent: SqlControlComponent;
 
   constructor(router: Router, route: ActivatedRoute, dataserviceService: DataserviceService,
-              logger: LoggerService, appSettingsService: AppSettingsService, vdbService: VdbService ) {
+              logger: LoggerService, appSettingsService: AppSettingsService,
+              notifierService: NotifierService, vdbService: VdbService ) {
     super(route, logger);
     this.router = router;
     this.appSettingsService = appSettingsService;
     this.dataserviceService = dataserviceService;
     this.vdbService = vdbService;
+    this.notifierService = notifierService;
     // Register for dataservice state changes
-    this.dataserviceStateSubscription = this.dataserviceService.dataserviceStateChange.subscribe((serviceStateMap) => {
+    this.dataserviceStateSubscription = this.notifierService.getDataserviceStateMap().subscribe((serviceStateMap) => {
       this.onDataserviceStateChanged(serviceStateMap);
     });
   }

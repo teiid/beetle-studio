@@ -16,7 +16,7 @@
  */
 
 import {
-  Component,
+  Component, OnDestroy,
   OnInit,
   ViewChild,
   ViewEncapsulation,
@@ -31,6 +31,7 @@ import { ConnectionTableSelectorComponent } from "@dataservices/connection-table
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
@@ -47,7 +48,7 @@ import { Subscription } from "rxjs/Subscription";
   templateUrl: "./add-dataservice-wizard.component.html",
   styleUrls: ["./add-dataservice-wizard.component.css"]
 })
-export class AddDataserviceWizardComponent implements OnInit {
+export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   public readonly dataserviceSummaryLink: string = DataservicesConstants.dataservicesRootPath;
   public loadingState = LoadingState; // need local ref of enum for html to use
 
@@ -74,17 +75,21 @@ export class AddDataserviceWizardComponent implements OnInit {
   @ViewChild(ConnectionTableSelectorComponent) public tableSelector: ConnectionTableSelectorComponent;
 
   private dataserviceService: DataserviceService;
+  private notifierService: NotifierService;
   private vdbService: VdbService;
   private logger: LoggerService;
   private router: Router;
   private deploymentChangeSubscription: Subscription;
+  private sourceVdbUnderDeployment: string;
 
-  constructor( router: Router, dataserviceService: DataserviceService,
-               logger: LoggerService, vdbService: VdbService ) {
+  constructor(router: Router, dataserviceService: DataserviceService,
+              notifierService: NotifierService, logger: LoggerService, vdbService: VdbService ) {
     this.dataserviceService = dataserviceService;
+    this.notifierService = notifierService;
     this.vdbService = vdbService;
     this.router = router;
     this.logger = logger;
+
     this.createBasicPropertyForm();
   }
 
@@ -92,6 +97,11 @@ export class AddDataserviceWizardComponent implements OnInit {
    * Initialization
    */
   public ngOnInit(): void {
+    // Subscribe to Vdb deployment change messages
+    this.deploymentChangeSubscription = this.notifierService.getVdbDeploymentStatus().subscribe((status) => {
+      this.onSourceVdbDeploymentStateChanged(status);
+    });
+
     // Step 1 - Name and Description
     this.step1Config = {
       id: "step1",
@@ -140,6 +150,10 @@ export class AddDataserviceWizardComponent implements OnInit {
 
     this.tableSelectorLoadingState = LoadingState.LOADING;
     this.setNavAway(false);
+  }
+
+  public ngOnDestroy(): void {
+    this.deploymentChangeSubscription.unsubscribe();
   }
 
   // ----------------
@@ -243,11 +257,7 @@ export class AddDataserviceWizardComponent implements OnInit {
 
     this.step3bConfig.nextEnabled = false;
     this.step3bConfig.previousEnabled = false;
-
-    // Before polling, subscribe to get status event
-    this.deploymentChangeSubscription = this.vdbService.deploymentStatus.subscribe((status) => {
-      this.onSourceVdbDeploymentStateChanged(status);
-    });
+    this.sourceVdbUnderDeployment = sourceVdbName;
 
     const self = this;
     this.vdbService
@@ -262,7 +272,7 @@ export class AddDataserviceWizardComponent implements OnInit {
             self.createSuccessful = false;
             self.step3bConfig.nextEnabled = false;
             self.step3bConfig.previousEnabled = true;
-            self.vdbService.deploymentStatus.unsubscribe();
+            self.sourceVdbUnderDeployment = null;
           }
         },
         (error) => {
@@ -271,7 +281,7 @@ export class AddDataserviceWizardComponent implements OnInit {
           self.createSuccessful = false;
           self.step3bConfig.nextEnabled = false;
           self.step3bConfig.previousEnabled = true;
-          self.vdbService.deploymentStatus.unsubscribe();
+          self.sourceVdbUnderDeployment = null;
         }
       );
   }
@@ -303,15 +313,15 @@ export class AddDataserviceWizardComponent implements OnInit {
    */
   public onSourceVdbDeploymentStateChanged(status: VdbStatus): void {
     // if null received, ignore
-    if (!status) {
+    if (!status || (status.getName() !== this.sourceVdbUnderDeployment) ) {
       return;
       // non-null received, unsubscribe to stop any further notifications
     } else {
-      // Got the status change, unsubscribe
-      this.deploymentChangeSubscription.unsubscribe();
+      // source VDB state change - no longer watching it's deployment
+      this.sourceVdbUnderDeployment = null;
     }
 
-    if (this.tableSelector.hasSelectedConnection()) {
+    if (this.tableSelector && this.tableSelector.hasSelectedConnection()) {
       const selectedConnectionName = this.tableSelector.selectedConnection.getId();
       const selectedVdbName = selectedConnectionName + VdbsConstants.SOURCE_VDB_SUFFIX;
       if (selectedVdbName === status.getName()) {

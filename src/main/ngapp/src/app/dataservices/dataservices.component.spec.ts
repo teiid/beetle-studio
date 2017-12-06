@@ -11,6 +11,7 @@ import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { SharedModule } from "@shared/shared.module";
@@ -30,6 +31,7 @@ describe("DataservicesComponent", () => {
       declarations: [ DataservicesComponent, DataservicesListComponent, DataservicesCardsComponent, SqlControlComponent ],
       providers: [
         AppSettingsService,
+        NotifierService,
         { provide: VdbService, useClass: MockVdbService }
       ]
     });

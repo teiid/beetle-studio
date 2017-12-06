@@ -10,6 +10,7 @@ import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jd
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
@@ -26,6 +27,7 @@ describe("AddDataserviceWizardComponent", () => {
       declarations: [ AddDataserviceWizardComponent, ConnectionTableSelectorComponent, JdbcTableSelectorComponent,
                       PropertyFormComponent, PropertyFormPropertyComponent ],
       providers: [
+        NotifierService,
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: ConnectionService, useClass: MockConnectionService },
         { provide: VdbService, useClass: MockVdbService },

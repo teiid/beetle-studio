@@ -22,6 +22,7 @@ import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { NameValue } from "@dataservices/shared/name-value.model";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbModelSource } from "@dataservices/shared/vdb-model-source.model";
 import { VdbModel } from "@dataservices/shared/vdb-model.model";
@@ -29,9 +30,7 @@ import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { environment } from "@environments/environment";
-import { ReplaySubject } from "rxjs/ReplaySubject";
 import { Observable } from "rxjs/Rx";
-import { Subject } from "rxjs/Subject";
 import { Subscription } from "rxjs/Subscription";
 
 @Injectable()
@@ -40,16 +39,15 @@ import { Subscription } from "rxjs/Subscription";
  */
 export class VdbService extends ApiService {
 
-  // Observable deployment status
-  // Using replay status with cache of 1, so subscribers dont get an initial value on subscription
-  public deploymentStatus: Subject<VdbStatus> = new ReplaySubject<VdbStatus>(1);
-
   private http: Http;
   private deploymentSubscription: Subscription;
+  private notifierService: NotifierService;
 
-  constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
+  constructor(http: Http, appSettings: AppSettingsService,
+              notifierService: NotifierService, logger: LoggerService ) {
     super( appSettings, logger  );
     this.http = http;
+    this.notifierService = notifierService;
   }
 
   /**
@@ -223,9 +221,11 @@ export class VdbService extends ApiService {
                 continue;
               }
               if ( vdbStatus.isActive() ) {
-                self.broadcastDeploymentChange(vdbStatus);
+                this.notifierService.sendVdbDeploymentStatus(vdbStatus);
+                self.deploymentSubscription.unsubscribe();
               } else if ( vdbStatus.isFailed() ) {
-                self.broadcastDeploymentChange(vdbStatus);
+                this.notifierService.sendVdbDeploymentStatus(vdbStatus);
+                self.deploymentSubscription.unsubscribe();
               }
             }
             pollCount++;
@@ -240,7 +240,8 @@ export class VdbService extends ApiService {
               errors.push("Deployment polling timed out");
               status.setErrors(errors);
               // broadcast the status
-              self.broadcastDeploymentChange(status);
+              this.notifierService.sendVdbDeploymentStatus(status);
+              self.deploymentSubscription.unsubscribe();
             }
           },
           (error) => {
@@ -254,7 +255,8 @@ export class VdbService extends ApiService {
             errors.push("Deployment failed");
             status.setErrors(errors);
             // Broadcast the status
-            self.broadcastDeploymentChange(status);
+            this.notifierService.sendVdbDeploymentStatus(status);
+            self.deploymentSubscription.unsubscribe();
           }
         );
     });
@@ -314,13 +316,6 @@ export class VdbService extends ApiService {
       .flatMap((res) => this.createVdbModel(vdb.getId(), vdbModel))
       .flatMap((res) => this.createVdbModelSource(vdb.getId(), vdbModel.getId(), vdbModelSource))
       .flatMap((res) => this.deployVdb(vdb.getId()));
-  }
-
-  // Broadcast of the deployment status changes
-  private broadcastDeploymentChange(status: VdbStatus): void {
-    this.deploymentSubscription.unsubscribe();
-    this.deploymentStatus.next(status);
-    this.deploymentStatus.next(null);
   }
 
 }

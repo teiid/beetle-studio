@@ -11,6 +11,7 @@ import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jd
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -26,6 +27,7 @@ describe("AddDataserviceComponent", () => {
       declarations: [ AddDataserviceComponent, AddDataserviceWizardComponent,
                       ConnectionTableSelectorComponent, JdbcTableSelectorComponent ],
       providers: [
+        NotifierService,
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: ConnectionService, useClass: MockConnectionService },
         { provide: VdbService, useClass: MockVdbService }
