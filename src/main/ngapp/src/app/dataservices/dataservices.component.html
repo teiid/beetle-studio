@@ -90,23 +90,35 @@
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('dataservices')">
         <!-- Notification for Dataservice Export -->
-        <pfng-inline-notification [header]="exportNotificationHeader"
-                                  [message]="exportNotificationMessage"
-                                  [dismissable]="true"
-                                  [type]="exportNotificationType"
-                                  [hidden]="exportNotificationHidden">
-        </pfng-inline-notification>
+        <pfng-toast-notification *ngIf="showExportNotification" [header]="exportNotificationHeader"
+                                 [message]="exportNotificationMessage"
+                                 [type]="exportNotificationType"
+                                 [showClose]="true"
+                                 (onCloseSelect)="onCloseExportNotification()">
+        </pfng-toast-notification>
 
-        <app-dataservices-list *ngIf="isListLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
-                               (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
-                               (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
-                               (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-list>
-        <app-dataservices-cards *ngIf="isCardLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
-                                (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
-                                (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
-                                (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-cards>
+        <div class="{{cardListAreaCss}}">
+          <app-dataservices-list *ngIf="isListLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
+                                 (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
+                                 (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
+                                 (quickLookDataservice)="onQuickLook($event)"
+                                 (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-list>
+          <app-dataservices-cards *ngIf="isCardLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
+                                  (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
+                                  (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
+                                  (quickLookDataservice)="onQuickLook($event)"
+                                  (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-cards>
+        </div>
       </div>
-
+      <div class="col-md-12 {{resultsAreaCss}}" *ngIf="showResults">
+        <hr class="dataservice-results-hr">
+        <span class="pull-left fa fa-list-alt dataservice-results-action-icon" (click)="onTest(quickLookServiceName)"></span>
+        <span class="pull-left fa fa-refresh dataservice-results-action-icon-refresh" (click)="onSubmitQuickLookQuery()"></span>
+        <span class="pull-right fa fa-fw fa-close dataservice-results-action-icon-close" (click)="setQuickLookPanelOpenState(false)"></span>
+        <h3 style="margin-left: 75px">Quick Look Results for Dataservice &apos;<strong>{{ quickLookServiceName }}</strong>&apos;</h3>
+        <br>
+        <app-sql-control [editorVisible]="editorVisible" ></app-sql-control>
+      </div>
     </div>
 
   </div>

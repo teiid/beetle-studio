@@ -3,6 +3,12 @@
   font-size: 1.7em;
 }
 
+.dataservice-list-quicklook-icon {
+  margin-left: 20px;
+  font-size: 1.3em;
+  cursor: pointer;
+}
+
 .list-view-pf-main-info {
   padding-bottom: 5px;
   padding-top: 5px;

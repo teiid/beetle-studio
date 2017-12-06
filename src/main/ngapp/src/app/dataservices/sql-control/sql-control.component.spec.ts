@@ -8,9 +8,9 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { SqlControlComponent } from "./sql-control.component";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { CodemirrorModule } from "ng2-codemirror";
+import { SqlControlComponent } from "./sql-control.component";
 
 describe("SqlControlComponent", () => {
   let component: SqlControlComponent;

@@ -25,6 +25,7 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { IdFilter } from "@shared/id-filter";
@@ -42,6 +43,14 @@ import { Subscription } from "rxjs/Subscription";
 export class DataservicesComponent extends AbstractPageComponent {
 
   public readonly addDataserviceLink: string = DataservicesConstants.addDataservicePath;
+  public readonly exportInProgressHeader: string = "Publishing:  ";
+  public readonly exportSuccessHeader: string = "Publish Succeeded:  ";
+  public readonly exportFailedHeader: string = "Publish Failed:  ";
+
+  private cardListAreaCss = "dataservice-summary-top-area-no-results";
+  private resultsAreaCss = "dataservice-summary-bottom-area-no-results";
+  private resultsShowing = false;
+  private quickLookSvcName: string;
 
   private allServices: Dataservice[] = [];
   private filteredServices: Dataservice[] = [];
@@ -56,10 +65,11 @@ export class DataservicesComponent extends AbstractPageComponent {
   private exportNotificationHeader: string;
   private exportNotificationMessage: string;
   private exportNotificationType = NotificationType.SUCCESS;
-  private exportNotificationHidden = true;
+  private exportNotificationVisible = false;
   private dataserviceStateSubscription: Subscription;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
+  @ViewChild(SqlControlComponent) private sqlControlComponent: SqlControlComponent;
 
   constructor(router: Router, route: ActivatedRoute, dataserviceService: DataserviceService,
               logger: LoggerService, appSettingsService: AppSettingsService, vdbService: VdbService ) {
@@ -89,6 +99,36 @@ export class DataservicesComponent extends AbstractPageComponent {
           self.error(error, "Error getting dataservices");
         }
       );
+  }
+
+  /**
+   * Sets the open state of the quick look panel
+   * @param {boolean} openState true if quick look panel is to be shown
+   */
+  public setQuickLookPanelOpenState(openState: boolean): void {
+    if (openState) {
+      this.cardListAreaCss = "dataservice-summary-top-area-with-results";
+      this.resultsAreaCss = "dataservice-summary-bottom-area-with-results";
+      this.resultsShowing = true;
+    } else {
+      this.cardListAreaCss = "dataservice-summary-top-area-no-results";
+      this.resultsAreaCss = "dataservice-summary-bottom-area-no-results";
+      this.resultsShowing = false;
+    }
+  }
+
+  /**
+   * @returns {boolean} true if dataservice results panel is to be shown
+   */
+  public get showResults(): boolean {
+    return this.resultsShowing;
+  }
+
+  /**
+   * @returns {boolean} true if dataservice export notification is to be shown
+   */
+  public get showExportNotification(): boolean {
+    return this.exportNotificationVisible;
   }
 
   /**
@@ -140,6 +180,13 @@ export class DataservicesComponent extends AbstractPageComponent {
     return this.selectedServices;
   }
 
+  /**
+   * @returns {string} the quick look service name
+   */
+  public get quickLookServiceName(): string {
+    return this.quickLookSvcName;
+  }
+
   public onSelected(dataservice: Dataservice): void {
     // Only allow one item to be selected
     this.selectedServices.shift();
@@ -152,9 +199,15 @@ export class DataservicesComponent extends AbstractPageComponent {
     // this.selectedServices.splice(this.selectedServices.indexOf(dataservice), 1);
   }
 
+  public onCloseExportNotification(): void {
+    this.exportNotificationVisible = false;
+  }
+
   public onActivate(svcName: string): void {
     const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
     selectedService.setServiceDeploymentState(DeploymentState.LOADING);
+
+    this.setQuickLookPanelOpenState(false);
 
     const self = this;
     // Start the deployment and then redirect to the dataservice summary page
@@ -174,6 +227,8 @@ export class DataservicesComponent extends AbstractPageComponent {
     const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
     this.dataserviceService.setSelectedDataservice(selectedService);
 
+    this.setQuickLookPanelOpenState(false);
+
     const link: string[] = [ DataservicesConstants.testDataservicePath ];
     this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
@@ -182,23 +237,25 @@ export class DataservicesComponent extends AbstractPageComponent {
   }
 
   public onPublish(svcName: string): void {
-    this.exportNotificationHeader = "Publishing:  ";
+    this.setQuickLookPanelOpenState(false);
+
+    this.exportNotificationHeader = this.exportInProgressHeader;
     this.exportNotificationMessage = "Publishing " + svcName + "...";
     this.exportNotificationType = NotificationType.INFO;
-    this.exportNotificationHidden = false;
+    this.exportNotificationVisible = true;
     this.logger.log("[DataservicesPageComponent] Publishing Dataservice: " + svcName);
     const self = this;
     this.dataserviceService
       .exportDataservice(svcName)
       .subscribe(
         (wasSuccess) => {
-          self.exportNotificationHeader = "Publish Succeeded:  ";
+          self.exportNotificationHeader = this.exportSuccessHeader;
           self.exportNotificationMessage = "   " + svcName + " was published successfully!";
           self.exportNotificationType = NotificationType.SUCCESS;
           this.logger.log("[DataservicesPageComponent] Publish Dataservice was successful");
         },
         (error) => {
-          self.exportNotificationHeader = "Publish Failed:  ";
+          self.exportNotificationHeader = this.exportFailedHeader;
           self.exportNotificationMessage = "   Failed to publish dataservice " + svcName + "!";
           self.exportNotificationType = NotificationType.DANGER;
           this.logger.log("[DataservicesPageComponent] Publish Dataservice failed.");
@@ -207,8 +264,23 @@ export class DataservicesComponent extends AbstractPageComponent {
   }
 
   public onDelete(svcName: string): void {
+    this.setQuickLookPanelOpenState(false);
+
     this.dataserviceNameForDelete = svcName;
     this.confirmDeleteDialog.open();
+  }
+
+  /*
+   * Handle showing the QuickLook panel for the specified Dataservice
+   */
+  public onQuickLook(svcName: string): void {
+    const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
+    this.dataserviceService.setSelectedDataservice(selectedService);
+
+    if (!this.resultsShowing) {
+      this.setQuickLookPanelOpenState(true);
+    }
+    this.setQuickLookResults(svcName);
   }
 
   public isFiltered(): boolean {
@@ -223,10 +295,14 @@ export class DataservicesComponent extends AbstractPageComponent {
    * @param {string} pattern the new pattern for the dataservice name filter (can be null or empty)
    */
   public set nameFilter( pattern: string ) {
+    this.setQuickLookPanelOpenState(false);
     this.filter.setFilter( pattern );
     this.filterDataservices();
   }
 
+  /**
+   * Toggles the direction of sort
+   */
   public toggleSortDirection(): void {
     if (this.sortDirection === SortDirection.ASC) {
       this.sortDirection = SortDirection.DESC;
@@ -236,16 +312,27 @@ export class DataservicesComponent extends AbstractPageComponent {
     this.filterDataservices();
   }
 
+  /**
+   * Clears the dataservice filter
+   */
   public clearFilters(): void {
     this.filter.reset();
     this.filterDataservices();
   }
 
+  /**
+   * Set the layout to list type
+   */
   public setListLayout(): void {
+    this.setQuickLookPanelOpenState(false);
     this.appSettingsService.dataservicesPageLayout = LayoutType.LIST;
   }
 
+  /**
+   * Set the layout to card type
+   */
   public setCardLayout(): void {
+    this.setQuickLookPanelOpenState(false);
     this.appSettingsService.dataservicesPageLayout = LayoutType.CARD;
   }
 
@@ -272,6 +359,13 @@ export class DataservicesComponent extends AbstractPageComponent {
           self.error(error, "Error deleting the dataservice");
         }
       );
+  }
+
+  /**
+   * Called to submit the quick look query
+   */
+  public onSubmitQuickLookQuery(): void {
+    this.sqlControlComponent.submitCurrentQuery();
   }
 
   /**
@@ -331,6 +425,16 @@ export class DataservicesComponent extends AbstractPageComponent {
           dService.setServiceDeploymentState(stateMap.get(serviceId));
         }
       }
+  }
+
+  /*
+   * Update quick look results using the supplied dataservice
+   * @param {string} svcName the dataservice name
+   */
+  private setQuickLookResults(svcName): void {
+     this.quickLookSvcName = svcName;
+     this.sqlControlComponent.initQueryText();
+     this.sqlControlComponent.submitCurrentQuery();
   }
 
 }
