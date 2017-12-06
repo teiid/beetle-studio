@@ -6,6 +6,7 @@ import { CoreModule } from "@core/core.module";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { TestDataserviceComponent } from "@dataservices/test-dataservice/test-dataservice.component";
@@ -21,6 +22,7 @@ describe("TestDataserviceComponent", () => {
       imports: [ CoreModule, FormsModule, RouterTestingModule, NgxDatatableModule, CodemirrorModule ],
       declarations: [ SqlControlComponent, TestDataserviceComponent ],
       providers: [
+        NotifierService,
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: VdbService, useClass: MockVdbService }
       ]

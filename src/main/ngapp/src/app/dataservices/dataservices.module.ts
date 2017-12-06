@@ -26,6 +26,7 @@ import { DataservicesListComponent } from "@dataservices/dataservices-list/datas
 import { DataservicesRoutingModule } from "@dataservices/dataservices-routing.module";
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SharedModule } from "@shared/shared.module";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
@@ -65,7 +66,8 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
   providers: [
     DataserviceService,
     VdbService,
-    LoggerService
+    LoggerService,
+    NotifierService
   ],
   exports: [
   ]

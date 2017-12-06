@@ -19,6 +19,7 @@ import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbModelSource } from "@dataservices/shared/vdb-model-source.model";
 import { VdbModel } from "@dataservices/shared/vdb-model.model";
@@ -44,8 +45,8 @@ export class MockVdbService extends VdbService {
   private vdbStatus3 = new VdbStatus();
   private statuses: VdbStatus[] = [this.vdbStatus1, this.vdbStatus3, this.vdbStatus3];
 
-  constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
-    super(http, appSettings, logger);
+  constructor(http: Http, appSettings: AppSettingsService, notifierService: NotifierService, logger: LoggerService ) {
+    super(http, appSettings, notifierService, logger);
     this.vdb1.setId("serv1");
     this.vdb2.setId("serv2");
     this.vdb3.setId("serv3");

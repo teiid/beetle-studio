@@ -7,6 +7,7 @@ import { LoggerService } from "@core/logger.service";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { CodemirrorModule } from "ng2-codemirror";
@@ -21,7 +22,9 @@ describe("SqlControlComponent", () => {
       imports: [ FormsModule, HttpModule, NgxDatatableModule, CodemirrorModule  ],
       declarations: [ SqlControlComponent ],
       providers: [
-        AppSettingsService, LoggerService,
+        AppSettingsService,
+        LoggerService,
+        NotifierService,
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: VdbService, useClass: MockVdbService }
       ]
