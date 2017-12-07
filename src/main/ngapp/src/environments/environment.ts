@@ -36,4 +36,7 @@ export const environment = {
   // REST URL - Komodo teiid server
   komodoTeiidUrl: "https://localhost:8443/vdb-builder/v1/teiid",
 
+  // REST URL - Komodo service
+  komodoServiceUrl: "https://localhost:8443/vdb-builder/v1/service",
+
 };

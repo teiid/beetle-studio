@@ -15,8 +15,13 @@
  * limitations under the License.
  */
 
-import { Component } from "@angular/core";
+import { Component, TemplateRef } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
+import { BsModalRef } from "ngx-bootstrap/modal/modal-options.class";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { AboutEvent } from "@core/about-dialog/about-event";
+import { AboutService } from "@core/about-dialog/about.service";
+import { About } from "@core/about-dialog/about.model";
 
 @Component({
   moduleId: module.id,
@@ -26,33 +31,37 @@ import { LoggerService } from "@core/logger.service";
 })
 export class NavHeaderComponent {
 
-  private version = "N/A";
-  private builtOn: Date = new Date();
+  private aboutRef: BsModalRef;
   private logger: LoggerService;
-  private projectUrl = "http://jboss.org/teiiddesigner/";
-  private userId = "user";
+  private modalService: BsModalService;
+  private aboutService: AboutService;
+  public aboutInfo: About;
 
-  constructor( logger: LoggerService ) {
+  constructor( logger: LoggerService,
+               modalService: BsModalService,
+               aboutService: AboutService ) {
     this.logger = logger;
-
-    // TODO this does not work
-    if (window["BeetleStudio"]) {
-      this.logger.log("[NavHeaderComponent] Found app info: %o", window["BeetleStudio"]);
-      this.version = window["BeetleStudio"].version;
-      this.builtOn = new Date(window["BeetleStudio"].builtOn);
-      this.projectUrl = window["BeetleStudio"].url;
-    } else {
-      this.logger.log("[NavHeaderComponent] App info not found.");
-    }
+    this.modalService = modalService;
+    this.aboutService = aboutService;
   }
 
-  public user(): string {
-    // TODO implement user()
-    return this.userId;
+  public closeAbout( $event: AboutEvent ): void {
+    this.aboutRef.hide();
   }
 
-  public logout(): void {
-    // TODO implement logout()
+  public openAbout( template: TemplateRef< any > ): void {
+    const self = this;
+
+    this.aboutService.getAboutInformation().subscribe(
+      ( result ) => {
+        self.aboutInfo = result;
+      },
+      ( error ) => {
+        this.logger.error( error, "Error getting about information.");
+      }
+    );
+
+    this.aboutRef = this.modalService.show( template );
   }
 
 }

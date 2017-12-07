@@ -22,6 +22,8 @@
 .datatable-header-cell {
   vertical-align: bottom;
   border-bottom: 2px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
   padding: 8px;
   line-height: 1.42857143;
   font-weight: bold;

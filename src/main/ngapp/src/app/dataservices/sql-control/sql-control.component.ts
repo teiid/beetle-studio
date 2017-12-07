@@ -224,13 +224,13 @@ export class SqlControlComponent implements OnInit {
     const column = { canAutoResize: true,
                      draggable: false,
                      // flexGrow: rowNumHeader.length,
-                     maxWidth: 50,
-                     minWidth: 50,
+                     maxWidth: 60,
+                     minWidth: 60,
                      name: rowNumHeader,
                      prop: rowNumHeader,
                      resizable: true,
                      sortable: true,
-                     width: 50 };
+                     width: 60 };
     this.columns.push( column );
 
     //
