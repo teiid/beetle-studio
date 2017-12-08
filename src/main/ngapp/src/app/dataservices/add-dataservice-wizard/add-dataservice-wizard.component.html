@@ -24,7 +24,7 @@
           <label class="col-sm-2 control-label">Name</label>
           <div class="col-sm-5">
             <input class="form-control" formControlName="name" title="">
-            <div class="help-block" *ngIf="!nameValid">{{ getBasicPropertyErrorMessage("name") }}</div>
+            <div class="help-block" *ngIf="!nameValid">{{ nameValidationError }}</div>
           </div>
         </div>
         <div [ngClass]="'form-group'">
