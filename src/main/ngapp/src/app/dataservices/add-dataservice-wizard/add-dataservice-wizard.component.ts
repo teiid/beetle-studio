@@ -23,8 +23,8 @@ import {
 } from "@angular/core";
 
 import { FormControl, FormGroup } from "@angular/forms";
-import { Validators } from "@angular/forms";
 import { AbstractControl } from "@angular/forms";
+import { Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { LoggerService } from "@core/logger.service";
 import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
@@ -81,6 +81,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   private router: Router;
   private deploymentChangeSubscription: Subscription;
   private sourceVdbUnderDeployment: string;
+  private errorDetailMessage: string;
 
   constructor(router: Router, dataserviceService: DataserviceService,
               notifierService: NotifierService, logger: LoggerService, vdbService: VdbService ) {
@@ -277,6 +278,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
         },
         (error) => {
           self.logger.error("[AddDataserviceWizardComponent] Error: %o", error);
+          self.setErrorDetails(error);
           self.createComplete = true;
           self.createSuccessful = false;
           self.step3bConfig.nextEnabled = false;
@@ -388,6 +390,13 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     this.setNavAway(this.step2Config.nextEnabled);
   }
 
+  /**
+   * @returns {string} the error details message
+   */
+  public get errorDetails(): string {
+    return this.errorDetailMessage;
+  }
+
   // ----------------
   // Private Methods
   // ----------------
@@ -446,12 +455,29 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
         },
         (error) => {
           self.logger.error("[AddDataserviceWizardComponent] Error: %o", error);
+          self.setErrorDetails(error);
           self.createComplete = true;
           self.createSuccessful = false;
           self.step3bConfig.nextEnabled = false;
           this.step3bConfig.previousEnabled = true;
         }
       );
-
   }
+
+  /**
+   * Sets the error details for the response
+   * @param resp the rest call response
+   */
+  private setErrorDetails( resp: any ): void {
+    // Get the error from the response json
+    this.errorDetailMessage = "";
+    if (resp) {
+      this.errorDetailMessage = resp.json().error;
+    }
+    // Error visible if message has content
+    if (this.errorDetailMessage.length === 0) {
+      this.errorDetailMessage = "Please check dataservice entries and retry";
+    }
+  }
+
 }

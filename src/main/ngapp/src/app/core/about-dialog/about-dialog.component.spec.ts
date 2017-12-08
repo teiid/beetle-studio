@@ -1,10 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AboutDialogComponent } from './about-dialog.component';
-import { MockAboutService } from "@core/about-dialog/mock-about.service";
 import { About } from "@core/about-dialog/about.model";
+import { MockAboutService } from "@core/about-dialog/mock-about.service";
+import { AboutDialogComponent } from "./about-dialog.component";
 
-describe('AboutDialogComponent', () => {
+describe("AboutDialogComponent", () => {
   let component: AboutDialogComponent;
   let fixture: ComponentFixture<AboutDialogComponent>;
 
@@ -22,7 +22,7 @@ describe('AboutDialogComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
   });
 });

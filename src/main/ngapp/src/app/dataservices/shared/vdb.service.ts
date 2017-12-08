@@ -65,6 +65,33 @@ export class VdbService extends ApiService {
   }
 
   /**
+   * Determine if the workspace has a vdb with the supplied name
+   * @param {string} vdbName the name of the VDB
+   * @returns {Observable<Vdb[]>}
+   */
+  public hasWorkspaceVdb(vdbName: string): Observable<boolean> {
+    return this.http
+      .get(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath, this.getAuthRequestOptions())
+      .map((response) => {
+        const vdbs = response.json();
+        // Determine if the vdbName exists in the list
+        let vdbFound = false;
+        for (const vdb of vdbs) {
+          const name = vdb.keng__id;
+          if (name === vdbName) {
+            vdbFound = true;
+            break;
+          }
+        }
+        if (vdbFound) {
+          return response.ok;
+        }
+        return !response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
    * Get the vdbs from the komodo rest interface
    * @returns {Observable<Vdb[]>}
    */
@@ -312,10 +339,28 @@ export class VdbService extends ApiService {
     vdbModelSource.setTranslatorName(connection.getDriverName());
 
     // Chain the individual calls together in series to build the Vdb and deploy it
-    return this.createVdb(vdb)
+    return this.deleteVdbIfFound(vdb.getId())
+      .flatMap((res) => this.createVdb(vdb))
       .flatMap((res) => this.createVdbModel(vdb.getId(), vdbModel))
       .flatMap((res) => this.createVdbModelSource(vdb.getId(), vdbModel.getId(), vdbModelSource))
       .flatMap((res) => this.deployVdb(vdb.getId()));
+  }
+
+  /**
+   * Deletes the workspace VDB if found.  Checks the workspace first, before attempting the delete.
+   * If the VDB is not found the delete attempt is skipped.
+   * @param {string} vdbName the name of the vdb
+   * @returns {Observable<boolean>}
+   */
+  public deleteVdbIfFound(vdbName: string): Observable<boolean> {
+    return this.hasWorkspaceVdb(vdbName)
+      .switchMap( (resp) => {
+        if (resp === true) {
+          return this.deleteVdb(vdbName);
+        } else {
+          return Observable.of(true);
+        }
+      });
   }
 
 }

@@ -20,6 +20,6 @@ export class AboutEvent {
   /**
    * Flag indicating Modal is open
    */
-  close?: boolean;
+  public close?: boolean;
 
 }

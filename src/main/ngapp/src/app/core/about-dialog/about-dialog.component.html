@@ -12,15 +12,15 @@
     </h2>
   </div>
   <div *ngIf="info" class="modal-body">
-    <h1>{{info.appTitle}}</h1>
-    <div class="product-versions-pf">{{info.appDescription}}</div>
+    <h1>{{ info.appTitle }}</h1>
+    <div class="product-versions-pf">{{ info.appDescription }}</div>
     <div class="product-versions-pf">
       <ul class="list-unstyled">
-        <li><strong>App Name:</strong> {{info.appName}}</li>
-        <li><strong>App Version:</strong> {{info.appVersion}}</li>
+        <li><strong>App Name:</strong> {{ info.appName }}</li>
+        <li><strong>App Version:</strong> {{ info.appVersion }}</li>
       </ul>
     </div>
-    <div class="trademark-pf">{{info.copyright}}</div>
+    <div class="trademark-pf">{{ info.copyright }}</div>
   </div>
   <div class="modal-footer">
     <img [src]="logoImageSrc" alt="{{logoImageAlt}}" />

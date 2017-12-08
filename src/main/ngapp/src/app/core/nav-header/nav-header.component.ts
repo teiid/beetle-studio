@@ -16,12 +16,12 @@
  */
 
 import { Component, TemplateRef } from "@angular/core";
-import { LoggerService } from "@core/logger.service";
-import { BsModalRef } from "ngx-bootstrap/modal/modal-options.class";
-import { BsModalService } from "ngx-bootstrap/modal";
 import { AboutEvent } from "@core/about-dialog/about-event";
-import { AboutService } from "@core/about-dialog/about.service";
 import { About } from "@core/about-dialog/about.model";
+import { AboutService } from "@core/about-dialog/about.service";
+import { LoggerService } from "@core/logger.service";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { BsModalRef } from "ngx-bootstrap/modal/modal-options.class";
 
 @Component({
   moduleId: module.id,

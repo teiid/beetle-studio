@@ -1,13 +1,13 @@
 import { async, ComponentFixture, inject, TestBed } from "@angular/core/testing";
+import { HttpModule } from "@angular/http";
+import { AboutDialogComponent } from "@core/about-dialog/about-dialog.component";
+import { AboutService } from "@core/about-dialog/about.service";
+import { MockAboutService } from "@core/about-dialog/mock-about.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { NavHeaderComponent } from "@core/nav-header/nav-header.component";
-import { AboutService } from "@core/about-dialog/about.service";
-import { AboutDialogComponent } from "@core/about-dialog/about-dialog.component";
-import { MockAboutService } from "@core/about-dialog/mock-about.service";
-import { BsModalService } from "ngx-bootstrap/modal";
 import { ModalModule } from "ngx-bootstrap";
-import { HttpModule } from "@angular/http";
-import { AppSettingsService } from "@core/app-settings.service";
+import { BsModalService } from "ngx-bootstrap/modal";
 
 describe("NavHeaderComponent", () => {
   let component: NavHeaderComponent;

@@ -26,7 +26,7 @@ export class About {
   //     "App Description": "A tool that allows creating, editing and managing dynamic VDBs and their contents",
   //     "App Version": "0.0.4-SNAPSHOT",
   //     "Repository Workspace": "komodoLocalWorkspace",
-  //     "Repository Configuration": "vfs:/content/ds-builder-archive.ear/vdb-builder.war/WEB-INF/lib/komodo-core-0.0.4-SNAPSHOT.jar/org/komodo/repository/local-repository-config.json",
+  //     "Repository Configuration": "vfs:/dirLocation/komodo-core-0.0.4-SNAPSHOT.jar/org/komodo/repository/local-repository-config.json",
   //     "Repository Vdb Total": "1"
   //   }
   // }
@@ -41,7 +41,7 @@ export class About {
 
   public get appDescription(): string {
     if ( this.Information && this.Information[ "App Description" ] != null ) {
-      return this.Information[ "App Description" ]
+      return this.Information[ "App Description" ];
     }
 
     return "App description not found";
@@ -49,7 +49,7 @@ export class About {
 
   public get appName(): string {
     if ( this.Information && this.Information[ "App Name" ] ) {
-      return this.Information[ "App Name" ]
+      return this.Information[ "App Name" ];
     }
 
     return "App name not found";
@@ -57,7 +57,7 @@ export class About {
 
   public get appTitle(): string {
     if ( this.Information && this.Information[ "App Title" ] ) {
-      return this.Information[ "App Title" ]
+      return this.Information[ "App Title" ];
     }
 
     return "App title not found";
@@ -65,7 +65,7 @@ export class About {
 
   public get appVersion(): string {
     if ( this.Information && this.Information[ "App Version" ] ) {
-      return this.Information[ "App Version" ]
+      return this.Information[ "App Version" ];
     }
 
     return "App version not found";
@@ -73,7 +73,7 @@ export class About {
 
   public get copyright(): string {
     if ( this.Information && this.Information[ "App Copyright" ] ) {
-      return this.Information[ "App Copyright" ]
+      return this.Information[ "App Copyright" ];
     }
 
     return "2017-2018 Red Hat, Inc.";

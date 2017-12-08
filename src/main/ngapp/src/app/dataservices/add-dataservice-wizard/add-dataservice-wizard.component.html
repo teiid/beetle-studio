@@ -74,7 +74,11 @@
         <div class="wizard-pf-complete blank-slate-pf" *ngIf="createComplete && !createSuccessful">
           <div class="wizard-pf-failed-icon"><span class="glyphicon glyphicon-remove-circle"></span></div>
           <h3 class="blank-slate-pf-main-action">Creation failed</h3>
-          <p class="blank-slate-pf-secondary-action">The dataservice creation failed.  Correct any properties and retry.</p>
+          <div class="blank-slate-pf-secondary-action">
+            The dataservice creation failed!
+            <br>
+            <div style="font-style: italic;">{{ errorDetails }}</div>
+          </div>
         </div>
       </div>
     </pfng-wizard-substep>

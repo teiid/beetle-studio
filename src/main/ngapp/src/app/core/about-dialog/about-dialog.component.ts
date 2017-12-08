@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { About } from "@core/about-dialog/about.model";
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from "@angular/core";
 import { AboutEvent } from "@core/about-dialog/about-event";
+import { About } from "@core/about-dialog/about.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
-  selector: 'app-about-dialog',
-  templateUrl: './about-dialog.component.html',
-  styleUrls: ['./about-dialog.component.css']
+  selector: "app-about-dialog",
+  templateUrl: "./about-dialog.component.html",
+  styleUrls: ["./about-dialog.component.css"]
 })
 export class AboutDialogComponent {
 
   /**
    * The Event is emitted when modal is closed
    */
-  @Output( 'onCancel' ) public onCancel = new EventEmitter();
+  @Output( "onCancel" ) public onCancel = new EventEmitter();
 
   /**
    * The about information.
