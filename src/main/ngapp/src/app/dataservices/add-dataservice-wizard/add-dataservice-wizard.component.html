@@ -3,59 +3,44 @@
              (onCancel)="cancelClicked($event)"
              (onNext)="nextClicked($event)"
              (onStepChange)="stepChanged($event)">
-  <!-- ----------------------------- -->
-  <!-- Step 1 : Name and Description -->
-  <!-- ----------------------------- -->
+  <!-- ------------------------- -->
+  <!-- Step 1 : Table Selection -->
+  <!-- ------------------------- -->
   <pfng-wizard-step [config]="step1Config">
     <h3><i>{{ step1InstructionMessage }}</i></h3>
-    <form [formGroup]=basicPropertyForm class="form-horizontal">
-      <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
-        <label class="col-sm-2 control-label">Name</label>
-        <div class="col-sm-5">
-          <input class="form-control" formControlName="name" title="">
-          <div class="help-block" *ngIf="!nameValid">{{ getBasicPropertyErrorMessage("name") }}</div>
-        </div>
-      </div>
-      <div [ngClass]="'form-group'">
-        <label class="col-sm-2 control-label">Description</label>
-        <div class="col-sm-5">
-          <input class="form-control" formControlName="description" title="">
-        </div>
-      </div>
-    </form>
+    <br>
+    <app-connection-table-selector (tableSelectionChanged)="updatePage1ValidStatus()"></app-connection-table-selector>
   </pfng-wizard-step>
-  <!-- ------------------------- -->
-  <!-- Step 2 : Table Selection -->
-  <!-- ------------------------- -->
+  <!-- -------------------------- -->
+  <!-- Step 2 : Review and Create -->
+  <!-- -------------------------- -->
   <pfng-wizard-step [config]="step2Config">
-    <h3><i>{{ step2InstructionMessage }}</i></h3>
-    <app-connection-table-selector (tableSelectionChanged)="updatePage2ValidStatus()"></app-connection-table-selector>
-  </pfng-wizard-step>
-  <!-- -------------------------- -->
-  <!-- Step 3 : Review and Create -->
-  <!-- -------------------------- -->
-  <pfng-wizard-step [config]="step3Config">
-    <!-- Step 3A: Review -->
-    <pfng-wizard-substep [config]="step3aConfig">
-      <h3><i>{{ step3InstructionMessage }}</i></h3>
-      <h4>Dataservice Properties:</h4>
-      <form class="form-horizontal">
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Name:</label>
-          <label class="col-sm-10">{{ dataserviceName }}</label>
+    <!-- Step 2A: Review -->
+    <pfng-wizard-substep [config]="step2aConfig">
+      <h3><i>{{ step2InstructionMessage }}</i></h3>
+      <br>
+      <form [formGroup]=basicPropertyForm class="form-horizontal">
+        <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
+          <label class="col-sm-2 control-label">Name</label>
+          <div class="col-sm-5">
+            <input class="form-control" formControlName="name" title="">
+            <div class="help-block" *ngIf="!nameValid">{{ getBasicPropertyErrorMessage("name") }}</div>
+          </div>
+        </div>
+        <div [ngClass]="'form-group'">
+          <label class="col-sm-2 control-label">Description</label>
+          <div class="col-sm-5">
+            <input class="form-control" formControlName="description" title="">
+          </div>
         </div>
         <div class="form-group">
-          <label class="col-sm-2 control-label">Description:</label>
-          <label class="col-sm-10">{{ dataserviceDescription }}</label>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Source Tables:</label>
+          <label class="col-sm-2 control-label">Selected Tables:</label>
           <label class="col-sm-5">{{ dataserviceSourceTables }}</label>
         </div>
       </form>
     </pfng-wizard-substep>
-    <!-- Step 3B: Create -->
-    <pfng-wizard-substep [config]="step3bConfig" (onShow)="createDataservice()">
+    <!-- Step 2B: Create -->
+    <pfng-wizard-substep [config]="step2bConfig" (onShow)="createDataservice()">
       <div class="wizard-pf-contents">
         <!-- In progress -->
         <div class="wizard-pf-process blank-slate-pf" *ngIf="!createComplete">

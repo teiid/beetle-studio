@@ -65,11 +65,8 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
 
   // Wizard Step 2
   public step2Config: WizardStepConfig;
-
-  // Wizard Step 3
-  public step3Config: WizardStepConfig;
-  public step3aConfig: WizardStepConfig;
-  public step3bConfig: WizardStepConfig;
+  public step2aConfig: WizardStepConfig;
+  public step2bConfig: WizardStepConfig;
 
   @ViewChild("wizard") public wizard: WizardComponent;
   @ViewChild(ConnectionTableSelectorComponent) public tableSelector: ConnectionTableSelectorComponent;
@@ -103,37 +100,29 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
       this.onSourceVdbDeploymentStateChanged(status);
     });
 
-    // Step 1 - Name and Description
+    // Step 1 - Select Tables
     this.step1Config = {
       id: "step1",
       priority: 0,
-      title: "Name and Description",
+      title: "Select Tables",
       allowClickNav: false
     } as WizardStepConfig;
 
-    // Step 2 - Tables
+    // Step 2 - Review and Create
     this.step2Config = {
       id: "step2",
-      priority: 0,
-      title: "Table Selection",
-      allowClickNav: false
-    } as WizardStepConfig;
-
-    // Step 3 - Review and Create
-    this.step3Config = {
-      id: "step3",
       priority: 0,
       title: "Review and Create",
       allowClickNav: false
     } as WizardStepConfig;
-    this.step3aConfig = {
-      id: "step3a",
+    this.step2aConfig = {
+      id: "step2a",
       priority: 0,
       title: "Review",
       allowClickNav: false
     } as WizardStepConfig;
-    this.step3bConfig = {
-      id: "step3b",
+    this.step2bConfig = {
+      id: "step2b",
       priority: 1,
       title: "Create",
       allowClickNav: false
@@ -193,17 +182,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    * Step 1 instruction message
    */
   public get step1InstructionMessage(): string {
-    if (!this.nameValid) {
-      return "Please enter a name for the Dataservice";
-    } else {
-      return "Click Next to continue";
-    }
-  }
-
-  /*
-   * Step 2 instruction message
-   */
-  public get step2InstructionMessage(): string {
     if (!this.tableSelector.valid) {
       return "Please select tables for the Dataservice";
     } else {
@@ -214,8 +192,8 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   /*
    * Step 3 instruction message
    */
-  public get step3InstructionMessage(): string {
-    return "Review your entries.  When finished, click Create to create the Dataservice";
+  public get step2InstructionMessage(): string {
+    return "Review selections and enter a name.  Click Create to create the Dataservice";
   }
 
   /*
@@ -256,8 +234,8 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
 
     const sourceVdbName = this.tableSelector.getSelectedTables()[0].getConnection().getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
 
-    this.step3bConfig.nextEnabled = false;
-    this.step3bConfig.previousEnabled = false;
+    this.step2bConfig.nextEnabled = false;
+    this.step2bConfig.previousEnabled = false;
     this.sourceVdbUnderDeployment = sourceVdbName;
 
     const self = this;
@@ -271,8 +249,8 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
           } else {
             self.createComplete = true;
             self.createSuccessful = false;
-            self.step3bConfig.nextEnabled = false;
-            self.step3bConfig.previousEnabled = true;
+            self.step2bConfig.nextEnabled = false;
+            self.step2bConfig.previousEnabled = true;
             self.sourceVdbUnderDeployment = null;
           }
         },
@@ -281,8 +259,8 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
           self.setErrorDetails(error);
           self.createComplete = true;
           self.createSuccessful = false;
-          self.step3bConfig.nextEnabled = false;
-          self.step3bConfig.previousEnabled = true;
+          self.step2bConfig.nextEnabled = false;
+          self.step2bConfig.previousEnabled = true;
           self.sourceVdbUnderDeployment = null;
         }
       );
@@ -332,8 +310,8 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
         } else if (status.isFailed()) {
           this.createComplete = true;
           this.createSuccessful = false;
-          this.step3bConfig.nextEnabled = false;
-          this.step3bConfig.previousEnabled = true;
+          this.step2bConfig.nextEnabled = false;
+          this.step2bConfig.previousEnabled = true;
         }
       }
     }
@@ -343,14 +321,12 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     if ($event.step.config.id === "step1") {
       this.updatePage1ValidStatus();
       this.wizardConfig.nextTitle = "Next >";
-    } else if ($event.step.config.id === "step2") {
-      this.updatePage2ValidStatus();
-      this.wizardConfig.nextTitle = "Next >";
-    } else if ($event.step.config.id === "step3a") {
+    } else if ($event.step.config.id === "step2a") {
+      this.updatePage2aValidStatus();
       this.wizardConfig.nextTitle = "Create";
-    } else if ($event.step.config.id === "step3b") {
+    } else if ($event.step.config.id === "step2b") {
       // Note: The next button is not disabled by default when wizard is done
-      this.step3Config.nextEnabled = false;
+      this.step2Config.nextEnabled = false;
     } else {
       this.wizardConfig.nextTitle = "Next >";
     }
@@ -385,9 +361,9 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     return tableStr;
   }
 
-  public updatePage2ValidStatus( ): void {
-    this.step2Config.nextEnabled = this.tableSelector.valid();
-    this.setNavAway(this.step2Config.nextEnabled);
+  public updatePage1ValidStatus( ): void {
+    this.step1Config.nextEnabled = this.tableSelector.valid();
+    this.setNavAway(this.step1Config.nextEnabled);
   }
 
   /**
@@ -411,7 +387,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     });
     // Responds to basic property changes - updates the page status
     this.basicPropertyForm.valueChanges.subscribe((val) => {
-      this.updatePage1ValidStatus( );
+      this.updatePage2aValidStatus( );
     });
   }
 
@@ -419,9 +395,9 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     this.step1Config.allowNavAway = allow;
   }
 
-  private updatePage1ValidStatus( ): void {
-    this.step1Config.nextEnabled = this.basicPropertyForm.valid;
-    this.setNavAway(this.step1Config.nextEnabled);
+  private updatePage2aValidStatus( ): void {
+    this.step2aConfig.nextEnabled = this.basicPropertyForm.valid;
+    this.setNavAway(this.step2aConfig.nextEnabled);
   }
 
   /*
@@ -444,13 +420,13 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
           if (wasSuccess) {
             self.createComplete = true;
             self.createSuccessful = true;
-            self.step3bConfig.nextEnabled = false;
-            this.step3bConfig.previousEnabled = true;
+            self.step2bConfig.nextEnabled = false;
+            this.step2bConfig.previousEnabled = true;
           } else {
             self.createComplete = true;
             self.createSuccessful = false;
-            self.step3bConfig.nextEnabled = false;
-            this.step3bConfig.previousEnabled = true;
+            self.step2bConfig.nextEnabled = false;
+            this.step2bConfig.previousEnabled = true;
           }
         },
         (error) => {
@@ -458,8 +434,8 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
           self.setErrorDetails(error);
           self.createComplete = true;
           self.createSuccessful = false;
-          self.step3bConfig.nextEnabled = false;
-          this.step3bConfig.previousEnabled = true;
+          self.step2bConfig.nextEnabled = false;
+          this.step2bConfig.previousEnabled = true;
         }
       );
   }
