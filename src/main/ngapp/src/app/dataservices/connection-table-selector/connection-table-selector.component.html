@@ -2,8 +2,10 @@
   <!-- ---------------- -->
   <!-- Connections List -->
   <!-- ---------------- -->
-  <div class="list-div col-sm-3">
-    <strong>Connections</strong>
+  <div class="list-div col-sm-3 connection-selector-container">
+    <div class="connection-column-title">
+      <strong>Connections</strong>
+    </div>
     <div *ngIf="connectionsLoading">
       <span class="spinner spinner-sm spinner-inline"></span>
     </div>
@@ -14,7 +16,9 @@
       </div>
     </div>
     <div class="connection-list list-group list-view-pf" *ngIf="connectionsLoadedValid">
-      <div class="list-group-item list-view-pf-stacked" *ngFor="let connection of getAllConnections()" [class.active]="isConnectionSelected(connection)" (click)="toggleConnectionSelected(connection)">
+      <div class="list-group-item list-view-pf-stacked"
+           *ngFor="let connection of getAllConnections(); index as i; odd as isEvenRow; even as isOddRow"
+           [class.oddRow]="isOddRow" [class.evenRow]="isEvenRow" [class.active]="isConnectionSelected(connection)" (click)="toggleConnectionSelected(connection)">
         <div class="list-view-pf-main-info">
           <div class="list-view-pf-left">
             <span class="fa fa-plug list-view-pf-icon-sm"></span>
@@ -36,7 +40,7 @@
   <!-- 2) Non-JDBC Connection selected             -->
   <!-- 3) No Connection selected                   -->
   <!-- ------------------------------------------- -->
-  <div class="col-sm-9">
+  <div class="col-sm-9 jdbc-selector-container">
     <app-jdbc-table-selector [connection]="selectedConnection" (tableSelectionChanged)="onTableSelectionChanged()" *ngIf="hasJdbcConnectionSelected()"></app-jdbc-table-selector>
   </div>
   <div class="col-sm-9" *ngIf="hasNonJdbcConnectionSelected()">

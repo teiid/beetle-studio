@@ -18,3 +18,35 @@
 .connection-list .list-view-pf-description {
   width: 95%;
 }
+
+.connection-list .list-group-item.active {
+  background-color: darkblue;
+  color: white;
+  border-color: transparent;
+}
+
+.connection-column-title {
+  height: 35px;
+  padding-top: 7px;
+  border:1px solid white;
+  background-color: #cccccc;
+  padding-left: 10px;
+}
+
+.evenRow {
+  background-color: #f2f2f2;
+}
+
+.oddRow {
+  background-color: white;
+}
+
+.connection-selector-container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.jdbc-selector-container {
+  padding-left: 0;
+  padding-right: 0;
+}

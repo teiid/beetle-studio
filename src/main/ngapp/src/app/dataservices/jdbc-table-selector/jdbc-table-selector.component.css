@@ -26,3 +26,30 @@
 .jdbc-list .list-view-pf-description {
   width: 95%;
 }
+
+.jdbc-list .list-group-item.active {
+  background-color: darkblue;
+  color: white;
+  border-color: transparent;
+}
+
+.jdbc-column-title {
+  height: 35px;
+  border:1px solid white;
+  background-color: #cccccc;
+  padding-top: 7px;
+  padding-left: 10px;
+  padding-right: 0;
+}
+
+.jdbc-column-results {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.evenRow {
+  background-color: #f2f2f2;
+}
+.oddRow {
+  background-color: white;
+}

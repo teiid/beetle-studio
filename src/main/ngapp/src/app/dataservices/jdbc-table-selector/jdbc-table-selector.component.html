@@ -1,13 +1,13 @@
 <!-- ------------- -->
 <!-- Column Titles -->
 <!-- ------------- -->
-<div class="col-sm-4">
+<div class="col-sm-4 jdbc-column-title">
   <strong>Schemas</strong>
 </div>
-<div class="col-sm-4">
+<div class="col-sm-4 jdbc-column-title">
   <strong>Tables</strong>
 </div>
-<div class="col-sm-4">
+<div class="col-sm-4 jdbc-column-title">
   <strong>Selections</strong>
 </div>
 <!-- ------------- -->
@@ -28,9 +28,12 @@
     <strong>No schema available</strong>
   </div>
 </div>
-<div class="list-div col-sm-4" *ngIf="schemasLoadedValidNotEmpty">
+<div class="list-div col-sm-4 jdbc-column-results" *ngIf="schemasLoadedValidNotEmpty">
   <div class="jdbc-list list-group list-view-pf">
-    <div class="list-group-item list-view-pf-stacked" *ngFor="let schema of getSchemas()" [class.active]="isSchemaSelected(schema)" (click)="toggleSchemaSelected(schema)">
+    <div class="list-group-item list-view-pf-stacked"
+         *ngFor="let schema of getSchemas(); index as i; odd as isEvenRow; even as isOddRow"
+         [class.oddRow]="isOddRow" [class.evenRow]="isEvenRow" [class.active]="isSchemaSelected(schema)"
+         (click)="toggleSchemaSelected(schema)">
       <div class="list-view-pf-main-info">
         <div class="list-view-pf-body">
           <div class="list-view-pf-description">
@@ -61,9 +64,11 @@
     <strong>No tables available</strong>
   </div>
 </div>
-<div class = "list-div col-sm-4" *ngIf="hasSelectedSchema && tablesLoadedValidNotEmpty">
+<div class = "list-div col-sm-4 jdbc-column-results" *ngIf="hasSelectedSchema && tablesLoadedValidNotEmpty">
   <div class="jdbc-list list-group list-view-pf">
-    <div class="list-group-item list-view-pf-stacked" *ngFor="let table of getTables()">
+    <div class="list-group-item list-view-pf-stacked"
+         *ngFor="let table of getTables(); index as i; odd as isEvenRow; even as isOddRow"
+         [class.oddRow]="isOddRow" [class.evenRow]="isEvenRow">
       <div class="list-view-pf-checkbox">
         <input type="checkbox" title="" [(ngModel)]="table.selected" (change)="selectedTablesChanged()">
       </div>
@@ -88,9 +93,11 @@
     <strong>No tables selected</strong>
   </div>
 </div>
-<div class = "list-div col-sm-4" *ngIf="hasSelectedSchema && hasSelectedTables()">
+<div class = "list-div col-sm-4 jdbc-column-results" *ngIf="hasSelectedSchema && hasSelectedTables()">
   <div class="jdbc-list list-group list-view-pf">
-    <div class="list-group-item list-view-pf-stacked" *ngFor="let table of getSelectedTables()">
+    <div class="list-group-item list-view-pf-stacked"
+         *ngFor="let table of getSelectedTables(); index as i; odd as isEvenRow; even as isOddRow"
+         [class.oddRow]="isOddRow" [class.evenRow]="isEvenRow">
       <div class="list-view-pf-main-info">
         <div class="list-view-pf-body">
           <div class="list-view-pf-description">

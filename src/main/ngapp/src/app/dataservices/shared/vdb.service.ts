@@ -71,24 +71,17 @@ export class VdbService extends ApiService {
    */
   public hasWorkspaceVdb(vdbName: string): Observable<boolean> {
     return this.http
-      .get(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath, this.getAuthRequestOptions())
+      .get(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName, this.getAuthRequestOptions())
       .map((response) => {
-        const vdbs = response.json();
-        // Determine if the vdbName exists in the list
-        let vdbFound = false;
-        for (const vdb of vdbs) {
-          const name = vdb.keng__id;
-          if (name === vdbName) {
-            vdbFound = true;
-            break;
-          }
-        }
-        if (vdbFound) {
           return response.ok;
-        }
-        return !response.ok;
       })
-      .catch( ( error ) => this.handleError( error ) );
+      .catch((error) => {
+        // VDB not found returns a 404
+        if (error.status === 404) {
+          return Observable.of(false);
+        }
+        this.handleError( error );
+      } );
   }
 
   /**
