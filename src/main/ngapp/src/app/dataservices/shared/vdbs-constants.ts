@@ -13,7 +13,7 @@
 export class VdbsConstants {
 
   public static readonly SERVICE_VIEW_MODEL_NAME = "views";  // ** must match KomodoDataserviceService.SERVICE_VDB_VIEW_MODEL **
-  public static readonly SOURCE_VDB_SUFFIX = "SvcSource";
+  public static readonly SOURCE_VDB_SUFFIX = "BtlSource";
   public static readonly DEFAULT_READONLY_DATA_ROLE = "DefaultReadOnlyDataRole";
 
   public static readonly statusPath = "/status";

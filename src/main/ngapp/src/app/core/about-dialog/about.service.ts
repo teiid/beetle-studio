@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { About } from "@core/about-dialog/about.model";
 import { ApiService } from "@core/api.service";
