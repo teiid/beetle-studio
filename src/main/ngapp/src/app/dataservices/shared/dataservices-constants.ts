@@ -25,4 +25,5 @@ export class DataservicesConstants {
 
   public static readonly testDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/test-dataservice";
   public static readonly testDataservicePath = DataservicesConstants.dataservicesRootPath + "/test-dataservice";
+
 }

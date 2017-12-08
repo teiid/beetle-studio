@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 
 // The file contents for the current environment will overwrite these during build.
 // The build system defaults to the dev environment which uses `environment.ts`, but if you do
@@ -25,7 +25,7 @@ export const environment = {
   production: false,
 
   // the home page path
-  homePagePath: ConnectionsConstants.connectionsRootPath,
+  homePagePath: DataservicesConstants.dataservicesRootPath,
 
   // REST URL - Komodo import export url
   komodoImportExportUrl: "https://localhost:8443/vdb-builder/v1/importexport",

@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 
 export const environment = {
 
   production: true,
 
   // the home page path
-  homePagePath: ConnectionsConstants.connectionsRootPath,
+  homePagePath: DataservicesConstants.dataservicesRootPath,
 
   // REST URL - Komodo import export url
   komodoImportExportUrl: "https://localhost:8443/vdb-builder/v1/importexport",

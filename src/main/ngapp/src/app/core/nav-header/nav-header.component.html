@@ -6,7 +6,7 @@
     <ul class="nav navbar-nav navbar-right navbar-iconic">
       <li class="dropdown">
         <a class="dropdown-toggle nav-item-iconic" (click)="openAbout(aboutTemplate)">
-          <span title="About" class="fa pficon-help"></span>
+          <span title="About" class="fa pficon-help navbar-help-icon"></span>
           <ng-template #aboutTemplate>
             <app-about-dialog [(info)]="aboutInfo" (onCancel)="closeAbout($event)">
             </app-about-dialog>

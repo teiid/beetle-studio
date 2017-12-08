@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http} from "@angular/http";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
@@ -38,6 +38,10 @@ import { Subscription } from "rxjs/Subscription";
 
 @Injectable()
 export class DataserviceService extends ApiService {
+
+  private static readonly nameValidationUrl = environment.komodoWorkspaceUrl
+                                              + DataservicesConstants.dataservicesRootPath
+                                              + "/nameValidation/";
 
   // Observable dataservice state changes
   // Using replay status with cache of 1, so subscribers dont get an initial value on subscription
@@ -76,6 +80,32 @@ export class DataserviceService extends ApiService {
    */
   public getSelectedDataservice( ): Dataservice {
     return this.selectedDataservice;
+  }
+
+  /**
+   * Validates the specified data service name. If the name contains valid characters and the name is unique, the
+   * service returns 'null'. Otherwise, a 'string' containing an error message is returned.
+   *
+   * @param {string} dataserviceName
+   * @returns {Observable<String>}
+   */
+  public isValidName( name: string ): Observable< string > {
+    if ( !name || name.length === 0 ) {
+      return Observable.of( "Dataservice name cannot be empty" );
+    }
+
+    const url = DataserviceService.nameValidationUrl + encodeURIComponent( name );
+
+    return this.http.get( url, this.getAuthRequestOptions() )
+      .map( ( response ) => {
+        if ( response.ok ) {
+          if ( response.text() ) {
+            return response.text();
+          }
+
+          return "";
+        } } )
+      .catch( ( error ) => this.handleError( error ) );
   }
 
   /**

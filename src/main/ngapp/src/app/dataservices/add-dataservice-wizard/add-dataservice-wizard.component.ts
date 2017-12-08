@@ -79,6 +79,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   private deploymentChangeSubscription: Subscription;
   private sourceVdbUnderDeployment: string;
   private errorDetailMessage: string;
+  public nameValidationError: string = "";
 
   constructor(router: Router, dataserviceService: DataserviceService,
               notifierService: NotifierService, logger: LoggerService, vdbService: VdbService ) {
@@ -171,11 +172,30 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     return this.tableSelectorLoadingState === LoadingState.LOADED_INVALID;
   }
 
+  public handleNameChanged( input: AbstractControl ): void {
+    const self = this;
+
+      this.dataserviceService.isValidName( input.value ).subscribe(
+          ( errorMsg ) => {
+          if ( errorMsg ) {
+            // only update if error has changed
+            if ( errorMsg != self.nameValidationError ) {
+              self.nameValidationError = errorMsg;
+            }
+          } else { // name is valid
+            self.nameValidationError = "";
+          }
+        },
+      ( error ) => {
+          self.logger.error( "[handleNameChanged] Error: %o", error );
+        } );
+  }
+
   /*
    * Return the name valid state
    */
   public get nameValid(): boolean {
-    return this.basicPropertyForm.controls["name"].valid;
+    return this.nameValidationError == null || this.nameValidationError.length == 0;
   }
 
   /*
@@ -382,7 +402,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    */
   private createBasicPropertyForm(): void {
     this.basicPropertyForm = new FormGroup({
-      name: new FormControl("", Validators.required),
+      name: new FormControl( "", this.handleNameChanged.bind( this ) ),
       description: new FormControl("")
     });
     // Responds to basic property changes - updates the page status
