@@ -316,10 +316,10 @@ export class VdbService extends ApiService {
     // Filter values for the model
     let catName = table.getCatalogName();
     let schemaName = table.getSchemaName();
-    let tableName = table.getName();
+    // let tableName = table.getName();
     catName = (!catName || catName.length < 1) ? "%" : catName;
     schemaName = (!schemaName || schemaName.length < 1) ? "%" : schemaName;
-    tableName = (!tableName || tableName.length < 1) ? "%" : tableName;
+    // tableName = (!tableName || tableName.length < 1) ? "%" : tableName;
     // Set the importer properties for the physical model
     const props: NameValue[] = [];
     props.push(new NameValue("importer.TableTypes", "TABLE"));
@@ -328,7 +328,7 @@ export class VdbService extends ApiService {
     props.push(new NameValue("importer.UseCatalogName", "false"));
     props.push(new NameValue("importer.catalog", catName));
     props.push(new NameValue("importer.schemaPattern", schemaName));
-    props.push(new NameValue("importer.tableNamePattern", tableName));
+    props.push(new NameValue("importer.tableNamePattern", "%"));  // TODO improve tablePattern when possible
     vdbModel.setProperties(props);
 
     // VdbModelSource to create
