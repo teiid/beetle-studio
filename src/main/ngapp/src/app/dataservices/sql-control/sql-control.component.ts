@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Input } from "@angular/core";
+import {Input, ViewEncapsulation} from "@angular/core";
 import { Component, OnInit } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ColumnData } from "@dataservices/shared/column-data.model";
@@ -28,6 +28,7 @@ import "codemirror/addon/selection/active-line.js";
 import "codemirror/mode/sql/sql.js";
 
 @Component({
+  encapsulation: ViewEncapsulation.None,
   selector: "app-sql-control",
   templateUrl: "./sql-control.component.html",
   styleUrls: ["./sql-control.component.css"]
@@ -230,7 +231,8 @@ export class SqlControlComponent implements OnInit {
                      prop: rowNumHeader,
                      resizable: true,
                      sortable: true,
-                     width: 60 };
+                     width: 60,
+                     cellClass: "row-number-column"};
     this.columns.push( column );
 
     //

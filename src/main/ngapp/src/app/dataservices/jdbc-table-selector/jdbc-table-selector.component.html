@@ -94,19 +94,7 @@
   </div>
 </div>
 <div class = "list-div col-sm-4 jdbc-column-results" *ngIf="hasSelectedSchema && hasSelectedTables()">
-  <div class="jdbc-list list-group list-view-pf">
-    <div class="list-group-item list-view-pf-stacked"
-         *ngFor="let table of getSelectedTables(); index as i; odd as isEvenRow; even as isOddRow"
-         [class.oddRow]="isOddRow" [class.evenRow]="isEvenRow">
-      <div class="list-view-pf-main-info">
-        <div class="list-view-pf-body">
-          <div class="list-view-pf-description">
-            <div class="list-group-item-heading">
-              {{ table.getName() }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div *ngFor="let table of getSelectedTables()">
+    <app-selected-table [table]="table"></app-selected-table>
   </div>
 </div>

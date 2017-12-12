@@ -26,3 +26,7 @@
 .sql-control-controls-offset input[type=number] {
   width: 5em;
 }
+
+.row-number-column {
+  text-align: center;
+}
