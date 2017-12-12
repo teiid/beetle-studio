@@ -31,11 +31,11 @@ import { BsModalRef } from "ngx-bootstrap/modal/modal-options.class";
 })
 export class NavHeaderComponent {
 
+  public aboutInfo: About;
   private aboutRef: BsModalRef;
   private logger: LoggerService;
   private modalService: BsModalService;
   private aboutService: AboutService;
-  public aboutInfo: About;
 
   constructor( logger: LoggerService,
                modalService: BsModalService,

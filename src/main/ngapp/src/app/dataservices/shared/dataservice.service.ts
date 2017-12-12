@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Http} from "@angular/http";
+import { Http } from "@angular/http";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";

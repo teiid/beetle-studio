@@ -24,7 +24,6 @@ import {
 
 import { FormControl, FormGroup } from "@angular/forms";
 import { AbstractControl } from "@angular/forms";
-import { Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { LoggerService } from "@core/logger.service";
 import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
@@ -71,6 +70,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   @ViewChild("wizard") public wizard: WizardComponent;
   @ViewChild(ConnectionTableSelectorComponent) public tableSelector: ConnectionTableSelectorComponent;
 
+  public nameValidationError = "";
   private dataserviceService: DataserviceService;
   private notifierService: NotifierService;
   private vdbService: VdbService;
@@ -79,7 +79,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   private deploymentChangeSubscription: Subscription;
   private sourceVdbUnderDeployment: string;
   private errorDetailMessage: string;
-  public nameValidationError: string = "";
 
   constructor(router: Router, dataserviceService: DataserviceService,
               notifierService: NotifierService, logger: LoggerService, vdbService: VdbService ) {
@@ -175,27 +174,27 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   public handleNameChanged( input: AbstractControl ): void {
     const self = this;
 
-      this.dataserviceService.isValidName( input.value ).subscribe(
-          ( errorMsg ) => {
-          if ( errorMsg ) {
-            // only update if error has changed
-            if ( errorMsg != self.nameValidationError ) {
-              self.nameValidationError = errorMsg;
-            }
-          } else { // name is valid
-            self.nameValidationError = "";
-          }
-        },
-      ( error ) => {
-          self.logger.error( "[handleNameChanged] Error: %o", error );
-        } );
+    this.dataserviceService.isValidName( input.value ).subscribe(
+      ( errorMsg ) => {
+      if ( errorMsg ) {
+        // only update if error has changed
+        if ( errorMsg !== self.nameValidationError ) {
+          self.nameValidationError = errorMsg;
+        }
+      } else { // name is valid
+        self.nameValidationError = "";
+      }
+    },
+  ( error ) => {
+      self.logger.error( "[handleNameChanged] Error: %o", error );
+    } );
   }
 
   /*
    * Return the name valid state
    */
   public get nameValid(): boolean {
-    return this.nameValidationError == null || this.nameValidationError.length == 0;
+    return this.nameValidationError == null || this.nameValidationError.length === 0;
   }
 
   /*

@@ -15,10 +15,7 @@
  * limitations under the License.
  */
 
-import { ViewChild } from "@angular/core";
-import { Output } from "@angular/core";
-import { EventEmitter } from "@angular/core";
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output, ViewChild, ViewEncapsulation } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { LoggerService } from "@core/logger.service";
@@ -27,6 +24,7 @@ import { Table } from "@dataservices/shared/table.model";
 import { LoadingState } from "@shared/loading-state.enum";
 
 @Component({
+  encapsulation: ViewEncapsulation.None,
   selector: "app-connection-table-selector",
   templateUrl: "./connection-table-selector.component.html",
   styleUrls: ["./connection-table-selector.component.css"]
@@ -36,6 +34,18 @@ export class ConnectionTableSelectorComponent implements OnInit {
   @Output() public tableSelectionChanged: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild(JdbcTableSelectorComponent) public jdbcTableSelector: JdbcTableSelectorComponent;
+
+  public readonly nameProp = "name"; // must match html template
+  public rows: any[] = [];
+
+  public readonly customClasses = {
+    sortAscending: "fa fa-sort-asc",
+    sortDescending: "fa fa-sort-desc",
+    pagerLeftArrow: "fa fa-chevron-left",
+    pagerRightArrow: "fa fa-chevron-right",
+    pagerPrevious: "fa fa-step-backward",
+    pagerNext: "fa fa-step-forward"
+  };
 
   private connectionService: ConnectionService;
   private allConnections: Connection[] = [];
@@ -61,6 +71,13 @@ export class ConnectionTableSelectorComponent implements OnInit {
         (conns) => {
           self.allConnections = conns;
           self.connectionLoadingState = LoadingState.LOADED_VALID;
+
+          // load table after setting loading state so table has been constructed
+          self.allConnections.forEach( ( connection ) => {
+            const row = {};
+            row[ this.nameProp ] = connection.getId();
+            self.rows.push( row );
+          } );
         },
         (error) => {
           self.logger.error("[ConnectionTableSelectorComponent] Error getting connections: %o", error);
@@ -69,33 +86,13 @@ export class ConnectionTableSelectorComponent implements OnInit {
       );
   }
 
-  /**
-   * Toggles the selection
-   * @param {Connection} connection the connection whose selection changed
-   */
-  public toggleConnectionSelected(connection: Connection): void {
-    // Connection currently selected, so deselect it
-    if (this.isConnectionSelected(connection)) {
-      this.selectedConn = null;
-    } else {
-      // Connection not currently selected or nothing selected, so select it.
-      this.selectedConn = connection;
-    }
-    // Set the specific selector with the current connection
-    if (this.jdbcTableSelector) {
-      if (this.selectedConn && this.selectedConn.isJdbc()) {
-        this.jdbcTableSelector.setConnection(connection);
-      } else {
-        this.jdbcTableSelector.setConnection(null);
-      }
-    }
-  }
+  // callback from connections table selection
+  public onSelect( { selected }) {
+    // connection is single select so get first element
+    const connectionName = selected[ 0 ][ this.nameProp ];
 
-  /**
-   * Respond to child table selection changes by propagating up my parent
-   */
-  public onTableSelectionChanged( ): void {
-    this.tableSelectionChanged.emit();
+    // find and set selected connection (see setter)
+    this.selectedConnection = this.allConnections.find(( conn ) => conn.getId() === connectionName );
   }
 
   /**
@@ -174,6 +171,18 @@ export class ConnectionTableSelectorComponent implements OnInit {
    */
   public set selectedConnection(conn: Connection) {
     this.selectedConn = conn;
+
+    // Set the specific selector with the current connection
+    if (this.jdbcTableSelector) {
+      if (this.selectedConn && this.selectedConn.isJdbc()) {
+        this.jdbcTableSelector.setConnection(this.selectedConnection);
+      } else {
+        this.jdbcTableSelector.setConnection(null);
+      }
+    }
+
+    // notify upstream that connection selection has changed
+    this.tableSelectionChanged.emit();
   }
 
   /*
@@ -194,6 +203,19 @@ export class ConnectionTableSelectorComponent implements OnInit {
       return this.jdbcTableSelector.getSelectedTables();
     }
     return selectedTables;
+  }
+
+  // used by table
+  public get tableMessages(): { emptyMessage: string; totalMessage: string | string } {
+    const msg = this.allConnections.length === 1 ? "connection" : "connections";
+
+    return {
+      // no data message
+      emptyMessage: "No connections found",
+
+      // footer total message
+      totalMessage: msg
+    };
   }
 
 }

@@ -1,38 +1,35 @@
 <div>
-  <!-- ---------------- -->
-  <!-- Connections List -->
-  <!-- ---------------- -->
-  <div class="list-div col-sm-3 connection-selector-container">
-    <div class="connection-column-title">
-      <strong>Connections</strong>
+  <div *ngIf="connectionsLoading">
+    <span class="spinner spinner-sm spinner-inline"></span>
+  </div>  <div *ngIf="connectionsLoadedInvalid">
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      <strong>Problem Loading Connections!</strong>
     </div>
-    <div *ngIf="connectionsLoading">
-      <span class="spinner spinner-sm spinner-inline"></span>
-    </div>
-    <div *ngIf="connectionsLoadedInvalid">
-      <div class="alert alert-info">
-        <span class="pficon pficon-info"></span>
-        <strong>Problem Loading Connections!</strong>
-      </div>
-    </div>
-    <div class="connection-list list-group list-view-pf" *ngIf="connectionsLoadedValid">
-      <div class="list-group-item list-view-pf-stacked"
-           *ngFor="let connection of getAllConnections(); index as i; odd as isEvenRow; even as isOddRow"
-           [class.oddRow]="isOddRow" [class.evenRow]="isEvenRow" [class.active]="isConnectionSelected(connection)" (click)="toggleConnectionSelected(connection)">
-        <div class="list-view-pf-main-info">
-          <div class="list-view-pf-left">
-            <span class="fa fa-plug list-view-pf-icon-sm"></span>
-          </div>
-          <div class="list-view-pf-body">
-            <div class="list-view-pf-description">
-              <div class="list-group-item-heading">
-                {{ connection.getId() }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  </div>
+  <div class="col-sm-3" *ngIf="connectionsLoadedValid">
+    <ngx-datatable [rows]="rows"
+                   [columns]="columns"
+                   [loadingIndicator]="connectionsLoading"
+                   [messages]="tableMessages"
+                   [footerHeight]="24"
+                   [scrollbarV]="true"
+                   [scrollbarH]="true"
+                   [columnMode]="'force'"
+                   [reorderable]="false"
+                   [selectionType]="'single'"
+                   (select)="onSelect($event)"
+                   [cssClasses]="customClasses">
+      <ngx-datatable-column [prop]="name" [sortable]="true" [resizeable]="false">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          Connections
+        </ng-template>
+        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+          <i class="fa fa-plug list-view-pf-icon-sm"></i>
+          {{row.name}}
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
   </div>
   <!-- ------------------------------------------- -->
   <!-- Connection Content Area                     -->
