@@ -47,7 +47,3 @@
   border-left: 1px solid #d8d8d8;
   border-right: 1px solid #d8d8d8;
 }
-
-.datatable-body-cell:first-child {
-  text-align: center;
-}

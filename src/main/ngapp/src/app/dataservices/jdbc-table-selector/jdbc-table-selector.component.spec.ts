@@ -6,6 +6,7 @@ import { ConnectionService } from "@connections/shared/connection.service";
 import { MockConnectionService } from "@connections/shared/mock-connection.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { SelectedTableComponent } from "@dataservices/selected-table/selected-table.component";
 import { JdbcTableSelectorComponent } from "./jdbc-table-selector.component";
 
 describe("JdbcTableSelectorComponent", () => {
@@ -15,7 +16,7 @@ describe("JdbcTableSelectorComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, HttpModule ],
-      declarations: [ JdbcTableSelectorComponent ],
+      declarations: [ JdbcTableSelectorComponent, SelectedTableComponent ],
       providers: [
         AppSettingsService, LoggerService,
         { provide: ConnectionService, useClass: MockConnectionService },

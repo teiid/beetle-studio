@@ -7,6 +7,7 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { CoreModule } from "@core/core.module";
 import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
 import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jdbc-table-selector.component";
+import { SelectedTableComponent } from "@dataservices/selected-table/selected-table.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
@@ -25,7 +26,7 @@ describe("AddDataserviceWizardComponent", () => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule ],
       declarations: [ AddDataserviceWizardComponent, ConnectionTableSelectorComponent, JdbcTableSelectorComponent,
-                      PropertyFormComponent, PropertyFormPropertyComponent ],
+                      PropertyFormComponent, PropertyFormPropertyComponent, SelectedTableComponent ],
       providers: [
         NotifierService,
         { provide: DataserviceService, useClass: MockDataserviceService },

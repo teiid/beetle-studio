@@ -1,0 +1,24 @@
+.selected-table-card {
+  background-color: #f2f2f2;
+  border:2px dotted darkblue;
+  margin-top: 5px;
+  margin-left: 15px;
+  min-height: 60px;
+  max-height: 80px;
+  padding-top: 5px;
+  padding-right: 5px;
+}
+
+.selected-table-name {
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.selected-table-connection {
+  margin-left: 5px;
+}
+
+.selected-table-close-icon {
+  cursor: pointer;
+  color: darkred;
+}
