@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Input, ViewEncapsulation} from "@angular/core";
+import { Input, ViewEncapsulation } from "@angular/core";
 import { Component, OnInit } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ColumnData } from "@dataservices/shared/column-data.model";

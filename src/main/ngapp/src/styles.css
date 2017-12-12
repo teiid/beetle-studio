@@ -38,12 +38,24 @@
   background-color: white;
 }
 
+.datatable-row-even:hover {
+  background-color: #def3ff;
+}
+
 .datatable-row-odd {
   background-color: #f2f2f2;
+}
+
+.datatable-row-odd:hover {
+  background-color: #def3ff;
 }
 
 .datatable-body-cell {
   padding: 0.25em;
   border-left: 1px solid #d8d8d8;
   border-right: 1px solid #d8d8d8;
+}
+
+.datatable-body-row.active .datatable-row-group {
+  background-color: #39a5dc !important;
 }
