@@ -28,7 +28,7 @@
 }
 
 .jdbc-list .list-group-item.active {
-  background-color: darkblue;
+  background-color: #0088ce;
   color: white;
   border-color: transparent;
 }
@@ -36,7 +36,7 @@
 .jdbc-column-title {
   height: 20px;
   border:1px solid white;
-  background-color: #cccccc;
+  background-color: #dddddd;
   padding-top: 0;
   padding-left: 10px;
   padding-right: 0;
@@ -53,3 +53,8 @@
 .oddRow {
   background-color: white;
 }
+
+.alert-padding {
+  padding-top: 10px;
+}
+

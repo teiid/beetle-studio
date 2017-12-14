@@ -15,7 +15,7 @@
 
 .datatable-header {
   color: white;
-  background-color: #cccccc;
+  background-color: #bbbbbb;
   text-align: center;
 }
 
@@ -60,6 +60,6 @@
 }
 
 .datatable-body-row.active .datatable-row-group {
-  background-color: darkblue !important;
+  background-color: #0088ce !important;
   color: white;
 }

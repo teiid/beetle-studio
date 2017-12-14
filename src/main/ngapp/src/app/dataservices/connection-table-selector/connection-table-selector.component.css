@@ -1,3 +1,8 @@
+.connection-selector-container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .jdbc-selector-container {
   padding-left: 0;
   padding-right: 0;
@@ -6,8 +11,12 @@
 .jdbc-column-title {
   height: 30px;
   border:1px solid white;
-  background-color: #cccccc;
+  background-color: #bbbbbb;
   padding-top: 5px;
   padding-left: 10px;
   padding-right: 0;
+}
+
+.alert-padding {
+  padding-top: 10px;
 }
