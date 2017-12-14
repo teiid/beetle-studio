@@ -1,34 +1,31 @@
 <!-- ------------- -->
 <!-- Column Titles -->
 <!-- ------------- -->
-<div class="col-sm-4 jdbc-column-title">
+<div class="col-sm-6 jdbc-column-title">
   <strong>Schemas</strong>
 </div>
-<div class="col-sm-4 jdbc-column-title">
+<div class="col-sm-6 jdbc-column-title">
   <strong>Tables</strong>
-</div>
-<div class="col-sm-4 jdbc-column-title">
-  <strong>Selections</strong>
 </div>
 <!-- ------------- -->
 <!-- Schemas List  -->
 <!-- ------------- -->
-<div class="col-sm-4" *ngIf="schemasLoading">
+<div class="col-sm-6" *ngIf="schemasLoading">
   <span class="spinner spinner-sm spinner-inline"></span>
 </div>
-<div class="col-sm-4" *ngIf="schemasLoadedInvalid">
+<div class="col-sm-6" *ngIf="schemasLoadedInvalid">
   <div class="alert alert-info">
     <span class="pficon pficon-info"></span>
     <strong>Unable to load schema</strong>
   </div>
 </div>
-<div class="col-sm-4" *ngIf="schemasLoadedValidEmpty">
+<div class="col-sm-6" *ngIf="schemasLoadedValidEmpty">
   <div class="alert alert-info">
     <span class="pficon pficon-info"></span>
     <strong>No schema available</strong>
   </div>
 </div>
-<div class="list-div col-sm-4 jdbc-column-results" *ngIf="schemasLoadedValidNotEmpty">
+<div class="list-div col-sm-6 jdbc-column-results" *ngIf="schemasLoadedValidNotEmpty">
   <div class="jdbc-list list-group list-view-pf">
     <div class="list-group-item list-view-pf-stacked"
          *ngFor="let schema of getSchemas(); index as i; odd as isEvenRow; even as isOddRow"
@@ -49,28 +46,28 @@
 <!-- ------------- -->
 <!--  Tables List  -->
 <!-- ------------- -->
-<div class="col-sm-4" *ngIf="hasSelectedSchema && tablesLoading">
+<div class="col-sm-6" *ngIf="hasSelectedSchema && tablesLoading">
   <span class="spinner spinner-sm spinner-inline"></span>
 </div>
-<div class="col-sm-4" *ngIf="hasSelectedSchema && tablesLoadedInvalid">
+<div class="col-sm-6" *ngIf="hasSelectedSchema && tablesLoadedInvalid">
   <div class="alert alert-info">
     <span class="pficon pficon-info"></span>
     <strong>Unable to load tables</strong>
   </div>
 </div>
-<div class="col-sm-4" *ngIf="hasSelectedSchema && tablesLoadedValidEmpty">
+<div class="col-sm-6" *ngIf="hasSelectedSchema && tablesLoadedValidEmpty">
   <div class="alert alert-info">
     <span class="pficon pficon-info"></span>
     <strong>No tables available</strong>
   </div>
 </div>
-<div class = "list-div col-sm-4 jdbc-column-results" *ngIf="hasSelectedSchema && tablesLoadedValidNotEmpty">
+<div class = "list-div col-sm-6 jdbc-column-results" *ngIf="hasSelectedSchema && tablesLoadedValidNotEmpty">
   <div class="jdbc-list list-group list-view-pf">
     <div class="list-group-item list-view-pf-stacked"
          *ngFor="let table of getTables(); index as i; odd as isEvenRow; even as isOddRow"
          [class.oddRow]="isOddRow" [class.evenRow]="isEvenRow">
       <div class="list-view-pf-checkbox">
-        <input type="checkbox" title="" [(ngModel)]="table.selected" (change)="selectedTablesChanged()">
+        <input type="checkbox" title="" [(ngModel)]="table.selected" (change)="selectedTablesChanged(table)">
       </div>
       <div class="list-view-pf-main-info">
         <div class="list-view-pf-body">
@@ -82,19 +79,5 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
-<!-- ----------------------- -->
-<!--  Table Selections List  -->
-<!-- ----------------------- -->
-<div class="col-sm-4" *ngIf="hasSelectedSchema && !hasSelectedTables()">
-  <div class="alert alert-info">
-    <span class="pficon pficon-info"></span>
-    <strong>No tables selected</strong>
-  </div>
-</div>
-<div class = "list-div col-sm-4 jdbc-column-results" *ngIf="hasSelectedSchema && hasSelectedTables()">
-  <div *ngFor="let table of getSelectedTables()">
-    <app-selected-table [table]="table"></app-selected-table>
   </div>
 </div>

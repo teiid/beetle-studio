@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { Connection } from "../../connections/shared/connection.model";
+import { Connection } from "@connections/shared/connection.model";
 import { Table } from "../shared/table.model";
 import { SelectedTableComponent } from "./selected-table.component";
 

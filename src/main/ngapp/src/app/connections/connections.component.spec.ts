@@ -37,10 +37,12 @@ describe("ConnectionsComponent", () => {
   }));
 
   it("should be created", () => {
+    console.log("========== [ConnectionsComponent] should be created");
     expect(component).toBeTruthy();
   });
 
   it("should have Connections Title", () => {
+    console.log("========== [ConnectionsComponent] should have Connections Title");
     // query for the title <h2> by CSS element selector
     const de = fixture.debugElement.query(By.css("h2"));
     const el = de.nativeElement;
@@ -48,12 +50,14 @@ describe("ConnectionsComponent", () => {
   });
 
   it("should have Toolbar", () => {
+    console.log("========== [ConnectionsComponent] should have Toolbar");
     // query for the toolbar by css classname
     const de = fixture.debugElement.query(By.css(".toolbar-pf"));
     expect(de).toBeDefined();
   });
 
   it("should have Connections", () => {
+    console.log("========== [ConnectionsComponent] should have Connections");
     // Check component object
     const connections = component.allConnections;
     expect(connections.length).toEqual(3);
@@ -65,6 +69,7 @@ describe("ConnectionsComponent", () => {
   });
 
   it("should have initial card layout", () => {
+    console.log("========== [ConnectionsComponent] should have initial card layout");
     // app-connections-cards should be present
     let debugEl = fixture.debugElement.query(By.css("app-connections-cards"));
     const element = debugEl.nativeElement;
@@ -76,6 +81,7 @@ describe("ConnectionsComponent", () => {
   });
 
   it("should toggle layout", () => {
+    console.log("========== [ConnectionsComponent] should toggle layout");
     // Initial layout should be Card Layout
     let cardDebugElem = fixture.debugElement.query(By.css("app-connections-cards"));
     let listDebugElem = fixture.debugElement.query(By.css("app-connections-list"));
@@ -98,6 +104,7 @@ describe("ConnectionsComponent", () => {
   });
 
   it("should filter connections", () => {
+    console.log("========== [ConnectionsComponent] should filter connections");
     // Expect 3 connections initially.
     let connections = component.filteredConnections;
     expect(connections.length).toEqual(3);

@@ -14,6 +14,7 @@ describe("ApiService", () => {
 
   it("should be created", inject([LoggerService],
                                             (service: MockService ) => {
+    console.log("========== [ApiServiceComponent] should be created");
     expect(service).toBeTruthy();
   }));
 });

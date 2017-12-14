@@ -51,10 +51,12 @@ describe("DataservicesComponent", () => {
   }));
 
   it("should be created", () => {
+    console.log("========== [DataservicesComponent] should be created");
     expect(component).toBeTruthy();
   });
 
   it("should have Dataservices Title", () => {
+    console.log("========== [DataservicesComponent] should have Dataservices Title");
     // query for the title <h2> by CSS element selector
     const de = fixture.debugElement.query(By.css("h2"));
     const el = de.nativeElement;
@@ -62,12 +64,14 @@ describe("DataservicesComponent", () => {
   });
 
   it("should have Toolbar", () => {
+    console.log("========== [DataservicesComponent] should have Toolbar");
     // query for the toolbar by css classname
     const de = fixture.debugElement.query(By.css(".toolbar-pf"));
     expect(de).toBeDefined();
   });
 
   it("should have Dataservices", () => {
+    console.log("========== [DataservicesComponent] should have Dataservices");
     // Check component object
     const dataservices = component.allDataservices;
     expect(dataservices.length).toEqual(3);
@@ -79,6 +83,7 @@ describe("DataservicesComponent", () => {
   });
 
   it("should have initial card layout", () => {
+    console.log("========== [DataservicesComponent] should have initial card layout");
     // app-dataservices-cards should be present
     let debugEl = fixture.debugElement.query(By.css("app-dataservices-cards"));
     const element = debugEl.nativeElement;
@@ -90,6 +95,7 @@ describe("DataservicesComponent", () => {
   });
 
   it("should toggle layout", () => {
+    console.log("========== [DataservicesComponent] should toggle layout");
     // Initial layout should be Card Layout
     let cardDebugElem = fixture.debugElement.query(By.css("app-dataservices-cards"));
     let listDebugElem = fixture.debugElement.query(By.css("app-dataservices-list"));
@@ -112,6 +118,7 @@ describe("DataservicesComponent", () => {
   });
 
   it("should filter dataservices", () => {
+    console.log("========== [DataservicesComponent] should filter dataservices");
     // Expect 3 dataservices initially.
     let dataservices = component.filteredDataservices;
     expect(dataservices.length).toEqual(3);

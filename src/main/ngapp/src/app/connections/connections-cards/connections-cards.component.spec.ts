@@ -23,6 +23,7 @@ describe("ConnectionsCardsComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [ConnectionCardsComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

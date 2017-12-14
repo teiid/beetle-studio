@@ -9,7 +9,7 @@
   <pfng-wizard-step [config]="step1Config">
     <h3><i>{{ step1InstructionMessage }}</i></h3>
     <br>
-    <app-connection-table-selector (tableSelectionChanged)="updatePage1ValidStatus()"></app-connection-table-selector>
+    <app-connection-table-selector (selectedTableListUpdated)="updatePage1ValidStatus()"></app-connection-table-selector>
   </pfng-wizard-step>
   <!-- -------------------------- -->
   <!-- Step 2 : Review and Create -->
@@ -35,7 +35,11 @@
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label">Selected Tables:</label>
-          <label class="col-sm-5">{{ dataserviceSourceTables }}</label>
+          <div class="col-sm-5">
+            <div *ngFor="let table of dataserviceSourceTables">
+              <label>[ {{ table.getConnection().getId() }} ]  {{table.getName()}}</label>
+            </div>
+          </div>
         </div>
       </form>
     </pfng-wizard-substep>

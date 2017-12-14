@@ -23,6 +23,7 @@ describe("ConnectionsListComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [ConnectionsListComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

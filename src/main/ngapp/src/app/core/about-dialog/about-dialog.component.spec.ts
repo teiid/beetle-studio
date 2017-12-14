@@ -23,6 +23,7 @@ describe("AboutDialogComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [AboutDialogComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

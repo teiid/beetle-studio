@@ -37,6 +37,7 @@ describe("AddActivityComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [AddActivityComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

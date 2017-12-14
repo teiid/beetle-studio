@@ -41,6 +41,7 @@ describe("NavHeaderComponent", () => {
 
   it("should be created", inject([ LoggerService ],
                                             (logger: LoggerService ) => {
+    console.log("========== [NavHeaderComponent] should be created");
     expect(component).toBeTruthy();
   }));
 });

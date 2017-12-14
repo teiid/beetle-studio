@@ -41,6 +41,7 @@ describe("PropertyFormComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [PropertyFormComponent] should be created");
     expect(component).toBeTruthy();
   });
 });
