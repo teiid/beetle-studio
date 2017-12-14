@@ -1,18 +1,19 @@
 <div>
   <div *ngIf="connectionsLoading">
     <span class="spinner spinner-sm spinner-inline"></span>
-  </div>  <div *ngIf="connectionsLoadedInvalid">
+  </div>
+  <div class="alert-padding" *ngIf="connectionsLoadedInvalid">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <strong>Problem Loading Connections!</strong>
     </div>
   </div>
-  <div class="col-sm-3" *ngIf="connectionsLoadedValid">
+  <div class="col-sm-3 connection-selector-container" *ngIf="connectionsLoadedValid">
     <ngx-datatable [rows]="rows"
                    [columns]="columns"
                    [messages]="tableMessages"
                    [footerHeight]="24"
-                   [scrollbarV]="true"
+                   [scrollbarV]="false"
                    [scrollbarH]="true"
                    [columnMode]="'force'"
                    [reorderable]="false"
@@ -46,13 +47,13 @@
                              *ngIf="hasJdbcConnectionSelected()">
     </app-jdbc-table-selector>
   </div>
-  <div class="col-sm-6" *ngIf="hasNonJdbcConnectionSelected()">
+  <div class="col-sm-6 alert-padding" *ngIf="hasNonJdbcConnectionSelected()">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <strong>Non-JDBC Connections are not supported</strong>
     </div>
   </div>
-  <div class="col-sm-6" *ngIf="!hasSelectedConnection()">
+  <div class="col-sm-6 alert-padding" *ngIf="!hasSelectedConnection()">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <strong>Please select a Connection</strong>
@@ -61,13 +62,13 @@
   <!-- ----------------------- -->
   <!--  Selected Tables List   -->
   <!-- ----------------------- -->
-  <div class="col-sm-3" *ngIf="!hasSelectedTables">
+  <div class="col-sm-3 alert-padding" *ngIf="!hasSelectedTables">
       <div class="alert alert-info">
         <span class="pficon pficon-info"></span>
         <strong>No tables selected</strong>
       </div>
   </div>
-  <div class = "list-div col-sm-3 jdbc-column-results" *ngIf="hasSelectedTables">
+  <div class = "list-div col-sm-3" *ngIf="hasSelectedTables">
       <div *ngFor="let table of getSelectedTables()">
         <app-selected-table [table]="table" (selectionListTableRemoved)="onTableSelectionRemoved($event)"></app-selected-table>
       </div>

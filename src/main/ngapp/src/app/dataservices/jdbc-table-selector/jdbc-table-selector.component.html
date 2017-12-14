@@ -13,13 +13,13 @@
 <div class="col-sm-6" *ngIf="schemasLoading">
   <span class="spinner spinner-sm spinner-inline"></span>
 </div>
-<div class="col-sm-6" *ngIf="schemasLoadedInvalid">
+<div class="col-sm-6 alert-padding" *ngIf="schemasLoadedInvalid">
   <div class="alert alert-info">
     <span class="pficon pficon-info"></span>
     <strong>Unable to load schema</strong>
   </div>
 </div>
-<div class="col-sm-6" *ngIf="schemasLoadedValidEmpty">
+<div class="col-sm-6 alert-padding" *ngIf="schemasLoadedValidEmpty">
   <div class="alert alert-info">
     <span class="pficon pficon-info"></span>
     <strong>No schema available</strong>
@@ -49,13 +49,13 @@
 <div class="col-sm-6" *ngIf="hasSelectedSchema && tablesLoading">
   <span class="spinner spinner-sm spinner-inline"></span>
 </div>
-<div class="col-sm-6" *ngIf="hasSelectedSchema && tablesLoadedInvalid">
+<div class="col-sm-6 alert-padding" *ngIf="hasSelectedSchema && tablesLoadedInvalid">
   <div class="alert alert-info">
     <span class="pficon pficon-info"></span>
     <strong>Unable to load tables</strong>
   </div>
 </div>
-<div class="col-sm-6" *ngIf="hasSelectedSchema && tablesLoadedValidEmpty">
+<div class="col-sm-6 alert-padding" *ngIf="hasSelectedSchema && tablesLoadedValidEmpty">
   <div class="alert alert-info">
     <span class="pficon pficon-info"></span>
     <strong>No tables available</strong>
