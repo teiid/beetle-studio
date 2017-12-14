@@ -16,18 +16,18 @@
  */
 
 import { Component, OnInit } from "@angular/core";
-import { Input } from "@angular/core";
 import { EventEmitter } from "@angular/core";
 import { Output } from "@angular/core";
+import { Input } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { LoggerService } from "@core/logger.service";
 import { CatalogSchema } from "@dataservices/shared/catalog-schema.model";
-import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { TableSelector } from "@dataservices/shared/table-selector";
 import { Table } from "@dataservices/shared/table.model";
+import { WizardService } from "@dataservices/shared/wizard.service";
 import { LoadingState } from "@shared/loading-state.enum";
 
 @Component({
@@ -43,7 +43,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   @Output() public tableSelectionRemoved: EventEmitter<Table> = new EventEmitter<Table>();
 
   private connectionService: ConnectionService;
-  private dataserviceService: DataserviceService;
+  private wizardService: WizardService;
   private logger: LoggerService;
   private schemas: CatalogSchema[] = [];
   private tables: Table[] = [];
@@ -51,9 +51,9 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   private schemaLoadingState: LoadingState = LoadingState.LOADING;
   private tableLoadingState: LoadingState = LoadingState.LOADING;
 
-  constructor( connectionService: ConnectionService, dataserviceService: DataserviceService, logger: LoggerService ) {
+  constructor(connectionService: ConnectionService, wizardService: WizardService, logger: LoggerService ) {
     this.connectionService = connectionService;
-    this.dataserviceService = dataserviceService;
+    this.wizardService = wizardService;
     this.logger = logger;
   }
 
@@ -322,7 +322,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
       const schemaName = table.getSchemaName();
       const tableName = table.getName();
       const connName = table.getConnection().getId();
-      for ( const initialTable of this.dataserviceService.getWizardSelectedTables() ) {
+      for ( const initialTable of this.wizardService.getWizardSelectedTables() ) {
         // const iCatName = initialTable.getCatalogName();
         const iSchemaName = initialTable.getSchemaName();
         const iTableName = initialTable.getName();

@@ -28,6 +28,7 @@ import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { WizardService } from "@dataservices/shared/wizard.service";
 import { SharedModule } from "@shared/shared.module";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { CodemirrorModule } from "ng2-codemirror";
@@ -69,7 +70,8 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
     DataserviceService,
     VdbService,
     LoggerService,
-    NotifierService
+    NotifierService,
+    WizardService
   ],
   exports: [
   ]

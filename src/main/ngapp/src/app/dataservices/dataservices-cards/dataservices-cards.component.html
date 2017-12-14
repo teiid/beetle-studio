@@ -23,7 +23,8 @@
           </h2>
           <hr/>
           <div class="pull-right">
-            <span class="pull-right fa fa-search dataservice-card-action-icon" (click)="onQuickLookDataservice(dataservice.getId())"></span>
+            <span *ngIf="dataservice.serviceDeploymentActive" class="pull-right fa fa-search dataservice-card-action-icon" (click)="onQuickLookDataservice(dataservice.getId())"></span>
+            <span *ngIf="!dataservice.serviceDeploymentActive" class="pull-right fa fa-search dataservice-card-action-disabled-icon"></span>
           </div>
           <div>
             <span>{{ dataservice.getDescription() }}</span>

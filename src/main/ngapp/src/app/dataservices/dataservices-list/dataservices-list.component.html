@@ -25,7 +25,8 @@
             <span *ngIf="dataservice.getServiceViewTables().length==2">{{dataservice.getServiceViewTables()[0]}}, {{dataservice.getServiceViewTables()[1]}}</span>
           </div>
           <div>
-            <span class="fa fa-search dataservice-list-quicklook-icon" (click)="onQuickLookDataservice(dataservice.getId())"></span>
+            <span *ngIf="dataservice.serviceDeploymentActive" class="fa fa-search dataservice-list-quicklook-icon" (click)="onQuickLookDataservice(dataservice.getId())"></span>
+            <span *ngIf="!dataservice.serviceDeploymentActive" class="fa fa-search dataservice-list-quicklook-disabled-icon"></span>
           </div>
           <!--
           <div class="dataservice-tags" *ngIf="dataservice.tags && dataservice.tags.length > 0">
