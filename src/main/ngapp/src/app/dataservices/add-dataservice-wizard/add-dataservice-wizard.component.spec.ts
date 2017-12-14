@@ -47,6 +47,7 @@ describe("AddDataserviceWizardComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [AddDataserviceWizardComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

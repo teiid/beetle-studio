@@ -26,7 +26,7 @@
         </ng-template>
         <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
           <i class="fa fa-plug list-view-pf-icon-sm"></i>
-          {{row.name}}
+          {{ row.name }}
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>
@@ -37,19 +37,43 @@
   <!-- 2) Non-JDBC Connection selected             -->
   <!-- 3) No Connection selected                   -->
   <!-- ------------------------------------------- -->
-  <div class="col-sm-9 jdbc-selector-container">
-    <app-jdbc-table-selector [connection]="selectedConnection" (tableSelectionChanged)="onTableSelectionChanged()" *ngIf="hasJdbcConnectionSelected()"></app-jdbc-table-selector>
+  <div class="col-sm-6 jdbc-column-title">
+    <strong>Table Selection</strong>
   </div>
-  <div class="col-sm-9" *ngIf="hasNonJdbcConnectionSelected()">
+  <div class="col-sm-3 jdbc-column-title">
+    <strong>Current Selections</strong>
+  </div>
+  <div class="col-sm-6 jdbc-selector-container">
+    <app-jdbc-table-selector [connection]="selectedConnection"
+                             (tableSelectionAdded)="onTableSelectionAdded($event)"
+                             (tableSelectionRemoved)="onTableSelectionRemoved($event)"
+                             *ngIf="hasJdbcConnectionSelected()">
+    </app-jdbc-table-selector>
+  </div>
+  <div class="col-sm-6" *ngIf="hasNonJdbcConnectionSelected()">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <strong>Non-JDBC Connections are not supported</strong>
     </div>
   </div>
-  <div class="col-sm-9" *ngIf="!hasSelectedConnection()">
+  <div class="col-sm-6" *ngIf="!hasSelectedConnection()">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <strong>Please select a Connection</strong>
     </div>
+  </div>
+  <!-- ----------------------- -->
+  <!--  Selected Tables List   -->
+  <!-- ----------------------- -->
+  <div class="col-sm-3" *ngIf="!hasSelectedTables">
+      <div class="alert alert-info">
+        <span class="pficon pficon-info"></span>
+        <strong>No tables selected</strong>
+      </div>
+  </div>
+  <div class = "list-div col-sm-3 jdbc-column-results" *ngIf="hasSelectedTables">
+      <div *ngFor="let table of getSelectedTables()">
+        <app-selected-table [table]="table" (selectionListTableRemoved)="onTableSelectionRemoved($event)"></app-selected-table>
+      </div>
   </div>
 </div>

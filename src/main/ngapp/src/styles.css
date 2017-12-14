@@ -57,5 +57,6 @@
 }
 
 .datatable-body-row.active .datatable-row-group {
-  background-color: #39a5dc !important;
+  background-color: darkblue !important;
+  color: white;
 }

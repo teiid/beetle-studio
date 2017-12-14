@@ -38,10 +38,12 @@ describe("ActivitiesComponent", () => {
   }));
 
   it("should be created", () => {
+    console.log("========== [ActivitiesComponent] should be created");
     expect(component).toBeTruthy();
   });
 
   it("should have Activities Title", () => {
+    console.log("========== [ActivitiesComponent] should have Activities Title");
     // query for the title <h2> by CSS element selector
     const de = fixture.debugElement.query(By.css("h2"));
     const el = de.nativeElement;
@@ -49,12 +51,14 @@ describe("ActivitiesComponent", () => {
   });
 
   it("should have Toolbar", () => {
+    console.log("========== [ActivitiesComponent] should have Toolbar");
     // query for the toolbar by css classname
     const de = fixture.debugElement.query(By.css(".toolbar-pf"));
     expect(de).toBeDefined();
   });
 
   it("should have Activities", () => {
+    console.log("========== [ActivitiesComponent] should have Activities");
     // Check component object
     const activities = component.allActivities;
     expect(activities.length).toEqual(3);
@@ -66,6 +70,7 @@ describe("ActivitiesComponent", () => {
   });
 
   it("should have initial card layout", () => {
+    console.log("========== [ActivitiesComponent] should have initial card layout");
     // app-activities-cards should be present
     let debugEl = fixture.debugElement.query(By.css("app-activities-cards"));
     const element = debugEl.nativeElement;
@@ -77,6 +82,7 @@ describe("ActivitiesComponent", () => {
   });
 
   it("should toggle layout", () => {
+    console.log("========== [ActivitiesComponent] should toggle layout");
     // Initial layout should be Card Layout
     let cardDebugElem = fixture.debugElement.query(By.css("app-activities-cards"));
     let listDebugElem = fixture.debugElement.query(By.css("app-activities-list"));
@@ -99,6 +105,7 @@ describe("ActivitiesComponent", () => {
   });
 
   it("should filter activities", () => {
+    console.log("========== [ActivitiesComponent] should filter activities");
     // Expect 3 activities initially.
     let activities = component.filteredActivities;
     expect(activities.length).toEqual(3);

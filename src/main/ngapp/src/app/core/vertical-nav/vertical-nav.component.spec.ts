@@ -26,6 +26,7 @@ describe("VerticalNavComponent", () => {
 
   it("should be created", inject([ LoggerService ],
     (logger: LoggerService ) => {
+    console.log("========== [VerticalNavComponent] should be created");
     expect(component).toBeTruthy();
   }));
 });

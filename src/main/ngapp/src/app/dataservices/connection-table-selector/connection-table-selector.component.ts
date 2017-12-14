@@ -20,6 +20,7 @@ import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { LoggerService } from "@core/logger.service";
 import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jdbc-table-selector.component";
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { Table } from "@dataservices/shared/table.model";
 import { LoadingState } from "@shared/loading-state.enum";
 
@@ -31,9 +32,8 @@ import { LoadingState } from "@shared/loading-state.enum";
 })
 export class ConnectionTableSelectorComponent implements OnInit {
 
-  @Output() public tableSelectionChanged: EventEmitter<void> = new EventEmitter<void>();
-
   @ViewChild(JdbcTableSelectorComponent) public jdbcTableSelector: JdbcTableSelectorComponent;
+  @Output() public selectedTableListUpdated: EventEmitter<void> = new EventEmitter<void>();
 
   public readonly nameProp = "name"; // must match html template
   public rows: any[] = [];
@@ -48,13 +48,16 @@ export class ConnectionTableSelectorComponent implements OnInit {
   };
 
   private connectionService: ConnectionService;
+  private dataserviceService: DataserviceService;
   private allConnections: Connection[] = [];
   private selectedConn: Connection;
   private connectionLoadingState: LoadingState = LoadingState.LOADING;
   private logger: LoggerService;
 
-  constructor( connectionService: ConnectionService, logger: LoggerService ) {
+  constructor( connectionService: ConnectionService, dataserviceService: DataserviceService,
+               logger: LoggerService ) {
     this.connectionService = connectionService;
+    this.dataserviceService = dataserviceService;
     this.logger = logger;
   }
 
@@ -62,6 +65,9 @@ export class ConnectionTableSelectorComponent implements OnInit {
    * Component initialization
    */
   public ngOnInit(): void {
+    // clears table selections
+    this.dataserviceService.clearWizardSelectedTables();
+
     // Load the connections
     this.connectionLoadingState = LoadingState.LOADING;
     const self = this;
@@ -87,7 +93,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
   }
 
   // callback from connections table selection
-  public onSelect( { selected }) {
+  public onSelect( { selected }): void {
     // connection is single select so get first element
     const connectionName = selected[ 0 ][ this.nameProp ];
 
@@ -180,9 +186,6 @@ export class ConnectionTableSelectorComponent implements OnInit {
         this.jdbcTableSelector.setConnection(null);
       }
     }
-
-    // notify upstream that connection selection has changed
-    this.tableSelectionChanged.emit();
   }
 
   /*
@@ -193,16 +196,42 @@ export class ConnectionTableSelectorComponent implements OnInit {
     return this.allConnections;
   }
 
+  /**
+   * Responds to table added event from the table selector.
+   * The table is added to the accumulator list.
+   * @param {Table} addedTable the table to add to the accumulator list
+   */
+  public onTableSelectionAdded(addedTable: Table): void {
+    this.dataserviceService.addToWizardSelectionTables(addedTable);
+    this.selectedTableListUpdated.emit();
+  }
+
+  /**
+   * Responds to table remove event from the table selector.
+   * The table is removed from the accumulator list, if found.
+   * @param {Table} removedTable the table to remove from the accumulator list
+   */
+  public onTableSelectionRemoved(removedTable: Table): void {
+    const wasRemoved = this.dataserviceService.removeFromWizardSelectionTables(removedTable);
+    if (wasRemoved) {
+      this.selectedTableListUpdated.emit();
+    }
+  }
+
+  /*
+   * Determine if any tables are currently selected
+   * @returns {boolean} true if one or more tables are selected
+   */
+  public get hasSelectedTables(): boolean {
+    return this.getSelectedTables().length > 0;
+  }
+
   /*
    * Return all currently selected Tables
    * @returns {Table[]} the list of selected Tables
    */
   public getSelectedTables(): Table[] {
-    const selectedTables = [];
-    if (this.jdbcTableSelector) {
-      return this.jdbcTableSelector.getSelectedTables();
-    }
-    return selectedTables;
+    return this.dataserviceService.getWizardSelectedTables();
   }
 
   // used by table

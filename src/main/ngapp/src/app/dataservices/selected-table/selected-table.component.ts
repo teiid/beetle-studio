@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Table } from "@dataservices/shared/table.model";
 
 @Component({
@@ -9,6 +9,7 @@ import { Table } from "@dataservices/shared/table.model";
 export class SelectedTableComponent implements OnInit {
 
   @Input() public table: Table;
+  @Output() public selectionListTableRemoved: EventEmitter<Table> = new EventEmitter<Table>();
 
   constructor() {
     // nothing to do
@@ -20,5 +21,6 @@ export class SelectedTableComponent implements OnInit {
 
   public onRemove(): void {
     this.table.selected = false;
+    this.selectionListTableRemoved.emit(this.table);
   }
 }

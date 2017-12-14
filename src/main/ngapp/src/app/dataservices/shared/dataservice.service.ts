@@ -51,10 +51,12 @@ export class DataserviceService extends ApiService {
 
   private http: Http;
   private notifierService: NotifierService;
+  private appSettingsService: AppSettingsService;
   private vdbService: VdbService;
   private selectedDataservice: Dataservice;
   private cachedDataserviceStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
   private updatesSubscription: Subscription;
+  private wizardSelectedTablesArray: Table[] = [];
 
   constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
               notifierService: NotifierService, logger: LoggerService ) {
@@ -62,6 +64,7 @@ export class DataserviceService extends ApiService {
     this.http = http;
     this.notifierService = notifierService;
     this.vdbService = vdbService;
+    this.appSettingsService = appSettings;
     // Polls to fire Dataservice state updates every minute
     this.pollDataserviceStatus(60);
   }
@@ -86,7 +89,7 @@ export class DataserviceService extends ApiService {
    * Validates the specified data service name. If the name contains valid characters and the name is unique, the
    * service returns 'null'. Otherwise, a 'string' containing an error message is returned.
    *
-   * @param {string} dataserviceName
+   * @param {string} name the dataservice name
    * @returns {Observable<String>}
    */
   public isValidName( name: string ): Observable< string > {
@@ -370,6 +373,77 @@ export class DataserviceService extends ApiService {
     this.updatesSubscription = timer.subscribe((t: any) => {
       self.updateDataserviceStates();
     });
+  }
+
+  /**
+   * Get the wizard table selections
+   * @returns {Table[]} the selections
+   */
+  public getWizardSelectedTables( ): Table[] {
+    return this.wizardSelectedTablesArray;
+  }
+
+  /**
+   * Clears the list of wizard table selections
+   */
+  public clearWizardSelectedTables( ): void {
+    this.wizardSelectedTablesArray = [];
+  }
+
+  /**
+   * Determine if the supplied table is one of the current selections in the wizard
+   * @param {Table} table the table
+   */
+  public isWizardSelectedTable(table: Table): boolean {
+    return this.getWizardTableIndex(table) > -1;
+  }
+
+  /**
+   * Add a table to the current wizard selections
+   * @param {Table} tableToAdd table to add
+   */
+  public addToWizardSelectionTables(tableToAdd: Table): void {
+    if (!this.isWizardSelectedTable(tableToAdd)) {
+      this.wizardSelectedTablesArray.push(tableToAdd);
+    }
+  }
+
+  /**
+   * Remove a table from the current wizard selections
+   * @param {Table} tableToRemove
+   * @returns {boolean}
+   */
+  public removeFromWizardSelectionTables(tableToRemove: Table): boolean {
+    let wasRemoved = false;
+
+    const index = this.getWizardTableIndex(tableToRemove);
+    if (index > -1) {
+      this.wizardSelectedTablesArray.splice(index, 1);
+      wasRemoved = true;
+    }
+
+    return wasRemoved;
+  }
+
+  /**
+   * Find index of the table in the wizard selected tables list.  -1 if not found
+   * @param {Table} table
+   * @returns {number}
+   */
+  private getWizardTableIndex(table: Table): number {
+    // supplied table and connection
+    const connName = table.getConnection().getId();
+    const tableName = table.getName();
+    let i = 0;
+    for (const wizTable of this.wizardSelectedTablesArray) {
+      const wizTableName = wizTable.getName();
+      const wizConnName = wizTable.getConnection().getId();
+      if (wizTableName === tableName && wizConnName === connName) {
+        return i;
+      }
+      i++;
+    }
+    return -1;
   }
 
   /*

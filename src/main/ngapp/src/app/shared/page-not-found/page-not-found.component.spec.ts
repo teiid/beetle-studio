@@ -21,6 +21,7 @@ describe("PageNotFoundComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [PageNotFoundComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

@@ -34,6 +34,7 @@ describe("AddConnectionComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [AddConnectionComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

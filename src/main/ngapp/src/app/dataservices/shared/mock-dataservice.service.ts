@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, Response } from "@angular/http";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
@@ -29,6 +29,7 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
+import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 
 @Injectable()
 export class MockDataserviceService extends DataserviceService {
@@ -102,6 +103,22 @@ export class MockDataserviceService extends DataserviceService {
    */
   public pollDataserviceStatus(pollIntervalSec: number): void {
     // Nothing to do
+  }
+
+  /**
+   * Query a Dataservice via the komodo rest interface
+   * @param {string} query the SQL query
+   * @param {string} dataserviceName the dataservice name
+   * @param {number} limit the limit for the number of result rows
+   * @param {number} offset the offset for the result rows
+   * @returns {Observable<boolean>}
+   */
+  public queryDataservice(query: string, dataserviceName: string, limit: number, offset: number): Observable<any> {
+    return Observable.of<any>();
+  }
+
+  protected handleError(error: Response): ErrorObservable {
+    return Observable.throw(error);
   }
 
 }

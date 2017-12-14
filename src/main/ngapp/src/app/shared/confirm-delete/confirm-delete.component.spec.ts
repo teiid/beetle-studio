@@ -23,6 +23,7 @@ describe("ConfirmDeleteComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [ConfirmDeleteComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

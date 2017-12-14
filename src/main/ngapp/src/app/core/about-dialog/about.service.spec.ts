@@ -15,6 +15,7 @@ describe("AboutService", () => {
   it("should be created",
       inject([ AboutService, AppSettingsService, LoggerService ],
      ( service: AboutService ) => {
-    expect( service ).toBeTruthy();
+        console.log("========== [AboutServiceComponent] should be created");
+        expect( service ).toBeTruthy();
   }));
 });

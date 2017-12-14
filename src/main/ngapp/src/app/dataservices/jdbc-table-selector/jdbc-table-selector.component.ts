@@ -16,15 +16,16 @@
  */
 
 import { Component, OnInit } from "@angular/core";
+import { Input } from "@angular/core";
 import { EventEmitter } from "@angular/core";
 import { Output } from "@angular/core";
-import { Input } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { LoggerService } from "@core/logger.service";
 import { CatalogSchema } from "@dataservices/shared/catalog-schema.model";
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { TableSelector } from "@dataservices/shared/table-selector";
 import { Table } from "@dataservices/shared/table.model";
 import { LoadingState } from "@shared/loading-state.enum";
@@ -38,18 +39,21 @@ import { LoadingState } from "@shared/loading-state.enum";
 export class JdbcTableSelectorComponent implements OnInit, TableSelector {
 
   @Input() public connection: Connection;
-  @Output() public tableSelectionChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public tableSelectionAdded: EventEmitter<Table> = new EventEmitter<Table>();
+  @Output() public tableSelectionRemoved: EventEmitter<Table> = new EventEmitter<Table>();
 
   private connectionService: ConnectionService;
+  private dataserviceService: DataserviceService;
   private logger: LoggerService;
   private schemas: CatalogSchema[] = [];
   private tables: Table[] = [];
-  private selectedSchemas: CatalogSchema[] = [];
+  private currentSchema: CatalogSchema = null;
   private schemaLoadingState: LoadingState = LoadingState.LOADING;
   private tableLoadingState: LoadingState = LoadingState.LOADING;
 
-  constructor( connectionService: ConnectionService, logger: LoggerService ) {
+  constructor( connectionService: ConnectionService, dataserviceService: DataserviceService, logger: LoggerService ) {
     this.connectionService = connectionService;
+    this.dataserviceService = dataserviceService;
     this.logger = logger;
   }
 
@@ -63,10 +67,11 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
    * @param {Connection} conn the jdbc connection
    */
   public setConnection(conn: Connection): void {
+    this.clearSchemas();
+    this.clearTables();
     if (conn && conn.isJdbc()) {
       this.connection = conn;
       // Load the schema info for a connection
-      this.schemas = [];
       this.schemaLoadingState = LoadingState.LOADING;
       const self = this;
       this.connectionService
@@ -82,9 +87,18 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
           }
         );
     } else {
-      this.schemas = [];
       this.schemaLoadingState = LoadingState.LOADING;
     }
+  }
+
+  public clearSchemas(): void {
+    this.schemas = [];
+    this.currentSchema = null;
+  }
+
+  public clearTables(): void {
+    this.tables = [];
+    this.tableLoadingState = LoadingState.LOADING;
   }
 
   /*
@@ -93,14 +107,11 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
    */
   public toggleSchemaSelected(schema: CatalogSchema): void {
     if (this.isSchemaSelected(schema)) {
-      this.selectedSchemas.shift();
+      this.currentSchema = null;
       // Deselection of schema clears tables
       this.tables = [];
-      this.selectedTablesChanged();
     } else {
-      // Only allow one item to be selected
-      this.selectedSchemas.shift();
-      this.selectedSchemas.push(schema);
+      this.currentSchema = schema;
       const filterInfo = new JdbcTableFilter();
       filterInfo.setConnectionName(this.connection.getId());
       filterInfo.setCatalogFilter(schema.getCatalogName());
@@ -115,7 +126,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
    * @param {CatalogSchema} schema the CatalogSchema to check
    */
   public isSchemaSelected(schema: CatalogSchema): boolean {
-    return this.selectedSchemas.indexOf(schema) !== -1;
+    return schema === this.currentSchema;
   }
 
   /*
@@ -123,7 +134,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
    * @returns {CatalogSchema} the selected schema
    */
   public get selectedSchema( ): CatalogSchema {
-    return this.selectedSchemas[0];
+    return this.currentSchema;
   }
 
   /*
@@ -131,7 +142,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
    * @returns {CatalogSchema} the selected schema
    */
   public get hasSelectedSchema( ): boolean {
-    return this.selectedSchemas.length > 0;
+    return this.currentSchema != null;
   }
 
   /**
@@ -231,8 +242,12 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   /*
    * Handler for changes in table selection
    */
-  public selectedTablesChanged( ): void {
-    this.tableSelectionChanged.emit();
+  public selectedTablesChanged(table: Table): void {
+    if (table.selected) {
+      this.tableSelectionAdded.emit(table);
+    } else {
+      this.tableSelectionRemoved.emit(table);
+    }
   }
 
   /*
@@ -290,6 +305,8 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
             table.setSchemaName(self.selectedSchema.getName());
             self.tables.push(table);
           }
+          // select any of the tables that are already selected
+          self.setInitialTableSelections();
           self.tableLoadingState = LoadingState.LOADED_VALID;
         },
         (error) => {
@@ -297,6 +314,25 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
           self.tableLoadingState = LoadingState.LOADED_INVALID;
         }
       );
+  }
+
+  private setInitialTableSelections(): void {
+    for ( const table of this.tables ) {
+      // const catName = table.getCatalogName();
+      const schemaName = table.getSchemaName();
+      const tableName = table.getName();
+      const connName = table.getConnection().getId();
+      for ( const initialTable of this.dataserviceService.getWizardSelectedTables() ) {
+        // const iCatName = initialTable.getCatalogName();
+        const iSchemaName = initialTable.getSchemaName();
+        const iTableName = initialTable.getName();
+        const iConnName = initialTable.getConnection().getId();
+        if (iConnName === connName && iTableName === tableName && iSchemaName === schemaName ) {
+          table.selected = true;
+          break;
+        }
+      }
+    }
   }
 
 }

@@ -41,6 +41,7 @@ describe("SqlControlComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [SqlControlComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

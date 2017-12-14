@@ -37,6 +37,7 @@ describe("AddActivityWizardComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [AddActivityWizardComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

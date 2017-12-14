@@ -25,6 +25,7 @@ describe("AddActivityFormComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [AddActivityFormComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

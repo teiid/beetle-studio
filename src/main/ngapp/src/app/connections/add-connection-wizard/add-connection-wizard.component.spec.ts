@@ -34,6 +34,7 @@ describe("AddConnectionWizardComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [AddConnectionWizardComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

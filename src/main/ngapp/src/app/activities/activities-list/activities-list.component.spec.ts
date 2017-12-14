@@ -23,6 +23,7 @@ describe("ActivitiesListComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [ActivitiesListComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

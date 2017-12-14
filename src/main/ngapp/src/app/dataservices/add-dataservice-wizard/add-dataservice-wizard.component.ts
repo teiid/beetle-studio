@@ -31,6 +31,7 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { Table } from "@dataservices/shared/table.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
@@ -368,18 +369,13 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   /**
    * @returns {string} the selected source table names in string form
    */
-  public get dataserviceSourceTables(): string {
-    let tableStr = "None";
-    const tables = this.tableSelector.getSelectedTables();
-    if (tables.length > 0) {
-      tableStr = tables[0].getConnection().getId() + " [" + tables[0].getName() + "]";
-    }
-    if (tables.length === 2) {
-      tableStr = tableStr + ", " + tables[1].getConnection().getId() + " [" + tables[1].getName() + "]";
-    }
-    return tableStr;
+  public get dataserviceSourceTables(): Table[] {
+    return this.tableSelector.getSelectedTables();
   }
 
+  /**
+   * Updates the page1 status
+   */
   public updatePage1ValidStatus( ): void {
     this.step1Config.nextEnabled = this.tableSelector.valid();
     this.setNavAway(this.step1Config.nextEnabled);

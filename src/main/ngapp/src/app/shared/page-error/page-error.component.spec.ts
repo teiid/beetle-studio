@@ -24,6 +24,7 @@ describe("PageErrorComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [PageErrorComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

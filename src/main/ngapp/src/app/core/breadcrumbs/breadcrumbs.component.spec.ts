@@ -21,6 +21,7 @@ describe("BreadcrumbsComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [BreadcrumbsComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

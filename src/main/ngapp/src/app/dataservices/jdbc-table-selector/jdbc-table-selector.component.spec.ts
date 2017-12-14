@@ -7,6 +7,11 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { SelectedTableComponent } from "@dataservices/selected-table/selected-table.component";
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { JdbcTableSelectorComponent } from "./jdbc-table-selector.component";
 
 describe("JdbcTableSelectorComponent", () => {
@@ -18,8 +23,10 @@ describe("JdbcTableSelectorComponent", () => {
       imports: [ FormsModule, HttpModule ],
       declarations: [ JdbcTableSelectorComponent, SelectedTableComponent ],
       providers: [
-        AppSettingsService, LoggerService,
+        AppSettingsService, LoggerService, NotifierService,
         { provide: ConnectionService, useClass: MockConnectionService },
+        { provide: DataserviceService, useClass: MockDataserviceService },
+        { provide: VdbService, useClass: MockVdbService },
       ]
     })
       .compileComponents().then(() => {
@@ -34,6 +41,7 @@ describe("JdbcTableSelectorComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [JdbcTableSelectorComponent] should be created");
     expect(component).toBeTruthy();
   });
 });
