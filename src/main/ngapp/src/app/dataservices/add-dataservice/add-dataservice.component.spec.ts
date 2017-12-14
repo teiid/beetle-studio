@@ -14,6 +14,7 @@ import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.se
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { WizardService } from "@dataservices/shared/wizard.service";
 import { SharedModule } from "@shared/shared.module";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -29,7 +30,7 @@ describe("AddDataserviceComponent", () => {
       declarations: [ AddDataserviceComponent, AddDataserviceWizardComponent,
                       ConnectionTableSelectorComponent, JdbcTableSelectorComponent, SelectedTableComponent ],
       providers: [
-        NotifierService,
+        NotifierService, WizardService,
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: ConnectionService, useClass: MockConnectionService },
         { provide: VdbService, useClass: MockVdbService }

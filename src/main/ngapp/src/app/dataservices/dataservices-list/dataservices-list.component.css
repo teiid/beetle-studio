@@ -9,6 +9,12 @@
   cursor: pointer;
 }
 
+.dataservice-list-quicklook-disabled-icon {
+  margin-left: 20px;
+  font-size: 1.3em;
+  color: lightgray;
+}
+
 .list-view-pf-main-info {
   padding-bottom: 5px;
   padding-top: 5px;

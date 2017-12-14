@@ -20,8 +20,8 @@ import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { LoggerService } from "@core/logger.service";
 import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jdbc-table-selector.component";
-import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { Table } from "@dataservices/shared/table.model";
+import { WizardService } from "@dataservices/shared/wizard.service";
 import { LoadingState } from "@shared/loading-state.enum";
 
 @Component({
@@ -48,16 +48,16 @@ export class ConnectionTableSelectorComponent implements OnInit {
   };
 
   private connectionService: ConnectionService;
-  private dataserviceService: DataserviceService;
+  private wizardService: WizardService;
   private allConnections: Connection[] = [];
   private selectedConn: Connection;
   private connectionLoadingState: LoadingState = LoadingState.LOADING;
   private logger: LoggerService;
 
-  constructor( connectionService: ConnectionService, dataserviceService: DataserviceService,
+  constructor( connectionService: ConnectionService, wizardService: WizardService,
                logger: LoggerService ) {
     this.connectionService = connectionService;
-    this.dataserviceService = dataserviceService;
+    this.wizardService = wizardService;
     this.logger = logger;
   }
 
@@ -66,7 +66,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
    */
   public ngOnInit(): void {
     // clears table selections
-    this.dataserviceService.clearWizardSelectedTables();
+    this.wizardService.clearWizardSelectedTables();
 
     // Load the connections
     this.connectionLoadingState = LoadingState.LOADING;
@@ -202,7 +202,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
    * @param {Table} addedTable the table to add to the accumulator list
    */
   public onTableSelectionAdded(addedTable: Table): void {
-    this.dataserviceService.addToWizardSelectionTables(addedTable);
+    this.wizardService.addToWizardSelectionTables(addedTable);
     this.selectedTableListUpdated.emit();
   }
 
@@ -212,7 +212,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
    * @param {Table} removedTable the table to remove from the accumulator list
    */
   public onTableSelectionRemoved(removedTable: Table): void {
-    const wasRemoved = this.dataserviceService.removeFromWizardSelectionTables(removedTable);
+    const wasRemoved = this.wizardService.removeFromWizardSelectionTables(removedTable);
     if (wasRemoved) {
       this.selectedTableListUpdated.emit();
     }
@@ -231,7 +231,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
    * @returns {Table[]} the list of selected Tables
    */
   public getSelectedTables(): Table[] {
-    return this.dataserviceService.getWizardSelectedTables();
+    return this.wizardService.getWizardSelectedTables();
   }
 
   // used by table

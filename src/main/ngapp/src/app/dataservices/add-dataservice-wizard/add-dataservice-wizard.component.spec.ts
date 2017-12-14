@@ -13,6 +13,7 @@ import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.se
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { WizardService } from "@dataservices/shared/wizard.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
@@ -29,7 +30,7 @@ describe("AddDataserviceWizardComponent", () => {
       declarations: [ AddDataserviceWizardComponent, ConnectionTableSelectorComponent, JdbcTableSelectorComponent,
                       PropertyFormComponent, PropertyFormPropertyComponent, SelectedTableComponent ],
       providers: [
-        NotifierService,
+        NotifierService, WizardService,
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: ConnectionService, useClass: MockConnectionService },
         { provide: VdbService, useClass: MockVdbService },
