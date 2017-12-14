@@ -10,7 +10,6 @@
   <div class="col-sm-3" *ngIf="connectionsLoadedValid">
     <ngx-datatable [rows]="rows"
                    [columns]="columns"
-                   [loadingIndicator]="connectionsLoading"
                    [messages]="tableMessages"
                    [footerHeight]="24"
                    [scrollbarV]="true"
@@ -20,10 +19,7 @@
                    [selectionType]="'single'"
                    (select)="onSelect($event)"
                    [cssClasses]="customClasses">
-      <ngx-datatable-column [prop]="name" [sortable]="true" [resizeable]="false">
-        <ng-template let-column="column" ngx-datatable-header-template>
-          Connections
-        </ng-template>
+      <ngx-datatable-column name="Connections" [prop]="'name'" [sortable]="true" [resizeable]="false">
         <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
           <i class="fa fa-plug list-view-pf-icon-sm"></i>
           {{ row.name }}
