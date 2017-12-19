@@ -37,7 +37,7 @@
           <label class="col-sm-2 control-label">Selected Tables:</label>
           <div class="col-sm-5">
             <div *ngFor="let table of dataserviceSourceTables">
-              <label>[ {{ table.getConnection().getId() }} ]  {{table.getName()}}</label>
+              <label>[ {{ table.getConnection().getId() }} ] {{ table.getName() }}</label>
             </div>
           </div>
         </div>
@@ -49,22 +49,22 @@
         <!-- In progress -->
         <div class="wizard-pf-process blank-slate-pf" *ngIf="!createComplete">
           <div class="spinner spinner-lg blank-slate-pf-icon"></div>
-          <h3 class="blank-slate-pf-main-action">Creation in progress</h3>
-          <p class="blank-slate-pf-secondary-action">The dataservice is being created. </p>
+          <h3 class="blank-slate-pf-main-action">{{ finalPageTitle }}</h3>
+          <p class="blank-slate-pf-secondary-action">{{ finalPageMessage }}</p>
         </div>
         <!-- Create Successful -->
         <div class="wizard-pf-complete blank-slate-pf" *ngIf="createComplete && createSuccessful">
           <div class="wizard-pf-success-icon"><span class="glyphicon glyphicon-ok-circle"></span></div>
-          <h3 class="blank-slate-pf-main-action">Creation was successful</h3>
-          <p class="blank-slate-pf-secondary-action">The dataservice was created successfully. Click on the button to see all dataservices.</p>
+          <h3 class="blank-slate-pf-main-action">{{ finalPageTitle }}</h3>
+          <p class="blank-slate-pf-secondary-action">{{ finalPageMessage }}</p>
           <button class="btn btn-lg btn-primary" type="button" (click)="onDeployDataservice()">View All Dataservices</button>
         </div>
         <!-- Create Failed -->
         <div class="wizard-pf-complete blank-slate-pf" *ngIf="createComplete && !createSuccessful">
           <div class="wizard-pf-failed-icon"><span class="glyphicon glyphicon-remove-circle"></span></div>
-          <h3 class="blank-slate-pf-main-action">Creation failed</h3>
+          <h3 class="blank-slate-pf-main-action">{{ finalPageTitle }}</h3>
           <div class="blank-slate-pf-secondary-action">
-            The dataservice creation failed!
+            {{ finalPageMessage }}
             <br>
             <div style="font-style: italic;">{{ errorDetails }}</div>
           </div>

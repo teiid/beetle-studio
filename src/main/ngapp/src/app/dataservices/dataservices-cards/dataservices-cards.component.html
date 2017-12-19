@@ -16,6 +16,8 @@
             <span><a [routerLink]="[dataservice.getId()]">{{ dataservice.getId() }}</a></span>
             <span *ngIf="!dataservice.serviceDeploymentLoading" class="pull-right pficon-delete dataservice-card-action-icon" style="color:darkred;" (click)="onDeleteDataservice(dataservice.getId())"></span>
             <span *ngIf="dataservice.serviceDeploymentLoading" class="pull-right pficon-delete dataservice-card-action-disabled-icon"></span>
+            <span *ngIf="!dataservice.serviceDeploymentLoading" class="pull-right fa fa-edit dataservice-card-action-icon" (click)="onEditDataservice(dataservice.getId())"></span>
+            <span *ngIf="dataservice.serviceDeploymentLoading" class="pull-right fa fa-edit dataservice-card-action-disabled-icon"></span>
             <span *ngIf="!dataservice.serviceDeploymentLoading" class="pull-right pficon-export dataservice-card-action-icon" (click)="onPublishDataservice(dataservice.getId())"></span>
             <span *ngIf="dataservice.serviceDeploymentLoading" class="pull-right pficon-export dataservice-card-action-disabled-icon"></span>
             <span *ngIf="dataservice.serviceDeploymentActive" class="pull-right fa fa-list-alt dataservice-card-action-icon" (click)="onTestDataservice(dataservice.getId())"></span>

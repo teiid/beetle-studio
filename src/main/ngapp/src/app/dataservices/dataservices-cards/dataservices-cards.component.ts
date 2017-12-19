@@ -35,6 +35,7 @@ export class DataservicesCardsComponent {
   @Output() public testDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public publishDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public deleteDataservice: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public editDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
 
   /**
@@ -70,6 +71,10 @@ export class DataservicesCardsComponent {
 
   public onDeleteDataservice(dataserviceName: string): void {
     this.deleteDataservice.emit(dataserviceName);
+  }
+
+  public onEditDataservice(dataserviceName: string): void {
+    this.editDataservice.emit(dataserviceName);
   }
 
   public onQuickLookDataservice(dataserviceName: string): void {

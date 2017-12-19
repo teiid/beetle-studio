@@ -28,7 +28,7 @@
             </button>
           </div>
           <div class="form-group">
-            <a i18n="@@dataservices.addDataservice" class="btn btn-primary" [routerLink]="[addDataserviceLink]">Add Dataservice</a>
+            <a i18n="@@dataservices.addDataservice" class="btn btn-primary" (click)="onNew()">Add Dataservice</a>
           </div>
           <div class="form-group toolbar-pf-view-selector">
             <ul class="list-inline">
@@ -60,7 +60,7 @@
           </p>
           <div class="blank-slate-pf-main-action">
             <div class="btn-group">
-              <a i18n="@@dataservices.addDataservice" class="btn btn-primary btn-lg" [routerLink]="[ addDataserviceLink ]">Add Dataservice</a>
+              <a i18n="@@dataservices.addDataservice" class="btn btn-primary btn-lg" (click)="onNew()">Add Dataservice</a>
             </div>
           </div>
         </div>
@@ -101,12 +101,12 @@
           <app-dataservices-list *ngIf="isListLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
                                  (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
                                  (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
-                                 (quickLookDataservice)="onQuickLook($event)"
+                                 (editDataservice)="onEdit($event)" (quickLookDataservice)="onQuickLook($event)"
                                  (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-list>
           <app-dataservices-cards *ngIf="isCardLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
                                   (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
                                   (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
-                                  (quickLookDataservice)="onQuickLook($event)"
+                                  (editDataservice)="onEdit($event)" (quickLookDataservice)="onQuickLook($event)"
                                   (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-cards>
         </div>
       </div>

@@ -35,6 +35,7 @@ import { Table } from "@dataservices/shared/table.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { WizardService } from "@dataservices/shared/wizard.service";
 import { LoadingState } from "@shared/loading-state.enum";
 import { WizardComponent } from "patternfly-ng";
 import { WizardEvent } from "patternfly-ng";
@@ -75,17 +76,21 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   private dataserviceService: DataserviceService;
   private notifierService: NotifierService;
   private vdbService: VdbService;
+  private wizardService: WizardService;
   private logger: LoggerService;
   private router: Router;
   private deploymentChangeSubscription: Subscription;
   private sourceVdbUnderDeployment: string;
   private errorDetailMessage: string;
+  private theFinalPageTitle = "";
+  private theFinalPageMessage = "";
 
-  constructor(router: Router, dataserviceService: DataserviceService,
+  constructor(router: Router, dataserviceService: DataserviceService, wizardService: WizardService,
               notifierService: NotifierService, logger: LoggerService, vdbService: VdbService ) {
     this.dataserviceService = dataserviceService;
     this.notifierService = notifierService;
     this.vdbService = vdbService;
+    this.wizardService = wizardService;
     this.router = router;
     this.logger = logger;
 
@@ -113,7 +118,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     this.step2Config = {
       id: "step2",
       priority: 0,
-      title: "Review and Create",
+      title: this.step2Title,
       allowClickNav: false
     } as WizardStepConfig;
     this.step2aConfig = {
@@ -125,20 +130,32 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     this.step2bConfig = {
       id: "step2b",
       priority: 1,
-      title: "Create",
+      title: this.step2bTitle,
       allowClickNav: false
     } as WizardStepConfig;
 
     // Wizard Configuration
     this.wizardConfig = {
       embedInPage: true,
-      loadingTitle: "Add Dataservice Wizard loading",
+      loadingTitle: "Dataservice Wizard loading",
       loadingSecondaryInfo: "Please wait for the wizard to finish loading...",
-      title: "Add Dataservice",
+      title: "Dataservice Wizard",
       contentHeight: "500px",
       done: false
     } as WizardConfig;
 
+    if (this.wizardService.isEdit()) {
+      const selectedService = this.dataserviceService.getSelectedDataservice();
+      const dsName = selectedService.getId();
+      const dsDescr = selectedService.getDescription();
+      this.basicPropertyForm.controls["name"].setValue(dsName);
+      this.basicPropertyForm.controls["description"].setValue(dsDescr);
+      this.basicPropertyForm.get("name").disable();
+      this.basicPropertyForm.get("description").disable();
+    } else {
+      this.basicPropertyForm.controls["name"].setValue(null);
+      this.basicPropertyForm.controls["description"].setValue(null);
+    }
     this.tableSelectorLoadingState = LoadingState.LOADING;
     this.setNavAway(false);
   }
@@ -150,6 +167,13 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   // ----------------
   // Public Methods
   // ----------------
+
+  /**
+   * Determine if Dataservice is being edited.
+   */
+  public get isEdit( ): boolean {
+    return this.wizardService.isEdit();
+  }
 
   /**
    * Determine if table selector is loading
@@ -185,6 +209,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
       } else { // name is valid
         self.nameValidationError = "";
       }
+      self.updatePage2aValidStatus();
     },
   ( error ) => {
       self.logger.error( "[handleNameChanged] Error: %o", error );
@@ -196,6 +221,22 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    */
   public get nameValid(): boolean {
     return this.nameValidationError == null || this.nameValidationError.length === 0;
+  }
+
+  /**
+   * Gets the Title to be displayed on the final wizard page
+   * @returns {string}
+   */
+  public get finalPageTitle(): string {
+    return this.theFinalPageTitle;
+  }
+
+  /**
+   * Gets the message to be displayed on the final wizard page
+   * @returns {string}
+   */
+  public get finalPageMessage(): string {
+    return this.theFinalPageMessage;
   }
 
   /*
@@ -210,9 +251,12 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   }
 
   /*
-   * Step 3 instruction message
+   * Step 2 instruction message
    */
   public get step2InstructionMessage(): string {
+    if (this.wizardService.isEdit()) {
+      return "Review selections.  Click Update to update the Dataservice";
+    }
     return "Review selections and enter a name.  Click Create to create the Dataservice";
   }
 
@@ -249,13 +293,10 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    * using the currently entered properties
    */
   public createDataservice(): void {
-    this.createComplete = false;
-    this.createSuccessful = false;
+    // Sets page in progress status
+    this.setFinalPageInProgress();
 
     const sourceVdbName = this.tableSelector.getSelectedTables()[0].getConnection().getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
-
-    this.step2bConfig.nextEnabled = false;
-    this.step2bConfig.previousEnabled = false;
     this.sourceVdbUnderDeployment = sourceVdbName;
 
     const self = this;
@@ -267,20 +308,14 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
           if (wasSuccess) {
             self.vdbService.pollForActiveVdb(sourceVdbName, 30, 5);
           } else {
-            self.createComplete = true;
-            self.createSuccessful = false;
-            self.step2bConfig.nextEnabled = false;
-            self.step2bConfig.previousEnabled = true;
+            self.setFinalPageComplete(false);
             self.sourceVdbUnderDeployment = null;
           }
         },
         (error) => {
           self.logger.error("[AddDataserviceWizardComponent] Error: %o", error);
           self.setErrorDetails(error);
-          self.createComplete = true;
-          self.createSuccessful = false;
-          self.step2bConfig.nextEnabled = false;
-          self.step2bConfig.previousEnabled = true;
+          self.setFinalPageComplete(false);
           self.sourceVdbUnderDeployment = null;
         }
       );
@@ -326,12 +361,13 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
       const selectedVdbName = selectedConnectionName + VdbsConstants.SOURCE_VDB_SUFFIX;
       if (selectedVdbName === status.getName()) {
         if (status.isActive()) {
-          this.createDataserviceForSingleTable();
+          if (this.wizardService.isEdit()) {
+            this.updateDataserviceForSingleTable();
+          } else {
+            this.createDataserviceForSingleTable();
+          }
         } else if (status.isFailed()) {
-          this.createComplete = true;
-          this.createSuccessful = false;
-          this.step2bConfig.nextEnabled = false;
-          this.step2bConfig.previousEnabled = true;
+          this.setFinalPageComplete(false);
         }
       }
     }
@@ -343,7 +379,11 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
       this.wizardConfig.nextTitle = "Next >";
     } else if ($event.step.config.id === "step2a") {
       this.updatePage2aValidStatus();
-      this.wizardConfig.nextTitle = "Create";
+      if (this.wizardService.isEdit()) {
+        this.wizardConfig.nextTitle = "Update";
+      } else {
+        this.wizardConfig.nextTitle = "Create";
+      }
     } else if ($event.step.config.id === "step2b") {
       // Note: The next button is not disabled by default when wizard is done
       this.step2Config.nextEnabled = false;
@@ -396,14 +436,21 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    * Create the BasicProperty form (page 1)
    */
   private createBasicPropertyForm(): void {
-    this.basicPropertyForm = new FormGroup({
-      name: new FormControl( "", this.handleNameChanged.bind( this ) ),
-      description: new FormControl("")
-    });
-    // Responds to basic property changes - updates the page status
-    this.basicPropertyForm.valueChanges.subscribe((val) => {
-      this.updatePage2aValidStatus( );
-    });
+    if (!this.wizardService.isEdit()) {
+      this.basicPropertyForm = new FormGroup({
+        name: new FormControl( "", this.handleNameChanged.bind( this ) ),
+        description: new FormControl("")
+      });
+      // Responds to basic property changes - updates the page status
+      this.basicPropertyForm.valueChanges.subscribe((val) => {
+        this.updatePage2aValidStatus( );
+      });
+    } else {
+      this.basicPropertyForm = new FormGroup({
+        name: new FormControl( "" ),
+        description: new FormControl("")
+      });
+    }
   }
 
   private setNavAway(allow: boolean): void {
@@ -411,7 +458,14 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   }
 
   private updatePage2aValidStatus( ): void {
-    this.step2aConfig.nextEnabled = this.basicPropertyForm.valid;
+    if (!this.step2aConfig) {
+      return;
+    }
+    if (this.wizardService.isEdit()) {
+      this.step2aConfig.nextEnabled = true;
+    } else {
+      this.step2aConfig.nextEnabled = this.nameValid;
+    }
     this.setNavAway(this.step2aConfig.nextEnabled);
   }
 
@@ -431,28 +485,109 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
       .createDataserviceForSingleTable(dataservice, this.tableSelector.getSelectedTables()[0])
       .subscribe(
         (wasSuccess) => {
-          // Deployment succeeded - wait for source vdb to become active
-          if (wasSuccess) {
-            self.createComplete = true;
-            self.createSuccessful = true;
-            self.step2bConfig.nextEnabled = false;
-            this.step2bConfig.previousEnabled = true;
-          } else {
-            self.createComplete = true;
-            self.createSuccessful = false;
-            self.step2bConfig.nextEnabled = false;
-            this.step2bConfig.previousEnabled = true;
-          }
+          self.setFinalPageComplete(wasSuccess);
         },
         (error) => {
           self.logger.error("[AddDataserviceWizardComponent] Error: %o", error);
           self.setErrorDetails(error);
-          self.createComplete = true;
-          self.createSuccessful = false;
-          self.step2bConfig.nextEnabled = false;
-          this.step2bConfig.previousEnabled = true;
+          self.setFinalPageComplete(false);
         }
       );
+  }
+
+  /**
+   * Update the selected Dataservice for the selected source table.  This is invoked
+   * only after the source VDB has successfully deployed.
+   */
+  private updateDataserviceForSingleTable(): void {
+    const dataservice: NewDataservice = new NewDataservice();
+
+    // Dataservice basic properties from step 1
+    dataservice.setId(this.dataserviceName);
+    dataservice.setDescription(this.dataserviceDescription);
+
+    const self = this;
+    this.dataserviceService
+      .updateDataserviceForSingleTable(dataservice, this.tableSelector.getSelectedTables()[0])
+      .subscribe(
+        (wasSuccess) => {
+          self.setFinalPageComplete(wasSuccess);
+        },
+        (error) => {
+          self.logger.error("[AddDataserviceWizardComponent] Error: %o", error);
+          self.setErrorDetails(error);
+          self.setFinalPageComplete(false);
+        }
+      );
+  }
+
+  /**
+   * Step 2 title - changes based on create or edit
+   * @returns {string} step 2 title
+   */
+  private get step2Title(): string {
+    if (this.wizardService.isEdit()) {
+      return "Review and Update";
+    } else {
+      return "Review and Create";
+    }
+  }
+
+  /**
+   * Step 2b title - changes based on create or edit
+   * @returns {string} step 2b title
+   */
+  private get step2bTitle(): string {
+    if (this.wizardService.isEdit()) {
+      return "Update";
+    } else {
+      return "Create";
+    }
+  }
+
+  /**
+   * Sets the final page in progress status
+   */
+  private setFinalPageInProgress(): void {
+    this.createComplete = false;
+    this.createSuccessful = false;
+    if (this.wizardService.isEdit()) {
+      this.theFinalPageTitle = "Update in progress";
+      this.theFinalPageMessage = "The dataservice is being updated.";
+    } else {
+      this.theFinalPageTitle = "Creation in progress";
+      this.theFinalPageMessage = "The dataservice is being created.";
+    }
+    this.step2bConfig.nextEnabled = false;
+    this.step2bConfig.previousEnabled = false;
+  }
+
+  /**
+   * Sets the final page completion status
+   * @param {boolean} wasSuccessful 'true' if the create or update was successful
+   */
+  private setFinalPageComplete(wasSuccessful: boolean): void {
+    this.createComplete = true;
+    this.createSuccessful = wasSuccessful;
+    this.step2bConfig.nextEnabled = false;
+    this.step2bConfig.previousEnabled = true;
+    if (wasSuccessful) {
+      if (this.wizardService.isEdit()) {
+        this.theFinalPageTitle = "Update was successful";
+        this.theFinalPageMessage = "The dataservice was updated successfully. Click on the button to see all dataservices.";
+      } else {
+        this.theFinalPageTitle = "Creation was successful";
+        this.theFinalPageMessage = "The dataservice was created successfully. Click on the button to see all dataservices.";
+      }
+    } else {
+      if (this.wizardService.isEdit()) {
+        this.theFinalPageTitle = "Update failed";
+        this.theFinalPageMessage = "The dataservice update failed!";
+      } else {
+        this.theFinalPageTitle = "Creation failed";
+        this.theFinalPageMessage = "The dataservice creation failed!";
+      }
+    }
   }
 
   /**

@@ -275,6 +275,18 @@ export class DataserviceService extends ApiService {
   }
 
   /**
+   * Updates a dataservice with single table source.  This is simply a create, with the added step of
+   * deleting the existing workspace dataservice first.
+   * @param {NewDataservice} dataservice
+   * @param {Table} sourceTable
+   * @returns {Observable<boolean>}
+   */
+  public updateDataserviceForSingleTable(dataservice: NewDataservice, sourceTable: Table): Observable<boolean> {
+    return this.deleteDataservice(dataservice.getId())
+      .flatMap((res) => this.createDataserviceForSingleTable(dataservice, sourceTable));
+  }
+
+  /**
    * Export a dataservice to a git repository
    * @param {string} dataserviceName the dataservice name
    * @returns {Observable<boolean>}

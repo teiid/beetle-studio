@@ -17,6 +17,7 @@
 
 import { Component, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { Connection } from "@connections/shared/connection.model";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { ArrayUtils } from "@core/utils/array-utils";
@@ -25,7 +26,10 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
@@ -43,7 +47,6 @@ import { Subscription } from "rxjs/Subscription";
 })
 export class DataservicesComponent extends AbstractPageComponent {
 
-  public readonly addDataserviceLink: string = DataservicesConstants.addDataservicePath;
   public readonly exportInProgressHeader: string = "Publishing:  ";
   public readonly exportSuccessHeader: string = "Publish Succeeded:  ";
   public readonly exportFailedHeader: string = "Publish Failed:  ";
@@ -69,12 +72,13 @@ export class DataservicesComponent extends AbstractPageComponent {
   private exportNotificationVisible = false;
   private dataserviceStateSubscription: Subscription;
   private notifierService: NotifierService;
+  private wizardService: WizardService;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
   @ViewChild(SqlControlComponent) private sqlControlComponent: SqlControlComponent;
 
   constructor(router: Router, route: ActivatedRoute, dataserviceService: DataserviceService,
-              logger: LoggerService, appSettingsService: AppSettingsService,
+              logger: LoggerService, appSettingsService: AppSettingsService, wizardService: WizardService,
               notifierService: NotifierService, vdbService: VdbService ) {
     super(route, logger);
     this.router = router;
@@ -82,6 +86,7 @@ export class DataservicesComponent extends AbstractPageComponent {
     this.dataserviceService = dataserviceService;
     this.vdbService = vdbService;
     this.notifierService = notifierService;
+    this.wizardService = wizardService;
     // Register for dataservice state changes
     this.dataserviceStateSubscription = this.notifierService.getDataserviceStateMap().subscribe((serviceStateMap) => {
       this.onDataserviceStateChanged(serviceStateMap);
@@ -267,11 +272,63 @@ export class DataservicesComponent extends AbstractPageComponent {
       );
   }
 
+  /**
+   * Handle Delete of the specified Dataservice
+   * @param {string} svcName
+   */
   public onDelete(svcName: string): void {
     this.setQuickLookPanelOpenState(false);
 
     this.dataserviceNameForDelete = svcName;
     this.confirmDeleteDialog.open();
+  }
+
+  /**
+   * Handle request for new Dataservice
+   */
+  public onNew(): void {
+    this.wizardService.setEdit(false);
+    this.wizardService.clearWizardSelectedTables();
+
+    const link: string[] = [ DataservicesConstants.addDataservicePath ];
+    this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
+  }
+
+  /**
+   * Handle Edit of the specified Dataservice
+   * @param {string} svcName
+   */
+  public onEdit(svcName: string): void {
+    const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
+    this.dataserviceService.setSelectedDataservice(selectedService);
+
+    this.setQuickLookPanelOpenState(false);
+
+    // Initialize the selected tables in the wizard service
+    this.wizardService.clearWizardSelectedTables();
+    const srcTables: string[] = selectedService.getServiceViewTables();
+    const selectedTables: Table[] = [];
+    for ( const tableStr of srcTables ) {
+      const subParts = tableStr.split(".");
+      const connectionName = subParts[0].replace(VdbsConstants.SOURCE_VDB_SUFFIX, "");
+      const tableName = subParts[1];
+      const conn: Connection = new Connection();
+      conn.setId(connectionName);
+      const table: Table = new Table();
+      table.setName(tableName);
+      table.setConnection(conn);
+      this.wizardService.addToWizardSelectionTables(table);
+      this.wizardService.setEdit(true);
+    }
+
+    const link: string[] = [ DataservicesConstants.addDataservicePath ];
+    this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
   /*

@@ -1,8 +1,8 @@
 <div>
-  <div *ngIf="connectionsLoading">
+  <div class="col-sm-3" *ngIf="connectionsLoading">
     <span class="spinner spinner-sm spinner-inline"></span>
   </div>
-  <div class="alert-padding" *ngIf="connectionsLoadedInvalid">
+  <div class="col-sm-3 alert-padding" *ngIf="connectionsLoadedInvalid">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <strong>Problem Loading Connections!</strong>
