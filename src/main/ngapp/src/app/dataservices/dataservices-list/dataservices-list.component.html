@@ -43,6 +43,8 @@
                 (click)="onTestDataservice(dataservice.getId())" [disabled]="!dataservice.serviceDeploymentActive">Test</button>
         <button i18n="@@dataservicesList.publish" class="btn btn-default" type="button"
                 (click)="onPublishDataservice(dataservice.getId())" [disabled]="dataservice.serviceDeploymentLoading">Publish</button>
+        <button i18n="@@dataservicesList.edit" class="btn btn-default" type="button"
+                (click)="onEditDataservice(dataservice.getId())" [disabled]="dataservice.serviceDeploymentLoading">Edit</button>
         <button i18n="@@dataservicesList.delete" class="btn btn-danger" type="button"
                 (click)="onDeleteDataservice(dataservice.getId())" [disabled]="dataservice.serviceDeploymentLoading">Delete</button>
       </div>

@@ -23,22 +23,28 @@ import { Table } from "@dataservices/shared/table.model";
  */
 export interface TableSelector {
 
-  /*
+  /**
    * Set the connection for this jdbc table selector
    * @param {Connection} conn the jdbc connection
    */
   setConnection(conn: Connection): void;
 
-  /*
+  /**
    * Determine if any tables are currently selected
    * @returns {boolean} true if one or more tables are selected
    */
   hasSelectedTables( ): boolean;
 
-  /*
+  /**
    * Get the array of currently selected Tables
    * @returns {Table[]} the array of selected Tables (never null, but may be empty)
    */
   getSelectedTables(): Table[];
+
+  /**
+   * Deselect the table if a table with the same name and connection is currently selected.
+   * @param {Table} table the table to deselect
+   */
+  deselectTable(table: Table): void;
 
 }

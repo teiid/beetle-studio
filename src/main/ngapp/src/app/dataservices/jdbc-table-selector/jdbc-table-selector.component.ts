@@ -250,6 +250,23 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     }
   }
 
+  /**
+   * Deselects the table if one with a matching name and connection is currently selected
+   * @param {Table} table
+   */
+  public deselectTable(table: Table): void {
+    const connName = table.getConnection().getId();
+    const tableName = table.getName();
+    for (const theTable of this.tables) {
+      const theConnName = theTable.getConnection().getId();
+      const theTableName = theTable.getName();
+      if (theConnName === connName && theTableName === tableName) {
+        theTable.selected = false;
+        break;
+      }
+    }
+  }
+
   /*
    * Builds the array of CatalogSchema items from the SchemaInfo coming from
    * the Komodo rest call
@@ -319,15 +336,15 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   private setInitialTableSelections(): void {
     for ( const table of this.tables ) {
       // const catName = table.getCatalogName();
-      const schemaName = table.getSchemaName();
+      // const schemaName = table.getSchemaName();
       const tableName = table.getName();
       const connName = table.getConnection().getId();
       for ( const initialTable of this.wizardService.getWizardSelectedTables() ) {
         // const iCatName = initialTable.getCatalogName();
-        const iSchemaName = initialTable.getSchemaName();
+        // const iSchemaName = initialTable.getSchemaName();
         const iTableName = initialTable.getName();
         const iConnName = initialTable.getConnection().getId();
-        if (iConnName === connName && iTableName === tableName && iSchemaName === schemaName ) {
+        if (iConnName === connName && iTableName === tableName ) {
           table.selected = true;
           break;
         }

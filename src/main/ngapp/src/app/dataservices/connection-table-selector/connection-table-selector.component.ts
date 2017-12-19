@@ -65,9 +65,6 @@ export class ConnectionTableSelectorComponent implements OnInit {
    * Component initialization
    */
   public ngOnInit(): void {
-    // clears table selections
-    this.wizardService.clearWizardSelectedTables();
-
     // Load the connections
     this.connectionLoadingState = LoadingState.LOADING;
     const self = this;
@@ -215,6 +212,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
     const wasRemoved = this.wizardService.removeFromWizardSelectionTables(removedTable);
     if (wasRemoved) {
       this.selectedTableListUpdated.emit();
+      this.jdbcTableSelector.deselectTable(removedTable);
     }
   }
 

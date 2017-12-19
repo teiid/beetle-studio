@@ -5,11 +5,27 @@ import { Table } from "@dataservices/shared/table.model";
 export class WizardService {
 
   private wizardSelectedTablesArray: Table[] = [];
+  private edit = false;
 
   constructor() {
     // Nothing to do
   }
 
+  /**
+   * Sets edit mode
+   * @param {boolean} isEdit 'true' if editing, 'false' if not.
+   */
+  public setEdit(isEdit: boolean): void {
+    this.edit = isEdit;
+  }
+
+  /**
+   * Gets the edit mode
+   * @returns {boolean} 'true' if editing, 'false' if not.
+   */
+  public isEdit(): boolean {
+    return this.edit;
+  }
   /**
    * Get the wizard table selections
    * @returns {Table[]} the selections
