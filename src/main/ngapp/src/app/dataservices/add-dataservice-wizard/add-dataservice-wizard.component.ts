@@ -59,7 +59,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   public basicPropertyForm: FormGroup;
   public createComplete = true;
   public createSuccessful = false;
-  public tableSelectorLoadingState = LoadingState.LOADING;
 
   // Wizard Step 1
   public step1Config: WizardStepConfig;
@@ -151,12 +150,10 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
       this.basicPropertyForm.controls["name"].setValue(dsName);
       this.basicPropertyForm.controls["description"].setValue(dsDescr);
       this.basicPropertyForm.get("name").disable();
-      this.basicPropertyForm.get("description").disable();
     } else {
       this.basicPropertyForm.controls["name"].setValue(null);
       this.basicPropertyForm.controls["description"].setValue(null);
     }
-    this.tableSelectorLoadingState = LoadingState.LOADING;
     this.setNavAway(false);
   }
 
@@ -173,27 +170,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    */
   public get isEdit( ): boolean {
     return this.wizardService.isEdit();
-  }
-
-  /**
-   * Determine if table selector is loading
-   */
-  public get tableSelectorLoading( ): boolean {
-    return this.tableSelectorLoadingState === LoadingState.LOADING;
-  }
-
-  /**
-   * Determine if table selector is loaded and valid
-   */
-  public get tableSelectorLoadedValid( ): boolean {
-    return this.tableSelectorLoadingState === LoadingState.LOADED_VALID;
-  }
-
-  /**
-   * Determine if table selector is loaded and invalid
-   */
-  public get tableSelectorLoadedInvalid( ): boolean {
-    return this.tableSelectorLoadingState === LoadingState.LOADED_INVALID;
   }
 
   public handleNameChanged( input: AbstractControl ): void {
@@ -356,20 +332,14 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
       this.sourceVdbUnderDeployment = null;
     }
 
-    if (this.tableSelector && this.tableSelector.hasSelectedConnection()) {
-      const selectedConnectionName = this.tableSelector.selectedConnection.getId();
-      const selectedVdbName = selectedConnectionName + VdbsConstants.SOURCE_VDB_SUFFIX;
-      if (selectedVdbName === status.getName()) {
-        if (status.isActive()) {
-          if (this.wizardService.isEdit()) {
-            this.updateDataserviceForSingleTable();
-          } else {
-            this.createDataserviceForSingleTable();
-          }
-        } else if (status.isFailed()) {
-          this.setFinalPageComplete(false);
-        }
+    if (status.isActive()) {
+      if (this.wizardService.isEdit()) {
+        this.updateDataserviceForSingleTable();
+      } else {
+        this.createDataserviceForSingleTable();
       }
+    } else if (status.isFailed()) {
+      this.setFinalPageComplete(false);
     }
   }
 
@@ -598,7 +568,11 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     // Get the error from the response json
     this.errorDetailMessage = "";
     if (resp) {
-      this.errorDetailMessage = resp.json().error;
+      try {
+        this.errorDetailMessage = resp.json().error;
+      } catch {
+        this.errorDetailMessage = resp.text();
+      }
     }
     // Error visible if message has content
     if (this.errorDetailMessage.length === 0) {
