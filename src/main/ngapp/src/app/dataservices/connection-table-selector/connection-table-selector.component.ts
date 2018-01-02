@@ -21,6 +21,7 @@ import { ConnectionService } from "@connections/shared/connection.service";
 import { LoggerService } from "@core/logger.service";
 import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jdbc-table-selector.component";
 import { Table } from "@dataservices/shared/table.model";
+import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { LoadingState } from "@shared/loading-state.enum";
 
@@ -74,6 +75,9 @@ export class ConnectionTableSelectorComponent implements OnInit {
         (conns) => {
           self.allConnections = conns;
           self.connectionLoadingState = LoadingState.LOADED_VALID;
+          if (self.wizardService.isEdit()) {
+            self.initEdit();
+          }
 
           // load table after setting loading state so table has been constructed
           self.allConnections.forEach( ( connection ) => {
@@ -243,6 +247,35 @@ export class ConnectionTableSelectorComponent implements OnInit {
       // footer total message
       totalMessage: msg
     };
+  }
+
+  /**
+   * Initialization for edit mode
+   */
+  private initEdit(): void {
+    // Updates current connections on wizardService
+    this.wizardService.setCurrentConnections(this.allConnections);
+
+    // Initialize the selected tables in the wizard service
+    this.wizardService.clearWizardSelectedTables();
+    const srcTables: string[] = this.wizardService.getSelectedDataservice().getServiceViewTables();
+    const selectedTables: Table[] = [];
+    for ( const tableStr of srcTables ) {
+      const subParts = tableStr.split(".");
+      const connectionName = subParts[0].replace(VdbsConstants.SOURCE_VDB_SUFFIX, "");
+      const tableName = subParts[1];
+      let conn = this.wizardService.getCurrentConnection(connectionName);
+      if (!conn) {
+        conn = new Connection();
+        conn.setId(connectionName);
+      }
+      const table: Table = new Table();
+      table.setName(tableName);
+      table.setConnection(conn);
+      this.wizardService.addToWizardSelectionTables(table);
+    }
+    this.selectedTableListUpdated.emit();
+
   }
 
 }

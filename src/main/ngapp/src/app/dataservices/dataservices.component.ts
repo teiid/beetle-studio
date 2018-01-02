@@ -17,7 +17,6 @@
 
 import { Component, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Connection } from "@connections/shared/connection.model";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { ArrayUtils } from "@core/utils/array-utils";
@@ -26,9 +25,7 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NotifierService } from "@dataservices/shared/notifier.service";
-import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
@@ -307,22 +304,9 @@ export class DataservicesComponent extends AbstractPageComponent {
 
     this.setQuickLookPanelOpenState(false);
 
-    // Initialize the selected tables in the wizard service
-    this.wizardService.clearWizardSelectedTables();
-    const srcTables: string[] = selectedService.getServiceViewTables();
-    const selectedTables: Table[] = [];
-    for ( const tableStr of srcTables ) {
-      const subParts = tableStr.split(".");
-      const connectionName = subParts[0].replace(VdbsConstants.SOURCE_VDB_SUFFIX, "");
-      const tableName = subParts[1];
-      const conn: Connection = new Connection();
-      conn.setId(connectionName);
-      const table: Table = new Table();
-      table.setName(tableName);
-      table.setConnection(conn);
-      this.wizardService.addToWizardSelectionTables(table);
-      this.wizardService.setEdit(true);
-    }
+    // Sets the selected dataservice and edit mode before transferring
+    this.wizardService.setSelectedDataservice(selectedService);
+    this.wizardService.setEdit(true);
 
     const link: string[] = [ DataservicesConstants.addDataservicePath ];
     this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);

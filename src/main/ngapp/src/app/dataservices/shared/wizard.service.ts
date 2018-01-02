@@ -1,4 +1,6 @@
 import { Injectable } from "@angular/core";
+import { Connection } from "@connections/shared/connection.model";
+import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { Table } from "@dataservices/shared/table.model";
 
 @Injectable()
@@ -6,6 +8,8 @@ export class WizardService {
 
   private wizardSelectedTablesArray: Table[] = [];
   private edit = false;
+  private currentConnections: Connection[] = [];
+  private selectedDataservice: Dataservice;
 
   constructor() {
     // Nothing to do
@@ -26,6 +30,23 @@ export class WizardService {
   public isEdit(): boolean {
     return this.edit;
   }
+
+  /**
+   * Gets the selected dataservice
+   * @returns {Dataservice} the selected dataservice
+   */
+  public getSelectedDataservice(): Dataservice {
+    return this.selectedDataservice;
+  }
+
+  /**
+   * Sets the selected dataservice
+   * @param {Dataservice} dataservice the selected dataservice
+   */
+  public setSelectedDataservice(dataservice: Dataservice): void {
+    this.selectedDataservice = dataservice;
+  }
+
   /**
    * Get the wizard table selections
    * @returns {Table[]} the selections
@@ -74,6 +95,36 @@ export class WizardService {
     }
 
     return wasRemoved;
+  }
+
+  /**
+   * Set the current connections to the supplied array
+   * @param {Connection[]} conns the current array of Connections
+   */
+  public setCurrentConnections(conns: Connection[]): void {
+    this.currentConnections = conns;
+  }
+
+  /**
+   * Get the current connections array
+   * @returns {Connection[]} the current connections
+   */
+  public getCurrentConnections( ): Connection[] {
+    return this.currentConnections;
+  }
+
+  /**
+   * Get the current connection with the supplied name.  If not found, returns null.
+   * @returns {Connection} the current connection
+   */
+  public getCurrentConnection(connName: string): Connection {
+    // No connections, return null
+    if (!this.currentConnections || this.currentConnections.length === 0) {
+      return null;
+    }
+
+    // Returns the matching connection, if found.
+    return this.currentConnections.find((x) => x.getId() === connName);
   }
 
   /**
