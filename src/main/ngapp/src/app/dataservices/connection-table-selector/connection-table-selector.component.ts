@@ -38,16 +38,14 @@ export class ConnectionTableSelectorComponent implements OnInit {
 
   public readonly customClasses = {
     sortAscending: "fa fa-sort-asc",
-    sortDescending: "fa fa-sort-desc",
-    pagerLeftArrow: "fa fa-chevron-left",
-    pagerRightArrow: "fa fa-chevron-right",
-    pagerPrevious: "fa fa-step-backward",
-    pagerNext: "fa fa-step-forward"
+    sortDescending: "fa fa-sort-desc"
   };
 
   private connectionService: ConnectionService;
   private wizardService: WizardService;
   private allConnections: Connection[] = [];
+  private filteredConnections: Connection[] = [];
+  private connectionFilter = "";
   private selectedConn: Connection;
   private connectionLoadingState: LoadingState = LoadingState.LOADING;
   private logger: LoggerService;
@@ -71,6 +69,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
       .subscribe(
         (conns) => {
           self.allConnections = conns;
+          self.filteredConnections = conns;
           self.connectionLoadingState = LoadingState.LOADED_VALID;
           if (self.wizardService.isEdit()) {
             self.initEdit();
@@ -233,15 +232,51 @@ export class ConnectionTableSelectorComponent implements OnInit {
   }
 
   public get connectionsTableMessages(): { emptyMessage: string; totalMessage: string | string } {
-    const msg = this.allConnections.length === 1 ? "connection" : "connections";
+    const numAll = this.allConnections.length;
+    const numFiltered = this.filteredConnections.length;
+    let msg: string;
+
+    if ( numAll === numFiltered ) {
+      if ( this.connectionFilter.length === 0 ) {
+        msg = numAll === 1 ? "connection" : "connections";
+      } else {
+        msg = numAll === 1 ? "matched connection" : "matched connections";
+      }
+    } else {
+      msg = numFiltered === 1 ? "matched connection" : "matched connections";
+    }
 
     return {
-      // no data message
-      emptyMessage: "No connections found",
+      // message shows in an empty row in table
+      emptyMessage: "",
 
       // footer total message
       totalMessage: msg
     };
+  }
+
+  /**
+   * Callback when key is pressed in column filter.
+   */
+  public connectionFilterChanged( event: any ): void {
+    this.connectionFilter = event.target.value;
+
+    if ( this.connectionFilter.length !== 0 ) {
+      this.connectionFilter = "^" + this.connectionFilter.replace( "*", ".*" );
+    }
+
+    this.filteredConnections = this.allConnections.filter( ( connection ) => connection.getId().match( this.connectionFilter ) != null );
+  }
+
+  /**
+   * Called when the table is sorted.
+   * @param {string} thisName the connection name being sorted
+   * @param {string} thatName the connection name being compared to
+   * @returns {number} -1 if less than, 0 if equal, or 1 if greater than
+   */
+  public connectionComparator( thisName: string,
+                               thatName: string ): number {
+    return thisName.localeCompare( thatName );
   }
 
   /**
