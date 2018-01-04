@@ -1,13 +1,4 @@
 <!-- ------------- -->
-<!-- Column Titles -->
-<!-- ------------- -->
-<div class="col-sm-6 jdbc-column-title">
-  <strong>Schemas</strong>
-</div>
-<div class="col-sm-6 jdbc-column-title">
-  <strong>Tables</strong>
-</div>
-<!-- ------------- -->
 <!-- Schemas List  -->
 <!-- ------------- -->
 <div class="col-sm-6" *ngIf="schemasLoading">
@@ -26,22 +17,28 @@
   </div>
 </div>
 <div class="list-div col-sm-6 jdbc-column-results" *ngIf="schemasLoadedValidNotEmpty">
-  <div class="jdbc-list list-group list-view-pf">
-    <div class="list-group-item list-view-pf-stacked"
-         *ngFor="let schema of getSchemas(); index as i; odd as isEvenRow; even as isOddRow"
-         [class.oddRow]="isOddRow" [class.evenRow]="isEvenRow" [class.active]="isSchemaSelected(schema)"
-         (click)="toggleSchemaSelected(schema)">
-      <div class="list-view-pf-main-info">
-        <div class="list-view-pf-body">
-          <div class="list-view-pf-description">
-            <div class="list-group-item-heading">
-              {{ schema.getDisplayName() }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    <ngx-datatable [rows]="schemas"
+                   [messages]="schemaTableMessages"
+                   [footerHeight]="24"
+                   [scrollbarV]="false"
+                   [scrollbarH]="true"
+                   [columnMode]="'force'"
+                   [reorderable]="false"
+                   [selectionType]="'single'"
+                   (select)="onSchemaSelect($event)"
+                   [cssClasses]="customClasses">
+      <ngx-datatable-column name="Schemas"
+                            [prop]="'name'"
+                            [sortable]="true"
+                            [canAutoResize]="true"
+                            [width]="300"
+                            [draggable]="false"
+                            [resizeable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.getDisplayName() }}
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
 </div>
 <!-- ------------- -->
 <!--  Tables List  -->
@@ -62,22 +59,28 @@
   </div>
 </div>
 <div class = "list-div col-sm-6 jdbc-column-results" *ngIf="hasSelectedSchema && tablesLoadedValidNotEmpty">
-  <div class="jdbc-list list-group list-view-pf">
-    <div class="list-group-item list-view-pf-stacked"
-         *ngFor="let table of getTables(); index as i; odd as isEvenRow; even as isOddRow"
-         [class.oddRow]="isOddRow" [class.evenRow]="isEvenRow">
-      <div class="list-view-pf-checkbox">
-        <input type="checkbox" title="" [(ngModel)]="table.selected" (change)="selectedTablesChanged(table)">
-      </div>
-      <div class="list-view-pf-main-info">
-        <div class="list-view-pf-body">
-          <div class="list-view-pf-description">
-            <div class="list-group-item-heading">
-              {{ table.getName() }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <ngx-datatable [rows]="tables"
+                 [messages]="tableTableMessages"
+                 [footerHeight]="24"
+                 [scrollbarV]="false"
+                 [scrollbarH]="true"
+                 [columnMode]="'force'"
+                 [reorderable]="false"
+                 [selectionType]="'checkbox'"
+                 [cssClasses]="customClasses">
+    <ngx-datatable-column name="Tables"
+                          [prop]="'name'"
+                          [sortable]="true"
+                          [canAutoResize]="true"
+                          [width]="300"
+                          [draggable]="false"
+                          [resizeable]="false">
+      <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="selectedAllRows" let-selectFn="selectAllTables">
+        <input type="checkbox" [checked]="selectedAllRows" (change)="selectAllTables()"/>Tables
+      </ng-template>
+      <ng-template ngx-datatable-cell-template let-row="row" let-isSelected="row.selected" let-onCheckboxChangeFn="selectedTableChanged">
+        <input type="checkbox" [checked]="row.selected" (change)="selectedTableChanged( row )"/>{{ row.name }}
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
 </div>

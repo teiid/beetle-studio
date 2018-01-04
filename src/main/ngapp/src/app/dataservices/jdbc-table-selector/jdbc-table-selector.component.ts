@@ -42,6 +42,17 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   @Output() public tableSelectionAdded: EventEmitter<Table> = new EventEmitter<Table>();
   @Output() public tableSelectionRemoved: EventEmitter<Table> = new EventEmitter<Table>();
 
+  public selectedAllRows = false;
+
+  public readonly customClasses = {
+    sortAscending: "fa fa-sort-asc",
+    sortDescending: "fa fa-sort-desc",
+    pagerLeftArrow: "fa fa-chevron-left",
+    pagerRightArrow: "fa fa-chevron-right",
+    pagerPrevious: "fa fa-step-backward",
+    pagerNext: "fa fa-step-forward"
+  };
+
   private connectionService: ConnectionService;
   private wizardService: WizardService;
   private logger: LoggerService;
@@ -101,23 +112,18 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     this.tableLoadingState = LoadingState.LOADING;
   }
 
-  /*
-   * Toggle the schema selection
-   * @param {CatalogSchema} schema the schema that has been selected or deselected
-   */
-  public toggleSchemaSelected(schema: CatalogSchema): void {
-    if (this.isSchemaSelected(schema)) {
-      this.currentSchema = null;
-      // Deselection of schema clears tables
-      this.tables = [];
+  // callback from schema selection in datatable
+  public onSchemaSelect( { selected }): void {
+    // schema table is single select so use first element
+    const schema: CatalogSchema = selected[ 0 ];
+
+    // only set if schema selection has changed (see setter)
+    if ( this.hasSelectedSchema ) {
+      if ( this.selectedSchema.getDisplayName() !== schema.getDisplayName() ) {
+        this.selectedSchema = schema;
+      }
     } else {
-      this.currentSchema = schema;
-      const filterInfo = new JdbcTableFilter();
-      filterInfo.setConnectionName(this.connection.getId());
-      filterInfo.setCatalogFilter(schema.getCatalogName());
-      filterInfo.setSchemaFilter(schema.getName());
-      filterInfo.setTableFilter("%");
-      this.loadTablesForSchema(filterInfo);
+      this.selectedSchema = schema;
     }
   }
 
@@ -135,6 +141,17 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
    */
   public get selectedSchema( ): CatalogSchema {
     return this.currentSchema;
+  }
+
+  public set selectedSchema( schema: CatalogSchema ) {
+    this.currentSchema = schema;
+
+    const filterInfo = new JdbcTableFilter();
+    filterInfo.setConnectionName(this.connection.getId());
+    filterInfo.setCatalogFilter(schema.getCatalogName());
+    filterInfo.setSchemaFilter(schema.getName());
+    filterInfo.setTableFilter("%");
+    this.loadTablesForSchema(filterInfo);
   }
 
   /*
@@ -173,6 +190,18 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     return this.schemaLoadingState === LoadingState.LOADED_INVALID;
   }
 
+  public get schemaTableMessages(): { emptyMessage: string; totalMessage: string | string } {
+    const msg = this.schemas.length === 1 ? "schema" : "schemas";
+
+    return {
+      // no data message
+      emptyMessage: "No schemas found",
+
+      // footer total message
+      totalMessage: msg
+    };
+  }
+
   /*
    * Get all schemas
    * @returns {CatalogSchema[]} the array of schema
@@ -209,6 +238,18 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     return this.tableLoadingState === LoadingState.LOADED_INVALID;
   }
 
+  public get tableTableMessages(): { emptyMessage: string; totalMessage: string | string } {
+    const msg = this.tables.length === 1 ? "table" : "tables";
+
+    return {
+      // no data message
+      emptyMessage: "No tables found",
+
+      // footer total message
+      totalMessage: msg
+    };
+  }
+
   /*
    * Get all tables
    * @returns {Table[]} the current tables for the selected schema
@@ -222,7 +263,13 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
    * @returns {boolean} true if one or more tables are selected
    */
   public hasSelectedTables(): boolean {
-    return this.getSelectedTables().length > 0;
+    for ( const table of this.tables ) {
+      if ( table.selected ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /*
@@ -230,23 +277,50 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
    * @returns {Table[]} the array of selected Tables
    */
   public getSelectedTables(): Table[] {
-    const selectedTables = [];
-    for ( const tbl of this.getTables() ) {
-      if (tbl.selected) {
-        selectedTables.push(tbl);
+    return this.tables.filter( ( table ) => table.selected );
+  }
+
+  public selectAllTables(): void {
+    this.selectedAllRows = !this.selectedAllRows;
+    const self = this;
+
+    this.tables.forEach( ( table ) => {
+      if ( table.selected !== self.selectedAllRows ) {
+        self.selectedTableChanged( table );
       }
-    }
-    return selectedTables;
+    } );
   }
 
   /*
    * Handler for changes in table selection
    */
-  public selectedTablesChanged(table: Table): void {
+  public selectedTableChanged(table: Table): void {
+    table.selected = !table.selected;
+
     if (table.selected) {
       this.tableSelectionAdded.emit(table);
+
+      // check column header checkbox if all are selected
+      if ( !this.selectedAllRows ) {
+        let selectAll = true;
+
+        for ( const tbl of this.tables ) {
+          if ( !tbl.selected ) {
+            selectAll = false;
+          }
+        }
+
+        if ( selectAll ) {
+          this.selectedAllRows = true;
+        }
+      }
     } else {
       this.tableSelectionRemoved.emit(table);
+
+      // uncheck column header checkbox if needed
+      if ( this.selectedAllRows ) {
+        this.selectedAllRows = false;
+      }
     }
   }
 
