@@ -46,18 +46,18 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
 
   public readonly customClasses = {
     sortAscending: "fa fa-sort-asc",
-    sortDescending: "fa fa-sort-desc",
-    pagerLeftArrow: "fa fa-chevron-left",
-    pagerRightArrow: "fa fa-chevron-right",
-    pagerPrevious: "fa fa-step-backward",
-    pagerNext: "fa fa-step-forward"
+    sortDescending: "fa fa-sort-desc"
   };
 
   private connectionService: ConnectionService;
   private wizardService: WizardService;
   private logger: LoggerService;
   private schemas: CatalogSchema[] = [];
+  private filteredSchemas: CatalogSchema[] = [];
+  private schemaFilter = "";
   private tables: Table[] = [];
+  private filteredTables: Table[] = [];
+  private tableFilter = "";
   private currentSchema: CatalogSchema = null;
   private schemaLoadingState: LoadingState = LoadingState.LOADING;
   private tableLoadingState: LoadingState = LoadingState.LOADING;
@@ -104,11 +104,13 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
 
   public clearSchemas(): void {
     this.schemas = [];
+    this.filteredSchemas = [];
     this.currentSchema = null;
   }
 
   public clearTables(): void {
     this.tables = [];
+    this.filteredTables = [];
     this.tableLoadingState = LoadingState.LOADING;
   }
 
@@ -190,16 +192,52 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     return this.schemaLoadingState === LoadingState.LOADED_INVALID;
   }
 
+  /**
+   * Callback when key is pressed in schema column filter.
+   */
+  public schemaFilterChanged( event: any ): void {
+    this.schemaFilter = event.target.value;
+
+    if ( this.schemaFilter.length !== 0 ) {
+      this.schemaFilter = "^" + this.schemaFilter.replace( "*", ".*" );
+    }
+
+    this.filteredSchemas = this.schemas.filter( ( schema ) => schema.getDisplayName().match( this.schemaFilter ) != null );
+  }
+
   public get schemaTableMessages(): { emptyMessage: string; totalMessage: string | string } {
-    const msg = this.schemas.length === 1 ? "schema" : "schemas";
+    const numAll = this.schemas.length;
+    const numFiltered = this.filteredSchemas.length;
+    let msg: string;
+
+    if ( numAll === numFiltered ) {
+      if ( this.schemaFilter.length === 0 ) {
+        msg = numAll === 1 ? "schema" : "schemas";
+      } else {
+        msg = numAll === 1 ? "matched schema" : "matched schemas";
+      }
+    } else {
+      msg = numFiltered === 1 ? "matched schema" : "matched schemas";
+    }
 
     return {
-      // no data message
-      emptyMessage: "No schemas found",
+      // message shows in an empty row in table
+      emptyMessage: "",
 
       // footer total message
       totalMessage: msg
     };
+  }
+
+  /**
+   * Called when the table is sorted.
+   * @param {string} thisName the name being sorted
+   * @param {string} thatName the name being compared to
+   * @returns {number} -1 if less than, 0 if equal, or 1 if greater than
+   */
+  public nameComparator( thisName: string,
+                         thatName: string ): number {
+    return thisName.localeCompare( thatName );
   }
 
   /*
@@ -239,15 +277,40 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   }
 
   public get tableTableMessages(): { emptyMessage: string; totalMessage: string | string } {
-    const msg = this.tables.length === 1 ? "table" : "tables";
+    const numAll = this.tables.length;
+    const numFiltered = this.filteredTables.length;
+    let msg: string;
+
+    if ( numAll === numFiltered ) {
+      if ( this.tableFilter.length === 0 ) {
+        msg = numAll === 1 ? "table" : "tables";
+      } else {
+        msg = numAll === 1 ? "matched table" : "matched tables";
+      }
+    } else {
+      msg = numFiltered === 1 ? "matched table" : "matched tables";
+    }
 
     return {
-      // no data message
-      emptyMessage: "No tables found",
+      // message shows in an empty row in table
+      emptyMessage: "",
 
       // footer total message
       totalMessage: msg
     };
+  }
+
+  /**
+   * Callback when key is pressed in table column filter.
+   */
+  public tableFilterChanged( event: any ): void {
+    this.tableFilter = event.target.value;
+
+    if ( this.tableFilter.length !== 0 ) {
+      this.tableFilter = "^" + this.tableFilter.replace( "*", ".*" );
+    }
+
+    this.filteredTables = this.tables.filter( ( table ) => table.getName().match( this.tableFilter ) != null );
   }
 
   /*
@@ -284,7 +347,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     this.selectedAllRows = !this.selectedAllRows;
     const self = this;
 
-    this.tables.forEach( ( table ) => {
+    this.filteredTables.forEach( ( table ) => {
       if ( table.selected !== self.selectedAllRows ) {
         self.selectedTableChanged( table );
       }
@@ -304,7 +367,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
       if ( !this.selectedAllRows ) {
         let selectAll = true;
 
-        for ( const tbl of this.tables ) {
+        for ( const tbl of this.filteredTables ) {
           if ( !tbl.selected ) {
             selectAll = false;
           }
@@ -359,18 +422,21 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
             item.setType("Schema");
             item.setCatalogName(infoName);
             this.schemas.push(item);
+            this.filteredSchemas.push(item);
           }
         } else {
           const item: CatalogSchema = new CatalogSchema();
           item.setName(infoName);
           item.setType("Catalog");
           this.schemas.push(item);
+          this.filteredSchemas.push(item);
         }
       } else if (infoType === "Schema") {
         const item: CatalogSchema = new CatalogSchema();
         item.setName(infoName);
         item.setType("Schema");
         this.schemas.push(item);
+        this.filteredSchemas.push(item);
       }
     }
   }
@@ -382,6 +448,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   private loadTablesForSchema(tableFilter: JdbcTableFilter): void {
     // Load the table names for the selected Connection and Schema
     this.tables = [];
+    this.filteredTables = [];
     this.tableLoadingState = LoadingState.LOADING;
     const self = this;
     this.connectionService
@@ -395,6 +462,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
             table.setCatalogName(self.selectedSchema.getCatalogName());
             table.setSchemaName(self.selectedSchema.getName());
             self.tables.push(table);
+            self.filteredTables.push(table);
           }
           // select any of the tables that are already selected
           self.setInitialTableSelections();
