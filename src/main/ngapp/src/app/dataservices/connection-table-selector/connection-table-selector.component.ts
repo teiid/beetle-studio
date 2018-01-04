@@ -36,9 +36,6 @@ export class ConnectionTableSelectorComponent implements OnInit {
   @ViewChild(JdbcTableSelectorComponent) public jdbcTableSelector: JdbcTableSelectorComponent;
   @Output() public selectedTableListUpdated: EventEmitter<void> = new EventEmitter<void>();
 
-  public readonly nameProp = "name"; // must match html template
-  public rows: any[] = [];
-
   public readonly customClasses = {
     sortAscending: "fa fa-sort-asc",
     sortDescending: "fa fa-sort-desc",
@@ -78,13 +75,6 @@ export class ConnectionTableSelectorComponent implements OnInit {
           if (self.wizardService.isEdit()) {
             self.initEdit();
           }
-
-          // load table after setting loading state so table has been constructed
-          self.allConnections.forEach( ( connection ) => {
-            const row = {};
-            row[ this.nameProp ] = connection.getId();
-            self.rows.push( row );
-          } );
         },
         (error) => {
           self.logger.error("[ConnectionTableSelectorComponent] Error getting connections: %o", error);
@@ -93,13 +83,19 @@ export class ConnectionTableSelectorComponent implements OnInit {
       );
   }
 
-  // callback from connections table selection
-  public onSelect( { selected }): void {
-    // connection is single select so get first element
-    const connectionName = selected[ 0 ][ this.nameProp ];
+  // callback from connection table selection
+  public onSelect( { selected } ): void {
+    // connection table is single select so use first element
+    const conn: Connection = selected[ 0 ];
 
-    // find and set selected connection (see setter)
-    this.selectedConnection = this.allConnections.find(( conn ) => conn.getId() === connectionName );
+    // only set if schema selection has changed (see setter)
+    if ( this.hasSelectedConnection() ) {
+      if ( this.selectedConn.getId() !== conn.getId() ) {
+        this.selectedConnection = conn;
+      }
+    } else {
+      this.selectedConnection = conn;
+    }
   }
 
   /**
@@ -161,7 +157,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
    * @returns {boolean} true if a connection is selected
    */
   public hasSelectedConnection( ): boolean {
-    return this.selectedConn !== null;
+    return this.selectedConn != null;
   }
 
   /**
@@ -236,8 +232,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
     return this.wizardService.getWizardSelectedTables();
   }
 
-  // used by table
-  public get tableMessages(): { emptyMessage: string; totalMessage: string | string } {
+  public get connectionsTableMessages(): { emptyMessage: string; totalMessage: string | string } {
     const msg = this.allConnections.length === 1 ? "connection" : "connections";
 
     return {
@@ -259,7 +254,6 @@ export class ConnectionTableSelectorComponent implements OnInit {
     // Initialize the selected tables in the wizard service
     this.wizardService.clearWizardSelectedTables();
     const srcTables: string[] = this.wizardService.getSelectedDataservice().getServiceViewTables();
-    const selectedTables: Table[] = [];
     for ( const tableStr of srcTables ) {
       const subParts = tableStr.split(".");
       const connectionName = subParts[0].replace(VdbsConstants.SOURCE_VDB_SUFFIX, "");

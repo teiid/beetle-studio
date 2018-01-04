@@ -9,9 +9,8 @@
     </div>
   </div>
   <div class="col-sm-3 connection-selector-container" *ngIf="connectionsLoadedValid">
-    <ngx-datatable [rows]="rows"
-                   [columns]="columns"
-                   [messages]="tableMessages"
+    <ngx-datatable [rows]="allConnections"
+                   [messages]="connectionsTableMessages"
                    [footerHeight]="24"
                    [scrollbarV]="false"
                    [scrollbarH]="true"
@@ -20,10 +19,10 @@
                    [selectionType]="'single'"
                    (select)="onSelect($event)"
                    [cssClasses]="customClasses">
-      <ngx-datatable-column name="Connections" [prop]="'name'" [sortable]="true" [resizeable]="false">
+      <ngx-datatable-column name="Connections" [prop]="'keng__id'" [sortable]="true" [width]="300" [resizeable]="false">
         <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
           <i class="fa fa-plug list-view-pf-icon-sm"></i>
-          {{ row.name }}
+          {{ row.keng__id }}
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>

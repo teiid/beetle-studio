@@ -11,6 +11,7 @@ import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
+import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { JdbcTableSelectorComponent } from "./jdbc-table-selector.component";
 
 describe("JdbcTableSelectorComponent", () => {
@@ -19,7 +20,7 @@ describe("JdbcTableSelectorComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, HttpModule ],
+      imports: [ FormsModule, HttpModule, NgxDatatableModule ],
       declarations: [ JdbcTableSelectorComponent, SelectedTableComponent ],
       providers: [
         AppSettingsService, LoggerService, NotifierService, WizardService,
