@@ -1,17 +1,17 @@
-# BeETLe Studio Style Guide
+# Beetle Studio Style Guide
 
-_BeETLe Studio_'s TypeScript style conventions are based on the [angular.io style guide](https://angular.io/guide/styleguide).
-The _BeETLe Studio_'s [tslint.json](https://github.com/teiid/beetle-studio/src/main/ngapp/tslint.json) file describes the 
+_Beetle Studio_'s TypeScript style conventions are based on the [angular.io style guide](https://angular.io/guide/styleguide).
+The _Beetle Studio_'s [tslint.json](https://github.com/teiid/beetle-studio/src/main/ngapp/tslint.json) file describes the 
 rules used to "enforce" the guidelines and project structure recommended by the _angular.io_ document.
 
 The goal of having style guidelines and conventions is to increase maintainability and readability.
 
 ## Project Structure
 
-_BeETLe Studio_ has tried to use the file structure recommended by _angular.io_, with minor
+_Beetle Studio_ has tried to use the file structure recommended by _angular.io_, with minor
 modifications due to facilitating a maven build process.
 
-So _BeETLe Studio_ has feature modules (connections, activities), a _CoreModule_ (for singletons and
+So _Beetle Studio_ has feature modules (connections, activities), a _CoreModule_ (for singletons and
 single use objects), and a _SharedModule_ (for reusable objects). Within each feature
 module there may be a _shared_ folder for services and other shared objects). See the 
 _Overall structural guidelines_ section of the [angular.io style guide](https://angular.io/guide/styleguide)

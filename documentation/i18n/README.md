@@ -1,6 +1,6 @@
-# Internationalization in BeETLe
+# Internationalization in Beetle
 
-`BeETLe` uses the built-in i8n functionality provided by **Angular**. It is well-documented here: https://angular.io/guide/i18n, but we document the steps here as well for purposes of brevity and clarity as i18n applies to `BeETLe`.
+`Beetle` uses the built-in i8n functionality provided by **Angular**. It is well-documented here: https://angular.io/guide/i18n, but we document the steps here as well for purposes of brevity and clarity as i18n applies to `Beetle`.
 
 The steps to i8n are as follows:
 

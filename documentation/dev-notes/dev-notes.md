@@ -1,6 +1,6 @@
-# BeETLe Studio Developer Notes
+# Beetle Studio Developer Notes
 
-This document is intended to be the "landing place" for information that would make a BeETLe Studio 
+This document is intended to be the "landing place" for information that would make a Beetle Studio 
 developer's life easier. Each note should highlight in **bold** the keywords. Developers should add 
 to this document  any task steps, processes, debugging steps, URLs, or anything else to save the 
 "next" developer time and effort. 

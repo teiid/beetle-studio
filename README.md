@@ -1,10 +1,10 @@
-# BeETLe Studio (Web-based tooling for the Teiid project)
+# Beetle Studio (Web-based tooling for the Teiid project)
 
 ## Summary
 
-This is the official Git repository for the _BeETLe Studio_ project. _BeETLe Studio_ is a development effort 
+This is the official Git repository for the _Beetle Studio_ project. _Beetle Studio_ is a development effort 
 intended to become, or at least influence, the next generation of _Teiid_ web-based tooling. As a
-first step, an ETL feature is being developed. See the [Teiid](http://teiid.jboss.org/) project
+first step, capability to deploy Data Access Services is being developed. See the [Teiid](http://teiid.jboss.org/) project
 for more information.
 
 ## Get the code
@@ -81,26 +81,26 @@ Then extract the zipfile into the directory you want to install the server.
 
 ### Test
 
-In a browser, navigate to `http://localhost:8080/beetle-studio` to test _BeETLe Studio_.
+In a browser, navigate to `http://localhost:8080/beetle-studio` to test _Beetle Studio_.
 
 ## Contribute fixes and features
 
-_BeETLe Studio_ is open source, and we welcome anybody who wants to participate and contribute!
+_Beetle Studio_ is open source, and we welcome anybody who wants to participate and contribute!
 
 TBD
 
 ## Developer Guidelines
 
 - IDE - The [WebStorm IDE](https://www.jetbrains.com/webstorm/) is the preferred development environment. See our
-[BeETLe Studio WebStorm IDE Guide](https://github.com/teiid/beetle-studio/blob/master/documentation/ide/webstorm-guide.md) 
+[Beetle Studio WebStorm IDE Guide](https://github.com/teiid/beetle-studio/blob/master/documentation/ide/webstorm-guide.md) 
 for IDE development practices.
 - Style and Coding Guide - In general, we try to follow the style outlined by Angular defined
 in their [style guide](https://angular.io/guide/styleguide). More specific syntax, conventions,
-project structure, and formatting can be found in our [BeETLe Studio Style Guide](https://github.com/teiid/beetle-studio/blob/master/documentation/style-guide/style-guide.md).
+project structure, and formatting can be found in our [Beetle Studio Style Guide](https://github.com/teiid/beetle-studio/blob/master/documentation/style-guide/style-guide.md).
 - Internationalization (i18n) - All text visible to the user should be internationlized.
-The [Internalization in BeETLe Studio](https://github.com/teiid/beetle-studio/blob/master/documentation/i18n/README.md)
+The [Internalization in Beetle Studio](https://github.com/teiid/beetle-studio/blob/master/documentation/i18n/README.md)
 document describes the internationalization practices that should be followed.
-- The [BeETLe Studio Developer Notes](https://github.com/teiid/beetle-studio/blob/master/documentation/dev-notes/dev-notes.md)
+- The [Beetle Studio Developer Notes](https://github.com/teiid/beetle-studio/blob/master/documentation/dev-notes/dev-notes.md)
 document contains information that developers may find useful in performing their daily tasks. For 
 instance, there might be a note on how to track down a certain problem, or a note on common issues
 with unit tests.
