@@ -1,4 +1,4 @@
-# BeETLe Studio WebStorm IDE Guide
+# Beetle Studio WebStorm IDE Guide
 
 ## Settings and Preferences:
 
@@ -20,13 +20,13 @@ To run TSLint, select the `Code > Inspect Code...` menu item. Make sure `Whole p
 be displayed in the `Inspection Results` panel which is displayed at the bottom of the IDE window.
 
 The TSLint rule configuration file is located here: `.../beetle-studio/src/main/ngapp/tslint.json`. See
-our [BeETLe Studio Style Guide](https://github.com/teiid/beetle-studio/documentation/style-guide/style-guide.md)
+our [Beetle Studio Style Guide](https://github.com/teiid/beetle-studio/documentation/style-guide/style-guide.md)
 for more information on our TypeScript style guidelines.
 
 ## Angular CLI
 
 _WebStorm_ has builtin support for [Angular CLI](https://cli.angular.io). As the name suggests _Angular CLI_ 
-is a command line interface for Angular. _BeETLe Studio_ has been created as an _Angular CLI_ project so using
+is a command line interface for Angular. _Beetle Studio_ has been created as an _Angular CLI_ project so using
 _Angular CLI_ commands is something you will do daily. These CLI commands will be executed in the
 _.../beetle-studio/src/main/ngapp_ directory.
 
@@ -48,10 +48,10 @@ configuration and set the `URL` to `http://localhost:4200/`.
 1. Start the debug server by opening a terminal in the `.../beetle-studio/src/main/ngapp` directory 
 and running the following command: `ng serve`.
 1. Set your breakpoints by clicking in the left margin of the line of code you want the breakpoint to be on.
-1. Open browser to `http://localhost:4200/` to see _BeETLe Studio_.
+1. Open browser to `http://localhost:4200/` to see _Beetle Studio_.
 1. Select the `Run > Debug...` menu item and then on the popup select your debug configuration. _Shortcut: the "bug"
 in the toolbar starts the last debug configuration that was run._
-1. Now interact with _BeETLe Studio_ so that your breakpoints are hit.
+1. Now interact with _Beetle Studio_ so that your breakpoints are hit.
 
 ## TODO Comments
 

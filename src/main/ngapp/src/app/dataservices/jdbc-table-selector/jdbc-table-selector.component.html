@@ -89,7 +89,7 @@
                           [draggable]="false"
                           [resizeable]="false">
       <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="selectedAllRows" let-selectFn="selectAllTables">
-        <input type="checkbox" [checked]="selectedAllRows" (change)="selectAllTables()"/>Tables
+        <input type="checkbox" [checked]="selectedAllRows" (change)="selectAllTables()"/><span class="jdbc-table-header">Tables</span>
         <input type="text"
                class="col-sm-12"
                style='border:solid 1px #dddddd;padding:8px;margin:0 auto;width:100%;height:24px'
@@ -97,7 +97,7 @@
                (keyup)='tableFilterChanged($event)'/>
       </ng-template>
       <ng-template ngx-datatable-cell-template let-row="row" let-isSelected="row.selected" let-onCheckboxChangeFn="selectedTableChanged">
-        <input type="checkbox" [checked]="row.selected" (change)="selectedTableChanged( row )"/>{{ row.name }}
+        <input type="checkbox" [checked]="row.selected" (change)="selectedTableChanged( row )"/><span class="jdbc-table-cell">{{ row.name }}</span>
       </ng-template>
     </ngx-datatable-column>
   </ngx-datatable>

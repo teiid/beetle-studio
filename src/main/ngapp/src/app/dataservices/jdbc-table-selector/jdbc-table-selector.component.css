@@ -5,6 +5,14 @@
   overflow-y: auto;
 }
 
+.jdbc-table-header {
+  margin-left: 5px;
+}
+
+.jdbc-table-cell {
+  margin-left: 5px;
+}
+
 .jdbc-list .list-view-pf-main-info {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
