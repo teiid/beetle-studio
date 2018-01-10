@@ -54,6 +54,7 @@ export class DataserviceService extends ApiService {
   private appSettingsService: AppSettingsService;
   private vdbService: VdbService;
   private selectedDataservice: Dataservice;
+  private dataserviceCurrentView: Table[] = [];
   private cachedDataserviceStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
   private updatesSubscription: Subscription;
 
@@ -74,6 +75,12 @@ export class DataserviceService extends ApiService {
    */
   public setSelectedDataservice(service: Dataservice): void {
     this.selectedDataservice = service;
+    // When the dataservice is selected, init the selected view
+    const views: Table[] = this.getSelectedDataserviceViews();
+    this.dataserviceCurrentView = [];
+    if (views && views.length > 0) {
+      this.dataserviceCurrentView.push(views[0]);
+    }
   }
 
   /**
@@ -82,6 +89,47 @@ export class DataserviceService extends ApiService {
    */
   public getSelectedDataservice( ): Dataservice {
     return this.selectedDataservice;
+  }
+
+  /**
+   * Get the current Dataservice selection's views.  The table object is used for the view,
+   * with the Table name set to the full "modelName"."viewName" of the view.
+   * @returns {Table[]} the selected Dataservice views
+   */
+  public getSelectedDataserviceViews( ): Table[] {
+    if (!this.selectedDataservice || this.selectedDataservice === null) {
+      return [];
+    }
+
+    const modelName = this.selectedDataservice.getServiceViewModel();
+    const serviceView = this.selectedDataservice.getServiceViewName();
+
+    // TODO: we will need to get multiple views when supported
+    const view1: Table = new Table();
+    view1.setName(modelName + "." + serviceView);
+
+    const allViews: Table[] = [];
+    allViews.push(view1);
+
+    return allViews;
+  }
+
+  /**
+   * Get the current Dataservice current view.  The table object is used for the view,
+   * with the Table name set to the full "modelName"."viewName" of the view.
+   * @returns {Table[]} the Dataservice current view
+   */
+  public getSelectedDataserviceCurrentView( ): Table[] {
+    return this.dataserviceCurrentView;
+  }
+
+  /**
+   * Set the current Dataservice current view.  The table object is used for the view,
+   * with the Table name set to the full "modelName"."viewName" of the view.
+   * @param {Table[]} view the current view
+   */
+  public setSelectedDataserviceCurrentView( view: Table[] ): void {
+    this.dataserviceCurrentView = view;
   }
 
   /**

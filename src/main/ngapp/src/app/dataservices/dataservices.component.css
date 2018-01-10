@@ -95,3 +95,9 @@ a.clear-filters {
   cursor: pointer;
   font-size: 1.5em;
 }
+
+.quicklook-title {
+  margin-left: 50px;
+  font-size: 1.25em;
+  font-weight: bold;
+}

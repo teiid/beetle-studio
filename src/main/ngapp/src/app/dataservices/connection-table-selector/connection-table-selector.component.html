@@ -81,7 +81,7 @@
         <strong>No tables selected</strong>
       </div>
   </div>
-  <div class = "list-div col-sm-3" *ngIf="hasSelectedTables">
+  <div class = "col-sm-3" *ngIf="hasSelectedTables">
       <div *ngFor="let table of getSelectedTables()">
         <app-selected-table [table]="table" (selectionListTableRemoved)="onTableSelectionRemoved($event)"></app-selected-table>
       </div>
