@@ -24,7 +24,8 @@
       </div>
     </div>
     <div class="col-sm-10" *ngIf="pageLoadedValid">
-      <app-sql-control></app-sql-control>
+      <app-sql-control [quicklook]="false" [selectedViews]="selectedViews" [serviceViews]="allServiceViews"
+                       [viewSql]="quickLookSql"></app-sql-control>
     </div>
   </div>
 </div>

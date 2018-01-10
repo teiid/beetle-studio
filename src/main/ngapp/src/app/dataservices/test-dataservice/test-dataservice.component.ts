@@ -5,6 +5,7 @@ import { LoggerService } from "@core/logger.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
+import { Table } from "@dataservices/shared/table.model";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { LoadingState } from "@shared/loading-state.enum";
 
@@ -22,6 +23,9 @@ export class TestDataserviceComponent extends AbstractPageComponent {
   private dataservice: Dataservice;
   private dataserviceService: DataserviceService;
   private pageLoadingState: LoadingState = LoadingState.LOADED_VALID;
+  private selectedSvcViews: Table[] = [];
+  private allSvcViews: Table[] = [];
+  private quickLookQueryText: string;
 
   constructor( router: Router, route: ActivatedRoute, dataserviceService: DataserviceService, logger: LoggerService ) {
     super(route, logger);
@@ -30,6 +34,11 @@ export class TestDataserviceComponent extends AbstractPageComponent {
 
   public loadAsyncPageData(): void {
     this.dataservice = this.dataserviceService.getSelectedDataservice();
+    this.allSvcViews = this.dataserviceService.getSelectedDataserviceViews();
+    this.selectedSvcViews = [];
+    this.selectedSvcViews.push(this.allSvcViews[0]);
+    const viewName = this.selectedSvcViews[0].getName();
+    this.quickLookQueryText = "SELECT * FROM " + viewName + ";";
   }
 
   /**
@@ -47,10 +56,23 @@ export class TestDataserviceComponent extends AbstractPageComponent {
   }
 
   /**
-   * Determine if page has loaded but was not successful
+   * Accessor for all available service views
    */
-  public get pageLoadedInvalid( ): boolean {
-    return this.pageLoadingState === LoadingState.LOADED_INVALID;
+  public get allServiceViews( ): Table[] {
+    return this.allSvcViews;
   }
 
+  /**
+   * Accessor for selected service view
+   */
+  public get selectedViews( ): Table[] {
+    return this.selectedSvcViews;
+  }
+
+  /**
+   * @returns {string} the quick look service name
+   */
+  public get quickLookSql(): string {
+    return this.quickLookQueryText;
+  }
 }

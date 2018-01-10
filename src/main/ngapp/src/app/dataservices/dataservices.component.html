@@ -112,12 +112,15 @@
       </div>
       <div class="col-md-12 {{resultsAreaCss}}" *ngIf="showResults">
         <hr class="dataservice-results-hr">
-        <span class="pull-left fa fa-list-alt dataservice-results-action-icon" (click)="onTest(quickLookServiceName)"></span>
-        <span class="pull-left fa fa-refresh dataservice-results-action-icon-refresh" (click)="onSubmitQuickLookQuery()"></span>
-        <span class="pull-right fa fa-fw fa-close dataservice-results-action-icon-close" (click)="setQuickLookPanelOpenState(false)"></span>
-        <h3 style="margin-left: 75px">Quick Look Results for Dataservice &apos;<strong>{{ quickLookServiceName }}</strong>&apos;</h3>
+        <div>
+          <span class="pull-left fa fa-list-alt dataservice-results-action-icon" (click)="onTest(quickLookServiceName)"></span>
+          <span class="pull-left fa fa-refresh dataservice-results-action-icon-refresh" (click)="onSubmitQuickLookQuery()"></span>
+          <span class="quicklook-title">Quick Look Results for Dataservice '{{ quickLookServiceName }}'</span>
+          <span class="pull-right fa fa-fw fa-close dataservice-results-action-icon-close" (click)="setQuickLookPanelOpenState(false)"></span>
+        </div>
         <br>
-        <app-sql-control [editorVisible]="editorVisible" ></app-sql-control>
+        <app-sql-control [quicklook]="true" [selectedViews]="selectedViews" [serviceViews]="allServiceViews"
+                                            [viewSql]="quickLookSql"></app-sql-control>
       </div>
     </div>
 

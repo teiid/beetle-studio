@@ -25,6 +25,7 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
@@ -52,6 +53,7 @@ export class DataservicesComponent extends AbstractPageComponent {
   private resultsAreaCss = "dataservice-summary-bottom-area-no-results";
   private resultsShowing = false;
   private quickLookSvcName: string;
+  private quickLookQueryText: string;
 
   private allServices: Dataservice[] = [];
   private filteredServices: Dataservice[] = [];
@@ -70,6 +72,8 @@ export class DataservicesComponent extends AbstractPageComponent {
   private dataserviceStateSubscription: Subscription;
   private notifierService: NotifierService;
   private wizardService: WizardService;
+  private selectedSvcViews: Table[] = [];
+  private allSvcViews: Table[] = [];
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
   @ViewChild(SqlControlComponent) private sqlControlComponent: SqlControlComponent;
@@ -187,10 +191,31 @@ export class DataservicesComponent extends AbstractPageComponent {
   }
 
   /**
+   * Accessor for all available service views
+   */
+  public get allServiceViews( ): Table[] {
+    return this.allSvcViews;
+  }
+
+  /**
+   * Accessor for selected service view
+   */
+  public get selectedViews( ): Table[] {
+    return this.selectedSvcViews;
+  }
+
+  /**
    * @returns {string} the quick look service name
    */
   public get quickLookServiceName(): string {
     return this.quickLookSvcName;
+  }
+
+  /**
+   * @returns {string} the quick look service name
+   */
+  public get quickLookSql(): string {
+    return this.quickLookQueryText;
   }
 
   public onSelected(dataservice: Dataservice): void {
@@ -232,6 +257,9 @@ export class DataservicesComponent extends AbstractPageComponent {
   public onTest(svcName: string): void {
     const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
     this.dataserviceService.setSelectedDataservice(selectedService);
+    this.allSvcViews = this.dataserviceService.getSelectedDataserviceViews();
+    this.selectedSvcViews = [];
+    this.selectedSvcViews.push(this.allServiceViews[0]);
 
     this.setQuickLookPanelOpenState(false);
 
@@ -321,11 +349,18 @@ export class DataservicesComponent extends AbstractPageComponent {
   public onQuickLook(svcName: string): void {
     const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
     this.dataserviceService.setSelectedDataservice(selectedService);
+    this.allSvcViews = this.dataserviceService.getSelectedDataserviceViews();
+    this.selectedSvcViews = [];
+    this.selectedSvcViews.push(this.allServiceViews[0]);
+    const viewName = this.selectedSvcViews[0].getName();
+    this.quickLookQueryText = "SELECT * FROM " + viewName + ";";
 
     if (!this.resultsShowing) {
       this.setQuickLookPanelOpenState(true);
     }
     this.setQuickLookResults(svcName);
+    this.sqlControlComponent.queryText = this.quickLookQueryText;
+    this.sqlControlComponent.submitCurrentQuery();
   }
 
   public isFiltered(): boolean {
@@ -478,8 +513,6 @@ export class DataservicesComponent extends AbstractPageComponent {
    */
   private setQuickLookResults(svcName): void {
      this.quickLookSvcName = svcName;
-     this.sqlControlComponent.initQueryText();
-     this.sqlControlComponent.submitCurrentQuery();
   }
 
 }

@@ -1,14 +1,36 @@
 <div class="row">
-  <div class="col-sm-12" *ngIf="editorVisible">
-    <div class="sql-control-control-title">Query Editor</div>
-
-    <div class="col-sm-12 sql-control-editor">
+  <div class="col-sm-12">
+    <div [ngClass]="quicklook ? 'col-sm-3 view-table-quicklook-div': 'col-sm-3 view-table-full-div'">
+      <ngx-datatable [rows]="serviceViews"
+                     [footerHeight]="0"
+                     [scrollbarV]="false"
+                     [scrollbarH]="true"
+                     [columnMode]="'force'"
+                     [reorderable]="false"
+                     [selectionType]="'single'"
+                     [selected]="selectedViews"
+                     (select)="onViewSelect($event)"
+                     [sorts]="[{prop: 'name', dir: 'asc'}]"
+                     [cssClasses]="customClasses">
+        <ngx-datatable-column name="Dataservice Views"
+                              [prop]="'name'"
+                              [sortable]="true"
+                              [width]="100"
+                              [draggable]="false"
+                              [resizeable]="false">
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+    <div *ngIf="!quicklook" class="col-sm-8 sql-control-editor">
       <codemirror [(ngModel)]="queryText" [config]="config"></codemirror>
       <div class="row sql-control-controls-query">
         <button class="btn btn-primary" (click)="submitCurrentQuery()">
           <span class="fa fa-fw fa-search"></span>Submit
         </button>
       </div>
+    </div>
+    <div *ngIf="quicklook" class="col-sm-9">
+      <span class="quicklook-sql-title">SQL:</span><span class="quicklook-sql">{{ queryText }}</span>
     </div>
   </div>
 
@@ -31,7 +53,7 @@
     <div class="col-sm-12" *ngIf="queryRanInvalid">
       <div class="alert alert-info">
         <span class="pficon pficon-info"></span>
-        <strong>There was an error running the Query!</strong>
+        <strong>Error running Query for <i>'{{ viewName }}'</i></strong>
       </div>
     </div>
     <div class="col-sm-12 sql-results-panel" *ngIf="queryRanValid">

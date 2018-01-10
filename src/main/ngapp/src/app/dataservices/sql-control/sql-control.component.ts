@@ -22,6 +22,7 @@ import { ColumnData } from "@dataservices/shared/column-data.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { RowData } from "@dataservices/shared/row-data.model";
+import { Table } from "@dataservices/shared/table.model";
 import { LoadingState } from "@shared/loading-state.enum";
 import "codemirror/addon/display/placeholder.js";
 import "codemirror/addon/selection/active-line.js";
@@ -35,7 +36,10 @@ import "codemirror/mode/sql/sql.js";
 })
 export class SqlControlComponent implements OnInit {
 
-  @Input() public editorVisible = true;
+  @Input() public quicklook = false;
+  @Input() public selectedViews: Table[] = [];
+  @Input() public serviceViews: Table[] = [];
+  @Input() public viewSql = "";
 
   public columns: any[] = [];
   public rows: any[] = [];
@@ -50,19 +54,16 @@ export class SqlControlComponent implements OnInit {
 
   public customClasses = {
     sortAscending: "fa fa-sort-asc",
-    sortDescending: "fa fa-sort-desc",
-    pagerLeftArrow: "fa fa-chevron-left",
-    pagerRightArrow: "fa fa-chevron-right",
-    pagerPrevious: "fa fa-step-backward",
-    pagerNext: "fa fa-step-forward"
+    sortDescending: "fa fa-sort-desc"
   };
 
   private dataserviceService: DataserviceService;
   private logger: LoggerService;
   private showResults = false;
   private queryResultsLoading: LoadingState;
-  private queryTxt: string;
   private queryResults: QueryResults;
+  private queryMap: Map<string, string> = new Map<string, string>();
+  private previousViewName: string;
 
   constructor( dataserviceService: DataserviceService, logger: LoggerService ) {
     this.dataserviceService = dataserviceService;
@@ -70,15 +71,29 @@ export class SqlControlComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.initQueryText();
+    this.queryMap.clear();
+    this.setQueryText();
+    this.queryMap.set(this.viewName, this.queryText);
+    this.previousViewName = this.viewName;
     this.submitCurrentQuery();
   }
 
   /*
-   * Initialize the query text based on the selected dataservice
+   * Handle View selection from the view table
    */
-  public initQueryText( ): void {
-    this.queryTxt = this.getDataserviceInitialQueryText();
+  public onViewSelect( {selected} ): void {
+    // Save query for current selection first
+    this.queryMap.set(this.previousViewName, this.queryText);
+
+    // View table is single select so use first element
+    const view: Table = selected[ 0 ];
+
+    this.selectedViews = [];
+    this.selectedViews.push(view);
+
+    this.setQueryText();
+    this.previousViewName = this.viewName;
+    this.submitCurrentQuery();
   }
 
   /*
@@ -99,14 +114,14 @@ export class SqlControlComponent implements OnInit {
    * Get the SQL text
    */
   public get queryText( ): string {
-    return this.queryTxt;
+    return this.viewSql;
   }
 
   /**
    * Set the SQL text
    */
   public set queryText( sql: string ) {
-    this.queryTxt = sql;
+    this.viewSql = sql;
   }
 
   /**
@@ -130,19 +145,20 @@ export class SqlControlComponent implements OnInit {
     return ( this.queryResultsLoading != null && (this.queryResultsLoading === LoadingState.LOADED_INVALID) );
   }
 
+  public get viewName(): string {
+    return !this.selectedViews ? "" : this.selectedViews[0].getName();
+  }
+
   /*
-  * the selected data service query text
-  */
-  private getDataserviceInitialQueryText(): string {
-    const dataservice = this.dataserviceService.getSelectedDataservice();
-    const modelName = dataservice.getServiceViewModel();
-    const serviceView = dataservice.getServiceViewName();
-
-    if ( !modelName || !serviceView ) {
-      return "SELECT * FROM ";
+   * Sets the query text based on the selected dataservice
+   */
+  public setQueryText( ): void {
+    const mapEntry = this.queryMap.get(this.viewName);
+    if (mapEntry) {
+      this.viewSql = mapEntry;
+    } else {
+      this.viewSql = "SELECT * FROM " + this.viewName + ";";
     }
-
-    return "SELECT * FROM " + modelName + "." + serviceView + ";";
   }
 
   /*

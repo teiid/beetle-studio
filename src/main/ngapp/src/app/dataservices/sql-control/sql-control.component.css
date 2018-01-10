@@ -1,6 +1,23 @@
+.view-table-full-div {
+  padding-left: 0;
+  padding-right: 10px;
+  min-height: 240px;
+  max-height: 240px;
+  border: 1px inset grey;
+  overflow-y: auto;
+}
+
+.view-table-quicklook-div {
+  padding-left: 0;
+  padding-right: 10px;
+  min-height: 120px;
+  max-height: 120px;
+  border: 1px inset grey;
+  overflow-y: auto;
+}
+
 .sql-control-control-title {
-  margin: 0.5em;
-  float: left;
+  margin: 5px 0 0;
   color: grey;
   font-weight: bold;
 }
@@ -10,11 +27,14 @@
 }
 
 .sql-control-editor {
-  clear: both;
   border: 1px inset grey;
+  margin-left: 15px;
+  padding-left: 0;
 }
 
 .sql-results-panel {
+  padding-left: 0;
+  padding-right: 0;
   clear: both;
   border: 1px inset grey;
 }
@@ -29,4 +49,16 @@
 
 .row-number-column {
   text-align: center;
+}
+
+.quicklook-sql-title {
+  font-size: 1.25em;
+  font-weight: bold;
+}
+
+.quicklook-sql {
+  margin-left: 15px;
+  font-size: 1.15em;
+  font-weight: bold;
+  font-style: italic;
 }
