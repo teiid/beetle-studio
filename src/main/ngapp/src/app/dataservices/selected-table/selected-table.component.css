@@ -1,24 +1,70 @@
-.selected-table-card {
+.selected-table-card .card-pf {
   background-color: #def3ff;
-  border:2px dotted darkblue;
-  margin-top: 5px;
-  margin-left: 0;
-  min-height: 60px;
-  max-height: 80px;
-  padding-top: 5px;
-  padding-right: 5px;
+  margin: 0 0px 10px;
+  min-height: 40px;
 }
 
-.selected-table-name {
-  margin-left: 20px;
+.selected-table-name:before {
+  display: inline-block;
+  margin-bottom: 0px;
+  margin-right: 10px;
+  margin-top: 0px;
+  font-family: "FontAwesome";
+  content: "\f0ce";
+}
+
+.selected-table-name .card-pf-title {
+  margin-bottom: 0px;
+  margin-left: 5px;
+  margin-top: 0px;
+  font-size: 14px;
   font-weight: bold;
 }
 
-.selected-table-connection {
+.selected-table-connection:before {
+  display: inline-block;
+  margin-bottom: 0px;
+  margin-left: 20px;
+  margin-right: 10px;
+  margin-top: 0px;
+  font-family: "FontAwesome";
+  content: "\f1e6";
+  color: #666666;
+}
+
+.selected-table-connection .card-pf-subtitle {
+  color: #666666;
+  margin-bottom: 0px;
   margin-left: 5px;
+  margin-top: 0px;
+  font-size: 14px;
 }
 
 .selected-table-close-icon {
   cursor: pointer;
   color: darkred;
 }
+
+.selected-table-body .card-pf-body {
+  background-color: white;
+  margin-top: 10px !important;
+}
+
+.selected-table-column-selection {
+  margin-left: 5px;
+  padding-top: 5px;
+  font-weight: bold;
+}
+
+.seleted-table-card .pfng-card .card-pf-heading {
+  background-color: #def3ff;
+  margin-bottom: -10px !important;
+}
+
+
+.selected-table-card .pfng-card .card-pf-footer  {
+  margin: 0 !important;
+  padding: 10px 0px 5px 20px;
+  min-height: 20px;
+}
+

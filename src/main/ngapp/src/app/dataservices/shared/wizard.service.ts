@@ -52,7 +52,10 @@ export class WizardService {
    * @returns {Table[]} the selections
    */
   public getWizardSelectedTables( ): Table[] {
-    return this.wizardSelectedTablesArray;
+    return this.wizardSelectedTablesArray.sort(
+      ( thisTable, thatTable ) => {
+        return thisTable.getName().localeCompare( thatTable.getName() );
+      } );
   }
 
   /**

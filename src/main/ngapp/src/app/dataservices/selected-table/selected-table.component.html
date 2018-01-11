@@ -1,6 +1,84 @@
-<div class="col-sm-12 selected-table-card">
-  <span class="fa fa-plug"></span><span class="selected-table-connection">{{ table.getConnection().getId() }}</span>
-  <span class="fa fa-close pull-right selected-table-close-icon" (click)="onRemove()"></span>
-  <br>
-  <span class="selected-table-name">{{ table.getName() }}</span>
-</div>
+<pfng-card class="selected-table-card"
+           [config]="config"
+           [headerTemplate]="tableHeaderTemplate"
+           (onActionSelect)="handleActionSelect($event)">
+  <ng-template #tableHeaderTemplate>
+    <h3 class="selected-table-name">
+      <span class="fa fa-close pull-right selected-table-close-icon" (click)="onRemove()"></span>
+      {{ table.getName() }}
+    </h3>
+    <h5 class="selected-table-connection">{{ table.getConnection().getId() }}</h5>
+  </ng-template>
+  <div class="selected-table-body">
+    <div *ngIf="showColumns">
+      <h5 class="selected-table-column-selection">Select columns to include in the view:</h5>
+      <ngx-datatable style="max-height: 200px;"
+                     [rows]="columnDefinitions"
+                     [footerHeight]="50"
+                     [scrollbarV]="true"
+                     [scrollbarH]="true"
+                     [columnMode]="'force'"
+                     [reorderable]="false"
+                     [selectionType]="'checkbox'"
+                     [sorts]="[{prop: 'name', dir: 'asc'}]"
+                     [cssClasses]="customClasses">
+        <ngx-datatable-column name=""
+                              [prop]="'selected'"
+                              [width]="40"
+                              [sortable]="false"
+                              [canAutoResize]="true"
+                              [draggable]="false"
+                              [resizeable]="false">
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template>
+              <div style="padding: 5px 10px">{{selectedColumnCount}} of {{columnCount}} selected</div>
+            </ng-template>
+          </ngx-datatable-footer>
+          <ng-template ngx-datatable-cell-template let-row="row" let-isSelected="row.selected" let-onCheckboxChangeFn="selectedColumnChanged">
+            <input type="checkbox" [checked]="row.selected" (change)="selectedColumnChanged( row )"/>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Name"
+                              [prop]="'name'"
+                              [sortable]="true"
+                              [checkboxable]="false"
+                              [canAutoResize]="true"
+                              [draggable]="false"
+                              [resizeable]="true">
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Type"
+                              [prop]="'type'"
+                              [sortable]="true"
+                              [checkboxable]="false"
+                              [canAutoResize]="true"
+                              [draggable]="false"
+                              [resizeable]="true">
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Size"
+                              [prop]="'size'"
+                              [sortable]="true"
+                              [checkboxable]="false"
+                              [canAutoResize]="true"
+                              [draggable]="false"
+                              [resizeable]="true">
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</pfng-card>
+
+<!--
+<pfng-info-status-card
+  [config]="selectedTableConfig">
+</pfng-info-status-card>
+  -->
+
+<!--
+
+  <div class="col-sm-12 selected-table-card">
+    <span class="fa fa-plug"></span><span class="selected-table-connection">{{ table.getConnection().getId() }}</span>
+    <span class="fa fa-close pull-right selected-table-close-icon" (click)="onRemove()"></span>
+    <br>
+    <span class="selected-table-name">{{ table.getName() }}</span>
+  </div>
+  -->
