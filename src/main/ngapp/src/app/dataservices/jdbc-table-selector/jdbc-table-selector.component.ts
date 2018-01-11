@@ -343,23 +343,48 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     return this.tables.filter( ( table ) => table.selected );
   }
 
-  public tableSelectionChanged( event: any ): void {
-    const selectedTables = event.selected;
-    const self =  this;
+  public selectAllTables(): void {
+    this.selectedAllRows = !this.selectedAllRows;
+    const self = this;
 
-    // sync up the UI row selections with the actual table selections
     this.filteredTables.forEach( ( table ) => {
-      if ( ( !table.selected && this.isSelected( selectedTables, table ) )
-        || ( table.selected && !this.isSelected( selectedTables, table )) ) {
-        table.selected = !table.selected;
-
-        if ( table.selected ) {
-          this.tableSelectionAdded.emit(table);
-        } else {
-          this.tableSelectionRemoved.emit(table);
-        }
+      if ( table.selected !== self.selectedAllRows ) {
+        self.selectedTableChanged( table );
       }
     } );
+  }
+
+  /*
+   * Handler for changes in table selection
+   */
+  public selectedTableChanged( table: Table ): void {
+    table.selected = !table.selected;
+
+    if ( table.selected ) {
+      this.tableSelectionAdded.emit(table);
+
+      // check column header checkbox if all are selected
+      if ( !this.selectedAllRows ) {
+        let selectAll = true;
+
+        for ( const tbl of this.filteredTables ) {
+          if ( !tbl.selected ) {
+            selectAll = false;
+          }
+        }
+
+        if ( selectAll ) {
+          this.selectedAllRows = true;
+        }
+      }
+    } else {
+      this.tableSelectionRemoved.emit(table);
+
+      // uncheck column header checkbox if needed
+      if ( this.selectedAllRows ) {
+        this.selectedAllRows = false;
+      }
+    }
   }
 
   /**
@@ -369,6 +394,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   public deselectTable(table: Table): void {
     const connName = table.getConnection().getId();
     const tableName = table.getName();
+
     for (const theTable of this.tables) {
       const theConnName = theTable.getConnection().getId();
       const theTableName = theTable.getName();
