@@ -13,6 +13,7 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { JdbcTableSelectorComponent } from "./jdbc-table-selector.component";
+import { PatternFlyNgModule } from "patternfly-ng";
 
 describe("JdbcTableSelectorComponent", () => {
   let component: JdbcTableSelectorComponent;
@@ -20,7 +21,7 @@ describe("JdbcTableSelectorComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, HttpModule, NgxDatatableModule ],
+      imports: [ FormsModule, HttpModule, NgxDatatableModule, PatternFlyNgModule ],
       declarations: [ JdbcTableSelectorComponent, SelectedTableComponent ],
       providers: [
         AppSettingsService, LoggerService, NotifierService, WizardService,
