@@ -311,6 +311,20 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     }
 
     this.filteredTables = this.tables.filter( ( table ) => table.getName().match( this.tableFilter ) != null );
+
+    // need to set column header checkbox state
+    let enable = true;
+
+    for ( const filteredTable of this.filteredTables ) {
+      if ( !filteredTable.selected ) {
+        enable = false;
+        break;
+      }
+    }
+
+    if ( this.selectedAllRows !== enable ) {
+      this.selectedAllRows = enable;
+    }
   }
 
   /*
@@ -400,6 +414,21 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
       const theTableName = theTable.getName();
       if (theConnName === connName && theTableName === tableName) {
         theTable.selected = false;
+
+        // need to set column header checkbox state
+        let enable = true;
+
+        for ( const filteredTable of this.filteredTables ) {
+          if ( !filteredTable.selected ) {
+            enable = false;
+            break;
+          }
+        }
+
+        if ( this.selectedAllRows !== enable ) {
+          this.selectedAllRows = enable;
+        }
+
         break;
       }
     }
