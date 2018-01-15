@@ -20,6 +20,7 @@ import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { NewConnection } from "@connections/shared/new-connection.model";
+import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { TemplateDefinition } from "@connections/shared/template-definition.model";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
@@ -32,21 +33,56 @@ import { Observable } from "rxjs/Observable";
 @Injectable()
 export class MockConnectionService extends ConnectionService {
 
-  private newConnection = new NewConnection();
-  private conn1 = new Connection();
-  private conn2 = new Connection();
-  private conn3 = new Connection();
-  private conns: Connection[] = [this.conn1, this.conn2, this.conn3];
-  private templ1 = new TemplateDefinition();
-  private templ2 = new TemplateDefinition();
-  private templ3 = new TemplateDefinition();
-  private templs: TemplateDefinition[] = [this.templ1, this.templ2, this.templ3];
+  public static conn1Id = "conn1";
+  public static conn1 = MockConnectionService.createJdbcConnection( MockConnectionService.conn1Id );
+  public static conn1SchemaInfos = [
+    SchemaInfo.create( { name: "conn1SchemaInfo1", type: "Schema" } ),
+    SchemaInfo.create( { name: "conn1CatalogInfo", type: "Catalog", schemaNames: [ "conn1CatalogSchema1", "conn1CatalogSchema1" ] } )
+  ];
+  public static numConn1Schemas = 3;
+
+  public static conn2Id = "conn2";
+  public static conn2 = MockConnectionService.createJdbcConnection( MockConnectionService.conn2Id );
+  public static conn2SchemaInfos = [
+    SchemaInfo.create( { name: "conn2CatalogInfo", type: "Catalog", schemaNames: [ "conn2CatalogSchema1", "conn2CatalogSchema1" ] } ),
+    SchemaInfo.create( { name: "conn2SchemaInfo1", type: "Schema" } ),
+    SchemaInfo.create( { name: "conn2SchemaInfo2", type: "Schema" } )
+  ];
+  public static numConn2Schemas = 4;
+
+  public static conn3Id = "conn3";
+  public static conn3 = MockConnectionService.createJdbcConnection( MockConnectionService.conn3Id );
+  public static conn3SchemaInfos = [
+    SchemaInfo.create( { name: "conn3CatalogInfo", type: "Catalog", schemaNames: [ "conn3CatalogSchema1", "conn3CatalogSchema1" ] } ),
+    SchemaInfo.create( { name: "conn3SchemaInfo1", type: "Schema" } ),
+    SchemaInfo.create( { name: "conn3SchemaInfo2", type: "Schema" } ),
+    SchemaInfo.create( { name: "conn3SchemaInfo2", type: "Schema" } )
+  ];
+  public static numConn3Schemas = 5;
+
+  public static templ1 = new TemplateDefinition();
+  public static templ2 = new TemplateDefinition();
+  public static templ3 = new TemplateDefinition();
+
+  public conns: Connection[] = [
+    MockConnectionService.conn1,
+    MockConnectionService.conn2,
+    MockConnectionService.conn3 ];
+
+  public templs: TemplateDefinition[] = [
+    MockConnectionService.templ1,
+    MockConnectionService.templ2,
+    MockConnectionService.templ3 ];
+
+  private static createJdbcConnection( id: string ): Connection {
+    const newConn = new Connection();
+    newConn.setId( id );
+    newConn.setJdbc( true );
+    return newConn;
+  }
 
   constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
     super(http, appSettings, logger);
-    this.conn1.setId("conn1");
-    this.conn2.setId("conn2");
-    this.conn3.setId("conn3");
   }
 
   /**
@@ -72,7 +108,9 @@ export class MockConnectionService extends ConnectionService {
    * @returns {Observable<boolean>}
    */
   public deleteConnection(connectionId: string): Observable<boolean> {
-    return Observable.of(true);
+    const size = this.conns.length;
+    this.conns = this.conns.filter( ( conn ) => conn.getId() !== connectionId );
+    return Observable.of( size === this.conns.length );
   }
 
   /**
@@ -81,6 +119,23 @@ export class MockConnectionService extends ConnectionService {
    */
   public getConnectionTemplates(): Observable<TemplateDefinition[]> {
     return Observable.of(this.templs);
+  }
+
+  public getConnectionSchemaInfos( connectionId: string): Observable< SchemaInfo[] > {
+    if ( connectionId === MockConnectionService.conn1Id ) {
+      return Observable.of( MockConnectionService.conn1SchemaInfos );
+    }
+
+    if ( connectionId === MockConnectionService.conn2Id ) {
+      return Observable.of( MockConnectionService.conn2SchemaInfos );
+    }
+
+    if ( connectionId === MockConnectionService.conn3Id ) {
+      return Observable.of( MockConnectionService.conn3SchemaInfos );
+    }
+
+    const empty: SchemaInfo[] = [];
+    return Observable.of( empty );
   }
 
 }
