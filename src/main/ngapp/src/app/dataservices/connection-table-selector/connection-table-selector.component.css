@@ -24,6 +24,6 @@
 .selected-tables-container {
   background-color: #bbbbbb;
   max-height: 480px;
-  margin-top: 0px;
+  margin-top: 0;
   overflow-y: auto;
 }

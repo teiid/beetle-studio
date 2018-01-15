@@ -13,8 +13,8 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
-import { ConnectionTableSelectorComponent } from "./connection-table-selector.component";
 import { PatternFlyNgModule } from "patternfly-ng";
+import { ConnectionTableSelectorComponent } from "./connection-table-selector.component";
 
 describe("ConnectionTableSelectorComponent", () => {
   let component: ConnectionTableSelectorComponent;
