@@ -7,6 +7,19 @@
   <!-- Step 1 : Table Selection -->
   <!-- ------------------------- -->
   <pfng-wizard-step [config]="step1Config">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="form-group">
+          <pfng-inline-notification
+            [header]="connectionNotificationHeader"
+            [message]="connectionNotificationMessage"
+            [dismissable]="connectionNotificationDismissable"
+            [type]="connectionNotificationType">
+          </pfng-inline-notification>
+        </div>
+      </div>
+    </div>
+
     <h3><i>{{ step1InstructionMessage }}</i></h3>
     <br>
     <app-connection-table-selector (selectedTableListUpdated)="updatePage1ValidStatus()"></app-connection-table-selector>
@@ -21,7 +34,7 @@
       <br>
       <form [formGroup]=basicPropertyForm class="form-horizontal">
         <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
-          <label class="col-sm-2 control-label">Name</label>
+          <label class="col-sm-2 control-label required-pf">Name</label>
           <div class="col-sm-5">
             <input class="form-control" formControlName="name" title="">
             <div class="help-block" *ngIf="!nameValid">{{ nameValidationError }}</div>
@@ -33,11 +46,30 @@
             <input class="form-control" formControlName="description" title="">
           </div>
         </div>
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Selected Tables:</label>
+        <div [ngClass]="hasSelectedConnection() ? 'form-group' : 'form-group has-error'">
+          <label class="col-sm-2 control-label required-pf"
+                 data-toggle="tooltip"
+                 data-placement="right"
+                 title="Select the connection whose tables will be included in the dataservice">
+            Connection
+          </label>
           <div class="col-sm-5">
-            <div *ngFor="let table of dataserviceSourceTables">
-              <label>[ {{ table.getConnection().getId() }} ] {{ table.getName() }}</label>
+            <select ([ngModel])="selectedConnection" (change)="selectedConnectionChanged($event)">
+              <option disabled selected value [ngValue]="emptyConnection">{{ emptyConnection.getId() }}</option>
+              <option *ngFor="let connection of sourceTableConnections"
+                      [ngValue]="connection">
+                {{ connection.getId() }}
+              </option>
+            </select>
+            <div class="help-block" *ngIf="!hasSelectedConnection()">{{ selectConnectionErrorMsg }}</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Included Tables</label>
+          <div class="col-sm-5 wiz-review-tables">
+            <div [ngClass]="shouldCheck(table) ? 'wiz-review-table-checked' : 'wiz-review-table-unchecked'"
+                 *ngFor="let table of dataserviceSourceTables">
+                {{ table.getName() }} ( {{ table.getConnection().getId() }} <span class="fa fa-plug"></span> )
             </div>
           </div>
         </div>
