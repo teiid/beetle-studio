@@ -2,9 +2,13 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.3.2.
 
+## Running with [Nodejs](https://nodejs.org)
+
+Execute `npm start` to serve the Angular app using nodejs. Navigate to `http://localhost:8080`. This command is meant for production and the files in the `dist` directory will have to be recompiled for code changes to be displayed. 
+
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Execute `npm start -- -d` for a development server. Navigate to `http://localhost:8080/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
