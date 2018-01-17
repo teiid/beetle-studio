@@ -490,6 +490,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     // Load the table names for the selected Connection and Schema
     this.tables = [];
     this.filteredTables = [];
+    this.selectedAllRows = false;
     this.tableLoadingState = LoadingState.LOADING;
     const self = this;
     this.connectionService
@@ -517,11 +518,14 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   }
 
   private setInitialTableSelections(): void {
+    let enableSelectAll = true;
+
     for ( const table of this.tables ) {
       // const catName = table.getCatalogName();
       // const schemaName = table.getSchemaName();
       const tableName = table.getName();
       const connName = table.getConnection().getId();
+
       for ( const initialTable of this.wizardService.getWizardSelectedTables() ) {
         // const iCatName = initialTable.getCatalogName();
         // const iSchemaName = initialTable.getSchemaName();
@@ -532,7 +536,13 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
           break;
         }
       }
+
+      if ( !table.selected ) {
+        enableSelectAll = false;
+      }
     }
+
+    this.selectedAllRows = enableSelectAll;
   }
 
 }

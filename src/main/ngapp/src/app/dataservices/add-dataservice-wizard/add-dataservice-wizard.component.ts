@@ -25,6 +25,7 @@ import {
 import { FormControl, FormGroup } from "@angular/forms";
 import { AbstractControl } from "@angular/forms";
 import { Router } from "@angular/router";
+import { Connection } from "@connections/shared/connection.model";
 import { LoggerService } from "@core/logger.service";
 import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
@@ -37,7 +38,7 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { LoadingState } from "@shared/loading-state.enum";
-import { WizardComponent } from "patternfly-ng";
+import { NotificationType, WizardComponent } from "patternfly-ng";
 import { WizardEvent } from "patternfly-ng";
 import { WizardStepConfig } from "patternfly-ng";
 import { WizardConfig } from "patternfly-ng";
@@ -50,8 +51,9 @@ import { Subscription } from "rxjs/Subscription";
   styleUrls: ["./add-dataservice-wizard.component.css"]
 })
 export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
-  public readonly dataserviceSummaryLink: string = DataservicesConstants.dataservicesRootPath;
-  public loadingState = LoadingState; // need local ref of enum for html to use
+
+  public emptyConnection = new Connection(); // a bogus connection used in drop down to give instructions
+  public readonly selectConnectionErrorMsg = "A connection must be selected";
 
   // Wizard Config
   public wizardConfig: WizardConfig;
@@ -62,6 +64,12 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
 
   // Wizard Step 1
   public step1Config: WizardStepConfig;
+  public connectionNotificationDismissable = false;
+  public connectionNotificationHeader = "Source Selection";
+  public connectionNotificationMessage = "You can select tables from multiple connections, but currently we only support "
+                                         + " tables from a single connection (multiple connections coming soon). You will "
+                                         + "choose the connection in the next step.";
+  public connectionNotificationType = NotificationType.WARNING;
 
   // Wizard Step 2
   public step2Config: WizardStepConfig;
@@ -71,6 +79,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   @ViewChild("wizard") public wizard: WizardComponent;
   @ViewChild(ConnectionTableSelectorComponent) public tableSelector: ConnectionTableSelectorComponent;
 
+  public selectedConnection: Connection;
   public nameValidationError = "";
   private dataserviceService: DataserviceService;
   private notifierService: NotifierService;
@@ -92,6 +101,8 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     this.wizardService = wizardService;
     this.router = router;
     this.logger = logger;
+    this.emptyConnection.setId( " -- select a connection -- " );
+    this.selectedConnection = this.emptyConnection;
 
     this.createBasicPropertyForm();
   }
@@ -233,7 +244,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     if (this.wizardService.isEdit()) {
       return "Review selections.  Click Update to update the Dataservice";
     }
-    return "Review selections and enter a name.  Click Create to create the Dataservice";
+    return "Enter a name, select a connection, and review the table selections. Click Create to create the Dataservice";
   }
 
   /*
@@ -377,10 +388,51 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * @returns {string} the selected source table names in string form
+   * @returns {Table[]} the selected source table names in string form
    */
   public get dataserviceSourceTables(): Table[] {
     return this.tableSelector.getSelectedTables();
+  }
+
+  /**
+   *
+   * @returns {Connection[]} the selected source table connections
+   */
+  public get sourceTableConnections(): Connection[] {
+    const tables = this.tableSelector.getSelectedTables();
+    const connections: Connection[] = [];
+
+    for ( const table of tables ) {
+      const connection = table.getConnection();
+
+      if ( connections.indexOf( connection) === -1 ) {
+        connections.push( connection );
+      }
+    }
+
+    return connections;
+  }
+
+  public selectedConnectionChanged( $event ): void {
+    // since the dropdown has a dummy first element subtract 1
+    const index = $event.target.selectedIndex - 1;
+    this.selectedConnection = this.sourceTableConnections[ index ];
+    this.updatePage2aValidStatus();
+  }
+
+  public shouldCheck( table: Table ): boolean {
+    if ( this.selectedConnection && ( table.getConnection() === this.selectedConnection ) ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * @returns {boolean} `true` if a connection has been selected
+   */
+  public hasSelectedConnection(): boolean {
+    return ( this.selectedConnection != null ) && ( this.selectedConnection !== this.emptyConnection );
   }
 
   /**
@@ -434,7 +486,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     if (this.wizardService.isEdit()) {
       this.step2aConfig.nextEnabled = true;
     } else {
-      this.step2aConfig.nextEnabled = this.nameValid;
+      this.step2aConfig.nextEnabled = this.nameValid && this.hasSelectedConnection();
     }
     this.setNavAway(this.step2aConfig.nextEnabled);
   }
