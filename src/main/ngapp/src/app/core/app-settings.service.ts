@@ -16,7 +16,12 @@
  */
 
 import { Injectable } from "@angular/core";
+import { Http, Headers, RequestOptions, Response } from "@angular/http";
+import { LoggerService } from "@core/logger.service";
 import { LayoutType } from "@shared/layout-type.enum";
+import { Observable } from "rxjs/Observable";
+import { ErrorObservable } from "rxjs/observable/ErrorObservable";
+import { environment } from "@environments/environment";
 
 @Injectable()
 export class AppSettingsService {
@@ -30,20 +35,24 @@ export class AppSettingsService {
   public readonly GIT_REPO_PATH_KEY = "repo-path-property";
   public readonly GIT_REPO_FILE_PATH_KEY = "file-path-property";
 
-  private readonly komodoRoot = "tko:komodo/tko:workspace";
-
-  // TODO: temporary location for user and password
-  private readonly komodoUser = "dsbUser";
-  private readonly komodoUserPassword = "1demo-user1";
-
   // Map to maintain the target git repository properties
   private readonly gitRepoProperties: Map<string, string>;
+
+  private static readonly userProfileUrl = environment.komodoServiceUrl + "/userProfile";
 
   // page layouts
   private svcPageLayout: LayoutType = LayoutType.CARD;
   private connPageLayout: LayoutType = LayoutType.CARD;
 
-  constructor() {
+  private http: Http;
+  private logger: LoggerService;
+
+  private userProfile: Object;
+
+  constructor(http: Http, logger: LoggerService) {
+    this.http = http;
+    this.logger = logger;
+
     // TODO: The git repository properties will be picked up based on the Openshift install location
     this.gitRepoProperties = new Map<string, string>();
     this.gitRepoProperties.set(this.GIT_REPO_PATH_KEY, "https://github.com/GIT_USER/GIT_REPO");
@@ -52,30 +61,75 @@ export class AppSettingsService {
     this.gitRepoProperties.set(this.GIT_REPO_PASSWORD_KEY, "MY_PASS");
     this.gitRepoProperties.set(this.GIT_REPO_AUTHOR_NAME_KEY, "MY_USER");
     this.gitRepoProperties.set(this.GIT_REPO_AUTHOR_EMAIL_KEY, "USER@SOMEWHERE.COM");
+
+    //
+    // Do a call to fetch the user profile on init of service.
+    // The fetchProfile method returns an observable
+    // which we subscribe to and on completion assigns the variable
+    // values accordingly
+    //
+    this.fetchUserProfile().subscribe(
+        (profile) => {
+            this.userProfile = profile;
+        },
+        (error) => {
+            this.logger.error( "[fetchUserProfile] Error: %o", error );
+        });
   }
 
-  /*
-   * Get the komodo workspace path for the current user
-   * @returns {string} the komodo workspace path
+  private handleError(error: Response): ErrorObservable {
+    this.logger.error( this.constructor.name + "::handleError" );
+    return Observable.throw(error);
+  }
+
+  private fetchUserProfile(): Observable<Object> {
+    return this.http.get(AppSettingsService.userProfileUrl, this.getAuthRequestOptions())
+        .map((response) => {
+          const userInfo = response.json();
+          return userInfo.Information;
+        })
+        .catch((error) => this.handleError(error));
+  }
+
+  /**
+   * Get the Auth RequestOptions if any
+   * Note: Since usage of the oauth-proxy no additional auth request options are necessary
+   *
+   * @returns {RequestOptions}
    */
-  public getKomodoUserWorkspacePath( ): string {
-    return this.komodoRoot + "/" + this.komodoUser;
+  public getAuthRequestOptions(): RequestOptions {
+    const headers = new Headers({});
+    return new RequestOptions({ headers });
   }
 
   /*
    * Get the logged in komodo user
    * @returns {string} the komodo user
    */
-  public getKomodoUser( ): string {
-    return this.komodoUser;
+  public getKomodoUser(): string {
+    if (! this.userProfile)
+        throw new Error('Failed to retrieve the user profile so cannot provide a user name');
+
+    let komodoUser = this.userProfile['User Name'];
+    if (! komodoUser)
+        throw new Error('Failed to retrieve the user name from the user profile');
+
+    return komodoUser;
   }
 
   /*
-   * Get the logged in komodo user password
-   * @returns {string} the komodo user password
+   * Get the komodo workspace path for the current user
+   * @returns {string} the komodo workspace path
    */
-  public getKomodoUserPassword( ): string {
-    return this.komodoUserPassword;
+  public getKomodoUserWorkspacePath(): string {
+    if (! this.userProfile)
+        throw new Error('Failed to retrieve the user profile so cannot provide a workspace path');
+
+    let workspace = this.userProfile['Workspace'];
+    if (! workspace)
+        throw new Error('Failed to retrieve the workspace path from the user profile');
+
+    return workspace;
   }
 
   /*

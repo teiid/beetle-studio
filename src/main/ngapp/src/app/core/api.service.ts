@@ -29,20 +29,26 @@ export abstract class ApiService {
   protected appSettings: AppSettingsService;
   protected logger: LoggerService;
 
-  constructor( appSettings: AppSettingsService, logger: LoggerService ) {
+  constructor( appSettings: AppSettingsService, logger: LoggerService) {
     this.appSettings = appSettings;
     this.logger = logger;
   }
 
   /**
-   * Get the Auth RequestOptions
-   * TODO: User and password are currently hardcoded to the DSB kit server credentials (dsbUser | 1demo-user1)
+   * @returns the base url of the application
+   */
+  protected getBaseUrl(): string {
+    return window.location.protocol + '://' + window.location.hostname;
+  }
+
+  /**
+   * Get the Auth RequestOptions if any
+   * Note: Since usage of the oauth-proxy no additional auth request options are necessary
+   *
    * @returns {RequestOptions}
    */
   protected getAuthRequestOptions(): RequestOptions {
-    const userPasswordStr = this.appSettings.getKomodoUser() + ":" + this.appSettings.getKomodoUserPassword();
-    const headers = new Headers({ "Authorization": "Basic " +  btoa(userPasswordStr) });
-    return new RequestOptions({ headers });
+    return this.appSettings.getAuthRequestOptions();
   }
 
   /**

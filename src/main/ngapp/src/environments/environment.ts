@@ -21,22 +21,30 @@ import { DataservicesConstants } from "@dataservices/shared/dataservices-constan
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
+export const komodoEngine = "vdb-builder";
+
+export const komodoRestVersion = "v1";
+
 export const environment = {
   production: false,
+
+  komodoEngine: komodoEngine,
+
+  komodoRestVersion: komodoRestVersion,
 
   // the home page path
   homePagePath: DataservicesConstants.dataservicesRootPath,
 
   // REST URL - Komodo import export url
-  komodoImportExportUrl: "https://localhost:8443/vdb-builder/v1/importexport",
+  komodoImportExportUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/importexport",
 
   // REST URL - Komodo workspace
-  komodoWorkspaceUrl: "https://localhost:8443/vdb-builder/v1/workspace",
+  komodoWorkspaceUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/workspace",
 
   // REST URL - Komodo teiid server
-  komodoTeiidUrl: "https://localhost:8443/vdb-builder/v1/teiid",
+  komodoTeiidUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/teiid",
 
   // REST URL - Komodo service
-  komodoServiceUrl: "https://localhost:8443/vdb-builder/v1/service",
+  komodoServiceUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/service"
 
 };
