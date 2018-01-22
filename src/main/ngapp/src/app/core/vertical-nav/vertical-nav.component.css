@@ -1,0 +1,15 @@
+.vertical-navbar-layout {
+  background-color: white;
+  position: fixed;
+}
+
+.app-feature-content {
+  margin-top: 2em;
+  margin-left: 200px;
+}
+
+.navbar-brand-title {
+  margin-top: 5px;
+  font-size: 2em;
+  color: white;
+}
