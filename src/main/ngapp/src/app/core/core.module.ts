@@ -25,29 +25,28 @@ import { AppSettingsService } from "@core/app-settings.service";
 import { BreadcrumbComponent } from "@core/breadcrumbs/breadcrumb/breadcrumb.component";
 import { BreadcrumbsComponent } from "@core/breadcrumbs/breadcrumbs.component";
 import { LoggerService } from "@core/logger.service";
-import { NavHeaderComponent } from "@core/nav-header/nav-header.component";
 import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component";
 import { ModalModule } from "ngx-bootstrap/modal";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { PatternFlyNgModule } from "patternfly-ng";
 
 @NgModule({
   imports: [
     CommonModule,
     HttpModule,
     ModalModule,
+    PatternFlyNgModule,
     RouterModule
   ],
   declarations: [
     AboutDialogComponent,
     BreadcrumbComponent,
     BreadcrumbsComponent,
-    NavHeaderComponent,
     VerticalNavComponent
   ],
   exports: [
     BreadcrumbComponent,
     BreadcrumbsComponent,
-    NavHeaderComponent,
     VerticalNavComponent
   ],
   providers: [

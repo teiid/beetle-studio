@@ -15,97 +15,81 @@
  * limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
-import { NavigationEnd, Router } from "@angular/router";
+import { Component, OnInit, TemplateRef, ViewEncapsulation } from "@angular/core";
+import { Router } from "@angular/router";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { AboutEvent } from "@core/about-dialog/about-event";
+import { About } from "@core/about-dialog/about.model";
+import { AboutService } from "@core/about-dialog/about.service";
 import { LoggerService } from "@core/logger.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
-
-/**
- * Models the menus off the main left-hand vertical nav.
- */
-enum VerticalNavType {
-  Home, Connections, Dataservices
-}
+import { BsModalService } from "ngx-bootstrap/modal";
+import { BsModalRef } from "ngx-bootstrap/modal/modal-options.class";
+import { NavigationItemConfig } from "patternfly-ng";
 
 @Component({
   moduleId: module.id,
+  encapsulation: ViewEncapsulation.None,
   selector: "app-vertical-nav",
   templateUrl: "./vertical-nav.component.html",
-  styleUrls: ["./vertical-nav.component.less"]
+  styleUrls: ["./vertical-nav.component.css"]
 })
 
 export class VerticalNavComponent implements OnInit {
 
-  public menuTypes: any = VerticalNavType;
-  public currentMenu: VerticalNavType = VerticalNavType.Home;
+  public aboutInfo: About;
+  public navigationItems: NavigationItemConfig[];
+
+  private aboutRef: BsModalRef;
+  private aboutService: AboutService;
   private logger: LoggerService;
+  private modalService: BsModalService;
   private router: Router;
 
-  constructor(router: Router, logger: LoggerService) {
+  constructor( router: Router,
+               logger: LoggerService,
+               modalService: BsModalService,
+               aboutService: AboutService ) {
     this.router = router;
     this.logger = logger;
+    this.modalService = modalService;
+    this.aboutService = aboutService;
+  }
+
+  public closeAbout( $event: AboutEvent ): void {
+    this.aboutRef.hide();
   }
 
   public ngOnInit(): void {
-    this.logger.log("Subscribing to router events.");
+    // uncomment to debug router events
+    // this.router.events.subscribe((event) => {
+    //   console.error( event );
+    // });
+
+    this.navigationItems = [ DataservicesConstants.dataservicesNavItem, ConnectionsConstants.connectionsNavItem ];
+  }
+
+  public onNavigation( $event: NavigationItemConfig ): void {
+    const link: string[] = [ $event.url ];
+    this.router.navigate( link ).then(() => {
+      // nothing to do
+    });
+  }
+
+  public openAbout( template: TemplateRef< any > ): void {
     const self = this;
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        self.onShadeClick();
+
+    this.aboutService.getAboutInformation().subscribe(
+      ( result ) => {
+        self.aboutInfo = result;
+      },
+      ( error ) => {
+        this.logger.error( error, "Error getting about information.");
       }
-    });
+    );
+
+    console.error( template );
+    this.aboutRef = this.modalService.show( template );
   }
-
-  /**
-   * Called when the user clicks the vertical menu Connections item.
-   */
-  public onConnectionsClick(): void {
-    this.currentMenu = VerticalNavType.Connections;
-    const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
-    this.router.navigate(link).then(() => {
-      // nothing to do
-    });
-  }
-
-  /**
-   * Called when the user clicks the vertical menu Dataservices item.
-   */
-  public onDataservicesClick(): void {
-    this.currentMenu = VerticalNavType.Dataservices;
-    const link: string[] = [ DataservicesConstants.dataservicesRootPath ];
-    this.router.navigate(link).then(() => {
-      // nothing to do
-    });
-  }
-
-  /**
-   * Called when the user clicks the vertical menu shade (the grey shaded area behind the submenu div that
-   * is displayed when a sub-menu is selected).  Clicking the shade makes the sub-menu div go away.
-   */
-  private onShadeClick(): void {
-      /*
-        this.subMenuOut = false;
-        setTimeout(() => {
-            this.currentSubMenu = VerticalNavSubMenuType.None;
-        }, 180);
-        */
-    }
-
-    /**
-     * Toggles a sub-menu off the main vertical left-hand menu bar.  If the sub-menu is
-     * already selected, it de-selects it.
-     * @param subMenu the sub-menu to toggle
-     */
-    /*
-    toggleSubMenu(subMenu: VerticalNavSubMenuType): void {
-        if (this.subMenuOut && this.currentSubMenu === subMenu) {
-            this.onShadeClick();
-        } else {
-            this.currentSubMenu = subMenu;
-            this.subMenuOut = true;
-        }
-    }
-    */
 
 }

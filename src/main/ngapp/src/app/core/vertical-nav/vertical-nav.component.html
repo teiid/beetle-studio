@@ -1,18 +1,31 @@
-<div id="studio-vertical-nav-wrapper">
-
-  <div id="studio-vertical-nav">
-    <div id="studio-nav-item-dataservices" class="studio-nav-item" [class.active]="currentMenu === menuTypes.Dataservices"
-         (click)="onDataservicesClick()">
-      <span class="fa fa-fw fa-table"></span>
-      <div i18n="@@verticalNav.dataservices">DataServices</div>
+<div id="verticalNavLayout" class="layout-pf layout-pf-fixed vertical-navbar-layout" style="background-color: white;">
+  <pfng-vertical-navigation
+    [brandSrc]="'assets/vdb.png'"
+    [title]="'Beetle Studio'"
+    [brandAlt]="'Beetle Studio'"
+    [hiddenIcons]="false"
+    [persistentSecondary]="false"
+    [pinnableMenus]="false"
+    [showBadges]="false"
+    [updateActiveItemsOnClick]="false"
+    [items]="navigationItems"
+    (onNavigationEvent)="onNavigation($event)">
+    <div>
+      <ul class="nav navbar-nav navbar-brand-title">
+        <li><label>Beetle Studio</label></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right navbar-iconic">
+        <li class="dropdown">
+          <a class="dropdown-toggle nav-item-iconic" (click)="openAbout(aboutTemplate)">
+            <span title="About" class="fa pficon-help navbar-help-icon"></span>
+            <ng-template #aboutTemplate>
+              <app-about-dialog [(info)]="aboutInfo" (onCancel)="closeAbout($event)">
+              </app-about-dialog>
+            </ng-template>
+          </a>
+        </li>
+      </ul>
     </div>
-    <div id="studio-nav-item-connections" class="studio-nav-item" [class.active]="currentMenu === menuTypes.Connections"
-         (click)="onConnectionsClick()">
-      <span class="fa fa-fw fa-plug"></span>
-      <div i18n="@@verticalNav.connections">Connections</div>
-    </div>
-    <div class="studio-nav-item-filler">
-    </div>
-  </div>
-
+    <div class=""></div>
+  </pfng-vertical-navigation>
 </div>

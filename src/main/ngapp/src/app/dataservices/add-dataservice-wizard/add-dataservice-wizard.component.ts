@@ -37,7 +37,6 @@ import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { WizardService } from "@dataservices/shared/wizard.service";
-import { LoadingState } from "@shared/loading-state.enum";
 import { NotificationType, WizardComponent } from "patternfly-ng";
 import { WizardEvent } from "patternfly-ng";
 import { WizardStepConfig } from "patternfly-ng";
@@ -421,11 +420,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   }
 
   public shouldCheck( table: Table ): boolean {
-    if ( this.selectedConnection && ( table.getConnection() === this.selectedConnection ) ) {
-      return true;
-    }
-
-    return false;
+    return !!( this.selectedConnection && ( table.getConnection() === this.selectedConnection ) );
   }
 
   /**

@@ -10,6 +10,8 @@
  * limitations under the License.
  */
 
+import { NavigationItemConfig } from "patternfly-ng";
+
 export class ConnectionsConstants {
 
   public static readonly connectionsRootRoute = "connections";
@@ -17,4 +19,11 @@ export class ConnectionsConstants {
 
   public static readonly addConnectionRoute = ConnectionsConstants.connectionsRootRoute + "/add-connection";
   public static readonly addConnectionPath = ConnectionsConstants.connectionsRootPath + "/add-connection";
+
+  public static readonly connectionsNavItem: NavigationItemConfig = {
+    title: "Connections",
+    iconStyleClass: "fa fa-fw fa-plug",
+    url: ConnectionsConstants.connectionsRootPath
+  };
+
 }

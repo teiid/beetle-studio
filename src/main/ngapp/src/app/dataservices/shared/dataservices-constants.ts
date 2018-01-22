@@ -1,3 +1,5 @@
+import { NavigationItemConfig } from "patternfly-ng";
+
 /**
  * @license
  * Copyright 2017 JBoss Inc
@@ -25,5 +27,11 @@ export class DataservicesConstants {
 
   public static readonly testDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/test-dataservice";
   public static readonly testDataservicePath = DataservicesConstants.dataservicesRootPath + "/test-dataservice";
+
+  public static readonly dataservicesNavItem: NavigationItemConfig = {
+    title: "Data Services",
+    iconStyleClass: "fa fa-fw fa-table",
+    url: DataservicesConstants.dataservicesRootPath
+  };
 
 }
