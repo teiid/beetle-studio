@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+/src/main/ngapp/dist
 
 # dependencies
 node_modules/

@@ -1,0 +1,861 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "annotations": {
+            "iconClass": "icon-jboss",
+            "description": "Application template for beetle-studio built using S2I.  Includes ability to configure certificates for serving secure content.",
+            "tags": "datavirt,jboss,data,virtualization,wildfly-swarm",
+            "version": "1.0.0",
+            "openshift.io/display-name": "beetle-studio based on teiid and wildfly",
+            "openshift.io/documentation-url":"http://teiid.org/docs/",
+            "openshift.io/long-description":"This template provides the UI to generate data access services using Teiid Data Virtualization federating heterogenous sources including files, relational databases, cloud sources, webservices etc., exposing them as a single service",
+            "openshift.io/provider-display-name":"Red Hat, Inc.",
+            "openshift.io/support-url":"http://teiid.org/"
+        },
+        "name": "beetle-studio-s2i"
+    },
+    "labels": {
+        "template": "beetle-studio-s2i"
+    },
+    "parameters": [
+        {
+            "description": "The location url of the beetle-studio source repository",
+            "displayName": "BeETLe-Studio Source URL",
+            "name": "BEETLE_GIT_URL",
+            "value": "git://github.com/teiid/beetle-studio.git",
+            "required": false
+        },
+        {
+            "description": "The location url of the teiid-komodo engine source repository",
+            "displayName": "Komodo Source URL",
+            "name": "KOMODO_GIT_URL",
+            "value": "git://github.com/teiid/teiid-komodo.git",
+            "required": false
+        },
+        {
+            "description": "Username of the persistence storage database.",
+            "displayName": "Persistence Storage Username",
+            "name": "PERSISTENCE_STORAGE_USER",
+            "value": "komodo",
+            "required": false
+        },
+        {
+            "description": "Password of the persistence storage database.",
+            "displayName": "Persistence Storage Password",
+            "name": "PERSISTENCE_STORAGE_PASSWORD",
+            "value": "komodo",
+            "required": false
+        },
+        {
+            "description": "Additional maven repository for finding dependencies",
+            "displayName": "Additional maven repository",
+            "name": "MVN_LOCAL_REPO",
+            "value": "https://repository.jboss.org/nexus/content/repositories/central/",
+            "required": false
+        },
+        {
+            "description": "Maven Mirror Url for finding dependencies",
+            "displayName": "Maven Mirror Url",
+            "name": "MVN_MIRROR_URL",
+            "required": false
+        }
+    ],
+    "objects": [
+        {
+            "apiVersion":"v1",
+            "kind":"ServiceAccount",
+            "metadata": {
+                "name":"das",
+                "annotations": {
+                    "serviceaccounts.openshift.io/oauth-redirectreference.primary":"{\"kind\":\"OAuthRedirectReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"Route\",\"name\":\"das\"}}"
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "vdb-builder-persistence",
+                "labels": {
+                    "app": "postgresql-persistent",
+                    "template": "postgresql-persistent-template"
+                },
+                "annotations": {
+                    "template.openshift.io/expose-uri": "postgres://{.spec.clusterIP}:{.spec.ports[?(.name==\"postgresql\")].port}"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "postgresql",
+                        "protocol": "TCP",
+                        "port": 5432,
+                        "targetPort": 5432
+                   }
+                ],
+                "selector": {
+                    "name": "vdb-builder-persistence"
+                }
+            }
+        },
+        {
+            "apiVersion":"v1",
+            "kind":"Service",
+            "metadata": {
+                "name":"das",
+                "annotations": {
+                    "service.alpha.openshift.io/serving-cert-secret-name":"proxy-tls"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name":"das",
+                        "port": 443,
+                        "targetPort": 8443
+                    }
+                ],
+                "selector": {
+                    "app":"das"
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "spec": {
+                "ports": [
+                    {
+                        "name": "http",
+                        "port": 8080,
+                        "targetPort": "http"
+                    },
+                    {
+                        "name": "admin",
+                        "port": 9990,
+                        "targetPort": "admin"
+                    },
+                    {
+                        "name": "jdbc",
+                        "port": 31000,
+                        "targetPort": "jdbc"
+                    }
+                ],
+                "selector": {
+                    "deploymentConfig": "vdb-builder"
+                }
+            },
+            "metadata": {
+                "name": "vdb-builder",
+                "labels": {
+                    "application": "vdb-builder"
+                },
+                "annotations": {
+                    "description": "Designing data virtualization services.",
+                    "service.alpha.openshift.io/dependencies":"[{\"name\": \"vdb-builder-persistence\", \"kind\": \"Service\"}]"
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "spec": {
+                "ports": [
+                    {
+                        "name": "http",
+                        "port": 8080,
+                        "targetPort": "http"
+                    }
+                ],
+                "selector": {
+                    "deploymentConfig": "beetle-studio"
+                }
+            },
+            "metadata": {
+                "name": "beetle-studio",
+                "labels": {
+                    "application": "beetle-studio"
+                },
+                "annotations": {
+                    "description": "Designing data virtualization services."
+                }
+            }
+        },
+        {
+            "apiVersion":"v1",
+            "kind":"Route",
+            "metadata": {
+                "name":"das"
+            },
+            "spec": {
+                "port": {
+                    "targetPort": 8443
+                },
+                "to": {
+                    "name":"das",
+                    "kind":"Service"
+                },
+                "tls": {
+                    "termination":"Reencrypt"
+                }
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "id": "vdb-builder-http",
+            "metadata": {
+                "name": "vdb-builder",
+                "labels": {
+                    "application": "vdb-builder"
+                },
+                "annotations": {
+                    "description": "Route for application's http (REST) service."
+                }
+            },
+            "spec": {
+                "port": {
+                    "targetPort": "http"
+                },
+                "to": {
+                    "name": "vdb-builder"
+                }
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "id": "vdb-builder-jdbc",
+            "metadata": {
+                "name": "jdbc-vdb-builder",
+                "labels": {
+                    "application": "vdb-builder"
+                },
+                "annotations": {
+                    "description": "Route for application's JDBC service."
+                }
+            },
+            "spec": {
+                "port": {
+                    "targetPort": "jdbc"
+                },
+                "to": {
+                    "name": "vdb-builder"
+                },
+                "tls": {
+                    "termination": "passthrough"
+                }
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "id": "beetle-studio-http",
+            "metadata": {
+                "name": "beetle-studio",
+                "labels": {
+                    "application": "beetle-studio"
+                },
+                "annotations": {
+                    "description": "Route for application's http service."
+                }
+            },
+            "spec": {
+                "port": {
+                    "targetPort": "http"
+                },
+                "to": {
+                    "name": "beetle-studio"
+                }
+            }
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "wildfly-swarm",
+                "labels": {
+                    "application": "wildfly-swarm"
+                }
+            }
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "vdb-builder",
+                "labels": {
+                    "application": "vdb-builder"
+                }
+            }
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "beetle-studio",
+                "labels": {
+                    "application": "beetle-studio"
+                }
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "wildfly-swarm-build",
+                "labels": {
+                    "application": "wildfly-swarm"
+                }
+            },
+            "spec": {
+                "source" : {
+                    "type" : "Git",
+                    "git" : {
+                        "uri": "git://github.com/wildfly-swarm/sti-wildflyswarm"
+                    },
+                    "contextDir": "1.0"
+                },
+                "strategy": {
+                    "type": "Docker",
+                    "dockerStrategy": {
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "openshift/base-centos7:latest"
+                        }
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "wildfly-swarm:latest"
+                    }
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChange": {}
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "vdb-builder-build",
+                "labels": {
+                    "application": "vdb-builder"
+                }
+            },
+            "spec": {
+                "source" : {
+                    "type" : "Git",
+                    "git" : {
+                        "uri": "${KOMODO_GIT_URL}"
+                    },
+                    "contextDir": "."
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "wildfly-swarm:latest"
+                        },
+                        "incremental": true,
+                        "env": [
+                            {
+                               "name": "MAVEN_MIRROR_URL",
+                               "value": "${MVN_MIRROR_URL}"
+                            },
+                            {
+                               "name": "MAVEN_ARGS",
+                               "value": "clean install -s settings.xml -Popenshift_s2i -Dlocal-repo=${MVN_LOCAL_REPO} -DskipTests -Dintegration.skipTests -B -pl org.teiid.komodo:komodo-rest,org.teiid.komodo:komodo-openshift -am"
+                            }
+                        ]
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "vdb-builder:latest"
+                    }
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChange": {
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "wildfly-swarm:latest"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "beetle-studio-build",
+                "labels": {
+                    "application": "beetle-studio"
+                }
+            },
+            "spec": {
+                "source" : {
+                    "type" : "Git",
+                    "git" : {
+                        "uri": "${BEETLE_GIT_URL}"
+                    },
+                    "contextDir": "src/main/ngapp"
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "nodejs:6",
+                            "namespace": "openshift"
+                        },
+                        "incremental": true,
+                        "env": [
+                            {
+                               "name": "MAVEN_MIRROR_URL",
+                               "value": "${MVN_MIRROR_URL}"
+                            },
+                            {
+                               "name": "MAVEN_ARGS",
+                               "value": "clean install -DskipTests"
+                            }
+                        ]
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "beetle-studio:latest"
+                    }
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChange": {
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "nodejs-6-centos7:latest"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "vdb-builder-persistence",
+                "labels": {
+                    "app": "postgresql-persistent",
+                    "template": "postgresql-persistent-template"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "postgresql"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "postgresql:9.5",
+                                "namespace": "openshift"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "name": "vdb-builder-persistence"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "name": "vdb-builder-persistence"
+                        }
+                    },
+                    "spec": {
+                        "terminationGracePeriodSeconds": 60,
+                        "containers": [
+                            {
+                                "name": "postgresql",
+                                "image": "centos/postgresql-95-centos7",
+                                "imagePullPolicy": "Always",
+                                "resources" : {
+                                    "limits" : {
+                                        "cpu" : "500m",
+                                        "memory" : "512Mi"
+                                    }
+                                },
+                                "ports": [
+                                    {
+                                        "containerPort": 5432,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "volumeMounts": [
+                                    {
+                                        "name": "vdb-builder-persistence-data",
+                                        "mountPath": "/var/lib/pgsql/data"
+                                    }
+                                ],
+                                "livenessProbe": {
+                                    "tcpSocket": {
+                                        "port": 5432
+                                    },
+                                    "initialDelaySeconds": 1,
+                                    "timeoutSeconds": 1,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/sh",
+                                            "-i",
+                                            "-c",
+                                           "psql -h 127.0.0.1 -U $POSTGRESQL_USER -q -d $POSTGRESQL_DATABASE -c 'SELECT 1'"
+                                        ]
+                                    },
+                                    "initialDelaySeconds": 5,
+                                    "timeoutSeconds": 1,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "env": [
+                                    {
+                                        "name": "POSTGRESQL_USER",
+                                        "value": "${PERSISTENCE_STORAGE_USER}"
+                                    },
+                                    {
+                                        "name": "POSTGRESQL_PASSWORD",
+                                        "value": "${PERSISTENCE_STORAGE_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "POSTGRESQL_DATABASE",
+                                        "value": "komodo"
+                                    }
+                                ]
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "name": "vdb-builder-persistence-data"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "vdb-builder",
+                "labels": {
+                    "application": "vdb-builder"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "vdb-builder"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "vdb-builder:latest"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "deploymentConfig": "vdb-builder"
+                },
+                "template": {
+                    "metadata": {
+                        "name": "vdb-builder",
+                        "labels": {
+                            "deploymentConfig": "vdb-builder",
+                            "application": "vdb-builder"
+                        }
+                    },
+                    "spec": {
+                        "serviceAccountName":"das",
+                        "terminationGracePeriodSeconds": 60,
+                        "containers": [
+                            {
+                                "name": "vdb-builder",
+                                "image": "vdb-builder",
+                                "imagePullPolicy": "Always",
+                                "resources" : {
+                                    "requests" : {
+                                        "cpu" : "500m",
+                                        "memory" : "1536Mi"
+                                    },
+                                    "limits" : {
+                                        "cpu" : "500m",
+                                        "memory" : "1536Mi"
+                                    }
+                                },
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "jdbc",
+                                        "containerPort": 31000,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "OPENSHIFT_KUBE_PING_LABELS",
+                                        "value": "application=vdb-builder"
+                                    },
+                                    {
+                                        "name": "OPENSHIFT_KUBE_PING_NAMESPACE",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "fieldPath": "metadata.namespace"
+                                            }
+                                        }
+                                    },
+                                    {
+                                    	"name": "SWARM_JVM_ARGS",
+                                    	"value": "-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
+                                    },
+                                    {
+                                    	"name": "SWARM_JAR_ARGS",
+                                    	"value": "-Dkomodo.user=${PERSISTENCE_STORAGE_USER} -Dkomodo.password=${PERSISTENCE_STORAGE_PASSWORD} -Dkomodo.repositoryPersistenceHost=vdb-builder-persistence"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "beetle-studio",
+                "labels": {
+                    "application": "beetle-studio"
+                },
+                "template.alpha.openshift.io/wait-for-ready":"true"
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "beetle-studio"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "beetle-studio:latest"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "deploymentConfig": "beetle-studio"
+                },
+                "template": {
+                    "metadata": {
+                        "name": "beetle-studio",
+                        "labels": {
+                            "deploymentConfig": "beetle-studio",
+                            "application": "beetle-studio"
+                        }
+                    },
+                    "spec": {
+                        "serviceAccountName":"das",
+                        "terminationGracePeriodSeconds": 60,
+                        "containers": [
+                            {
+                                "name": "beetle-studio",
+                                "image": "beetle-studio",
+                                "imagePullPolicy": "Always",
+                                "resources" : {
+                                    "requests" : {
+                                        "cpu" : "500m",
+                                        "memory" : "1536Mi"
+                                    },
+                                    "limits" : {
+                                        "cpu" : "500m",
+                                        "memory" : "1536Mi"
+                                    }
+                                },
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "OPENSHIFT_KUBE_PING_LABELS",
+                                        "value": "application=beetle-studio"
+                                    },
+                                    {
+                                        "name": "OPENSHIFT_KUBE_PING_NAMESPACE",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "fieldPath": "metadata.namespace"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "livenessProbe":{
+                                    "httpGet":{
+                                        "path":"/",
+                                        "port":8080
+                                    },
+                                    "initialDelaySeconds":180,
+                                    "timeoutSeconds":30
+                                },
+                                "readinessProbe":{
+                                    "httpGet":{
+                                        "path":"/",
+                                        "port":8080
+                                    },
+                                    "initialDelaySeconds":180,
+                                    "timeoutSeconds":30
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion":"extensions/v1beta1",
+            "kind":"Deployment",
+            "metadata": {
+                "name":"das"
+            },
+            "spec": {
+                "replicas":1,
+                "selector": {
+                    "matchLabels": {
+                        "app":"das"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "app":"das"
+                        }
+                    },
+                    "spec": {
+                        "serviceAccountName":"das",
+                        "containers": [
+                            {
+                                "name":"oauth-proxy",
+                                "image":"openshift/oauth-proxy:v1.0.0",
+                                "imagePullPolicy":"IfNotPresent",
+                                "ports": [
+                                    {
+                                        "containerPort":8443,
+                                        "name":"public"
+                                    }
+                                ],
+                                "args": [
+                                    "--https-address=:8443",
+                                    "--provider=openshift",
+                                    "--openshift-service-account=das",
+                                    "--upstream=http://vdb-builder:8080/vdb-builder/",
+                                    "--upstream=http://beetle-studio:8080",
+                                    "--tls-cert=/etc/tls/private/tls.crt",
+                                    "--tls-key=/etc/tls/private/tls.key",
+                                    "--cookie-secret=V2lsZDAwZDJXaWxkMDBkMg==",
+                                    "--pass-access-token=true",
+                                    "--skip-provider-button=true",
+                                    "--pass-basic-auth=true",
+                                    "--pass-user-headers=true",
+                                    "--pass-host-header=true",
+                                    "--skip-auth-preflight",
+                                    "--openshift-ca=/etc/pki/tls/certs/ca-bundle.crt",
+                                    "--openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt",
+                                    "--scope=user:info user:check-access role:admin:beetle-studio:! role:cluster-admin:beetle-studio:!"
+                                ],
+                                "volumeMounts": [
+                                    {
+                                        "mountPath":"/etc/tls/private",
+                                        "name":"proxy-tls"
+                                    }
+                                ]
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "name":"proxy-tls",
+                                "secret": {
+                                    "secretName":"proxy-tls"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}
