@@ -18,12 +18,13 @@
 #
 #################
 function show_help {
-	echo "Usage: $0 -h [-r]"
-	echo "-h ip|hostname: location of Openshift host"
-	echo "-m url: maven mirror url"
-	echo "-k url: komodo source repository location url"
-    echo "-b url: beetle studio repository location url"
-	echo "-r local mvn repo: provides an additional nexus repository"
+  echo "Usage: $0 -h|--host <hostname|ip> [-r|--local <local mvn repo>] [-m|--mirror <url>] [-k|--komodo <url>] [-b|--beetle <url>]"
+  echo "-h <ip|hostname>: location of Openshift host"
+  echo "-m <url>: maven mirror url"
+  echo "-k <url>: komodo source repository location url"
+  echo "-b <url>: beetle studio repository location url"
+  echo "-r <local mvn repo>: provides an additional nexus repository"
+  echo "--help: print this help"
   exit 1
 }
 
@@ -40,22 +41,42 @@ fi
 #
 # Determine the command line options
 #
-while getopts "h:m:r:k:b:" opt;
-do
-	case $opt in
-	h) OS_HOST=$OPTARG ;;
-	m) MVN_MIRROR=$OPTARG ;;
-	r) LOCAL_MVN_REPO=$OPTARG ;;
-	k) KOMODO_SOURCE_REPO=$OPTARG ;;
-    b) BEETLE_SOURCE_REPO=$OPTARG ;;
-	*) show_help ;;
-	esac
+OPTS=`getopt -o h:m:r:k:b: --longoptions help,host:,mirror:,local:,komodo:,beetle: -n 'parse-options' -- "$@"`
+
+if [ $? != 0 ] ; then
+  echo "Error: Failed parsing options." >&2 ; exit 1 ; fi
+
+eval set -- "$OPTS"
+
+while true; do
+  case "$1" in
+    -h | --host ) OS_HOST=$2; shift 2 ;;
+    -m | --mirror) MVN_MIRROR=$2; shift 2 ;;
+    -r | --local) LOCAL_MVN_REPO=$2; shift 2 ;;
+    -k | --komodo) KOMODO_SOURCE_REPO=$2; shift 2 ;;
+    -b | --beetle) BEETLE_SOURCE_REPO=$2; shift 2 ;;
+    --help) show_help ;;
+    -- ) shift; break ;;
+    * ) break ;;
+  esac
 done
 
+#
+# Check the parameters provided
+#
 if [ -z "$OS_HOST" ]; then
-  echo "No Openshift host specified. Use -h <host|ip>"
+  echo -e "\nError: No Openshift host specified. Use -h|--host <host|ip>\n"
+  show_help
   exit 1
 fi
+
+echo "Openshift host: $OS_HOST"
+echo "Maven mirror: $MVN_MIRROR"
+echo "Local maven repository: $LOCAL_MVN_REPO"
+echo "Komodo source repository: $KOMODO_SOURCE_REPO"
+echo "Beetle source repository: $BEETLE_SOURCE_REPO"
+
+exit 1
 
 echo -e '\n\n=== Logging into oc tool as admin ==='
 oc login https://${OS_HOST}:8443 -u admin -p admin
