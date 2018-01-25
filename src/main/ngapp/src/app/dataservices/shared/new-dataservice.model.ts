@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ReflectiveInjector } from "@angular/core";
-import { AppSettingsService } from "@core/app-settings.service";
 
 export class NewDataservice {
 
@@ -23,15 +21,14 @@ export class NewDataservice {
   private keng__dataPath: string;
   private keng__kType: string;
   private tko__description: string;
-  private appSettings: AppSettingsService;
+  private workspacePath: string;
 
   /**
    * Constructor
    */
-  constructor( ) {
+  constructor(workspacePath: string) {
     this.keng__kType = "Dataservice";
-    const injector = ReflectiveInjector.resolveAndCreate([AppSettingsService]);
-    this.appSettings = injector.get(AppSettingsService);
+    this.workspacePath = workspacePath;
   }
 
   /**
@@ -53,7 +50,7 @@ export class NewDataservice {
    */
   public setId( name: string ): void {
     this.keng__id = name;
-    this.keng__dataPath = this.appSettings.getKomodoUserWorkspacePath() + "/" + name;
+    this.keng__dataPath = this.workspacePath + "/" + name;
   }
 
   /**
@@ -63,7 +60,7 @@ export class NewDataservice {
     this.tko__description = description ? description : null;
   }
 
-  // overrides toJSON - we do not want the appSettings
+  // overrides toJSON - we do not want the workspace path
   public toJSON(): {} {
     return {
       keng__id: this.keng__id,

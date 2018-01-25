@@ -17,6 +17,9 @@ export class ConnectionsConstants {
   public static readonly connectionsRootRoute = "connections";
   public static readonly connectionsRootPath = "/" + ConnectionsConstants.connectionsRootRoute;
 
+  public static readonly connectionRootRoute = "connection";
+  public static readonly connectionRootPath = "/" + ConnectionsConstants.connectionRootRoute;
+
   public static readonly addConnectionRoute = ConnectionsConstants.connectionsRootRoute + "/add-connection";
   public static readonly addConnectionPath = ConnectionsConstants.connectionsRootPath + "/add-connection";
 

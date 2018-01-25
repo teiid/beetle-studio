@@ -285,7 +285,7 @@ export class AddConnectionWizardComponent implements OnInit {
 
     const self = this;
     this.connectionService
-      .createConnection(connection)
+      .createAndDeployConnection(connection)
       .subscribe(
         (wasSuccess) => {
           self.createComplete = true;

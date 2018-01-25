@@ -287,7 +287,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
 
     const self = this;
     this.vdbService
-      .deployVdbForTable(this.tableSelector.getSelectedTables()[0])
+      .deployVdbForTables(this.tableSelector.getSelectedTables())
       .subscribe(
         (wasSuccess) => {
           // Deployment succeeded - wait for source vdb to become active
@@ -344,9 +344,9 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
 
     if (status.isActive()) {
       if (this.wizardService.isEdit()) {
-        this.updateDataserviceForSingleTable();
+        this.updateDataserviceForSingleSourceTables();
       } else {
-        this.createDataserviceForSingleTable();
+        this.createDataserviceForSingleSourceTables();
       }
     } else if (status.isFailed()) {
       this.setFinalPageComplete(false);
@@ -487,19 +487,16 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   }
 
   /*
-   * Create the Dataservice for the selected source table.  This is invoked
+   * Create the Dataservice for the selected single source tables.  This is invoked
    * only after the source VDB has successfully deployed.
    */
-  private createDataserviceForSingleTable(): void {
-    const dataservice: NewDataservice = new NewDataservice();
-
+  private createDataserviceForSingleSourceTables(): void {
     // Dataservice basic properties from step 1
-    dataservice.setId(this.dataserviceName);
-    dataservice.setDescription(this.dataserviceDescription);
+    const dataservice: NewDataservice = this.dataserviceService.newDataserviceInstance(this.dataserviceName, this.dataserviceDescription);
 
     const self = this;
     this.dataserviceService
-      .createDataserviceForSingleTable(dataservice, this.tableSelector.getSelectedTables()[0])
+      .createDataserviceForSingleSourceTables(dataservice, this.tableSelector.getSelectedTables())
       .subscribe(
         (wasSuccess) => {
           self.setFinalPageComplete(wasSuccess);
@@ -513,19 +510,16 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Update the selected Dataservice for the selected source table.  This is invoked
+   * Update the selected Dataservice for the selected single source tables.  This is invoked
    * only after the source VDB has successfully deployed.
    */
-  private updateDataserviceForSingleTable(): void {
-    const dataservice: NewDataservice = new NewDataservice();
-
+  private updateDataserviceForSingleSourceTables(): void {
     // Dataservice basic properties from step 1
-    dataservice.setId(this.dataserviceName);
-    dataservice.setDescription(this.dataserviceDescription);
+    const dataservice: NewDataservice = this.dataserviceService.newDataserviceInstance(this.dataserviceName, this.dataserviceDescription);
 
     const self = this;
     this.dataserviceService
-      .updateDataserviceForSingleTable(dataservice, this.tableSelector.getSelectedTables()[0])
+      .updateDataserviceForSingleSourceTables(dataservice, this.tableSelector.getSelectedTables())
       .subscribe(
         (wasSuccess) => {
           self.setFinalPageComplete(wasSuccess);

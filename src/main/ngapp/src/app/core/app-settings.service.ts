@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Injectable, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Headers, Http, RequestOptions, Response } from "@angular/http";
 import { LoggerService } from "@core/logger.service";
 import { environment } from "@environments/environment";
@@ -24,7 +24,7 @@ import { Observable } from "rxjs/Observable";
 import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 
 @Injectable()
-export class AppSettingsService implements OnInit {
+export class AppSettingsService {
 
   private static readonly userProfileUrl = environment.komodoServiceUrl + "/userProfile";
 
@@ -61,9 +61,11 @@ export class AppSettingsService implements OnInit {
     this.gitRepoProperties.set(this.GIT_REPO_PASSWORD_KEY, "MY_PASS");
     this.gitRepoProperties.set(this.GIT_REPO_AUTHOR_NAME_KEY, "MY_USER");
     this.gitRepoProperties.set(this.GIT_REPO_AUTHOR_EMAIL_KEY, "USER@SOMEWHERE.COM");
+
+    this.initUserProfile();
   }
 
-  public ngOnInit(): void {
+  public initUserProfile(): void {
     //
     // Do a call to fetch the user profile on init of service.
     // The fetchProfile method returns an observable

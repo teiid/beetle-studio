@@ -283,12 +283,14 @@ export class VdbService extends ApiService {
   }
 
   /**
-   * Create and deploy a VDB for the provided table
-   * @param {Table} table
+   * Create and deploy a VDB for the provided tables.  Currently we require all tables to
+   * be from the same connection source.
+   * @param {Table[]} tables
    * @returns {Observable<boolean>}
    */
-  public deployVdbForTable(table: Table): Observable<boolean> {
-    const connection: Connection = table.getConnection();
+  public deployVdbForTables(tables: Table[]): Observable<boolean> {
+    // Currently requiring all tables from same connection
+    const connection: Connection = tables[0].getConnection();
 
     // VDB to create
     const vdb = new Vdb();
@@ -306,22 +308,21 @@ export class VdbService extends ApiService {
     vdbModel.setId(connName);
     vdbModel.setDataPath(vdbPath + "/" + connName);
     vdbModel.setModelType("PHYSICAL");
-    // Filter values for the model
-    let catName = table.getCatalogName();
-    let schemaName = table.getSchemaName();
-    // let tableName = table.getName();
-    catName = (!catName || catName.length < 1) ? "%" : catName;
-    schemaName = (!schemaName || schemaName.length < 1) ? "%" : schemaName;
-    // tableName = (!tableName || tableName.length < 1) ? "%" : tableName;
+
+    // TODO: Narrow the filters.  Currently fetches entire schema.  (Schema generation will be changing anyway)
+    const catNamePattern = "%";
+    const schemaNamePattern = "%";
+    const tableNamePattern = "%";
+
     // Set the importer properties for the physical model
     const props: NameValue[] = [];
     props.push(new NameValue("importer.TableTypes", "TABLE"));
     props.push(new NameValue("importer.UseFullSchemaName", "false"));
     props.push(new NameValue("importer.UseQualifiedName", "false"));
     props.push(new NameValue("importer.UseCatalogName", "false"));
-    props.push(new NameValue("importer.catalog", catName));
-    props.push(new NameValue("importer.schemaPattern", schemaName));
-    props.push(new NameValue("importer.tableNamePattern", "%"));  // TODO improve tablePattern when possible
+    props.push(new NameValue("importer.catalog", catNamePattern));
+    props.push(new NameValue("importer.schemaPattern", schemaNamePattern));
+    props.push(new NameValue("importer.tableNamePattern", tableNamePattern));
     vdbModel.setProperties(props);
 
     // VdbModelSource to create

@@ -46,15 +46,17 @@ export class MockDataserviceService extends DataserviceService {
     this.serv1.setId("serv1");
     this.serv1.setServiceViewTables(["table1", "table2"]);
     this.serv1.setServiceViewModel("viewModel");
-    this.serv1.setServiceViewName("views");
+    const viewNames: string[] = [];
+    viewNames.push("views");
+    this.serv1.setServiceViewNames(viewNames);
     this.serv2.setId("serv2");
     this.serv2.setServiceViewTables(["table1", "table2"]);
     this.serv2.setServiceViewModel("viewModel");
-    this.serv2.setServiceViewName("views");
+    this.serv2.setServiceViewNames(viewNames);
     this.serv3.setId("serv3");
     this.serv3.setServiceViewTables(["table1", "table2"]);
     this.serv3.setServiceViewModel("viewModel");
-    this.serv3.setServiceViewName("views");
+    this.serv3.setServiceViewNames(viewNames);
   }
 
   /**
