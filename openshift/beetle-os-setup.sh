@@ -76,8 +76,6 @@ echo "Local maven repository: $LOCAL_MVN_REPO"
 echo "Komodo source repository: $KOMODO_SOURCE_REPO"
 echo "Beetle source repository: $BEETLE_SOURCE_REPO"
 
-exit 1
-
 echo -e '\n\n=== Logging into oc tool as admin ==='
 oc login https://${OS_HOST}:8443 -u admin -p admin
 oc whoami 2>&1 > /dev/null || { echo "Cannot log in ... exiting" && exit 1; }
@@ -113,7 +111,7 @@ if [ -n "${BEETLE_SOURCE_REPO}" ]; then
   APP_ARGS="${APP_ARGS} --param=BEETLE_GIT_URL=${BEETLE_SOURCE_REPO}"
 fi
 
-echo -e "\n\n=== Deploying ${OS_TEMPLATE} template with default values ==="
+echo -e "\n\n=== Deploying ${OS_TEMPLATE} template ==="
 oc get dc/vdb-builder 2>&1 >/dev/null || \
 	oc new-app ${OS_TEMPLATE} \
 		${APP_ARGS} \
