@@ -42,7 +42,7 @@ export const environment = {
   komodoWorkspaceUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/workspace",
 
   // REST URL - Komodo teiid server
-  komodoTeiidUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/teiid",
+  komodoTeiidUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/metadata",
 
   // REST URL - Komodo service
   komodoServiceUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/service"
