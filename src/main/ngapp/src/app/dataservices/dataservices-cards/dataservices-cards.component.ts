@@ -15,11 +15,14 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from "@angular/core";
+import { LoggerService } from "@core/logger.service";
+import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 
 @Component({
   moduleId: module.id,
+  encapsulation: ViewEncapsulation.None,
   selector: "app-dataservices-cards",
   templateUrl: "dataservices-cards.component.html",
   styleUrls: ["dataservices-cards.component.css"]
@@ -30,7 +33,6 @@ export class DataservicesCardsComponent {
   @Input() public selectedDataservices: Dataservice[];
   @Output() public dataserviceSelected: EventEmitter<Dataservice> = new EventEmitter<Dataservice>();
   @Output() public dataserviceDeselected: EventEmitter<Dataservice> = new EventEmitter<Dataservice>();
-  @Output() public tagSelected: EventEmitter<string> = new EventEmitter<string>();
   @Output() public activateDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public testDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public publishDataservice: EventEmitter<string> = new EventEmitter<string>();
@@ -38,53 +40,47 @@ export class DataservicesCardsComponent {
   @Output() public editDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
 
+  public logger: LoggerService;
+
   /**
-   * Constructor.
+   * @param {LoggerService} logger the logging service
    */
-  constructor() {
-    // nothing to do
+  constructor( logger: LoggerService ) {
+    this.logger = logger;
   }
 
-  public toggleDataserviceSelected(dataservice: Dataservice): void {
-    if (this.isSelected(dataservice)) {
-      this.dataserviceDeselected.emit(dataservice);
-    } else {
-      this.dataserviceSelected.emit(dataservice);
+  public isSelected( dataservice: Dataservice ): boolean {
+    return this.selectedDataservices.indexOf( dataservice ) !== -1;
+  }
+
+  public onCardEvent( event: { eventType: string, dataserviceName: string } ): void {
+    switch ( event.eventType ) {
+      case DataserviceCardComponent.activateDataserviceEvent:
+        this.activateDataservice.emit( event.dataserviceName );
+        break;
+      case DataserviceCardComponent.deleteDataserviceEvent:
+        this.deleteDataservice.emit( event.dataserviceName );
+        break;
+      case DataserviceCardComponent.editDataserviceEvent:
+        this.editDataservice.emit( event.dataserviceName );
+        break;
+      case DataserviceCardComponent.publishDataserviceEvent:
+        this.publishDataservice.emit( event.dataserviceName );
+        break;
+      case DataserviceCardComponent.quickLookDataserviceEvent:
+        this.quickLookDataservice.emit( event.dataserviceName );
+        break;
+      case DataserviceCardComponent.testDataserviceEvent:
+        this.testDataservice.emit( event.dataserviceName );
+        break;
+      default:
+        this.logger.error( "Unhandled event type of '" + event.eventType + "'" );
+        break;
     }
   }
 
-  public isSelected(dataservice: Dataservice): boolean {
-    return this.selectedDataservices.indexOf(dataservice) !== -1;
-  }
-
-  public onActivateDataservice(dataserviceName: string): void {
-    this.activateDataservice.emit(dataserviceName);
-  }
-
-  public onTestDataservice(dataserviceName: string): void {
-    this.testDataservice.emit(dataserviceName);
-  }
-
-  public onPublishDataservice(dataserviceName: string): void {
-    this.publishDataservice.emit(dataserviceName);
-  }
-
-  public onDeleteDataservice(dataserviceName: string): void {
-    this.deleteDataservice.emit(dataserviceName);
-  }
-
-  public onEditDataservice(dataserviceName: string): void {
-    this.editDataservice.emit(dataserviceName);
-  }
-
-  public onQuickLookDataservice(dataserviceName: string): void {
-    this.quickLookDataservice.emit(dataserviceName);
-  }
-
-  public onSelectTag(tag: string, event: MouseEvent): void {
-    event.stopPropagation();
-    event.preventDefault();
-    this.tagSelected.emit(tag);
+  public onSelectEvent( dataservice: Dataservice ): void {
+    this.dataserviceSelected.emit( dataservice );
   }
 
 }

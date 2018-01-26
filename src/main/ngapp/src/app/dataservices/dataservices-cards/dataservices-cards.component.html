@@ -1,51 +1,8 @@
-<div class="container-fluid container-cards-pf">
-  <div class="row row-cards-pf">
-
-    <div class="col-xs-12 col-sm-3 col-md-3" *ngFor="let dataservice of dataservices">
-      <div class="card-pf card-pf-accented card-pf-aggregate-status dataservice-card" [class.active]="isSelected(dataservice)" (click)="toggleDataserviceSelected(dataservice)">
-        <div class="card-pf-body">
-          <!-- title -->
-          <h2 class="dataservice-card-title">
-            <span class="pull-left pficon-ok" *ngIf="dataservice.serviceDeploymentActive"></span>
-            <span class="pull-left pficon-error-circle-o" *ngIf="dataservice.serviceDeploymentFailed"></span>
-            <span class="pull-left pficon-warning-triangle-o" *ngIf="dataservice.serviceDeploymentInactive"></span>
-            <span class="pull-left pficon-unknown" *ngIf="dataservice.serviceDeploymentNotDeployed"></span>
-            <span class="pull-left fa fa-spinner fa-pulse" *ngIf="dataservice.serviceDeploymentLoading"></span>
-            <span class="pull-left fa fa-refresh dataservice-card-action-icon" (click)="onActivateDataservice(dataservice.getId())"></span>
-            <span class="fa fa-table dataservice-card-icon"></span>
-            <span><a [routerLink]="[dataservice.getId()]">{{ dataservice.getId() }}</a></span>
-            <span *ngIf="!dataservice.serviceDeploymentLoading" class="pull-right pficon-delete dataservice-card-action-icon" style="color:darkred;" (click)="onDeleteDataservice(dataservice.getId())"></span>
-            <span *ngIf="dataservice.serviceDeploymentLoading" class="pull-right pficon-delete dataservice-card-action-disabled-icon"></span>
-            <span *ngIf="!dataservice.serviceDeploymentLoading" class="pull-right fa fa-edit dataservice-card-action-icon" (click)="onEditDataservice(dataservice.getId())"></span>
-            <span *ngIf="dataservice.serviceDeploymentLoading" class="pull-right fa fa-edit dataservice-card-action-disabled-icon"></span>
-            <span *ngIf="!dataservice.serviceDeploymentLoading" class="pull-right pficon-export dataservice-card-action-icon" (click)="onPublishDataservice(dataservice.getId())"></span>
-            <span *ngIf="dataservice.serviceDeploymentLoading" class="pull-right pficon-export dataservice-card-action-disabled-icon"></span>
-            <span *ngIf="dataservice.serviceDeploymentActive" class="pull-right fa fa-list-alt dataservice-card-action-icon" (click)="onTestDataservice(dataservice.getId())"></span>
-            <span *ngIf="!dataservice.serviceDeploymentActive" class="pull-right fa fa-list-alt dataservice-card-action-disabled-icon"></span>
-          </h2>
-          <hr/>
-          <div class="pull-right">
-            <span *ngIf="dataservice.serviceDeploymentActive" class="pull-right fa fa-search dataservice-card-action-icon" (click)="onQuickLookDataservice(dataservice.getId())"></span>
-            <span *ngIf="!dataservice.serviceDeploymentActive" class="pull-right fa fa-search dataservice-card-action-disabled-icon"></span>
-          </div>
-          <div>
-            <span>{{ dataservice.getDescription() }}</span>
-          </div>
-          <div>
-            <span class="fa fa-database"></span>
-            <span *ngIf="dataservice.getServiceViewTables().length==1">{{dataservice.getServiceViewTables()[0]}}</span>
-            <span *ngIf="dataservice.getServiceViewTables().length==2">{{dataservice.getServiceViewTables()[0]}}, {{dataservice.getServiceViewTables()[1]}}</span>
-          </div>
-          <!--
-          <div class="dataservice-tags" *ngIf="dataservice.tags && dataservice.tags.length > 0">
-            <span class="dataservice-tags-label">Tags:</span>
-            <span class="dataservice-tag" *ngFor="let tag of dataservice.tags" (click)="selectTag(tag, $event)">{{ tag }}</span>
-          </div>
-          <p class="dataservice-description">{{dataservice.description}}</p>
-          -->
-        </div>
-      </div>
-    </div>
-
+<div class="row-cards-pf">
+  <div class="col-xs-12 col-sm-3 col-md-3" *ngFor="let dataservice of dataservices">
+    <app-dataservice-card-component [dataservice]="dataservice"
+                                    [selectedDataservices]="selectedDataservices"
+                                    (cardEvent)="onCardEvent($event)"
+                                    (selectEvent)="onSelectEvent($event)"></app-dataservice-card-component>
   </div>
 </div>

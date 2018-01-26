@@ -35,15 +35,15 @@
       <form [formGroup]=basicPropertyForm class="form-horizontal">
         <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
           <label class="col-sm-2 control-label required-pf">Name</label>
-          <div class="col-sm-5">
+          <div class="col-sm-7">
             <input class="form-control" formControlName="name" title="">
             <div class="help-block" *ngIf="!nameValid">{{ nameValidationError }}</div>
           </div>
         </div>
         <div [ngClass]="'form-group'">
           <label class="col-sm-2 control-label">Description</label>
-          <div class="col-sm-5">
-            <input class="form-control" formControlName="description" title="">
+          <div class="col-sm-7">
+            <textarea class="form-control" rows="2" maxlength="256" formControlName="description"></textarea>
           </div>
         </div>
         <div [ngClass]="hasSelectedConnection() ? 'form-group' : 'form-group has-error'">
@@ -53,11 +53,10 @@
                  title="Select the connection whose tables will be included in the dataservice">
             Connection
           </label>
-          <div class="col-sm-5">
+          <div class="col-sm-7">
             <select ([ngModel])="selectedConnection" (change)="selectedConnectionChanged($event)">
               <option disabled selected value [ngValue]="emptyConnection">{{ emptyConnection.getId() }}</option>
-              <option *ngFor="let connection of sourceTableConnections"
-                      [ngValue]="connection">
+              <option *ngFor="let connection of sourceTableConnections" [ngValue]="connection">
                 {{ connection.getId() }}
               </option>
             </select>
@@ -66,7 +65,7 @@
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label">Included Tables</label>
-          <div class="col-sm-5 wiz-review-tables">
+          <div class="col-sm-7 wiz-review-tables">
             <div [ngClass]="shouldCheck(table) ? 'wiz-review-table-checked' : 'wiz-review-table-unchecked'"
                  *ngFor="let table of dataserviceSourceTables">
                 {{ table.getName() }} ( {{ table.getConnection().getId() }} <span class="fa fa-plug"></span> )

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Headers, RequestOptions, Response } from "@angular/http";
+import { RequestOptions, Response } from "@angular/http";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import "rxjs/add/observable/throw";
@@ -38,7 +38,7 @@ export abstract class ApiService {
    * @returns the base url of the application
    */
   protected getBaseUrl(): string {
-    return window.location.protocol + '://' + window.location.hostname;
+    return window.location.protocol + "://" + window.location.hostname;
   }
 
   /**

@@ -5,6 +5,7 @@ import { By } from "@angular/platform-browser";
 import { RouterTestingModule } from "@angular/router/testing";
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
+import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
 import { DataservicesComponent } from "@dataservices/dataservices.component";
@@ -29,7 +30,11 @@ describe("DataservicesComponent", () => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), PatternFlyNgModule,
                  RouterTestingModule, SharedModule, CodemirrorModule, NgxDatatableModule ],
-      declarations: [ DataservicesComponent, DataservicesListComponent, DataservicesCardsComponent, SqlControlComponent ],
+      declarations: [ DataservicesComponent,
+                      DataservicesListComponent,
+                      DataservicesCardsComponent,
+                      DataserviceCardComponent,
+                      SqlControlComponent ],
       providers: [
         AppSettingsService,
         NotifierService,
@@ -79,7 +84,7 @@ describe("DataservicesComponent", () => {
     expect(dataservices.length).toEqual(3);
 
     // Check html has the same number of dataservice cards
-    const cardDebugElems = fixture.debugElement.queryAll(By.css(".dataservice-card-title"));
+    const cardDebugElems = fixture.debugElement.queryAll(By.css(".dataservice-card"));
     expect(cardDebugElems).toBeDefined();
     expect(cardDebugElems.length).toEqual(3);
   });
