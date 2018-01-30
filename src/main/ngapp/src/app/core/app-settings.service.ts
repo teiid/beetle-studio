@@ -15,16 +15,18 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
-import { Http, Headers, RequestOptions, Response } from "@angular/http";
+import { Injectable, OnInit } from "@angular/core";
+import { Headers, Http, RequestOptions, Response } from "@angular/http";
 import { LoggerService } from "@core/logger.service";
+import { environment } from "@environments/environment";
 import { LayoutType } from "@shared/layout-type.enum";
 import { Observable } from "rxjs/Observable";
 import { ErrorObservable } from "rxjs/observable/ErrorObservable";
-import { environment } from "@environments/environment";
 
 @Injectable()
-export class AppSettingsService {
+export class AppSettingsService implements OnInit {
+
+  private static readonly userProfileUrl = environment.komodoServiceUrl + "/userProfile";
 
   // ** Dont change git keys - must match Komodo rest call parameters **
   public readonly GIT_REPO_BRANCH_KEY = "repo-branch-property";
@@ -35,10 +37,10 @@ export class AppSettingsService {
   public readonly GIT_REPO_PATH_KEY = "repo-path-property";
   public readonly GIT_REPO_FILE_PATH_KEY = "file-path-property";
 
+  protected userProfile: Object;
+
   // Map to maintain the target git repository properties
   private readonly gitRepoProperties: Map<string, string>;
-
-  private static readonly userProfileUrl = environment.komodoServiceUrl + "/userProfile";
 
   // page layouts
   private svcPageLayout: LayoutType = LayoutType.CARD;
@@ -46,8 +48,6 @@ export class AppSettingsService {
 
   private http: Http;
   private logger: LoggerService;
-
-  private userProfile: Object;
 
   constructor(http: Http, logger: LoggerService) {
     this.http = http;
@@ -61,7 +61,9 @@ export class AppSettingsService {
     this.gitRepoProperties.set(this.GIT_REPO_PASSWORD_KEY, "MY_PASS");
     this.gitRepoProperties.set(this.GIT_REPO_AUTHOR_NAME_KEY, "MY_USER");
     this.gitRepoProperties.set(this.GIT_REPO_AUTHOR_EMAIL_KEY, "USER@SOMEWHERE.COM");
+  }
 
+  public ngOnInit(): void {
     //
     // Do a call to fetch the user profile on init of service.
     // The fetchProfile method returns an observable
@@ -69,26 +71,21 @@ export class AppSettingsService {
     // values accordingly
     //
     this.fetchUserProfile().subscribe(
-        (profile) => {
-            this.userProfile = profile;
-        },
-        (error) => {
-            this.logger.error( "[fetchUserProfile] Error: %o", error );
-        });
+      ( profile ) => {
+        this.userProfile = profile;
+      },
+      ( error ) => {
+        this.logger.error( "[fetchUserProfile] Error: %o", error );
+      } );
   }
 
-  private handleError(error: Response): ErrorObservable {
-    this.logger.error( this.constructor.name + "::handleError" );
-    return Observable.throw(error);
-  }
-
-  private fetchUserProfile(): Observable<Object> {
+  protected fetchUserProfile(): Observable<Object> {
     return this.http.get(AppSettingsService.userProfileUrl, this.getAuthRequestOptions())
-        .map((response) => {
-          const userInfo = response.json();
-          return userInfo.Information;
-        })
-        .catch((error) => this.handleError(error));
+      .map((response) => {
+        const userInfo = response.json();
+        return userInfo.Information;
+      })
+      .catch((error) => this.handleError(error));
   }
 
   /**
@@ -107,12 +104,14 @@ export class AppSettingsService {
    * @returns {string} the komodo user
    */
   public getKomodoUser(): string {
-    if (! this.userProfile)
-        throw new Error('Failed to retrieve the user profile so cannot provide a user name');
+    if (! this.userProfile) {
+      throw new Error( "Failed to retrieve the user profile so cannot provide a user name" );
+    }
 
-    let komodoUser = this.userProfile['User Name'];
-    if (! komodoUser)
-        throw new Error('Failed to retrieve the user name from the user profile');
+    const komodoUser = this.userProfile["User Name"];
+    if (! komodoUser) {
+      throw new Error( "Failed to retrieve the user name from the user profile" );
+    }
 
     return komodoUser;
   }
@@ -122,12 +121,14 @@ export class AppSettingsService {
    * @returns {string} the komodo workspace path
    */
   public getKomodoUserWorkspacePath(): string {
-    if (! this.userProfile)
-        throw new Error('Failed to retrieve the user profile so cannot provide a workspace path');
+    if (! this.userProfile) {
+      throw new Error( "Failed to retrieve the user profile so cannot provide a workspace path" );
+    }
 
-    let workspace = this.userProfile['Workspace'];
-    if (! workspace)
-        throw new Error('Failed to retrieve the workspace path from the user profile');
+    const workspace = this.userProfile["Workspace"];
+    if (! workspace) {
+      throw new Error( "Failed to retrieve the workspace path from the user profile" );
+    }
 
     return workspace;
   }
@@ -170,6 +171,11 @@ export class AppSettingsService {
    */
   public set dataservicesPageLayout( layout: LayoutType ) {
     this.svcPageLayout = layout;
+  }
+
+  private handleError(error: Response): ErrorObservable {
+    this.logger.error( this.constructor.name + "::handleError" );
+    return Observable.throw(error);
   }
 
 }

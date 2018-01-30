@@ -24,7 +24,7 @@ import { AboutService } from "@core/about-dialog/about.service";
 import { LoggerService } from "@core/logger.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { BsModalRef } from "ngx-bootstrap/modal/modal-options.class";
+import { BsModalRef } from "ngx-bootstrap/modal/bs-modal-ref.service";
 import { NavigationItemConfig } from "patternfly-ng";
 
 @Component({

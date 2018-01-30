@@ -28,9 +28,9 @@ export const komodoRestVersion = "v1";
 export const environment = {
   production: false,
 
-  komodoEngine: komodoEngine,
+  komodoEngine,
 
-  komodoRestVersion: komodoRestVersion,
+  komodoRestVersion,
 
   // the home page path
   homePagePath: DataservicesConstants.dataservicesRootPath,

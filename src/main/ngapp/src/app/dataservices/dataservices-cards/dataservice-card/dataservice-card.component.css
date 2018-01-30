@@ -1,0 +1,116 @@
+:root {
+  --body-main-color: #dc7039;
+  --border-color: #39a5dc;
+  --border-style: double;
+  --border-width: 2px;
+  --hover-color: rgb(221, 234, 255);
+}
+
+.dataservice-card {
+  -webkit-transition: background-color 300ms;
+  -moz-transition: background-color 300ms;
+//-ms-transition: background-color 300ms;
+  -o-transition: background-color 300ms;
+  transition: background-color 300ms;
+  height: 160px;
+}
+
+.dataservice-card-selected {
+}
+
+.dataservice-card-toolbar {
+  border-bottom: 1px solid lightgrey;
+  margin-bottom: 6px;
+  margin-top: 0;
+}
+
+.dataservice-card-toolbar:hover {
+  background-color: var(--hover-color);
+}
+
+.dataservice-card-toolbar-kebab {
+  margin-left: 0 !important;
+  margin-right: 4px;
+}
+
+.dataservice-card-action-icon {
+  color: var(--border-color);
+  cursor: pointer;
+  font-size: 1.5em;
+  height: 24px !important;
+  margin-left: 0 !important;
+  margin-top: 4px;
+  width: 24px !important;
+}
+
+.dataservice-card-action-disabled-icon {
+  color: lightgray;
+  font-size: 1.5em;
+  height: 24px !important;
+  margin-left: 4px;
+  margin-top: 4px;
+  width: 24px !important;
+}
+
+.dataservice-card-icon {
+  border: 2px solid var(--border-color);
+  border-radius: 60px;
+  display: inline-block;
+  padding: 0.1em 0.2em;
+}
+
+.dataservice-card-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.dataservice-card .card-pf .card-pf-heading:hover  {
+  background-color: var(--hover-color);
+}
+
+.dataservice-card-selected .card-pf .card-pf-heading {
+  border-right: var(--border-width) var(--border-style) var(--border-color);
+  border-left: var(--border-width) var(--border-style) var(--border-color);
+}
+
+.dataservice-card .card-pf .card-pf-footer  {
+  margin: 0 !important;
+  min-height: 20px;
+  padding: 10px 0 5px 20px;
+}
+
+.dataservice-card-selected .card-pf .card-pf-footer {
+  border-right: var(--border-width) var(--border-style) var(--border-color);
+  border-left: var(--border-width) var(--border-style) var(--border-color);
+}
+
+.dataservice-card-body .list-pf-container {
+  margin: 0 !important;
+  padding: 4px 10px;
+}
+
+.dataservice-card-body-title {
+  background-color: var(--body-main-color);
+  color: white;
+  margin: 4px 4px !important;
+  text-align: center;
+}
+
+div .dataservice-card-body-title {
+  border-right: var(--border-width) var(--border-style) var(--border-color);
+  border-left: var(--border-width) var(--border-style) var(--border-color);
+  margin: 0 !important;
+}
+
+.dataservice-card-description {
+  color: slategray;
+  height: 50px;
+  margin-bottom: 8px;
+  overflow: scroll;
+  padding: 0 5px 5px 5px;
+}
+
+.view-name {
+  cursor: pointer;
+  color: var(--body-main-color);
+}

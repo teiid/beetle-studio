@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-import { ReflectiveInjector } from "@angular/core";
-import { AppSettingsService } from "@core/app-settings.service";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { Identifiable } from "@shared/identifiable";
 import { SortDirection } from "@shared/sort-direction.enum";
@@ -31,7 +29,6 @@ export class Dataservice implements Identifiable< string > {
   private serviceViewModel: string;
   private serviceViewTables: string[];
   private deploymentState: DeploymentState = DeploymentState.LOADING;
-  private appSettings: AppSettingsService;
 
   /**
    * @param {Object} json the JSON representation of a Dataservice
@@ -61,8 +58,7 @@ export class Dataservice implements Identifiable< string > {
   }
 
   constructor( ) {
-    const injector = ReflectiveInjector.resolveAndCreate([AppSettingsService]);
-    this.appSettings = injector.get(AppSettingsService);
+    // nothing to do
   }
 
   /**
@@ -134,13 +130,6 @@ export class Dataservice implements Identifiable< string > {
    */
   public getServiceViewTables(): string[] {
     return this.serviceViewTables;
-  }
-
-  /**
-   * @returns {string} the dataservice dataPath (can be null)
-   */
-  public getDataPath(): string {
-    return this.appSettings.getKomodoUserWorkspacePath() + "/" + this.keng__id;
   }
 
   /**

@@ -264,7 +264,7 @@ export class DataservicesComponent extends AbstractPageComponent {
     this.setQuickLookPanelOpenState(false);
 
     const link: string[] = [ DataservicesConstants.testDataservicePath ];
-    this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
+    this.logger.debug("[DataservicesPageComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do
     });
