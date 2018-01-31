@@ -21,27 +21,38 @@ export const komodoEngine = "vdb-builder";
 
 export const komodoRestVersion = "v1";
 
+export const localKomodoPrefix = "http://localhost:8080/";
+
+export const openshiftKomodoPrefix = "/";
+
+// -----------------------------------------------------------
+// komodoUrlPrefix
+//   - openshiftKomodoPrefix (openshift deployment)
+//   - localKomodoPrefix (development on local teiid-komodo)
+// -----------------------------------------------------------
+export const komodoUrlPrefix = openshiftKomodoPrefix;
+
 export const environment = {
 
   production: true,
 
-  komodoEngine: komodoEngine,
+  komodoEngine,
 
-  komodoRestVersion: komodoRestVersion,
+  komodoRestVersion,
 
   // the home page path
   homePagePath: DataservicesConstants.dataservicesRootPath,
 
   // REST URL - Komodo import export url
-  komodoImportExportUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/importexport",
+  komodoImportExportUrl: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/importexport",
 
   // REST URL - Komodo workspace
-  komodoWorkspaceUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/workspace",
+  komodoWorkspaceUrl: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/workspace",
 
   // REST URL - Komodo teiid server
-  komodoTeiidUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/metadata",
+  komodoTeiidUrl: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/metadata",
 
   // REST URL - Komodo service
-  komodoServiceUrl: "/" + komodoEngine + "/" + komodoRestVersion + "/service"
+  komodoServiceUrl: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/service"
 
 };
