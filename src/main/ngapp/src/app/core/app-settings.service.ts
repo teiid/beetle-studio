@@ -37,7 +37,7 @@ export class AppSettingsService implements OnInit {
   public readonly GIT_REPO_PATH_KEY = "repo-path-property";
   public readonly GIT_REPO_FILE_PATH_KEY = "file-path-property";
 
-  protected userProfile: Object;
+  protected userProfile: object;
 
   // Map to maintain the target git repository properties
   private readonly gitRepoProperties: Map<string, string>;
@@ -79,7 +79,7 @@ export class AppSettingsService implements OnInit {
       } );
   }
 
-  protected fetchUserProfile(): Observable<Object> {
+  protected fetchUserProfile(): Observable<object> {
     return this.http.get(AppSettingsService.userProfileUrl, this.getAuthRequestOptions())
       .map((response) => {
         const userInfo = response.json();

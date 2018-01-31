@@ -21,7 +21,7 @@ export class MockAppSettingsService extends AppSettingsService implements OnInit
     super( http, logger );
   }
 
-  protected fetchUserProfile(): Observable< Object > {
+  protected fetchUserProfile(): Observable< object > {
     return Observable.of( this.userProfile );
   }
 
