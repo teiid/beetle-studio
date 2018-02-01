@@ -70,6 +70,22 @@ export class DataserviceService extends ApiService {
   }
 
   /**
+   * Create and return a NewDataservice instance
+   * @param {string} name the dataservice name
+   * @param {string} description the dataservice description
+   * @returns {NewDataservice} the NewDataservice object
+   */
+  public newDataserviceInstance(name: string, description: string ): NewDataservice {
+    const ds: NewDataservice = new NewDataservice(this.appSettingsService.getKomodoUserWorkspacePath());
+
+    // Set provided name and description
+    ds.setId(name);
+    ds.setDescription(description);
+
+    return ds;
+  }
+
+  /**
    * Set the current Dataservice selection
    * @param {Dataservice} service the Dataservice
    */
@@ -102,14 +118,16 @@ export class DataserviceService extends ApiService {
     }
 
     const modelName = this.selectedDataservice.getServiceViewModel();
-    const serviceView = this.selectedDataservice.getServiceViewName();
+    const serviceViews = this.selectedDataservice.getServiceViewNames();
 
-    // TODO: we will need to get multiple views when supported
-    const view1: Table = new Table();
-    view1.setName(modelName + "." + serviceView);
-
+    // build the views using the model and view names
     const allViews: Table[] = [];
-    allViews.push(view1);
+    for ( const serviceView of serviceViews ) {
+      const aView: Table = new Table();
+      aView.setName(modelName + "." + serviceView);
+
+      allViews.push(aView);
+    }
 
     return allViews;
   }
@@ -206,14 +224,14 @@ export class DataserviceService extends ApiService {
   /**
    * Create a dataservice via the komodo rest interface
    * @param {string} dataserviceName,
-   * @param {string} tablePath,
+   * @param {string[]} tablePaths,
    * @param {string} modelSourcePath,
    * @returns {Observable<boolean>}
    */
-  public setServiceVdbForSingleTable(dataserviceName: string, tablePath: string, modelSourcePath: string): Observable<boolean> {
+  public setServiceVdbForSingleSourceTables(dataserviceName: string, tablePaths: string[], modelSourcePath: string): Observable<boolean> {
     return this.http
-      .post(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRootPath + "/ServiceVdbForSingleTable",
-        { dataserviceName, tablePath, modelSourcePath}, this.getAuthRequestOptions())
+      .post(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRootPath + "/ServiceVdbForSingleSourceTables",
+        { dataserviceName, tablePaths, modelSourcePath}, this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
       })
@@ -301,22 +319,27 @@ export class DataserviceService extends ApiService {
   /**
    * Create a dataservice which is a straight passthru to the supplied tables
    * @param {NewDataservice} dataservice
-   * @param {Table} sourceTable
+   * @param {Table[]} sourceTables
    * @returns {Observable<boolean>}
    */
-  public createDataserviceForSingleTable(dataservice: NewDataservice, sourceTable: Table): Observable<boolean> {
-    const connectionName = sourceTable.getConnection().getId();
+  public createDataserviceForSingleSourceTables(dataservice: NewDataservice, sourceTables: Table[]): Observable<boolean> {
+    // All tables from same connection
+    const connectionName = sourceTables[0].getConnection().getId();
     const sourceVdbName = connectionName + VdbsConstants.SOURCE_VDB_SUFFIX;
     const sourceModelName = connectionName;
     const vdbPath = this.getKomodoUserWorkspacePath() + "/" + sourceVdbName;
-    const tablePath = vdbPath + "/" + sourceModelName + "/" + sourceTable.getName();
+    const tablePaths = [];
+    for ( const sourceTable of sourceTables ) {
+      const tablePath = vdbPath + "/" + sourceModelName + "/" + sourceTable.getName();
+      tablePaths.push(tablePath);
+    }
     const modelSourcePath = vdbPath + "/" + sourceModelName + "/vdb:sources/" + sourceModelName;
 
     // Chain the individual calls together in series to build the DataService
     return this.createDataservice(dataservice)
       .flatMap((res) => this.vdbService.updateVdbModelFromTeiid(sourceVdbName, sourceModelName,
                                                                 sourceVdbName, sourceModelName))
-      .flatMap((res) => this.setServiceVdbForSingleTable(dataservice.getId(), tablePath, modelSourcePath))
+      .flatMap((res) => this.setServiceVdbForSingleSourceTables(dataservice.getId(), tablePaths, modelSourcePath))
       .flatMap((res) => this.createReadonlyDataRole(dataservice.getId(), sourceModelName))
       .flatMap((res) => this.vdbService.undeployVdb(sourceVdbName))
       .flatMap((res) => this.vdbService.deleteVdb(sourceVdbName));
@@ -326,12 +349,12 @@ export class DataserviceService extends ApiService {
    * Updates a dataservice with single table source.  This is simply a create, with the added step of
    * deleting the existing workspace dataservice first.
    * @param {NewDataservice} dataservice
-   * @param {Table} sourceTable
+   * @param {Table[]} sourceTables
    * @returns {Observable<boolean>}
    */
-  public updateDataserviceForSingleTable(dataservice: NewDataservice, sourceTable: Table): Observable<boolean> {
+  public updateDataserviceForSingleSourceTables(dataservice: NewDataservice, sourceTables: Table[]): Observable<boolean> {
     return this.deleteDataservice(dataservice.getId())
-      .flatMap((res) => this.createDataserviceForSingleTable(dataservice, sourceTable));
+      .flatMap((res) => this.createDataserviceForSingleSourceTables(dataservice, sourceTables));
   }
 
   /**

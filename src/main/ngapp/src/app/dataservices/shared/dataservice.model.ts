@@ -25,7 +25,7 @@ export class Dataservice implements Identifiable< string > {
   private tko__description: string;
   private serviceVdbName: string;
   private serviceVdbVersion: string;
-  private serviceView: string;
+  private serviceViews: string[];
   private serviceViewModel: string;
   private serviceViewTables: string[];
   private deploymentState: DeploymentState = DeploymentState.LOADING;
@@ -112,10 +112,10 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
-   * @returns {string} the dataservice view name (can be null)
+   * @returns {string[]} the dataservice view names (can be null)
    */
-  public getServiceViewName(): string {
-    return this.serviceView;
+  public getServiceViewNames(): string[] {
+    return this.serviceViews;
   }
 
   /**
@@ -215,10 +215,10 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
-   * @param {string} viewName the dataservice view name
+   * @param {string[]} viewNames the dataservice view names
    */
-  public setServiceViewName( viewName: string ): void {
-    this.serviceView = viewName;
+  public setServiceViewNames( viewNames: string[] ): void {
+    this.serviceViews = viewNames;
   }
 
   /**
@@ -249,7 +249,7 @@ export class Dataservice implements Identifiable< string > {
       tko__description: this.tko__description,
       serviceVdbName: this.serviceVdbName,
       serviceVdbVersion: this.serviceVdbVersion,
-      serviceView: this.serviceView,
+      serviceViews: this.serviceViews,
       serviceViewModel: this.serviceViewModel,
       serviceViewTables: this.serviceViewTables
     };

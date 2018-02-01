@@ -26,6 +26,7 @@ import { TemplateDefinition } from "@connections/shared/template-definition.mode
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { Table } from "@dataservices/shared/table.model";
 import { environment } from "@environments/environment";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
 import { Observable } from "rxjs/Observable";
@@ -63,6 +64,22 @@ export class ConnectionService extends ApiService {
     return this.http
       .post(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath + "/" + connection.getName(),
              connection, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Deploy a connection via the komodo rest interface
+   * @param {string} connectionName
+   * @returns {Observable<boolean>}
+   */
+  public deployConnection(connectionName: string): Observable<boolean> {
+    const connectionPath = this.getKomodoUserWorkspacePath() + "/" + connectionName;
+    return this.http
+      .post(environment.komodoTeiidUrl + ConnectionsConstants.connectionRootPath,
+        { path: connectionPath}, this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
       })
@@ -151,6 +168,17 @@ export class ConnectionService extends ApiService {
         return tableNames;
       })
       .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Create a connection and deploy it to server via the komodo rest interface
+   * @param {NewConnection} connection
+   * @returns {Observable<boolean>}
+   */
+  public createAndDeployConnection(connection: NewConnection): Observable<boolean> {
+    // Chain the individual calls together in series to build the DataService
+    return this.createConnection(connection)
+      .flatMap((res) => this.deployConnection(connection.getName()));
   }
 
 }

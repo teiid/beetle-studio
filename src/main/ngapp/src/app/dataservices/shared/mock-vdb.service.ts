@@ -153,10 +153,10 @@ export class MockVdbService extends VdbService {
 
   /**
    * Create and deploy a VDB for the provided table
-   * @param {Table} table
+   * @param {Table[]} tables
    * @returns {Observable<boolean>}
    */
-  public deployVdbForTable(table: Table): Observable<boolean> {
+  public deployVdbForTables(tables: Table[]): Observable<boolean> {
     return Observable.of(true);
   }
 
