@@ -8,7 +8,9 @@ import { ConnectionsListComponent } from "@connections/connections-list/connecti
 import { ConnectionsComponent } from "@connections/connections.component";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { MockConnectionService } from "@connections/shared/mock-connection.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { SharedModule } from "@shared/shared.module";
 import { ModalModule } from "ngx-bootstrap";
 
@@ -26,6 +28,7 @@ describe("ConnectionsComponent", () => {
     TestBed.overrideComponent( ConnectionsComponent, {
       set: {
         providers: [
+          { provide: AppSettingsService, useClass: MockAppSettingsService },
           { provide: ConnectionService, useClass: MockConnectionService },
         ]
       }

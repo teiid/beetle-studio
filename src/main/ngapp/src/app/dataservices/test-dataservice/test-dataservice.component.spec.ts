@@ -1,7 +1,9 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
@@ -22,6 +24,7 @@ describe("TestDataserviceComponent", () => {
       declarations: [ SqlControlComponent, TestDataserviceComponent ],
       providers: [
         NotifierService,
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: VdbService, useClass: MockVdbService }
       ]

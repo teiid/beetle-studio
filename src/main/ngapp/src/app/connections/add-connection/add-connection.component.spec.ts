@@ -5,7 +5,9 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { AddConnectionWizardComponent } from "@connections/add-connection-wizard/add-connection-wizard.component";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { MockConnectionService } from "@connections/shared/mock-connection.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddConnectionComponent } from "./add-connection.component";
@@ -19,6 +21,7 @@ describe("AddConnectionComponent", () => {
       imports: [ CoreModule, PatternFlyNgModule, FormsModule, ReactiveFormsModule, RouterTestingModule, SharedModule ],
       declarations: [ AddConnectionComponent, AddConnectionWizardComponent ],
       providers: [
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ConnectionService, useClass: MockConnectionService },
       ]
     })

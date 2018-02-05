@@ -19,6 +19,7 @@ import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
+import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { TemplateDefinition } from "@connections/shared/template-definition.model";
@@ -136,6 +137,14 @@ export class MockConnectionService extends ConnectionService {
 
     const empty: SchemaInfo[] = [];
     return Observable.of( empty );
+  }
+
+  public getJdbcConnectionTables( tableFilter: JdbcTableFilter ): Observable< string[] > {
+    const tableNames = [];
+    tableNames.push( "table1" );
+    tableNames.push( "table2" );
+    tableNames.push( "table3" );
+    return Observable.of( tableNames );
   }
 
 }

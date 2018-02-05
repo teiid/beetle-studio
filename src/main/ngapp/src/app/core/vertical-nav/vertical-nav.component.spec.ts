@@ -5,6 +5,7 @@ import { AboutDialogComponent } from "@core/about-dialog/about-dialog.component"
 import { AboutService } from "@core/about-dialog/about.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component";
 import { BsModalService, ModalModule } from "ngx-bootstrap";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -17,7 +18,11 @@ describe("VerticalNavComponent", () => {
     TestBed.configureTestingModule({
       imports: [ HttpModule, ModalModule.forRoot(), PatternFlyNgModule, RouterTestingModule ],
       declarations: [ VerticalNavComponent, AboutDialogComponent ],
-      providers: [ AboutService, AppSettingsService, BsModalService, LoggerService ]
+      providers: [
+        AboutService,
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
+        BsModalService,
+        LoggerService ]
     })
     .compileComponents().then(() => {
       // nothing to do

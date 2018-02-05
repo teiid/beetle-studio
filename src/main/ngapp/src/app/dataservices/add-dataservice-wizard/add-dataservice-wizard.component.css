@@ -32,7 +32,7 @@
   width: 300px;
   margin-left: 20px;
   padding-left: 4px;
-  overflow: scroll;
+  overflow: auto;
   white-space: nowrap;
   border: 1px solid #ccc;
   -webkit-border-radius: 2px;

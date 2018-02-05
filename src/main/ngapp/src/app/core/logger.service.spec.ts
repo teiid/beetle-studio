@@ -9,6 +9,7 @@ describe("LoggerService", () => {
   });
 
   it("should be created", inject([LoggerService], ( service: LoggerService) => {
+    console.log("========== [LoggerService] should be created");
     expect(service).toBeTruthy();
   }));
 });

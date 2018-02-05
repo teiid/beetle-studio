@@ -1,7 +1,24 @@
+:root {
+  --body-background-color: #f5f5f5;
+  --body-main-color: #72767b;
+}
+
+.card-pf .card-pf-body {
+  background-color: var(--body-background-color);
+  margin: 0;
+  padding: 0 10px 0 10px;
+}
+
+.card-pf-heading {
+  margin: 0;
+  padding: 0 20px;
+}
+
 .selected-table-card .card-pf {
   background-color: #def3ff;
-  margin: 0 0 10px;
+  margin: 0 4px 4px 4px;
   min-height: 40px;
+  padding: 0;
 }
 
 .selected-table-name:before {
@@ -43,25 +60,25 @@
 }
 
 .selected-table-body .card-pf-body {
-  background-color: white;
+  background-color: var(--body-background-color);
   margin-top: 10px !important;
 }
 
 .selected-table-column-selection {
-  margin-left: 5px;
-  padding-top: 5px;
-  font-weight: bold;
+  background-color: var(--body-main-color);
+  color: white;
+  margin: 4px 0;
+  text-align: center;
 }
-
-.seleted-table-card .pfng-card .card-pf-heading {
-  background-color: #def3ff;
-  margin-bottom: -10px !important;
-}
-
 
 .selected-table-card .pfng-card .card-pf-footer  {
+  background-color: #ececec;
   margin: 0 !important;
-  padding: 10px 0 5px 20px;
   min-height: 20px;
+  padding: 10px 0 5px 20px;
 }
 
+.selected-tables-container {
+  margin-top: 0;
+  padding-top: 4px;
+}

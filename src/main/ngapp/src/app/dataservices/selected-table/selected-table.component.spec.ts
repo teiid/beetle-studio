@@ -41,6 +41,7 @@ describe("SelectedTableComponent", () => {
   });
 
   it("should be created", () => {
+    console.log("========== [SelectedTableComponent] should be created");
     expect(component).toBeTruthy();
   });
 
