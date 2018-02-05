@@ -90,20 +90,11 @@ export class DataserviceCardComponent implements OnInit {
    * @returns {string[]} the names of the views
    */
   public getViews( ds: Dataservice ): string[] {
-    // TODO rewrite when REST functionality has been implemented
     const result: string[] = [];
 
-    const v1 = "ViewOne";
-    result.push( v1 );
-
-    const v2 = "ViewTwo";
-    result.push( v2 );
-
-    const v3 = "ViewThree";
-    result.push( v3 );
-
-    const v4 = "ViewFour";
-    result.push( v4 );
+    for (const viewName of ds.getServiceViewNames()) {
+      result.push(viewName);
+    }
 
     return result;
   }
@@ -124,7 +115,7 @@ export class DataserviceCardComponent implements OnInit {
       },
       titleBorder: true,
       noPadding: true,
-      topBorder: true
+      topBorder: false
     } as CardConfig;
 
     this.listConfig = {
