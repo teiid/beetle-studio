@@ -11,7 +11,9 @@
 }
 
 .activity-list-items {
-  margin-top: 10px
+  margin-top: 10px;
+  height: 75vh;
+  overflow-y: auto;
 }
 
 .activity-list-activities .toolbar-pf {
