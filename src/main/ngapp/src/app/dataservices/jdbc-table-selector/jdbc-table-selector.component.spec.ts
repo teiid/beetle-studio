@@ -6,6 +6,7 @@ import { ConnectionService } from "@connections/shared/connection.service";
 import { MockConnectionService } from "@connections/shared/mock-connection.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jdbc-table-selector.component";
 import { SelectedTableComponent } from "@dataservices/selected-table/selected-table.component";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
@@ -25,6 +26,7 @@ describe("JdbcTableSelectorComponent", () => {
       declarations: [ JdbcTableSelectorComponent, SelectedTableComponent ],
       providers: [
         AppSettingsService, LoggerService, NotifierService, WizardService,
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ConnectionService, useClass: MockConnectionService },
         { provide: VdbService, useClass: MockVdbService },
       ]
@@ -46,6 +48,7 @@ describe("JdbcTableSelectorComponent", () => {
   });
 
   it("should have correct number of schemas", () => {
+    console.log("========== [JdbcTableSelectorComponent] should have correct number of schemas");
     component.connection = MockConnectionService.conn2;
     component.ngOnInit();
     component.setConnection( MockConnectionService.conn1 );
@@ -53,6 +56,7 @@ describe("JdbcTableSelectorComponent", () => {
   });
 
   it( "should clear schemas", () => {
+    console.log("========== [JdbcTableSelectorComponent] should clear schemas");
     component.connection = MockConnectionService.conn3;
     component.ngOnInit();
     expect( component.getSchemas().length ).toBe( MockConnectionService.numConn3Schemas );
@@ -62,6 +66,7 @@ describe("JdbcTableSelectorComponent", () => {
   });
 
   it( "should select schema", () => {
+    console.log("========== [JdbcTableSelectorComponent] should select schema");
     component.connection = MockConnectionService.conn1;
     component.ngOnInit();
     expect( component.selectedSchema ).toBeNull();

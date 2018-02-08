@@ -8,7 +8,9 @@ import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 import { By } from "@angular/platform-browser";
 import { RouterTestingModule } from "@angular/router/testing";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { SharedModule } from "@shared/shared.module";
 import { ModalModule } from "ngx-bootstrap";
 
@@ -27,6 +29,7 @@ describe("ActivitiesComponent", () => {
       set: {
         providers: [
           { provide: ActivityService, useClass: MockActivityService },
+          { provide: AppSettingsService, useClass: MockAppSettingsService }
         ]
       }
     });

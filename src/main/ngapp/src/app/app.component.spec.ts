@@ -1,6 +1,8 @@
 import { async, TestBed } from "@angular/core/testing";
 import { RouterTestingModule } from "@angular/router/testing";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { ModalModule } from "ngx-bootstrap";
 import { AppComponent } from "./app.component";
 
@@ -11,6 +13,9 @@ describe("AppComponent", () => {
       declarations: [
         AppComponent
       ],
+      providers: [
+        { provide: AppSettingsService, useClass: MockAppSettingsService }
+      ]
     }).compileComponents().then(() => {
       // nothing to do
     });

@@ -7,7 +7,9 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { MockConnectionService } from "@connections/shared/mock-connection.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddActivityComponent } from "./add-activity.component";
@@ -22,12 +24,29 @@ describe("AddActivityComponent", () => {
       declarations: [ AddActivityComponent, AddActivityWizardComponent ],
       providers: [
         { provide: ActivityService, useClass: MockActivityService },
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ConnectionService, useClass: MockConnectionService }
       ]
     })
       .compileComponents().then(() => {
       // nothing to do
     });
+
+    TestBed.overrideComponent(
+      MockActivityService, {
+        set: {
+          providers: [ { provide: AppSettingsService, useClass: MockAppSettingsService } ]
+        }
+      }
+    );
+
+    TestBed.overrideComponent(
+      MockConnectionService, {
+        set: {
+          providers: [ { provide: AppSettingsService, useClass: MockAppSettingsService } ]
+        }
+      }
+    );
   }));
 
   beforeEach(() => {

@@ -7,11 +7,11 @@
       <span class="fa fa-close pull-right selected-table-close-icon" (click)="onRemove()"></span>
       {{ table.getName() }}
     </h3>
-    <h5 class="selected-table-connection">{{ table.getConnection().getId() }}</h5>
+    <div class="selected-table-connection">{{ table.getConnection().getId() }}</div>
   </ng-template>
   <div class="selected-table-body">
     <div *ngIf="showColumns">
-      <h5 class="selected-table-column-selection">Select columns to include in the view:</h5>
+      <div class="selected-table-column-selection">Include/Exclude Columns</div>
       <ngx-datatable style="max-height: 200px;"
                      [rows]="columnDefinitions"
                      [footerHeight]="50"
