@@ -4,7 +4,7 @@
     "metadata": {
         "annotations": {
             "iconClass": "icon-jboss",
-            "description": "Application template for beetle-studio built using S2I.  Includes ability to configure certificates for serving secure content.",
+            "description": "Application template for beetle-studio and vdb-builder built using S2I.",
             "tags": "datavirt,jboss,data,virtualization,wildfly-swarm",
             "version": "1.0.0",
             "openshift.io/display-name": "beetle-studio based on teiid and wildfly",
