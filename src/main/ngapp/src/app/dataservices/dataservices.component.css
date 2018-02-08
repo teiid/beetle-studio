@@ -12,7 +12,9 @@
 
 .dataservice-list-items {
   background-color: #fafafa;
-  margin-top: 10px
+  margin-top: 10px;
+  height: 75vh;
+  overflow-y: auto;
 }
 
 .dataservice-list-dataservices .toolbar-pf {
