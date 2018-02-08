@@ -1,9 +1,15 @@
 :root {
-  --body-main-color: #dc7039;
+  --body-background-color: #f5f5f5;
+  --body-main-color: #72767b;
   --border-color: #39a5dc;
   --border-style: double;
   --border-width: 2px;
   --hover-color: rgb(221, 234, 255);
+}
+
+.card-pf .card-pf-body {
+  margin: 0;
+  padding: 0;
 }
 
 .dataservice-card {
@@ -12,26 +18,38 @@
 //-ms-transition: background-color 300ms;
   -o-transition: background-color 300ms;
   transition: background-color 300ms;
+  margin: 0px 10px;
   height: 160px;
 }
 
-.dataservice-card-selected {
+.dataservice-card .card-pf {
+  margin: 0;
+  padding: 0 20px;
 }
 
-.dataservice-card-toolbar {
-  border-top: 1px solid lightgrey;
-  border-bottom: 1px solid lightgrey;
-  margin-bottom: 6px;
-  margin-top: 0;
-}
-
-.dataservice-card-toolbar:hover {
+.dataservice-card .card-pf:hover  {
   background-color: var(--hover-color);
 }
 
-.dataservice-card-toolbar-kebab {
-  margin-left: 0 !important;
-  margin-right: 4px;
+.dataservice-card .card-pf .card-pf-footer  {
+  background-color: #ececec;
+  min-height: 20px;
+  padding: 10px 0 5px 20px;
+}
+
+.dataservice-card .card-pf .card-pf-heading {
+  border-bottom: none;
+  margin: 0px -20px 0px -20px;
+  padding: 0 20px;
+}
+
+.dataservice-card-action-disabled-icon {
+  color: lightgray;
+  font-size: 1.5em;
+  height: 24px !important;
+  margin-left: 4px;
+  margin-top: 4px;
+  width: 24px !important;
 }
 
 .dataservice-card-action-icon {
@@ -44,13 +62,32 @@
   width: 24px !important;
 }
 
-.dataservice-card-action-disabled-icon {
-  color: lightgray;
-  font-size: 1.5em;
-  height: 24px !important;
-  margin-left: 4px;
-  margin-top: 4px;
-  width: 24px !important;
+.dataservice-card-body {
+  /*background-color: #dc7039;*/
+  margin: 0 -20px;
+}
+
+.dataservice-card-body-title {
+  background-color: var(--body-main-color);
+  color: white;
+  margin: 0;
+  text-align: center;
+}
+
+/*.dataservice-card-body-title {*/
+  /*margin: 0 !important;*/
+/*}*/
+
+.dataservice-card-body-title-selected {
+  border-left: var(--border-width) var(--border-style) var(--border-color);
+  border-right: var(--border-width) var(--border-style) var(--border-color);
+}
+
+.dataservice-card-description {
+  color: slategray;
+  height: 50px;
+  overflow: auto;
+  padding: 0 5px 5px 5px;
 }
 
 .dataservice-card-icon {
@@ -60,25 +97,14 @@
   padding: 0.1em 0.2em;
 }
 
-.dataservice-card-title {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.dataservice-card .card-pf .card-pf-heading:hover  {
-  background-color: var(--hover-color);
+.dataservice-card-selected {
 }
 
 .dataservice-card-selected .card-pf .card-pf-heading {
   border-top: var(--border-width) var(--border-style) var(--border-color);
   border-right: var(--border-width) var(--border-style) var(--border-color);
   border-left: var(--border-width) var(--border-style) var(--border-color);
-}
-
-.dataservice-card .card-pf .card-pf-footer  {
-  margin: 0 !important;
-  min-height: 20px;
-  padding: 10px 0 5px 20px;
+  padding: 0px 20px;
 }
 
 .dataservice-card-selected .card-pf .card-pf-footer {
@@ -87,33 +113,47 @@
   border-bottom: var(--border-width) var(--border-style) var(--border-color);
 }
 
-.dataservice-card-body .list-pf-container {
-  margin: 0 !important;
-  padding: 4px 10px;
+.dataservice-card-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 10px 0 !important;
 }
 
-.dataservice-card-body-title {
-  background-color: var(--body-main-color);
-  color: white;
-  margin: 4px 4px !important;
-  text-align: center;
+.dataservice-card-toolbar {
+  border-top: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
+  margin-bottom: 6px;
+  margin-top: 0;
 }
 
-div .dataservice-card-body-title {
-  border-right: var(--border-width) var(--border-style) var(--border-color);
-  border-left: var(--border-width) var(--border-style) var(--border-color);
-  margin: 0 !important;
+.dataservice-card-toolbar-kebab {
+  margin-left: 0 !important;
+  margin-right: 4px;
 }
 
-.dataservice-card-description {
-  color: slategray;
-  height: 50px;
-  margin-bottom: 8px;
-  overflow: auto;
-  padding: 0 5px 5px 5px;
+.list-pf {
+  border: none;
+}
+
+.list-pf-item {
+  border: none;
+}
+
+.list-pf-item:hover {
+  background-color: transparent;
 }
 
 .view-name {
   cursor: pointer;
   color: var(--body-main-color);
+}
+
+.views-details {
+  background-color: var(--body-background-color);
+  border-bottom: 2px solid lightgrey;
+}
+
+.views-details-selected {
+  border-left: var(--border-width) var(--border-style) var(--border-color);
+  border-right: var(--border-width) var(--border-style) var(--border-color);
 }

@@ -10,6 +10,7 @@ describe("WizardService", () => {
   });
 
   it("should be created", inject([WizardService], (service: WizardService) => {
+    console.log("========== [WizardService] should be created");
     expect(service).toBeTruthy();
   }));
 });

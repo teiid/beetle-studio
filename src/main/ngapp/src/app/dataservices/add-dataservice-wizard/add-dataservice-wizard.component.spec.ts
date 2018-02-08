@@ -4,7 +4,9 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { MockConnectionService } from "@connections/shared/mock-connection.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
 import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jdbc-table-selector.component";
 import { SelectedTableComponent } from "@dataservices/selected-table/selected-table.component";
@@ -31,6 +33,7 @@ describe("AddDataserviceWizardComponent", () => {
                       PropertyFormComponent, PropertyFormPropertyComponent, SelectedTableComponent ],
       providers: [
         NotifierService, WizardService,
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: ConnectionService, useClass: MockConnectionService },
         { provide: VdbService, useClass: MockVdbService },

@@ -77,7 +77,7 @@ export class AppSettingsService {
         this.userProfile = profile;
       },
       ( error ) => {
-        this.logger.error( "[fetchUserProfile] Error: %o", error );
+        this.logger.error( "[fetchUserProfile] Error:", error );
       } );
   }
 

@@ -5,6 +5,7 @@ import { By } from "@angular/platform-browser";
 import { RouterTestingModule } from "@angular/router/testing";
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
@@ -39,17 +40,10 @@ describe("DataservicesComponent", () => {
         AppSettingsService,
         NotifierService,
         WizardService,
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
+        { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: VdbService, useClass: MockVdbService }
       ]
-    });
-
-    // use mock service
-    TestBed.overrideComponent( DataservicesComponent, {
-      set: {
-        providers: [
-          { provide: DataserviceService, useClass: MockDataserviceService },
-        ]
-      }
     });
 
     fixture = TestBed.createComponent(DataservicesComponent);

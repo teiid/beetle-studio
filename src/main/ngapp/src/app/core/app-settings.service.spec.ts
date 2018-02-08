@@ -15,7 +15,7 @@ describe("AppSettingsService", () => {
   });
 
   it("should be created", inject([AppSettingsService], (service: AppSettingsService) => {
-    console.log("========== [AppSettingsServiceComponent] should be created");
+    console.log("========== [AppSettingsService] should be created");
     expect(service).toBeTruthy();
   }));
 });

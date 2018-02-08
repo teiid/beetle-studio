@@ -6,7 +6,9 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { MockConnectionService } from "@connections/shared/mock-connection.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -21,6 +23,7 @@ describe("AddActivityWizardComponent", () => {
       imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule ],
       declarations: [ AddActivityWizardComponent, PropertyFormComponent, PropertyFormPropertyComponent ],
       providers: [
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ActivityService, useClass: MockActivityService },
         { provide: ConnectionService, useClass: MockConnectionService }
       ]
