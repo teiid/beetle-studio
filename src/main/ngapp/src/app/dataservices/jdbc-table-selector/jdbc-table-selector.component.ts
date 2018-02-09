@@ -86,7 +86,7 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
       this.schemaLoadingState = LoadingState.LOADING;
       const self = this;
       this.connectionService
-        .getConnectionSchemaInfos(this.connection.getId())
+        .getConnectionSchemaInfos(conn.getServiceCatalogSourceName())
         .subscribe(
           (infos) => {
             self.generateSchemaNames(infos);
@@ -149,9 +149,19 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     this.currentSchema = schema;
 
     const filterInfo = new JdbcTableFilter();
-    filterInfo.setConnectionName(this.connection.getId());
-    filterInfo.setCatalogFilter(schema.getCatalogName());
-    filterInfo.setSchemaFilter(schema.getName());
+    filterInfo.setConnectionName(this.connection.getServiceCatalogSourceName());
+    if (schema.getType() === "Catalog") {
+      filterInfo.setCatalogFilter(schema.getName());
+      filterInfo.setSchemaFilter("%");
+    } else {
+      filterInfo.setSchemaFilter(schema.getName());
+      const catName = schema.getCatalogName();
+      if (catName && catName.length > 0) {
+        filterInfo.setCatalogFilter(catName);
+      } else {
+        filterInfo.setCatalogFilter("%");
+      }
+    }
     filterInfo.setTableFilter("%");
     this.loadTablesForSchema(filterInfo);
   }

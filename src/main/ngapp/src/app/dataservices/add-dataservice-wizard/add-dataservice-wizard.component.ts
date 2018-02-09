@@ -349,6 +349,11 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
         this.createDataserviceForSingleSourceTables();
       }
     } else if (status.isFailed()) {
+      // Set error message to first error, if there is one.
+      const errors = status.getErrors();
+      if (errors.length > 0) {
+        this.errorDetailMessage = errors[0];
+      }
       this.setFinalPageComplete(false);
     }
   }

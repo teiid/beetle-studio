@@ -32,6 +32,8 @@ import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
+import { ConnectionTypeCardComponent } from "./connection-type-cards/connection-type-card/connection-type-card.component";
+import { ConnectionTypeCardsComponent } from "./connection-type-cards/connection-type-cards.component";
 
 @NgModule({
   imports: [
@@ -52,7 +54,9 @@ import { PatternFlyNgModule } from "patternfly-ng";
     ConnectionsListComponent,
     AddConnectionWizardComponent,
     AddConnectionComponent,
-    ConnectionCardComponent
+    ConnectionCardComponent,
+    ConnectionTypeCardsComponent,
+    ConnectionTypeCardComponent
   ],
   providers: [
     ConnectionService,

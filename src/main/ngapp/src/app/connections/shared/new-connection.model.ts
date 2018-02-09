@@ -18,10 +18,8 @@
 export class NewConnection {
 
   private name: string;
-  private jndiName: string;
-  private driverName: string;
-  private jdbc: boolean;
-  private properties: Map< string, string > = new Map< string, string >();
+  private description = "";
+  private serviceCatalogSource: string;
 
   /**
    * Constructor
@@ -38,31 +36,17 @@ export class NewConnection {
   }
 
   /**
-   * @returns {string} the connection jndi name (can be null)
+   * @returns {string} the connection description (can be null)
    */
-  public getJndiName(): string {
-    return this.jndiName;
+  public getDescription(): string {
+    return this.description;
   }
 
   /**
-   * @returns {string} the connection driver name (can be null)
+   * @returns {string} the connection serviceCatalog source name (can be null)
    */
-  public getDriverName(): string {
-    return this.driverName;
-  }
-
-  /**
-   * @returns {boolean} the jdbc status
-   */
-  public isJdbc(): boolean {
-    return this.jdbc;
-  }
-
-  /**
-   * @returns {Map<string, string>} the connection properties (never null)
-   */
-  public getProperties(): Map< string, string > {
-    return this.properties;
+  public getServiceCatalogSource(): string {
+    return this.serviceCatalogSource;
   }
 
   /**
@@ -73,50 +57,25 @@ export class NewConnection {
   }
 
   /**
-   * @param {string} jndiName the connection JNDI name (optional)
+   * @param {string} description the connection description (optional)
    */
-  public setJndiName( jndiName?: string ): void {
-    this.jndiName = jndiName ? jndiName : null;
+  public setDescription( description?: string ): void {
+    this.description = description ? description : "";
   }
 
   /**
-   * @param {string} driverName the connection driver name (optional)
+   * @param {string} serviceCatalogSource the serviceCatalogSource
    */
-  public setDriverName( driverName?: string ): void {
-    this.driverName = driverName ? driverName : null;
-  }
-
-  /**
-   * @param {boolean} isJdbc the jdbc state
-   */
-  public setJdbc( isJdbc ): void {
-    this.jdbc = isJdbc;
-  }
-
-  /**
-   * @param {Map<string, string>} props the connection properties (optional)
-   */
-  public setProperties( props?: Map< string, string > ): void {
-    this.properties = props ? props : new Map< string, string >();
+  public setServiceCatalogSource( serviceCatalogSource?: string ): void {
+    this.serviceCatalogSource = serviceCatalogSource ? serviceCatalogSource : null;
   }
 
   // overrides toJSON - we do not want the name supplied in the json body.
   public toJSON(): {} {
     return {
-      jndiName: this.jndiName,
-      driverName: this.driverName,
-      jdbc: this.jdbc,
-      parameters: this.strMapToObj(this.properties)
+      description: this.description,
+      serviceCatalogSource: this.serviceCatalogSource,
     };
   }
 
-  private strMapToObj(strMap: Map<string, string>): any {
-    const obj = Object.create(null);
-    for (const [k, v] of Array.from(strMap)) {
-      // We don’t escape the key '__proto__'
-      // which can cause problems on older engines
-      obj[k] = v;
-    }
-    return obj;
-  }
 }

@@ -22,6 +22,7 @@ import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { WizardService } from "@dataservices/shared/wizard.service";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { LayoutType } from "@shared/layout-type.enum";
@@ -34,7 +35,6 @@ import { SortConfig } from "patternfly-ng";
 import { SortField } from "patternfly-ng";
 import { SortEvent } from "patternfly-ng";
 
-
 @Component({
   moduleId: module.id,
   selector: "app-connections",
@@ -42,8 +42,6 @@ import { SortEvent } from "patternfly-ng";
   styleUrls: ["./connections.component.css"]
 })
 export class ConnectionsComponent extends AbstractPageComponent implements OnInit{
-
-  public readonly addConnectionLink: string = ConnectionsConstants.addConnectionPath;
 
   public connectionNameForDelete: string;
 
@@ -63,15 +61,17 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   private appSettingsService: AppSettingsService;
   private connectionService: ConnectionService;
   private layout: LayoutType = LayoutType.CARD;
+  private wizardService: WizardService;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
   constructor(router: Router, route: ActivatedRoute, appSettingsService: AppSettingsService,
-              connectionService: ConnectionService, logger: LoggerService) {
+              wizardService: WizardService, connectionService: ConnectionService, logger: LoggerService) {
     super(route, logger);
     this.router = router;
     this.appSettingsService = appSettingsService;
     this.connectionService = connectionService;
+    this.wizardService = wizardService;
   }
 
   public ngOnInit(): void {
@@ -160,12 +160,6 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     return this.selectedConns;
   }
 
-  public onEdit( connectionName: string ): void {
-    const connection = this.filteredConns.find( ( conn ) => conn.getId() === connectionName );
-    // TODO: implement onEdit
-    alert( "Edit '" + connectionName + "' connection (not yet implemented)" );
-  }
-
   public onPing( connName: string ): void {
     // TODO: implement onEdit
     alert( "Ping the '" + connName + "' connection (not yet implemented)" );
@@ -194,6 +188,37 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
 
   public setCardLayout(): void {
     this.appSettingsService.connectionsPageLayout = LayoutType.CARD;
+  }
+
+  /**
+   * Handle request for new Connection
+   */
+  public onNew(): void {
+    this.wizardService.setEdit(false);
+
+    const link: string[] = [ ConnectionsConstants.addConnectionPath ];
+    this.logger.log("[ConnectionsComponent] Navigating to: %o", link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
+  }
+
+  /**
+   * Handle Edit of the specified Connection
+   * @param {string} connName
+   */
+  public onEdit(connName: string): void {
+    const selectedConnection =  this.filteredConnections.find((x) => x.getId() === connName);
+
+    // Sets the selected dataservice and edit mode before transferring
+    this.wizardService.setSelectedConnection(selectedConnection);
+    this.wizardService.setEdit(true);
+
+    const link: string[] = [ ConnectionsConstants.addConnectionPath ];
+    this.logger.log("[ConnectionsComponent] Navigating to: %o", link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
   /**

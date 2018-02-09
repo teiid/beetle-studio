@@ -79,6 +79,7 @@ export class MockConnectionService extends ConnectionService {
     const newConn = new Connection();
     newConn.setId( id );
     newConn.setJdbc( true );
+    newConn.setServiceCatalogSourceName(id);
     return newConn;
   }
 
@@ -92,15 +93,6 @@ export class MockConnectionService extends ConnectionService {
    */
   public getAllConnections(): Observable<Connection[]> {
     return Observable.of(this.conns);
-  }
-
-  /**
-   * Create a connection via the komodo rest interface
-   * @param {NewConnection} connection
-   * @returns {Observable<boolean>}
-   */
-  public createConnection(connection: NewConnection): Observable<boolean> {
-    return Observable.of(true);
   }
 
   /**

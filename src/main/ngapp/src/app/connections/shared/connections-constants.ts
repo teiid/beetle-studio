@@ -23,6 +23,19 @@ export class ConnectionsConstants {
   public static readonly addConnectionRoute = ConnectionsConstants.connectionsRootRoute + "/add-connection";
   public static readonly addConnectionPath = ConnectionsConstants.connectionsRootPath + "/add-connection";
 
+  public static readonly serviceCatalogSourcesRootRoute = "serviceCatalogSources";
+  public static readonly serviceCatalogSourcesRootPath = "/" + ConnectionsConstants.serviceCatalogSourcesRootRoute;
+
+  public static readonly connectionType_postgresql = "postgresql";
+  public static readonly connectionType_mysql = "mysql";
+  public static readonly connectionType_mongodb = "mongodb";
+  public static readonly connectionType_mariadb = "mariadb";
+
+  public static readonly connectionTypeDescription_postgresql = "PostgreSQL database";
+  public static readonly connectionTypeDescription_mysql = "MySQL database";
+  public static readonly connectionTypeDescription_mongodb = "MongoDB database";
+  public static readonly connectionTypeDescription_mariadb = "MariaDB database";
+
   public static driverNamePropertyLabel = "Driver Name";
   public static jndiNamePropertyLabel = "JNDI Name";
   public static serviceCatalogSourceNameLabel = "Service Catalog Source";
