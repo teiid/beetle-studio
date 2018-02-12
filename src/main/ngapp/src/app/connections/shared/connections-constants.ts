@@ -23,6 +23,10 @@ export class ConnectionsConstants {
   public static readonly addConnectionRoute = ConnectionsConstants.connectionsRootRoute + "/add-connection";
   public static readonly addConnectionPath = ConnectionsConstants.connectionsRootPath + "/add-connection";
 
+  public static driverNamePropertyLabel = "Driver Name";
+  public static jndiNamePropertyLabel = "JNDI Name";
+  public static serviceCatalogSourceNameLabel = "Service Catalog Source";
+
   public static readonly connectionsNavItem: NavigationItemConfig = {
     title: "Connections",
     iconStyleClass: "fa fa-fw fa-plug",

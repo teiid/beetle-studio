@@ -292,7 +292,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
         (wasSuccess) => {
           // Deployment succeeded - wait for source vdb to become active
           if (wasSuccess) {
-            self.vdbService.pollForActiveVdb(sourceVdbName, 120, 5);
+            self.vdbService.pollForActiveVdb(sourceVdbName, 240, 5);
           } else {
             self.setFinalPageComplete(false);
             self.sourceVdbUnderDeployment = null;

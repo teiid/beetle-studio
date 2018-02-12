@@ -1,0 +1,55 @@
+<pfng-card [config]="cardConfig"
+           [headerTemplate]="tableHeaderTemplate"
+           (onActionSelect)="onShowDetails($event)"
+           (click)="onSelect()"
+           [class]="isSelected() ? 'object-card-selected' : 'object-card'"
+           (selectedConnections)="selectedConnections">
+  <ng-template #tableHeaderTemplate>
+    <div class="row card-toolbar">
+      <div class="form-group pull-right col-xs-1 card-toolbar-dropdown-action-group">
+        <pfng-action [config]="actionConfig"
+                     (onActionSelect)="handleAction($event)">
+        </pfng-action>
+      </div>
+      <span class="pull-right fa pficon-connected card-action-icon"
+            (click)="onClick(pingEvent)"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Determine if accessible">
+      </span>
+      <span class="pull-right fa fa-edit card-action-icon"
+            (click)="onClick(editEvent)"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Edit properties">
+      </span>
+    </div>
+    <div class="row card-pf-title text-center object-card-title">
+      <div class="fa fa-plug object-inline-icon"></div>
+      <a [routerLink]="[connection.getId()]" (click)="onClick(editEvent)">{{ connection.name }}</a>
+    </div>
+    <div class="row">
+      <div class="object-card-description">{{ connection.description }}</div>
+    </div>
+  </ng-template>
+  <div class="object-card-body">
+    <div *ngIf="showDetails">
+      <div [class]="isSelected() ? 'object-card-body-title-selected' : 'object-card-body-title'">Properties</div>
+      <div [class]="isSelected() ? 'col-sm-12 properties-group-selected' : 'col-sm-12 properties-group'">
+        <div class="form-group">
+          <pfng-list
+            [config]="listConfig"
+            [itemTemplate]="itemTemplate"
+            [items]="properties">
+            <ng-template #itemTemplate let-item="item">
+              <div class="object-card-body-item">
+                <div class="col-sm-6 property-name">{{ item[ 0 ] }}</div>
+                <div class="col-sm-6 property-value">{{ item[ 1 ] }}</div>
+              </div>
+            </ng-template>
+          </pfng-list>
+        </div>
+      </div>
+    </div>
+  </div>
+</pfng-card>

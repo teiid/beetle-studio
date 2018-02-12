@@ -3,7 +3,9 @@ import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 import { By } from "@angular/platform-browser";
 import { RouterTestingModule } from "@angular/router/testing";
+import { ConnectionCardComponent } from "@connections/connections-cards/connection-card/connection-card.component";
 import { ConnectionsCardsComponent } from "@connections/connections-cards/connections-cards.component";
+import { ConnectionDetailsComponent } from "@connections/connections-list/connection-details.component";
 import { ConnectionsListComponent } from "@connections/connections-list/connections-list.component";
 import { ConnectionsComponent } from "@connections/connections.component";
 import { ConnectionService } from "@connections/shared/connection.service";
@@ -13,6 +15,7 @@ import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { SharedModule } from "@shared/shared.module";
 import { ModalModule } from "ngx-bootstrap";
+import { PatternFlyNgModule } from "patternfly-ng";
 
 describe("ConnectionsComponent", () => {
   let component: ConnectionsComponent;
@@ -20,8 +23,22 @@ describe("ConnectionsComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), RouterTestingModule, SharedModule ],
-      declarations: [ ConnectionsComponent, ConnectionsListComponent, ConnectionsCardsComponent ]
+      imports: [
+        CoreModule,
+        FormsModule,
+        HttpModule,
+        ModalModule.forRoot(),
+        PatternFlyNgModule,
+        RouterTestingModule,
+        SharedModule
+      ],
+      declarations: [
+        ConnectionsComponent,
+        ConnectionDetailsComponent,
+        ConnectionsListComponent,
+        ConnectionCardComponent,
+        ConnectionsCardsComponent
+      ]
     });
 
     // use mock service
@@ -66,7 +83,7 @@ describe("ConnectionsComponent", () => {
     expect(connections.length).toEqual(3);
 
     // Check html has the same number of connection cards
-    const cardDebugElems = fixture.debugElement.queryAll(By.css(".connection-card-title"));
+    const cardDebugElems = fixture.debugElement.queryAll(By.css(".object-card"));
     expect(cardDebugElems).toBeDefined();
     expect(cardDebugElems.length).toEqual(3);
   });

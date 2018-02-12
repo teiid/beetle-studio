@@ -15,10 +15,14 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
+import {
+  Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef,
+  ViewEncapsulation
+} from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
+import { LoggerService } from "@core/logger.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
-import { CardAction, CardConfig, ListConfig } from "patternfly-ng";
+import { Action, ActionConfig, CardAction, CardConfig, ListConfig } from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -26,19 +30,16 @@ import { CardAction, CardConfig, ListConfig } from "patternfly-ng";
   templateUrl: "./dataservice-card.component.html",
   styleUrls: ["./dataservice-card.component.css"]
 })
-export class DataserviceCardComponent implements OnInit {
+export class DataserviceCardComponent implements DoCheck, OnInit {
 
-  public static readonly activateDataserviceEvent = "activate";
   public static readonly deleteDataserviceEvent = "delete";
   public static readonly editDataserviceEvent = "edit";
   public static readonly publishDataserviceEvent = "publish";
   public static readonly quickLookDataserviceEvent = "quickLook";
+  public static readonly refreshDataserviceEvent = "activate";
   public static readonly testDataserviceEvent = "test";
 
-  public readonly activateEvent = DataserviceCardComponent.activateDataserviceEvent;
-  public readonly deleteEvent = DataserviceCardComponent.deleteDataserviceEvent;
   public readonly editEvent = DataserviceCardComponent.editDataserviceEvent;
-  public readonly publishEvent = DataserviceCardComponent.publishDataserviceEvent;
   public readonly quickLookEvent = DataserviceCardComponent.quickLookDataserviceEvent;
   public readonly testEvent = DataserviceCardComponent.testDataserviceEvent;
 
@@ -47,12 +48,23 @@ export class DataserviceCardComponent implements OnInit {
   @Output() public cardEvent: EventEmitter< {} > = new EventEmitter< {} >();
   @Output() public selectEvent: EventEmitter< Dataservice > = new EventEmitter< Dataservice >();
 
+  public actionConfig: ActionConfig;
   public cardConfig: CardConfig;
   public listConfig: ListConfig;
   public showDetails = false;
 
-  constructor() {
-    // nothing to do
+  private readonly deleteActionId = "delete";
+  private readonly deleteActionIndex = 2; // index in moreActions
+  private readonly publishActionId = "publish";
+  private readonly publishActionIndex = 1; // index in moreActions
+  private readonly refreshActionId = "refresh";
+  private readonly refreshActionIndex = 0; // index in moreActions
+
+  private isLoading = false;
+  private logger: LoggerService;
+
+  constructor( logger: LoggerService ) {
+    this.logger = logger;
   }
 
   /**
@@ -86,17 +98,32 @@ export class DataserviceCardComponent implements OnInit {
   }
 
   /**
-   * @param {Dataservice} ds the dataservice whose views are being requested
    * @returns {string[]} the names of the views
    */
-  public getViews( ds: Dataservice ): string[] {
+  public getViews(): string[] {
     const result: string[] = [];
 
-    for (const viewName of ds.getServiceViewNames()) {
+    for (const viewName of this.dataservice.getServiceViewNames()) {
       result.push(viewName);
     }
 
     return result;
+  }
+
+  /**
+   * Event handler for when a toolbar kebab action is clicked.
+   * @param {Action} action the action that was selected.
+   */
+  public handleAction( action: Action ): void {
+    if ( action.id === this.deleteActionId ) {
+      this.onClick( DataserviceCardComponent.deleteDataserviceEvent );
+    } else if ( action.id === this.publishActionId ) {
+      this.onClick( DataserviceCardComponent.publishDataserviceEvent );
+    } else if ( action.id === this.refreshActionId ) {
+      this.onClick( DataserviceCardComponent.refreshDataserviceEvent );
+    } else {
+      this.logger.error( "Action '" + action.id + "' not handled." );
+    }
   }
 
   /**
@@ -106,7 +133,41 @@ export class DataserviceCardComponent implements OnInit {
     return this.selectedDataservices.indexOf( this.dataservice ) !== -1;
   }
 
+  public ngDoCheck(): void {
+    if ( this.isLoading !== this.dataservice.serviceDeploymentLoading ) {
+      this.isLoading = this.dataservice.serviceDeploymentLoading;
+
+      this.actionConfig.moreActions[ this.deleteActionIndex ].disabled = this.isLoading;
+      this.actionConfig.moreActions[ this.publishActionIndex ].disabled = this.isLoading;
+      this.actionConfig.moreActions[ this.refreshActionIndex ].disabled = this.isLoading;
+    }
+  }
+
   public ngOnInit(): void {
+    this.actionConfig = {
+      primaryActions: [
+      ],
+      moreActions: [
+        {
+          id: this.refreshActionId,
+          title: "Refresh",
+          tooltip: "Refresh"
+        },
+        {
+          disabled: true,
+          id: this.publishActionId,
+          title: "Publish",
+          tooltip: "Publish"
+        },
+        {
+          disabled: true,
+          id: this.deleteActionId,
+          title: "Delete",
+          tooltip: "Delete"
+        }
+      ]
+    } as ActionConfig;
+
     this.cardConfig = {
       action: {
         id: "showDetails",

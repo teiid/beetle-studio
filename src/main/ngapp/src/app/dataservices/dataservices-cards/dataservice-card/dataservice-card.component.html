@@ -2,151 +2,103 @@
            [headerTemplate]="tableHeaderTemplate"
            (onActionSelect)="onShowDetails( $event )"
            (click)="onSelect()"
-           [class]="isSelected() ? 'dataservice-card dataservice-card-selected' : 'dataservice-card'">
+           [class]="isSelected() ? 'object-card-selected' : 'object-card'">
   <ng-template #tableHeaderTemplate>
-    <div class="row dataservice-card-toolbar">
-      <div class="pull-right dropdown-kebab-pf dataservice-card-toolbar-kebab" dropdown>
-        <button class="btn btn-link dropdown-toggle dropdown-kebab-pf" type="button" id="dropdownKebabRight"
-                dropdownToggle>
-          <span class="fa fa-ellipsis-v"></span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownKebabRight" *dropdownMenu>
-          <li class="dropdown" role="menuitem">
-            <a class="dropdown-item"
-               href="#">Delete</a>
-          </li>
-        </ul>
+    <div class="row card-toolbar">
+      <div class="form-group pull-right col-xs-1 card-toolbar-dropdown-action-group">
+        <pfng-action [config]="actionConfig"
+                     (onActionSelect)="handleAction($event)">
+        </pfng-action>
       </div>
-      <span class="pull-left fa fa-check-circle-o fa-2x dataservice-card-action-icon"
+      <span class="pull-left fa fa-check-circle-o fa-2x card-action-icon"
             style="color:green;"
             *ngIf="dataservice.serviceDeploymentActive"
             data-toggle="tooltip"
             data-placement="right"
             title="Active">
       </span>
-      <span class="pull-left fa fa-times-circle-o fa-2x dataservice-card-action-icon"
+      <span class="pull-left fa fa-times-circle-o fa-2x card-action-icon"
             style="color:red;"
             *ngIf="dataservice.serviceDeploymentFailed"
             data-toggle="tooltip"
             data-placement="right"
             title="Failed to activate">
       </span>
-      <span class="pull-left fa fa-exclamation-triangle fa-2x dataservice-card-action-icon"
+      <span class="pull-left fa fa-exclamation-triangle fa-2x card-action-icon"
             style="color:orange;"
             *ngIf="dataservice.serviceDeploymentInactive"
             data-toggle="tooltip"
             data-placement="right"
             title="Inactive">
       </span>
-      <span class="pull-left fa fa-question-circle-o fa-2x dataservice-card-action-icon"
+      <span class="pull-left fa fa-question-circle-o fa-2x card-action-icon"
             style="color:orange;"
             *ngIf="dataservice.serviceDeploymentNotDeployed"
             data-toggle="tooltip"
             data-placement="right"
             title="Inactive">
       </span>
-      <span class="pull-left fa fa-spinner fa-pulse fa-2x dataservice-card-action-icon"
+      <span class="pull-left fa fa-spinner fa-pulse fa-2x card-action-icon"
             *ngIf="dataservice.serviceDeploymentLoading">
       </span>
-      <span *ngIf="!dataservice.serviceDeploymentLoading"
-            class="pull-right fa fa-trash-o fa-1g dataservice-card-action-icon"
-            style="color:darkred;"
-            (click)="onClick( deleteEvent )"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Delete">
-      </span>
-      <span *ngIf="dataservice.serviceDeploymentLoading"
-            class="pull-right fa fa-trash-o fa-1g dataservice-card-action-disabled-icon"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Delete">
-      </span>
-      <span *ngIf="!dataservice.serviceDeploymentLoading"
-            class="pull-right fa fa-external-link fa-1g dataservice-card-action-icon"
-            (click)="onClick( publishEvent )"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Export">
-      </span>
-      <span *ngIf="dataservice.serviceDeploymentLoading"
-            class="pull-right fa fa-external-link dataservice-card-action-disabled-icon"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Export">
-      </span>
       <span *ngIf="dataservice.serviceDeploymentActive"
-            class="pull-right fa fa-list-alt dataservice-card-action-icon"
-            (click)="onClick( testEvent )"
+            class="pull-right fa fa-list-alt card-action-icon"
+            (click)="onClick(testEvent)"
             data-toggle="tooltip"
             data-placement="right"
             title="Test">
       </span>
       <span *ngIf="!dataservice.serviceDeploymentActive"
-            class="pull-right fa fa-list-alt dataservice-card-action-disabled-icon"
+            class="pull-right fa fa-list-alt card-action-disabled-icon"
             data-toggle="tooltip"
             data-placement="right"
             title="Test">
       </span>
       <span *ngIf="!dataservice.serviceDeploymentLoading"
-            class="pull-right fa fa-edit dataservice-card-action-icon"
-            (click)="onClick( editEvent )"
+            class="pull-right fa fa-edit card-action-icon"
+            (click)="onClick(editEvent)"
             data-toggle="tooltip"
             data-placement="right"
             title="Edit">
       </span>
       <span *ngIf="dataservice.serviceDeploymentLoading"
-            class="pull-right fa fa-edit dataservice-card-action-disabled-icon"
+            class="pull-right fa fa-edit card-action-disabled-icon"
             data-toggle="tooltip"
             data-placement="right"
             title="Edit">
       </span>
       <span *ngIf="dataservice.serviceDeploymentActive"
-            class="pull-right fa fa-search dataservice-card-action-icon"
-            (click)="onClick( quickLookEvent )"
+            class="pull-right fa fa-search card-action-icon"
+            (click)="onClick(quickLookEvent)"
             data-toggle="tooltip"
             data-placement="right"
             title="Quick Look"></span>
       <span *ngIf="!dataservice.serviceDeploymentActive"
-            class="pull-right fa fa-search dataservice-card-action-disabled-icon"
+            class="pull-right fa fa-search card-action-disabled-icon"
             data-toggle="tooltip"
             data-placement="right"
             title="Quick Look"></span>
-      <span class="pull-right fa fa-refresh dataservice-card-action-icon"
-            (click)="onClick( activateEvent )"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Refresh">
-      </span>
     </div>
-    <div class="row card-pf-title text-center dataservice-card-title">
-      <span class="fa fa-table dataservice-card-icon"></span>
-      <a [routerLink]="[dataservice.getId()]">{{ dataservice.getId() }}</a>
+    <div class="row card-pf-title text-center object-card-title">
+      <span class="fa fa-table object-inline-icon"></span>
+      <a [routerLink]="[dataservice.getId()]" (click)="onClick(editEvent)">{{ dataservice.getId() }}</a>
     </div>
     <div class="row">
-      <div class="dataservice-card-description">{{ description }}</div>
+      <div class="object-card-description">{{ description }}</div>
     </div>
   </ng-template>
-  <div class="dataservice-card-body">
+  <div class="object-card-body">
     <div *ngIf="showDetails">
-      <div [class]="isSelected() ? 'dataservice-card-body-title dataservice-card-body-title-selected' : 'dataservice-card-body-title'">Views</div>
+      <div [class]="isSelected() ? 'object-card-body-title-selected' : 'object-card-body-title'">Views</div>
       <div [class]="isSelected() ? 'col-sm-12 views-details views-details-selected' : 'col-sm-12 views-details'">
         <div class="form-group">
           <pfng-list
             [config]="listConfig"
             [itemTemplate]="itemTemplate"
-            [expandTemplate]="expandTemplate"
-            [items]="getViews( dataservice )">
+            [items]="getViews()">
             <ng-template #itemTemplate let-item="item">
               <div class="list-pf-main-content">
-                <a class="list-pf-title view-name"><span class="fa fa-table dataservice-card-action-icon"></span>{{ item }}</a>
-              </div>
-            </ng-template>
-            <ng-template #expandTemplate let-item="item" let-index="index">
-              <div class="row" *ngFor="let connection of getConnections( item )">
-                <div class="col-sm-9 dataservice-card-body-item">
-                  {{ connection.getId() }}
-                </div>
+                <a class="list-pf-title view-name"><span class="fa fa-table object-card-action-icon"></span>{{ item }}</a>
               </div>
             </ng-template>
           </pfng-list>

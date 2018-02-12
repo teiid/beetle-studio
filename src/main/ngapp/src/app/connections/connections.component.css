@@ -11,6 +11,7 @@
 }
 
 .connection-list-items {
+  background-color: #fafafa;
   margin-top: 10px;
   height: 75vh;
   overflow-y: auto;

@@ -78,7 +78,7 @@ describe("DataservicesComponent", () => {
     expect(dataservices.length).toEqual(3);
 
     // Check html has the same number of dataservice cards
-    const cardDebugElems = fixture.debugElement.queryAll(By.css(".dataservice-card"));
+    const cardDebugElems = fixture.debugElement.queryAll(By.css(".object-card"));
     expect(cardDebugElems).toBeDefined();
     expect(cardDebugElems.length).toEqual(3);
   });

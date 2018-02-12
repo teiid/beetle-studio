@@ -55,9 +55,6 @@ export class DataservicesCardsComponent {
 
   public onCardEvent( event: { eventType: string, dataserviceName: string } ): void {
     switch ( event.eventType ) {
-      case DataserviceCardComponent.activateDataserviceEvent:
-        this.activateDataservice.emit( event.dataserviceName );
-        break;
       case DataserviceCardComponent.deleteDataserviceEvent:
         this.deleteDataservice.emit( event.dataserviceName );
         break;
@@ -69,6 +66,9 @@ export class DataservicesCardsComponent {
         break;
       case DataserviceCardComponent.quickLookDataserviceEvent:
         this.quickLookDataservice.emit( event.dataserviceName );
+        break;
+      case DataserviceCardComponent.refreshDataserviceEvent:
+        this.activateDataservice.emit( event.dataserviceName );
         break;
       case DataserviceCardComponent.testDataserviceEvent:
         this.testDataservice.emit( event.dataserviceName );

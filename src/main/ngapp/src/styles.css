@@ -5,6 +5,231 @@
 @import "~patternfly/dist/css/patternfly.css";
 @import "~patternfly/dist/css/patternfly-additions.css";
 
+:root {
+  --alert-color: darkred;
+  --disabled-color: lightgrey;
+  --card-action-icon-color: var(--card-border-color);
+  --card-action-icon-cursor: pointer;
+  --card-action-icon-disabled-color: var(--disabled-color);
+  --card-action-icon-font-size: 1.5em;
+  --card-action-icon-height: 16px !important;
+  --card-action-icon-margin-left: 2px;
+  --card-action-icon-margin-right: 2px;
+  --card-action-icon-margin-top: 4px;
+  --card-action-icon-width: 16px !important;
+  --card-body-background-color: #fafafa;
+  --card-body-color: #72767b;
+  --card-body-title-background-color: var(--card-body-color);
+  --card-body-title-color: white;
+  --card-border-color: #39a5dc;
+  --card-border-style: double;
+  --card-border-width: 2px;
+  --card-description-color: slategray;
+  --card-description-height: 75px;
+  --card-description-overflow: auto;
+  --card-description-margin-bottom: 10px;
+  --card-description-padding: 0 5px 5px 5px;
+  --card-footer-background-color: #ececec;
+  --card-hover-color: #ddeaff;
+  --card-title-font-size: 16px;
+  --card-title-font-weight: bold;
+  --card-title-margin: 10px 0 !important;
+  --card-toolbar-border-bottom: 1px solid lightgrey;
+  --card-toolbar-border-top: 1px solid lightgrey;
+  --card-toolbar-dropdown-form-group-margin-bottom: 0;
+  --card-toolbar-dropdown-form-group-padding: 0 8px;
+  --card-toolbar-dropdown-action-icon-color: var(--card-action-icon-color);
+  --card-toolbar-dropdown-action-icon-display: inline-block;
+  --card-toolbar-dropdown-action-icon-margin-bottom: 0;
+  --card-toolbar-dropdown-action-icon-margin-right: 10px;
+  --card-toolbar-dropdown-action-icon-margin-top: 0;
+  --card-toolbar-kebab-margin-left: 0 !important;
+  --card-toolbar-kebab-margin-right: 4px;
+  --card-toolbar-margin-bottom: 6px;
+  --card-toolbar-margin-top: 0;
+  --card-toolbar-padding: 0 0 0 4px;
+  --inline-icon-color: var(--card-border-color);
+  --inline-icon-display: inline-block;
+}
+
+/*********************************************************************************/
+/*                    Beetle Studio global types below here                      */
+/*********************************************************************************/
+
+.card-action-icon-disabled,
+.card-action-icon {
+  color: var(--card-action-icon-color);
+  cursor: var(--card-action-icon-cursor);
+  font-size: var(--card-action-icon-font-size);
+  height: var(--card-action-icon-height);
+  margin-left: var(--card-action-icon-margin-left);
+  margin-right: var(--card-action-icon-margin-right);
+  margin-top: var(--card-action-icon-margin-top);
+  width: var(--card-action-icon-width);
+}
+
+.card-action-icon-disabled {
+  color: var(--card-action-icon-disabled-color);
+}
+
+.card-toolbar {
+  border-bottom: var(--card-toolbar-border-bottom);
+  border-top: var(--card-toolbar-border-top);
+  margin-bottom: var(--card-toolbar-margin-bottom);
+  margin-top: var(--card-toolbar-margin-top);
+  padding: var(--card-toolbar-padding);
+}
+
+.card-toolbar-dropdown-action-group {
+  margin-bottom: var(--card-toolbar-dropdown-form-group-margin-bottom);
+  padding: var(--card-toolbar-dropdown-form-group-padding);
+}
+
+.card-toolbar-kebab {
+  margin-left: var(--card-toolbar-kebab-margin-left);
+  margin-right: var(--card-toolbar-kebab-margin-right);
+}
+.object-card,
+.object-card-selected {
+  -webkit-transition: background-color 300ms;
+  -moz-transition: background-color 300ms;
+//-ms-transition: background-color 300ms;
+  -o-transition: background-color 300ms;
+  margin: 0 10px;
+  transition: background-color 300ms;
+  height: 160px;
+}
+
+.object-card-selected .card-pf-body,
+.object-card .card-pf-body {
+  margin: 0;
+  padding: 0;
+}
+
+.object-card-selected .card-pf:hover,
+.object-card .card-pf:hover  {
+  background-color: var(--card-hover-color);
+}
+
+.object-card-selected .card-pf .card-pf-footer,
+.object-card .card-pf .card-pf-footer {
+  background-color: var(--card-footer-background-color);
+  min-height: 20px;
+  padding: 10px 0 5px 20px;
+}
+
+.object-card-selected .card-pf .card-pf-heading,
+.object-card .card-pf .card-pf-heading {
+  border-bottom: none !important;
+  margin: 0 -20px 0 -20px;
+  padding: 0 20px;
+}
+
+.object-card-body {
+  margin: 0 -20px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.object-card-body .pfng-list-content {
+  width: 100%;
+}
+
+.object-card-body-title-selected,
+.object-card-body-title {
+  background-color: var(--card-body-title-background-color);
+  color: var(--card-body-title-color);
+  margin: 0;
+  text-align: center;
+}
+
+.object-card-body-title-selected {
+  border-left: var(--card-border-width) var(--card-border-style) var(--card-border-color);
+  border-right: var(--card-border-width) var(--card-border-style) var(--card-border-color);
+}
+
+.object-card-description {
+  color: var(--card-description-color);
+  height: var(--card-description-height);
+  margin-bottom: var(--card-description-margin-bottom);
+  overflow: var(--card-description-overflow);
+  padding: var(--card-description-padding);
+}
+
+.object-card-selected .card-pf .card-pf-heading {
+  border-left: var(--card-border-width) var(--card-border-style) var(--card-border-color);
+  border-right: var(--card-border-width) var(--card-border-style) var(--card-border-color);
+  border-top: var(--card-border-width) var(--card-border-style) var(--card-border-color);
+  padding: 0 20px;
+}
+
+.object-card-selected .card-pf .card-pf-footer {
+  border-bottom: var(--card-border-width) var(--card-border-style) var(--card-border-color);
+  border-left: var(--card-border-width) var(--card-border-style) var(--card-border-color);
+  border-right: var(--card-border-width) var(--card-border-style) var(--card-border-color);
+}
+
+.object-card-title {
+  font-size: var(--card-title-font-size);
+  font-weight: var(--card-title-font-weight);
+  margin: var(--card-title-margin);
+}
+
+.object-list .close {
+  float: left;
+}
+
+.object-list .list-pf-actions {
+  flex-grow: 1;
+  justify-content: flex-end;
+}
+
+/* Usage: "fa fa-xxx inline-icon" */
+.object-inline-icon {
+  color: var(--inline-icon-color);
+  display: var(--inline-icon-display);
+}
+
+.properties-group-selected,
+.properties-group {
+  padding: 0 4px;
+}
+
+.properties-group-selected {
+  border-left: var(--card-border-width) var(--card-border-style) var(--card-border-color);
+  border-right: var(--card-border-width) var(--card-border-style) var(--card-border-color);
+}
+
+.properties-group .list-pf-container {
+  margin: 0;
+  padding: 4px 0;
+}
+
+.properties-group-selected .list-pf-container {
+  margin: 0;
+  padding: 4px 0;
+}
+
+.property-name {
+  flex-grow: 0;
+  font-weight: bold;
+  justify-content: right;
+  padding: 0 4px;
+  text-align: left;
+}
+
+.property-value {
+  color: gray;
+  flex-grow: 0;
+  justify-content: left;
+  padding: 0 4px;
+  text-align: left;
+}
+
+/*********************************************************************************/
+/*                    3rd Party library types below here                         */
+/*********************************************************************************/
+
 .CodeMirror {
   height: 200px;
 }
@@ -59,4 +284,20 @@
 .datatable-body-row.active .datatable-row-group {
   background-color: #0088ce !important;
   color: white;
+}
+
+/* Patternfly-NG kebab dropdown actions. */
+.secondary-action:before {
+  color: var(--card-toolbar-dropdown-action-icon-color);
+  display: var(--card-toolbar-dropdown-action-icon-display);
+  margin-bottom: var(--card-toolbar-dropdown-action-icon-margin-bottom);
+  margin-right: var(--card-toolbar-dropdown-action-icon-margin-right);
+  margin-top: var(--card-toolbar-dropdown-action-icon-margin-top);
+}
+
+/* Adds a red trashcan icon to the left of the delete action item in dropdown of kebab. */
+.secondary-action[title*="Delete"]:before {
+  color: var(--alert-color);
+  content: "\f014";
+  font-family: "FontAwesome";
 }

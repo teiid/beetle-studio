@@ -15,27 +15,35 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewEncapsulation } from "@angular/core";
 import { Router } from "@angular/router";
 import { Connection } from "@connections/shared/connection.model";
+import { Action, ActionConfig, ListConfig } from "patternfly-ng";
 
 @Component({
   moduleId: module.id,
+  encapsulation: ViewEncapsulation.None,
   selector: "app-connections-list",
   templateUrl: "connections-list.component.html",
   styleUrls: ["connections-list.component.css"]
 })
-export class ConnectionsListComponent {
+export class ConnectionsListComponent implements OnInit {
 
   @Input() public connections: Connection[];
   @Input() public selectedConnections: Connection[];
-  @Output() public connectionSelected: EventEmitter<Connection> = new EventEmitter<Connection>();
-  @Output() public connectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();
-  @Output() public tagSelected: EventEmitter<string> = new EventEmitter<string>();
-  @Output() public pingConnection: EventEmitter<string> = new EventEmitter<string>();
-  @Output() public deleteConnection: EventEmitter<string> = new EventEmitter<string>();
 
+  @Output() public connectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();
+  @Output() public connectionSelected: EventEmitter<Connection> = new EventEmitter<Connection>();
+  @Output() public deleteConnection: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public editConnection: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public pingConnection: EventEmitter<string> = new EventEmitter<string>();
+
+  public listConfig: ListConfig;
   private router: Router;
+
+  private readonly deleteActionId = "delecteActionId";
+  private readonly editActionId = "editActionId";
+  private readonly pingActionId = "pingActionId";
 
   /**
    * Constructor.
@@ -44,30 +52,118 @@ export class ConnectionsListComponent {
     this.router = router;
   }
 
-  public toggleConnectionSelected(connection: Connection): void {
-    if (this.isSelected(connection)) {
-      this.connectionDeselected.emit(connection);
-    } else {
-      this.connectionSelected.emit(connection);
+  /**
+   * Initializes the list config.
+   */
+  public ngOnInit(): void {
+    this.listConfig = {
+      dblClick: false,
+      multiSelect: false,
+      selectItems: true,
+      selectedItems: this.selectedConnections,
+      showCheckbox: false,
+      useExpandItems: true
+    } as ListConfig;
+  }
+
+  /**
+   * Get the ActionConfig properties for each row.
+   *
+   * @param connection the connection represented by a row
+   * @param editActionTemplate {TemplateRef} the edit action template
+   * @param pingActionTemplate {TemplateRef} the ping action template
+   * @param deleteActionTemplate {TemplateRef} the delete action template
+   * @returns {ActionConfig} the actions configuration
+   */
+  public getActionConfig( connection: Connection,
+                          editActionTemplate: TemplateRef< any >,
+                          pingActionTemplate: TemplateRef< any >,
+                          deleteActionTemplate: TemplateRef< any > ): ActionConfig {
+    const actionConfig = {
+      primaryActions: [
+        {
+          id: this.editActionId,
+          template: editActionTemplate,
+          title: "Edit",
+          tooltip: "Edit properties"
+        },
+        {
+          id: this.pingActionId,
+          template: pingActionTemplate,
+          title: "Ping",
+          tooltip: "Determine if accessible"
+        }
+      ],
+      moreActions: [
+        {
+          id: this.deleteActionId,
+          template: deleteActionTemplate,
+          title: "Delete",
+          tooltip: "Delete the connection"
+        }
+      ],
+      moreActionsDisabled: false,
+      moreActionsVisible: true
+    } as ActionConfig;
+
+    return actionConfig;
+  }
+
+  /**
+   * Event handler for when a toolbar icon or kebab action is clicked.
+   * @param {Action} action the action that was selected.
+   * @param {any} not used
+   */
+  public handleAction( action: Action,
+                       item: any ): void {
+    if ( action.id === this.deleteActionId ) {
+      this.onDeleteConnection( this.selectedConnections[ 0 ].getId() );
+    } else if ( action.id === this.editActionId ) {
+      this.onEditConnection( this.selectedConnections[ 0 ].getId() );
+    } else if ( action.id === this.pingActionId ) {
+      this.onPingConnection( this.selectedConnections[ 0 ].getId() );
     }
   }
 
-  public isSelected(connection: Connection): boolean {
-    return this.selectedConnections.indexOf(connection) !== -1;
+  /**
+   * @returns {boolean} `true` if the connection row is selected in the list
+   */
+  public isSelected( connection: Connection ): boolean {
+    return this.selectedConnections.indexOf( connection ) !== -1;
   }
 
-  public onPingConnection(connectionName: string): void {
-    this.pingConnection.emit(connectionName);
-  }
-
+  /**
+   * @param {string} connectionName the name of the connection to delete
+   */
   public onDeleteConnection(connectionName: string): void {
     this.deleteConnection.emit(connectionName);
   }
 
-  public onSelectTag(tag: string, event: MouseEvent): void {
-    event.stopPropagation();
-    event.preventDefault();
-    this.tagSelected.emit(tag);
+  /**
+   * @param {string} connectionName the name of the connection to edit
+   */
+  public onEditConnection( connectionName: string ): void {
+    this.editConnection.emit( connectionName );
+  }
+
+  /**
+   * @param {string} connectionName the name of the connection to ping
+   */
+  public onPingConnection( connectionName: string ): void {
+    this.pingConnection.emit( connectionName );
+  }
+
+  /**
+   * @param $event the list row selection event being handled
+   */
+  public onSelect( $event ): void {
+    if ( $event.selectedItems.length === 0 ) {
+      if ( this.selectedConnections.length !== 0 ) {
+        this.connectionDeselected.emit( $event.selectedItems[ 0 ] );
+      }
+    } else {
+      this.connectionSelected.emit( $event.selectedItems[ 0 ] );
+    }
   }
 
 }
