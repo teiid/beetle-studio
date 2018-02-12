@@ -15,18 +15,46 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { Router } from "@angular/router";
+import {
+  Component,
+  OnInit,
+  ViewEncapsulation,
+  EventEmitter,
+  Input,
+  Output
+} from '@angular/core';
 import { Dataservice } from "@dataservices/shared/dataservice.model";
+import { LoggerService } from "@core/logger.service";
+import { Action, ActionConfig, ListConfig, ListEvent } from "patternfly-ng";
 
 @Component({
+  encapsulation: ViewEncapsulation.None,
   moduleId: module.id,
   selector: "app-dataservices-list",
   templateUrl: "dataservices-list.component.html",
   styleUrls: ["dataservices-list.component.css"]
-})
-export class DataservicesListComponent {
+ })
+export class DataservicesListComponent implements OnInit {
 
+  public static readonly activateDataserviceEvent = "activate";
+  public static readonly deleteDataserviceEvent = "delete";
+  public static readonly editDataserviceEvent = "edit";
+  public static readonly publishDataserviceEvent = "publish";
+  public static readonly quickLookDataserviceEvent = "quickLook";
+  public static readonly testDataserviceEvent = "test";
+
+  public readonly activateEvent = DataservicesListComponent.activateDataserviceEvent;
+  public readonly deleteEvent = DataservicesListComponent.deleteDataserviceEvent;
+  public readonly editEvent = DataservicesListComponent.editDataserviceEvent;
+  public readonly publishEvent = DataservicesListComponent.publishDataserviceEvent;
+  public readonly quickLookEvent = DataservicesListComponent.quickLookDataserviceEvent;
+  public readonly testEvent = DataservicesListComponent.testDataserviceEvent;
+
+  actionConfig: ActionConfig;
+  actionsText: string = '';
+  allItems: Dataservice[];
+  items: Dataservice[];
+  listConfig: ListConfig;
   @Input() public dataservices: Dataservice[];
   @Input() public selectedDataservices: Dataservice[];
   @Output() public dataserviceSelected: EventEmitter<Dataservice> = new EventEmitter<Dataservice>();
@@ -39,16 +67,69 @@ export class DataservicesListComponent {
   @Output() public editDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
 
-  private router: Router;
+  public logger: LoggerService;
 
   /**
-   * Constructor.
+   * @param {LoggerService} logger the logging service
    */
-  constructor(router: Router) {
-    this.router = router;
+  constructor( logger: LoggerService ) {
+    this.logger = logger;
   }
 
-  public toggleDataserviceSelected(dataservice: Dataservice): void {
+  ngOnInit(): void {
+
+    this.items = this.dataservices;
+
+    this.actionConfig = {
+      primaryActions: [{
+        id: 'edit',
+        title: 'Edit',
+        tooltip: 'Edit this data service'
+      },
+      {
+        id: 'test',
+        title: 'Test',
+        tooltip: 'Test this data service'
+      },
+      {
+        id: 'quickLook',
+        title: 'Preview',
+        tooltip: 'Preview this data service'
+      }],
+      moreActions: [{
+        disabled: false,
+        id: 'activate',
+        title: 'Activate',
+        tooltip: 'Activate this data service'
+        },
+        {
+          id: 'publish',
+          title: 'Publish',
+          tooltip: 'Publish this data service'
+        },
+        {
+          id: 'refresh',
+          title: 'Refresh',
+          tooltip: 'Refresh this data service'
+        },
+        {
+          id: 'delete',
+          title: 'Delete',
+          tooltip: 'Delete this data service'
+        }],
+    } as ActionConfig;
+
+    this.listConfig = {
+      dblClick: false,
+      multiSelect: false,
+      selectItems: false,
+      selectionMatchProp: 'name',
+      showCheckbox: false,
+      useExpandItems: true
+    } as ListConfig;
+  }
+
+    public toggleDataserviceSelected(dataservice: Dataservice): void {
     if (this.isSelected(dataservice)) {
       this.dataserviceDeselected.emit(dataservice);
     } else {
@@ -84,10 +165,39 @@ export class DataservicesListComponent {
     this.quickLookDataservice.emit(dataserviceName);
   }
 
-  // public onSelectTag(tag: string, event: MouseEvent): void {
-  //   event.stopPropagation();
-  //   event.preventDefault();
-  //   this.tagSelected.emit(tag);
-  // }
+  ngDoCheck(): void {
+  }
 
+  // Actions
+
+  handleAction($event: Action, item: any): void {
+
+    switch ( $event.id ) {
+      case DataservicesListComponent.activateDataserviceEvent:
+        this.activateDataservice.emit( item.getId() );
+        break;
+      case DataservicesListComponent.deleteDataserviceEvent:
+        this.deleteDataservice.emit( item.getId() );
+        break;
+      case DataservicesListComponent.editDataserviceEvent:
+        this.editDataservice.emit( item.getId() );
+        break;
+      case DataservicesListComponent.publishDataserviceEvent:
+        this.publishDataservice.emit( item.getId() );
+        break;
+      case DataservicesListComponent.quickLookDataserviceEvent:
+        this.quickLookDataservice.emit( item.getId() );
+        break;
+      case DataservicesListComponent.testDataserviceEvent:
+        this.testDataservice.emit( item.getId() );
+        break;
+      default:
+        this.logger.error( "Unhandled event type of '" + $event.title + "'" );
+        break;
+    }
+
+  //  handleClick($event: ListEvent): void {
+    //  this.actionsText = $event.item.name + ' clicked\r\n' + this.actionsText;
+  //  }
+  }
 }

@@ -41,6 +41,8 @@ import { JdbcTableSelectorComponent } from "./jdbc-table-selector/jdbc-table-sel
 import { SelectedTableComponent } from "./selected-table/selected-table.component";
 import { SqlControlComponent } from "./sql-control/sql-control.component";
 import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.component";
+import {BasicContentComponent} from "@dataservices/dataservices-list/basic-content.component";
+import {ViewsContentComponent} from "@dataservices/dataservices-list/views-content.component";
 
 @NgModule({
   imports: [
@@ -56,6 +58,8 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
     CodemirrorModule
   ],
   declarations: [
+    BasicContentComponent,
+    ViewsContentComponent,
     DataservicesCardsComponent,
     DataservicesComponent,
     DataservicesListComponent,
