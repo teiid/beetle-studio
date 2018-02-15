@@ -1,52 +1,50 @@
-<div class="list-group list-view-pf">
-  <div class="list-group-item list-view-pf-stacked" *ngFor="let dataservice of dataservices" [class.active]="isSelected(dataservice)" (click)="toggleDataserviceSelected(dataservice)">
-    <div class="list-view-pf-main-info">
-      <div class="list-view-pf-left">
-        <span class="pull-left pficon-ok dataservice-list-state-icon" *ngIf="dataservice.serviceDeploymentActive"></span>
-        <span class="pull-left pficon-error-circle-o dataservice-list-state-icon" *ngIf="dataservice.serviceDeploymentFailed"></span>
-        <span class="pull-left pficon-warning-triangle-o dataservice-list-state-icon" *ngIf="dataservice.serviceDeploymentInactive"></span>
-        <span class="pull-left pficon-unknown dataservice-list-state-icon" *ngIf="dataservice.serviceDeploymentNotDeployed"></span>
-        <span class="pull-left fa fa-spinner fa-pulse dataservice-list-state-icon" *ngIf="dataservice.serviceDeploymentLoading"></span>
-        <span class="fa fa-table list-view-pf-icon-sm"></span>
-      </div>
-      <div class="list-view-pf-body">
-        <div class="list-view-pf-description">
-          <div class="list-group-item-heading">
-            <a [routerLink]="[dataservice.getId()]">{{ dataservice.getId() }}</a>
+<div class="padding-15">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="list-group">
+        <pfng-list
+          [actionTemplate]="actionTemplate"
+          [config]="listConfig"
+          [expandTemplate]="expandTemplate"
+          [items]="items"
+          [itemTemplate]="itemTemplate"
+          (onActionSelect)="handleAction($event, null)">
+          <div class="list-pf-left">
+            <span class="fa fa-plug dataservice-list-icon"></span>
           </div>
-          <div class="list-group-item-text">
-            {{ dataservice.getDescription() }}
-          </div>
-        </div>
-        <div class="list-view-pf-additional-info">
-          <div>
-            <span class="fa fa-database"></span>
-            <span *ngIf="dataservice.getServiceViewTables().length==1">{{dataservice.getServiceViewTables()[0]}}</span>
-            <span *ngIf="dataservice.getServiceViewTables().length==2">{{dataservice.getServiceViewTables()[0]}}, {{dataservice.getServiceViewTables()[1]}}</span>
-          </div>
-          <div>
-            <span *ngIf="dataservice.serviceDeploymentActive" class="fa fa-search dataservice-list-quicklook-icon" (click)="onQuickLookDataservice(dataservice.getId())"></span>
-            <span *ngIf="!dataservice.serviceDeploymentActive" class="fa fa-search dataservice-list-quicklook-disabled-icon"></span>
-          </div>
-          <!--
-          <div class="dataservice-tags" *ngIf="dataservice.tags && dataservice.tags.length > 0">
-            <span class="dataservice-tags-label">Tags:</span>
-            <span class="dataservice-tag" *ngFor="let tag of dataservice.tags" (click)="selectTag(tag, $event)">{{ tag }}</span>
-          </div>
-          -->
-        </div>
-      </div>
-      <div class="list-view-pf-actions">
-        <button i18n="@@dataservicesList.activate" class="btn btn-default" type="button"
-                (click)="onActivateDataservice(dataservice.getId())">Activate</button>
-        <button i18n="@@dataservicesList.test" class="btn btn-default" type="button"
-                (click)="onTestDataservice(dataservice.getId())" [disabled]="!dataservice.serviceDeploymentActive">Test</button>
-        <button i18n="@@dataservicesList.publish" class="btn btn-default" type="button"
-                (click)="onPublishDataservice(dataservice.getId())" [disabled]="dataservice.serviceDeploymentLoading">Publish</button>
-        <button i18n="@@dataservicesList.edit" class="btn btn-default" type="button"
-                (click)="onEditDataservice(dataservice.getId())" [disabled]="dataservice.serviceDeploymentLoading">Edit</button>
-        <button i18n="@@dataservicesList.delete" class="btn btn-danger" type="button"
-                (click)="onDeleteDataservice(dataservice.getId())" [disabled]="dataservice.serviceDeploymentLoading">Delete</button>
+          <ng-template #itemTemplate let-item="item">
+            <span class="pull-left pficon-ok dataservice-list-state-icon" *ngIf="item.serviceDeploymentActive"></span>
+            <span class="pull-left pficon-error-circle-o dataservice-list-state-icon" *ngIf="item.serviceDeploymentFailed"></span>
+            <span class="pull-left pficon-warning-triangle-o dataservice-list-state-icon" *ngIf="item.serviceDeploymentInactive"></span>
+            <span class="pull-left pficon-unknown dataservice-list-state-icon" *ngIf="item.serviceDeploymentNotDeployed"></span>
+            <span class="pull-left fa fa-spinner fa-pulse dataservice-list-state-icon" *ngIf="item.serviceDeploymentLoading"></span>
+            <span class="fa fa-table list-view-pf-icon-sm"></span>
+            <div class="list-pf-content-wrapper">
+              <div class="list-pf-main-content">
+                <div class="list-pf-title">{{item.getId()}}</div>
+                <div class="list-pf-description text-overflow-pf">{{item.getDescription()}}</div>
+              </div>
+              <div class="list-pf-additional-content">
+                <pfng-list-expand-toggle [expandId]="'views'" [item]="item" [template]="viewsTemplate">
+                <ng-template #viewsTemplate>
+                <span class="fa fa-table"></span>
+                <span class="list-pf-title">Views</span>
+                </ng-template>
+                </pfng-list-expand-toggle>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template #actionTemplate let-item="item" let-index="index">
+            <pfng-action class="list-pf-actions"
+                         [config]="actionConfig"
+                         (onActionSelect)="handleAction($event, item)">
+            </pfng-action>
+          </ng-template>
+          <ng-template #expandTemplate let-item="item" let-index="index">
+            <basic-content [item]="item" *ngIf="item.expandId === undefined"></basic-content>
+            <views-content [item]="item" *ngIf="item.expandId === 'views'"></views-content>
+          </ng-template>
+        </pfng-list>
       </div>
     </div>
   </div>
