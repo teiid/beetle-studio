@@ -49,11 +49,22 @@
             title="Test">
       </span>
       <span *ngIf="!dataservice.serviceDeploymentActive"
-            class="pull-right fa fa-list-alt card-action-disabled-icon"
+            class="pull-right fa fa-list-alt card-action-icon-disabled"
             data-toggle="tooltip"
             data-placement="right"
             title="Test">
       </span>
+      <span *ngIf="dataservice.serviceDeploymentActive"
+            class="pull-right fa fa-search card-action-icon"
+            (click)="onClick(quickLookEvent)"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Preview"></span>
+      <span *ngIf="!dataservice.serviceDeploymentActive"
+            class="pull-right fa fa-search card-action-icon-disabled"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Preview"></span>
       <span *ngIf="!dataservice.serviceDeploymentLoading"
             class="pull-right fa fa-edit card-action-icon"
             (click)="onClick(editEvent)"
@@ -62,22 +73,11 @@
             title="Edit">
       </span>
       <span *ngIf="dataservice.serviceDeploymentLoading"
-            class="pull-right fa fa-edit card-action-disabled-icon"
+            class="pull-right fa fa-edit card-action-icon-disabled"
             data-toggle="tooltip"
             data-placement="right"
             title="Edit">
       </span>
-      <span *ngIf="dataservice.serviceDeploymentActive"
-            class="pull-right fa fa-search card-action-icon"
-            (click)="onClick(quickLookEvent)"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Quick Look"></span>
-      <span *ngIf="!dataservice.serviceDeploymentActive"
-            class="pull-right fa fa-search card-action-disabled-icon"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Quick Look"></span>
     </div>
     <div class="row card-pf-title text-center object-card-title">
       <span class="fa fa-table object-inline-icon"></span>
@@ -98,7 +98,8 @@
             [items]="getViews()">
             <ng-template #itemTemplate let-item="item">
               <div class="list-pf-main-content">
-                <a class="list-pf-title view-name"><span class="fa fa-table object-card-action-icon"></span>{{ item }}</a>
+                <span class="fa fa-table object-inline-icon"></span>
+                <a class="list-pf-title view-name">{{ item }}</a>
               </div>
             </ng-template>
           </pfng-list>

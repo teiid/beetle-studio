@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
+import { Component, DoCheck, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { LoggerService } from "@core/logger.service";
@@ -27,7 +27,7 @@ import { Action, ActionConfig, CardAction, CardConfig, ListConfig } from "patter
   templateUrl: "./connection-card.component.html",
   styleUrls: ["./connection-card.component.css"]
 })
-export class ConnectionCardComponent implements OnInit {
+export class ConnectionCardComponent implements DoCheck, OnInit {
 
   public static readonly deleteConnectionEvent = "delete";
   public static readonly editConnectionEvent = "edit";
@@ -53,17 +53,8 @@ export class ConnectionCardComponent implements OnInit {
     this.logger = logger;
   }
 
-  /**
-   * @returns {string[][]} the properties of a connection
-   */
-  public get properties(): string[][] {
-    const props = [
-      [ ConnectionsConstants.jndiNamePropertyLabel, this.connection.getJndiName() ],
-      [ ConnectionsConstants.driverNamePropertyLabel, this.connection.getDriverName() ],
-      [ ConnectionsConstants.serviceCatalogSourceNameLabel, this.connection.getServiceCatalogSourceName() ],
-    ];
-
-    return props;
+  private get detailsIconStyle(): string {
+    return this.showDetails ? "fa fa-close" : "fa fa-angle-right";
   }
 
   /**
@@ -83,6 +74,10 @@ export class ConnectionCardComponent implements OnInit {
    */
   public isSelected(): boolean {
     return this.selectedConnections.indexOf( this.connection ) !== -1;
+  }
+
+  public ngDoCheck(): void {
+    this.cardConfig.action.iconStyleClass = this.detailsIconStyle;
   }
 
   /**
@@ -105,7 +100,7 @@ export class ConnectionCardComponent implements OnInit {
       action: {
         id: "showDetails",
         hypertext: this.showDetailsTitle,
-        iconStyleClass: "fa fa-info-circle"
+        iconStyleClass: this.detailsIconStyle
       },
       titleBorder: true,
       noPadding: true,
@@ -147,10 +142,23 @@ export class ConnectionCardComponent implements OnInit {
   }
 
   /**
+   * @returns {string[][]} the properties of a connection
+   */
+  public get properties(): string[][] {
+    const props = [
+      [ ConnectionsConstants.jndiNamePropertyLabel, this.connection.getJndiName() ],
+      [ ConnectionsConstants.driverNamePropertyLabel, this.connection.getDriverName() ],
+      [ ConnectionsConstants.serviceCatalogSourceNameLabel, this.connection.getServiceCatalogSourceName() ],
+    ];
+
+    return props;
+  }
+
+  /**
    * @returns {string} the footer details action text
    */
   public get showDetailsTitle(): string {
-    return this.showDetails ? "Hide Details" : "Show Details";
+    return this.showDetails ? "Less" : "More";
   }
 
 }

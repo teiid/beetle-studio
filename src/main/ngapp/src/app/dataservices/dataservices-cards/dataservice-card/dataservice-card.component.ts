@@ -16,8 +16,7 @@
  */
 
 import {
-  Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef,
-  ViewEncapsulation
+  Component, DoCheck, EventEmitter, Input, OnInit, Output, ViewEncapsulation
 } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
 import { LoggerService } from "@core/logger.service";
@@ -32,6 +31,7 @@ import { Action, ActionConfig, CardAction, CardConfig, ListConfig } from "patter
 })
 export class DataserviceCardComponent implements DoCheck, OnInit {
 
+  public static readonly activateDataserviceEvent = "activate";
   public static readonly deleteDataserviceEvent = "delete";
   public static readonly editDataserviceEvent = "edit";
   public static readonly publishDataserviceEvent = "publish";
@@ -53,12 +53,14 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
   public listConfig: ListConfig;
   public showDetails = false;
 
+  private readonly activateActionId = "activate";
+  private readonly activateActionIndex = 0; // index in moreActions
   private readonly deleteActionId = "delete";
-  private readonly deleteActionIndex = 2; // index in moreActions
+  private readonly deleteActionIndex = 3; // index in moreActions
   private readonly publishActionId = "publish";
-  private readonly publishActionIndex = 1; // index in moreActions
+  private readonly publishActionIndex = 2; // index in moreActions
   private readonly refreshActionId = "refresh";
-  private readonly refreshActionIndex = 0; // index in moreActions
+  private readonly refreshActionIndex = 1; // index in moreActions
 
   private isLoading = false;
   private logger: LoggerService;
@@ -72,6 +74,10 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
    */
   public get description(): string {
     return this.dataservice.getDescription();
+  }
+
+  private get detailsIconStyle(): string {
+    return this.showDetails ? "fa fa-close" : "fa fa-angle-right";
   }
 
   /**
@@ -115,7 +121,9 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
    * @param {Action} action the action that was selected.
    */
   public handleAction( action: Action ): void {
-    if ( action.id === this.deleteActionId ) {
+    if ( action.id === this.activateActionId ) {
+      this.onClick( DataserviceCardComponent.activateDataserviceEvent );
+    } else if ( action.id === this.deleteActionId ) {
       this.onClick( DataserviceCardComponent.deleteDataserviceEvent );
     } else if ( action.id === this.publishActionId ) {
       this.onClick( DataserviceCardComponent.publishDataserviceEvent );
@@ -137,10 +145,13 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
     if ( this.isLoading !== this.dataservice.serviceDeploymentLoading ) {
       this.isLoading = this.dataservice.serviceDeploymentLoading;
 
+      this.actionConfig.moreActions[ this.activateActionIndex ].disabled = this.isLoading;
       this.actionConfig.moreActions[ this.deleteActionIndex ].disabled = this.isLoading;
       this.actionConfig.moreActions[ this.publishActionIndex ].disabled = this.isLoading;
       this.actionConfig.moreActions[ this.refreshActionIndex ].disabled = this.isLoading;
     }
+
+    this.cardConfig.action.iconStyleClass = this.detailsIconStyle;
   }
 
   public ngOnInit(): void {
@@ -148,6 +159,11 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
       primaryActions: [
       ],
       moreActions: [
+        {
+          id: this.activateActionId,
+          title: "Activate",
+          tooltip: "Activate"
+        },
         {
           id: this.refreshActionId,
           title: "Refresh",
@@ -172,7 +188,7 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
       action: {
         id: "showDetails",
         hypertext: this.showDetailsTitle,
-        iconStyleClass: "fa fa-info-circle"
+        iconStyleClass: this.detailsIconStyle
       },
       titleBorder: true,
       noPadding: true,
@@ -216,7 +232,7 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
    * @returns {string} the footer details action text
    */
   public get showDetailsTitle(): string {
-    return this.showDetails ? "Hide Details" : "Show Details";
+    return this.showDetails ? "Less" : "More";
   }
 
 }

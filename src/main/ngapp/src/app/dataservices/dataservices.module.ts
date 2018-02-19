@@ -22,7 +22,9 @@ import { RouterModule } from "@angular/router";
 import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
+import { BasicContentComponent } from "@dataservices/dataservices-list/basic-content.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
+import { ViewsContentComponent } from "@dataservices/dataservices-list/views-content.component";
 import { DataservicesRoutingModule } from "@dataservices/dataservices-routing.module";
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
@@ -41,8 +43,6 @@ import { JdbcTableSelectorComponent } from "./jdbc-table-selector/jdbc-table-sel
 import { SelectedTableComponent } from "./selected-table/selected-table.component";
 import { SqlControlComponent } from "./sql-control/sql-control.component";
 import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.component";
-import {BasicContentComponent} from "@dataservices/dataservices-list/basic-content.component";
-import {ViewsContentComponent} from "@dataservices/dataservices-list/views-content.component";
 
 @NgModule({
   imports: [

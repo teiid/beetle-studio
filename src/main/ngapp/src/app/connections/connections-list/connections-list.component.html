@@ -20,9 +20,7 @@
             <div class="list-pf-content-wrapper">
               <div class="list-pf-main-content">
                 <a [routerLink]="[item.name]" (click)="onEditConnection(item.name)">{{ item.name }}</a>
-              </div>
-              <div class="list-pf-additional-content">
-                <div class="list-pf-description text-overflow-pf">{{ item.description }}</div>
+                <div class="list-pf-description">{{ getDescription(item) }}</div>
               </div>
             </div>
           </ng-template>

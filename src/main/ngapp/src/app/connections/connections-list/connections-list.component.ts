@@ -61,6 +61,7 @@ export class ConnectionsListComponent implements OnInit {
       multiSelect: false,
       selectItems: true,
       selectedItems: this.selectedConnections,
+      selectionMatchProp: "name",
       showCheckbox: false,
       useExpandItems: true
     } as ListConfig;
@@ -107,6 +108,16 @@ export class ConnectionsListComponent implements OnInit {
     } as ActionConfig;
 
     return actionConfig;
+  }
+
+  public getDescription( conn: Connection ): string {
+    const description = conn.description;
+
+    if ( description && description.length > 120 ) {
+      return description.slice( 0, 120 ) + " ... ";
+    }
+
+    return description;
   }
 
   /**

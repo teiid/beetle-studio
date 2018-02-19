@@ -17,7 +17,6 @@
 
 import { Component, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ConnectionCardComponent } from "@connections/connections-cards/connection-card/connection-card.component";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";

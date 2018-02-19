@@ -34,7 +34,7 @@ export const openshiftKomodoPrefix = "/";
 //   - openshiftKomodoPrefix (openshift deployment)
 //   - localKomodoPrefix (development on local teiid-komodo)
 // -----------------------------------------------------------
-export const komodoUrlPrefix = localKomodoPrefix;
+export const komodoUrlPrefix = openshiftKomodoPrefix;
 
 export const environment = {
   production: false,

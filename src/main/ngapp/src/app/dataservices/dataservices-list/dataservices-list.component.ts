@@ -17,15 +17,15 @@
 
 import {
   Component,
-  OnInit,
-  ViewEncapsulation,
   EventEmitter,
   Input,
-  Output
-} from '@angular/core';
-import { Dataservice } from "@dataservices/shared/dataservice.model";
+  OnInit,
+  Output, TemplateRef,
+  ViewEncapsulation
+} from "@angular/core";
 import { LoggerService } from "@core/logger.service";
-import { Action, ActionConfig, ListConfig, ListEvent } from "patternfly-ng";
+import { Dataservice } from "@dataservices/shared/dataservice.model";
+import { Action, ActionConfig, ListConfig} from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -50,11 +50,10 @@ export class DataservicesListComponent implements OnInit {
   public readonly quickLookEvent = DataservicesListComponent.quickLookDataserviceEvent;
   public readonly testEvent = DataservicesListComponent.testDataserviceEvent;
 
-  actionConfig: ActionConfig;
-  actionsText: string = '';
-  allItems: Dataservice[];
-  items: Dataservice[];
-  listConfig: ListConfig;
+  public actionConfig: ActionConfig;
+  public items: Dataservice[];
+  public listConfig: ListConfig;
+
   @Input() public dataservices: Dataservice[];
   @Input() public selectedDataservices: Dataservice[];
   @Output() public dataserviceSelected: EventEmitter<Dataservice> = new EventEmitter<Dataservice>();
@@ -76,60 +75,108 @@ export class DataservicesListComponent implements OnInit {
     this.logger = logger;
   }
 
-  ngOnInit(): void {
-
-    this.items = this.dataservices;
-
-    this.actionConfig = {
-      primaryActions: [{
-        id: 'edit',
-        title: 'Edit',
-        tooltip: 'Edit this data service'
-      },
-      {
-        id: 'test',
-        title: 'Test',
-        tooltip: 'Test this data service'
-      },
-      {
-        id: 'quickLook',
-        title: 'Preview',
-        tooltip: 'Preview this data service'
-      }],
-      moreActions: [{
-        disabled: false,
-        id: 'activate',
-        title: 'Activate',
-        tooltip: 'Activate this data service'
+  /**
+   * Get the ActionConfig properties for each row. Note: currently PatternFly does not support templates for
+   * "moreActions" but I added in the hope that they will be supported in the future.
+   *
+   * @param connection the connection represented by a row
+   * @param editActionTemplate {TemplateRef} the edit action template
+   * @param testActionTemplate {TemplateRef} the test action template
+   * @param quickLookActionTemplate {TemplateRef} the preview action template
+   * @param activateActionTemplate {TemplateRef} the activate action template
+   * @param publishActionTemplate {TemplateRef} the publish action template
+   * @param refreshActionTemplate {TemplateRef} the refresh action template
+   * @param deleteActionTemplate {TemplateRef} the delete action template
+   * @returns {ActionConfig} the actions configuration
+   */
+  public getActionConfig( ds: Dataservice,
+                          editActionTemplate: TemplateRef< any >,
+                          testActionTemplate: TemplateRef< any >,
+                          quickLookActionTemplate: TemplateRef< any >,
+                          activateActionTemplate: TemplateRef< any >,
+                          publishActionTemplate: TemplateRef< any >,
+                          refreshActionTemplate: TemplateRef< any >,
+                          deleteActionTemplate: TemplateRef< any > ): ActionConfig {
+    if ( this.actionConfig == null ) {
+      this.actionConfig = {
+        primaryActions: [ {
+          disabled: ds.serviceDeploymentLoading,
+          id: "edit",
+          template: editActionTemplate,
+          title: "Edit",
+          tooltip: "Edit this data service"
         },
-        {
-          id: 'publish',
-          title: 'Publish',
-          tooltip: 'Publish this data service'
-        },
-        {
-          id: 'refresh',
-          title: 'Refresh',
-          tooltip: 'Refresh this data service'
-        },
-        {
-          id: 'delete',
-          title: 'Delete',
-          tooltip: 'Delete this data service'
-        }],
-    } as ActionConfig;
+          {
+            disabled: ds.serviceDeploymentLoading,
+            id: "quickLook",
+            template: quickLookActionTemplate,
+            title: "Preview",
+            tooltip: "Preview this data service"
+          },
+          {
+            disabled: ds.serviceDeploymentLoading,
+            id: "test",
+            template: testActionTemplate,
+            title: "Test",
+            tooltip: "Test this data service"
+          }
+        ],
+        moreActions: [
+          {
+            disabled: ds.serviceDeploymentLoading,
+            id: "activate",
+            template: activateActionTemplate,
+            title: "Activate",
+            tooltip: "Activate this data service"
+          },
+          {
+            disabled: ds.serviceDeploymentLoading,
+            id: "refresh",
+            template: refreshActionTemplate,
+            title: "Refresh",
+            tooltip: "Refresh this data service"
+          },
+          {
+            disabled: ds.serviceDeploymentLoading,
+            template: publishActionTemplate,
+            title: "Publish",
+            tooltip: "Publish this data service"
+          },
+          {
+            disabled: ds.serviceDeploymentLoading,
+            id: "delete",
+            template: deleteActionTemplate,
+            title: "Delete",
+            tooltip: "Delete this data service"
+          } ],
+      } as ActionConfig;
+    }
 
+    return this.actionConfig;
+  }
+
+  public getDescription( dataservice: Dataservice ): string {
+    const description = dataservice.getDescription();
+
+    if ( description && description.length > 120 ) {
+      return description.slice( 0, 120 ) + " ... ";
+    }
+
+    return description;
+  }
+
+  public ngOnInit(): void {
     this.listConfig = {
       dblClick: false,
       multiSelect: false,
       selectItems: false,
-      selectionMatchProp: 'name',
+      selectionMatchProp: "name",
       showCheckbox: false,
       useExpandItems: true
     } as ListConfig;
   }
 
-    public toggleDataserviceSelected(dataservice: Dataservice): void {
+  public toggleDataserviceSelected(dataservice: Dataservice): void {
     if (this.isSelected(dataservice)) {
       this.dataserviceDeselected.emit(dataservice);
     } else {
@@ -143,6 +190,19 @@ export class DataservicesListComponent implements OnInit {
 
   public onActivateDataservice(dataserviceName: string): void {
     this.activateDataservice.emit(dataserviceName);
+  }
+
+  /**
+   * @param $event the list row selection event being handled
+   */
+  public onSelect( $event ): void {
+    if ( $event.selectedItems.length === 0 ) {
+      if ( this.selectedDataservices.length !== 0 ) {
+        this.dataserviceDeselected.emit( $event.selectedItems[ 0 ] );
+      }
+    } else {
+      this.dataserviceSelected.emit( $event.selectedItems[ 0 ] );
+    }
   }
 
   public onTestDataservice(dataserviceName: string): void {
@@ -165,13 +225,7 @@ export class DataservicesListComponent implements OnInit {
     this.quickLookDataservice.emit(dataserviceName);
   }
 
-  ngDoCheck(): void {
-  }
-
-  // Actions
-
-  handleAction($event: Action, item: any): void {
-
+  public handleAction($event: Action, item: any): void {
     switch ( $event.id ) {
       case DataservicesListComponent.activateDataserviceEvent:
         this.activateDataservice.emit( item.getId() );

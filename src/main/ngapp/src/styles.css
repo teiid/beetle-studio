@@ -115,7 +115,7 @@
 .object-card .card-pf .card-pf-footer {
   background-color: var(--card-footer-background-color);
   min-height: 20px;
-  padding: 10px 0 5px 20px;
+  padding: 5px 2px 1px 10px;
 }
 
 .object-card-selected .card-pf .card-pf-heading,
@@ -188,6 +188,11 @@
 .object-inline-icon {
   color: var(--inline-icon-color);
   display: var(--inline-icon-display);
+}
+
+.object-name-link {
+  margin-left: 4px !important;
+  padding-left: 0;
 }
 
 .properties-group-selected,

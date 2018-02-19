@@ -1,8 +1,0 @@
-.connections-list .close {
-  float: left;
-}
-
-.connections-list .list-pf-actions {
-  flex-grow: 1;
-  justify-content: flex-end;
-}

@@ -1,9 +1,17 @@
+.card-toolbar .secondary-action[title="Activate"]:before {
+  color: var(--card-action-icon-color);
+  content: "\f1eb";
+  font-family: "FontAwesome";
+}
+
 .card-toolbar .secondary-action[title="Publish"]:before {
+  color: var(--card-action-icon-color);
   content: "\f08e";
   font-family: "FontAwesome";
 }
 
 .card-toolbar .secondary-action[title="Refresh"]:before {
+  color: var(--card-action-icon-color);
   content: "\f021";
   font-family: "FontAwesome";
 }
@@ -32,9 +40,10 @@
   background-color: transparent;
 }
 
-.view-name {
+a.list-pf-title.view-name {
   cursor: pointer;
   color: var(--card-body-color);
+  margin-left: 10px !important;
 }
 
 .views-details {
