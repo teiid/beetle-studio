@@ -89,12 +89,22 @@
 
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('connections')">
-        <app-connections-list *ngIf="isListLayout" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
-                              (pingConnection)="onPing($event)" (deleteConnection)="onDelete($event)"
-                              (connectionSelected)="onSelected($event)" (connectionDeselected)="onDeselected($event)"></app-connections-list>
-        <app-connections-cards *ngIf="isCardLayout" [connections]="filteredConnections" [selectedConnections]="selectedConnections"
-                               (pingConnection)="onPing($event)" (deleteConnection)="onDelete($event)"
-                               (connectionSelected)="onSelected($event)" (connectionDeselected)="onDeselected($event)"></app-connections-cards>
+        <app-connections-list *ngIf="isListLayout"
+                              [connections]="filteredConnections"
+                              [selectedConnections]="selectedConnections"
+                              (editConnection)="onEdit($event)"
+                              (pingConnection)="onPing($event)"
+                              (deleteConnection)="onDelete($event)"
+                              (connectionSelected)="onSelected($event)"
+                              (connectionDeselected)="onDeselected($event)"></app-connections-list>
+        <app-connections-cards *ngIf="isCardLayout"
+                               [connections]="filteredConnections"
+                               [selectedConnections]="selectedConnections"
+                               (editConnection)="onEdit($event)"
+                               (pingConnection)="onPing($event)"
+                               (deleteConnection)="onDelete($event)"
+                               (connectionSelected)="onSelected($event)"
+                               (connectionDeselected)="onDeselected($event)"></app-connections-cards>
       </div>
 
     </div>
@@ -103,5 +113,7 @@
 
 </div>
 <app-confirm-delete (deleteSelected)="onDeleteConnection()">
-  <p i18n="@@connections.doYouReallyWantToDeleteSelectedConnection" >Do you really want to delete the selected Connection?</p>
+  <p i18n="@@connections.doYouReallyWantToDeleteSelectedConnection" >
+    Do you really want to delete the '{{connectionNameForDelete}}' Connection?
+  </p>
 </app-confirm-delete>

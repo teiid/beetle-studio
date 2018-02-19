@@ -16,14 +16,21 @@
  */
 
 import { Component, Input, ViewEncapsulation } from "@angular/core";
+import { Connection } from "@connections/shared/connection.model";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
-  selector: "app-basic-content",
-  templateUrl: "basic-content.component.html"
+  selector: "app-connection-details",
+  templateUrl: "./connection-details.component.html"
 })
-export class BasicContentComponent  {
-  @Input() public item: any;
+export class ConnectionDetailsComponent {
+
+  public readonly driverLabel = ConnectionsConstants.driverNamePropertyLabel;
+  public readonly jndiLabel = ConnectionsConstants.jndiNamePropertyLabel;
+  public readonly serviceCatalogSourceLabel = ConnectionsConstants.serviceCatalogSourceNameLabel;
+
+  @Input() public connection: Connection;
 
   constructor() {
     // nothing to do

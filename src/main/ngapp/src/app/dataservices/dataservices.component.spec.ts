@@ -8,7 +8,9 @@ import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
+import { BasicContentComponent } from "@dataservices/dataservices-list/basic-content.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
+import { ViewsContentComponent } from "@dataservices/dataservices-list/views-content.component";
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
@@ -31,11 +33,13 @@ describe("DataservicesComponent", () => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), PatternFlyNgModule,
                  RouterTestingModule, SharedModule, CodemirrorModule, NgxDatatableModule ],
-      declarations: [ DataservicesComponent,
+      declarations: [ BasicContentComponent,
+                      DataservicesComponent,
                       DataservicesListComponent,
                       DataservicesCardsComponent,
                       DataserviceCardComponent,
-                      SqlControlComponent ],
+                      SqlControlComponent,
+                      ViewsContentComponent ],
       providers: [
         AppSettingsService,
         NotifierService,
@@ -78,7 +82,7 @@ describe("DataservicesComponent", () => {
     expect(dataservices.length).toEqual(3);
 
     // Check html has the same number of dataservice cards
-    const cardDebugElems = fixture.debugElement.queryAll(By.css(".dataservice-card"));
+    const cardDebugElems = fixture.debugElement.queryAll(By.css(".object-card"));
     expect(cardDebugElems).toBeDefined();
     expect(cardDebugElems.length).toEqual(3);
   });

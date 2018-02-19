@@ -80,6 +80,14 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
+   * @returns {string} the connection description
+   */
+  public get description(): string {
+    // TODO do connections have a description
+    return "This is a connection description. So if you're looking for the description you found it.";
+  }
+
+  /**
    * @returns {string} the connection driver name (can be null)
    */
   public getDriverName(): string {
@@ -101,10 +109,25 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
+   * @returns {string} the service catalog source name of this connection
+   */
+  public getServiceCatalogSourceName(): string {
+    // TODO: finish implenting getServiceCatalogSourceName()
+    return "TBD";
+  }
+
+  /**
    * @returns {boolean} the jdbc status (true == jdbc)
    */
   public isJdbc(): boolean {
     return this.dv__type;
+  }
+
+  /**
+   * @returns {string} the connection name
+   */
+  public get name(): string {
+    return this.keng__id;
   }
 
   /**

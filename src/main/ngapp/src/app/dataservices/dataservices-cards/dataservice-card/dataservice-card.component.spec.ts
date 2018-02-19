@@ -3,6 +3,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { PatternFlyNgModule } from "patternfly-ng";
+import { LoggerService } from "@core/logger.service";
 
 describe("DataserviceCardComponent", () => {
   let component: DataserviceCardComponent;
@@ -11,7 +12,8 @@ describe("DataserviceCardComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ PatternFlyNgModule, RouterTestingModule ],
-      declarations: [ DataserviceCardComponent ]
+      declarations: [ DataserviceCardComponent ],
+      providers: [ LoggerService ]
     })
     .compileComponents();
   }));

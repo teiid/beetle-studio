@@ -1,48 +1,72 @@
 <div class="padding-15">
   <div class="row">
     <div class="col-sm-12">
-      <div class="list-group">
+      <div class="form-group">
         <pfng-list
+          class="object-list"
           [actionTemplate]="actionTemplate"
           [config]="listConfig"
           [expandTemplate]="expandTemplate"
-          [items]="items"
+          [items]="dataservices"
           [itemTemplate]="itemTemplate"
-          (onActionSelect)="handleAction($event, null)">
-          <div class="list-pf-left">
-            <span class="fa fa-plug dataservice-list-icon"></span>
-          </div>
-          <ng-template #itemTemplate let-item="item">
-            <span class="pull-left pficon-ok dataservice-list-state-icon" *ngIf="item.serviceDeploymentActive"></span>
-            <span class="pull-left pficon-error-circle-o dataservice-list-state-icon" *ngIf="item.serviceDeploymentFailed"></span>
-            <span class="pull-left pficon-warning-triangle-o dataservice-list-state-icon" *ngIf="item.serviceDeploymentInactive"></span>
-            <span class="pull-left pficon-unknown dataservice-list-state-icon" *ngIf="item.serviceDeploymentNotDeployed"></span>
-            <span class="pull-left fa fa-spinner fa-pulse dataservice-list-state-icon" *ngIf="item.serviceDeploymentLoading"></span>
-            <span class="fa fa-table list-view-pf-icon-sm"></span>
+          (onActionSelect)="handleAction($event, null)"
+          (onSelectionChange)="onSelect($event)">
+          <ng-template #itemTemplate
+                       let-item="item"
+                       let-index="index">
+            <div class="list-pf-left">
+              <span class="fa fa-lg fa-table object-inline-icon"></span>
+            </div>
             <div class="list-pf-content-wrapper">
               <div class="list-pf-main-content">
-                <div class="list-pf-title">{{item.getId()}}</div>
-                <div class="list-pf-description text-overflow-pf">{{item.getDescription()}}</div>
+                <span class="pull-left pficon-ok object-inline-icon" *ngIf="item.serviceDeploymentActive"></span>
+                <span class="pull-left pficon-error-circle-o object-inline-icon" *ngIf="item.serviceDeploymentFailed"></span>
+                <span class="pull-left pficon-warning-triangle-o object-inline-icon" *ngIf="item.serviceDeploymentInactive"></span>
+                <span class="pull-left pficon-unknown object-inline-icon" *ngIf="item.serviceDeploymentNotDeployed"></span>
+                <span class="pull-left fa fa-spinner fa-pulse object-inline-icon" *ngIf="item.serviceDeploymentLoading"></span>
+                <a class="object-name-link" [routerLink]="[item.getId()]" (click)="onEditDataservice(item.getId())">{{ item.getId() }}</a>
+                <div class="list-pf-description">{{ getDescription( item ) }}</div>
               </div>
               <div class="list-pf-additional-content">
                 <pfng-list-expand-toggle [expandId]="'views'" [item]="item" [template]="viewsTemplate">
-                <ng-template #viewsTemplate>
-                <span class="fa fa-table"></span>
-                <span class="list-pf-title">Views</span>
-                </ng-template>
+                  <ng-template #viewsTemplate>
+                    <span class="fa fa-table object-inline-icon"></span>
+                    <span class="list-pf-title">Views</span>
+                  </ng-template>
                 </pfng-list-expand-toggle>
               </div>
             </div>
           </ng-template>
           <ng-template #actionTemplate let-item="item" let-index="index">
             <pfng-action class="list-pf-actions"
-                         [config]="actionConfig"
+                         [config]="getActionConfig( item, editActionTemplate, testActionTemplate, quickLookActionTemplate, activateActionTemplate, publishActionTemplate, refreshActionTemplate, deleteActionTemplate )"
                          (onActionSelect)="handleAction($event, item)">
+              <ng-template #editActionTemplate let-action="action">
+                <span class="fa fa-edit">&nbsp;</span>{{ action.title }}
+              </ng-template>
+              <ng-template #testActionTemplate let-action="action">
+                <span class="fa fa-list-alt">&nbsp;</span>{{ action.title }}
+              </ng-template>
+              <ng-template #quickLookActionTemplate let-action="action">
+                <span class="fa fa-search">&nbsp;</span>{{ action.title }}
+              </ng-template>
+              <ng-template #activateActionTemplate let-action="action">
+                <span class="fa fa-wifi">&nbsp;</span>{{ action.title }}
+              </ng-template>
+              <ng-template #publishActionTemplate let-action="action">
+                <span class="fa fa-external-link-alt">&nbsp;</span>{{ action.title }}
+              </ng-template>
+              <ng-template #refreshActionTemplate let-action="action">
+                <span class="fa fa-refresh">&nbsp;</span>{{ action.title }}
+              </ng-template>
+              <ng-template #deleteActionTemplate let-action="action">
+                <span class="fa fa-trash-o">&nbsp;</span>{{ action.title }}
+              </ng-template>
             </pfng-action>
           </ng-template>
           <ng-template #expandTemplate let-item="item" let-index="index">
-            <basic-content [item]="item" *ngIf="item.expandId === undefined"></basic-content>
-            <views-content [item]="item" *ngIf="item.expandId === 'views'"></views-content>
+            <app-basic-content [item]="item" *ngIf="item.expandId === undefined"></app-basic-content>
+            <app-views-content [item]="item" *ngIf="item.expandId === 'views'"></app-views-content>
           </ng-template>
         </pfng-list>
       </div>

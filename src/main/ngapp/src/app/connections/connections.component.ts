@@ -39,10 +39,10 @@ export class ConnectionsComponent extends AbstractPageComponent {
 
   public readonly addConnectionLink: string = ConnectionsConstants.addConnectionPath;
 
+  public connectionNameForDelete: string;
   private allConns: Connection[] = [];
   private filteredConns: Connection[] = [];
   private selectedConns: Connection[] = [];
-  private connectionNameForDelete: string;
   private router: Router;
   private appSettingsService: AppSettingsService;
   private connectionService: ConnectionService;
@@ -126,8 +126,15 @@ export class ConnectionsComponent extends AbstractPageComponent {
     return this.selectedConns;
   }
 
-  public onPing( connName: string): void {
-    alert("Ping connection " + connName);
+  public onEdit( connectionName: string ): void {
+    const connection = this.filterConnections().find( ( conn ) => conn.getId() === connectionName );
+    // TODO: implement onEdit
+    alert( "Edit '" + connectionName + "' connection (not yet implemented)" );
+  }
+
+  public onPing( connName: string ): void {
+    // TODO: implement onEdit
+    alert( "Ping the '" + connName + "' connection (not yet implemented)" );
   }
 
   public onSelected(connection: Connection): void {

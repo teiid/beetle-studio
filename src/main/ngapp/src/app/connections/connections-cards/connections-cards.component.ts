@@ -16,6 +16,7 @@
  */
 
 import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { ConnectionCardComponent } from "@connections/connections-cards/connection-card/connection-card.component";
 import { Connection } from "@connections/shared/connection.model";
 
 @Component({
@@ -28,11 +29,12 @@ export class ConnectionsCardsComponent {
 
   @Input() public connections: Connection[];
   @Input() public selectedConnections: Connection[];
+
   @Output() public connectionSelected: EventEmitter<Connection> = new EventEmitter<Connection>();
   @Output() public connectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();
-  @Output() public tagSelected: EventEmitter<string> = new EventEmitter<string>();
-  @Output() public pingConnection: EventEmitter<string> = new EventEmitter<string>();
   @Output() public deleteConnection: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public editConnection: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public pingConnection: EventEmitter<string> = new EventEmitter<string>();
 
   /**
    * Constructor.
@@ -41,30 +43,31 @@ export class ConnectionsCardsComponent {
     // nothing to do
   }
 
-  public toggleConnectionSelected(connection: Connection): void {
-    if (this.isSelected(connection)) {
-      this.connectionDeselected.emit(connection);
-    } else {
-      this.connectionSelected.emit(connection);
+  public isSelected( connection: Connection ): boolean {
+    return this.selectedConnections.indexOf( connection ) !== -1;
+  }
+
+  public onCardEvent( event: { eventType: string,
+                               connectionName: string } ): void {
+    switch ( event.eventType ) {
+      case ConnectionCardComponent.deleteConnectionEvent:
+        this.deleteConnection.emit( event.connectionName );
+        break;
+      case ConnectionCardComponent.editConnectionEvent:
+        this.editConnection.emit( event.connectionName );
+        break;
+      case ConnectionCardComponent.pingConnectionEvent:
+        this.pingConnection.emit( event.connectionName );
+        break;
+      default:
+        // TODO log this
+        // this.logger.error( "Unhandled event type of '" + event.eventType + "'" );
+        break;
     }
   }
 
-  public isSelected(connection: Connection): boolean {
-    return this.selectedConnections.indexOf(connection) !== -1;
-  }
-
-  public onPingConnection(connectionName: string): void {
-    this.pingConnection.emit(connectionName);
-  }
-
-  public onDeleteConnection(connectionName: string): void {
-    this.deleteConnection.emit(connectionName);
-  }
-
-  public onSelectTag(tag: string, event: MouseEvent): void {
-    event.stopPropagation();
-    event.preventDefault();
-    this.tagSelected.emit(tag);
+  public onSelectEvent( connection: Connection ): void {
+    this.connectionSelected.emit( connection );
   }
 
 }
