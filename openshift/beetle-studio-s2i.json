@@ -810,7 +810,7 @@
                         "containers": [
                             {
                                 "name":"oauth-proxy",
-                                "image":"openshift/oauth-proxy:v1.0.0",
+                                "image":"openshift/oauth-proxy:v1.1.0",
                                 "imagePullPolicy":"IfNotPresent",
                                 "ports": [
                                     {
