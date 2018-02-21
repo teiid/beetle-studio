@@ -15,16 +15,17 @@
  * limitations under the License.
  */
 
-import { Component, Input, ViewEncapsulation } from "@angular/core";
+import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { ListConfig } from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
   selector: "app-connection-details",
   templateUrl: "./connection-details.component.html"
 })
-export class ConnectionDetailsComponent {
+export class ConnectionDetailsComponent implements OnInit {
 
   public readonly driverLabel = ConnectionsConstants.driverNamePropertyLabel;
   public readonly jndiLabel = ConnectionsConstants.jndiNamePropertyLabel;
@@ -32,8 +33,33 @@ export class ConnectionDetailsComponent {
 
   @Input() public connection: Connection;
 
+  public listConfig: ListConfig;
+
   constructor() {
     // nothing to do
+  }
+
+  public ngOnInit(): void {
+    this.listConfig = {
+      dblClick: false,
+      multiSelect: false,
+      selectItems: false,
+      showCheckbox: false,
+      useExpandItems: false
+    };
+  }
+
+  /**
+   * @returns {string[][]} the properties of a connection
+   */
+  public get properties(): string[][] {
+    const props = [
+      [ ConnectionsConstants.jndiNamePropertyLabel, this.connection.getJndiName() ],
+      [ ConnectionsConstants.driverNamePropertyLabel, this.connection.getDriverName() ],
+      [ ConnectionsConstants.serviceCatalogSourceNameLabel, this.connection.getServiceCatalogSourceName() ],
+    ];
+
+    return props;
   }
 
 }

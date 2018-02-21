@@ -216,6 +216,7 @@
 }
 
 .property-name {
+  display: inline-flex;
   flex-grow: 0;
   font-weight: bold;
   justify-content: right;
@@ -225,6 +226,7 @@
 
 .property-value {
   color: gray;
+  display: inline-flex;
   flex-grow: 0;
   justify-content: left;
   padding: 0 4px;
@@ -304,5 +306,5 @@
 .secondary-action[title*="Delete"]:before {
   color: var(--alert-color);
   content: "\f014";
-  font-family: "FontAwesome";
+  font-family: "FontAwesome, monospace";
 }

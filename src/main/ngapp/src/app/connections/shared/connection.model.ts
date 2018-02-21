@@ -112,7 +112,7 @@ export class Connection implements Identifiable< string > {
    * @returns {string} the service catalog source name of this connection
    */
   public getServiceCatalogSourceName(): string {
-    // TODO: finish implenting getServiceCatalogSourceName()
+    // TODO: finish implementing getServiceCatalogSourceName()
     return "TBD";
   }
 

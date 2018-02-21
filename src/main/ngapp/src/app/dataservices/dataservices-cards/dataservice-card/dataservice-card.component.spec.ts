@@ -1,9 +1,9 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { RouterTestingModule } from "@angular/router/testing";
+import { LoggerService } from "@core/logger.service";
 import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { PatternFlyNgModule } from "patternfly-ng";
-import { LoggerService } from "@core/logger.service";
 
 describe("DataserviceCardComponent", () => {
   let component: DataserviceCardComponent;
