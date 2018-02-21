@@ -15,19 +15,25 @@
  * limitations under the License.
  */
 
-import { Component, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild} from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
-import { ArrayUtils } from "@core/utils/array-utils";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
-import { IdFilter } from "@shared/id-filter";
 import { LayoutType } from "@shared/layout-type.enum";
-import { SortDirection } from "@shared/sort-direction.enum";
+import { Filter } from "patternfly-ng";
+import { FilterConfig } from "patternfly-ng";
+import { FilterField } from "patternfly-ng";
+import { FilterEvent } from "patternfly-ng";
+import { FilterType } from "patternfly-ng";
+import { SortConfig } from "patternfly-ng";
+import { SortField } from "patternfly-ng";
+import { SortEvent } from "patternfly-ng";
+
 
 @Component({
   moduleId: module.id,
@@ -35,20 +41,28 @@ import { SortDirection } from "@shared/sort-direction.enum";
   templateUrl: "./connections.component.html",
   styleUrls: ["./connections.component.css"]
 })
-export class ConnectionsComponent extends AbstractPageComponent {
+export class ConnectionsComponent extends AbstractPageComponent implements OnInit{
 
   public readonly addConnectionLink: string = ConnectionsConstants.addConnectionPath;
 
   public connectionNameForDelete: string;
+
+  public filterConfig: FilterConfig;
+  public filtersText = "";
+  public separator: object;
+  public allItems: Connection[];
+  public items: Connection[];
+  public sortConfig: SortConfig;
+  public currentSortField: SortField;
+  public isAscendingSort: boolean = true;
+
   private allConns: Connection[] = [];
   private filteredConns: Connection[] = [];
   private selectedConns: Connection[] = [];
   private router: Router;
   private appSettingsService: AppSettingsService;
   private connectionService: ConnectionService;
-  private filter: IdFilter = new IdFilter();
   private layout: LayoutType = LayoutType.CARD;
-  private sortDirection: SortDirection = SortDirection.ASC;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
@@ -60,6 +74,40 @@ export class ConnectionsComponent extends AbstractPageComponent {
     this.connectionService = connectionService;
   }
 
+  public ngOnInit(): void {
+
+    super.ngOnInit();
+
+    this.filterConfig = {
+      fields: [{
+        id: "name",
+        title: "Name",
+        placeholder: "Filter by Name...",
+        type: FilterType.TEXT
+      }, {
+        id: "description",
+        title: "Description",
+        placeholder: "Filter by Description...",
+        type: FilterType.TEXT
+      }] as FilterField[],
+      resultsCount: this.filteredConns.length,
+      appliedFilters: []
+    } as FilterConfig;
+
+    this.sortConfig = {
+      fields: [{
+        id: "name",
+        title: "Name",
+        sortType: "alpha"
+      }, {
+        id: "description",
+        title: "Description",
+        sortType: "alpha"
+      }],
+      isAscending: this.isAscendingSort
+    } as SortConfig;
+  }
+
   public loadAsyncPageData(): void {
     const self = this;
 
@@ -68,7 +116,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
       .subscribe(
         (connections) => {
           self.allConns = connections;
-          self.filteredConns = this.filterConnections();
+          self.filteredConns = connections;
           self.loaded("connections");
         },
         (error) => {
@@ -89,20 +137,6 @@ export class ConnectionsComponent extends AbstractPageComponent {
    */
   public get isListLayout(): boolean {
     return this.appSettingsService.connectionsPageLayout === LayoutType.LIST;
-  }
-
-  /**
-   * @returns {boolean} true if sorting connection names in ascending order
-   */
-  public get isSortAscending(): boolean {
-    return this.sortDirection === SortDirection.ASC;
-  }
-
-  /**
-   * @returns {boolean} true if sorting connection names in descending order
-   */
-  public get isSortDescending(): boolean {
-    return this.sortDirection === SortDirection.DESC;
   }
 
   /**
@@ -127,7 +161,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
   }
 
   public onEdit( connectionName: string ): void {
-    const connection = this.filterConnections().find( ( conn ) => conn.getId() === connectionName );
+    const connection = this.filteredConns.find( ( conn ) => conn.getId() === connectionName );
     // TODO: implement onEdit
     alert( "Edit '" + connectionName + "' connection (not yet implemented)" );
   }
@@ -154,36 +188,6 @@ export class ConnectionsComponent extends AbstractPageComponent {
     this.confirmDeleteDialog.open();
   }
 
-  public isFiltered(): boolean {
-    return this.allConns.length !== this.filteredConns.length;
-  }
-
-  public get nameFilter(): string {
-    return this.filter.getPattern();
-  }
-
-  /**
-   * @param {string} pattern the new pattern for the connection name filter (can be null or empty)
-   */
-  public set nameFilter( pattern: string ) {
-    this.filter.setFilter( pattern );
-    this.filterConnections();
-  }
-
-  public toggleSortDirection(): void {
-    if (this.sortDirection === SortDirection.ASC) {
-      this.sortDirection = SortDirection.DESC;
-    } else {
-      this.sortDirection = SortDirection.ASC;
-    }
-    this.filterConnections();
-  }
-
-  public clearFilters(): void {
-    this.filter.reset();
-    this.filterConnections();
-  }
-
   public setListLayout(): void {
     this.appSettingsService.connectionsPageLayout = LayoutType.LIST;
   }
@@ -196,7 +200,7 @@ export class ConnectionsComponent extends AbstractPageComponent {
    * Called to doDelete all selected APIs.
    */
   public onDeleteConnection(): void {
-    const selectedConn =  this.filterConnections().find((x) => x.getId() === this.connectionNameForDelete);
+    const selectedConn =  this.filteredConnections.find((x) => x.getId() === this.connectionNameForDelete);
 
     // const itemsToDelete: Connection[] = ArrayUtils.intersect(this.selectedConns, this.filteredConns);
     // const selectedConn = itemsToDelete[0];
@@ -222,28 +226,76 @@ export class ConnectionsComponent extends AbstractPageComponent {
   }
 
   /**
-   * Filters and sorts the list of connections based on the user input
+   * Filter functions
    */
-  public filterConnections(): Connection[] {
-    // Clear the array first.
-    this.filteredConns.splice(0, this.filteredConns.length);
+  public applyFilters(filters: Filter[]): void {
+    this.items = [];
+    if (filters && filters.length > 0) {
+      this.allConnections.forEach((item) => {
+        if (this.matchesFilters(item, filters)) {
+          this.items.push(item);
+        }
+      });
+    } else {
+      this.items = this.allConnections;
+    }
+    this.filteredConns = this.items;
+    this.filterConfig.resultsCount = this.items.length;
+  }
 
-    // filter
-    for (const connection of this.allConns) {
-      if (this.filter.accepts(connection)) {
-        this.filteredConns.push(connection);
+  public filterChanged($event: FilterEvent): void {
+    this.filtersText = "";
+    $event.appliedFilters.forEach((filter) => {
+      this.filtersText += filter.field.title + " : " + filter.value + "\n";
+    });
+    this.applyFilters($event.appliedFilters);
+  }
+
+  public matchesFilter(item: Connection, filter: Filter): boolean {
+    let match = true;
+    if (filter.field.id === "name") {
+      match = item.getId().match(filter.value) !== null;
+    } else if (filter.field.id === "description") {
+      match = item.getDescription().match(filter.value) !== null;
+    }
+    return match;
+  }
+
+  public matchesFilters(item: any, filters: Filter[]): boolean {
+    let matches = true;
+    filters.forEach((filter) => {
+      if (!this.matchesFilter(item, filter)) {
+        matches = false;
+        return matches;
       }
+    });
+    return matches;
+  }
+
+  /**
+   * Sort functions
+   */
+  public compare(item1: Connection, item2: Connection): number {
+    let compValue = 0;
+    if (this.currentSortField.id === "name") {
+      compValue = item1.getId().localeCompare(item2.getId());
+    } else if (this.currentSortField.id === "description") {
+      compValue = item1.getDescription().localeCompare(item2.getDescription());
     }
 
-    // sort
-    Connection.sort( this.filteredConns, this.sortDirection );
-    this.selectedConns = ArrayUtils.intersect(this.selectedConns, this.filteredConns);
+    if (!this.isAscendingSort) {
+      compValue = compValue * -1;
+    }
+    return compValue;
+  }
 
-    return this.filteredConns;
+  public sortChange($event: SortEvent): void {
+    this.currentSortField = $event.field;
+    this.isAscendingSort = $event.isAscending;
+    this.filteredConnections.sort((item1: Connection, item2: Connection) => this.compare(item1, item2));
   }
 
   private removeConnectionFromList(connection: Connection): void {
     this.allConns.splice(this.allConns.indexOf(connection), 1);
-    this.filterConnections();
   }
 }

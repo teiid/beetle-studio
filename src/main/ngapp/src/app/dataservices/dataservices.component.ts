@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Component, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
@@ -37,17 +37,34 @@ import { SortDirection } from "@shared/sort-direction.enum";
 import { NotificationType } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 
+import { Filter } from "patternfly-ng";
+import { FilterConfig } from "patternfly-ng";
+import { FilterField } from "patternfly-ng";
+import { FilterEvent } from "patternfly-ng";
+import { FilterType } from "patternfly-ng";
+import { SortConfig } from "patternfly-ng";
+import { SortField } from "patternfly-ng";
+import { SortEvent } from "patternfly-ng";
+
 @Component({
   moduleId: module.id,
   selector: "app-dataservices",
   templateUrl: "./dataservices.component.html",
   styleUrls: ["./dataservices.component.css"]
 })
-export class DataservicesComponent extends AbstractPageComponent {
+export class DataservicesComponent extends AbstractPageComponent implements OnInit {
 
   public readonly exportInProgressHeader: string = "Publishing:  ";
   public readonly exportSuccessHeader: string = "Publish Succeeded:  ";
   public readonly exportFailedHeader: string = "Publish Failed:  ";
+  public filterConfig: FilterConfig;
+  public filtersText = "";
+  public separator: object;
+  public allItems: Dataservice[];
+  public items: Dataservice[];
+  public sortConfig: SortConfig;
+  public currentSortField: SortField;
+  public isAscendingSort: boolean = true;
 
   private cardListAreaCss = "dataservice-summary-top-area-no-results";
   private resultsAreaCss = "dataservice-summary-bottom-area-no-results";
@@ -94,6 +111,40 @@ export class DataservicesComponent extends AbstractPageComponent {
     });
   }
 
+  public ngOnInit(): void {
+
+    super.ngOnInit();
+
+    this.filterConfig = {
+      fields: [{
+        id: "name",
+        title: "Name",
+        placeholder: "Filter by Name...",
+        type: FilterType.TEXT
+      }, {
+        id: "description",
+        title: "Description",
+        placeholder: "Filter by Description...",
+        type: FilterType.TEXT
+      }] as FilterField[],
+      resultsCount: this.filteredDataservices.length,
+      appliedFilters: []
+    } as FilterConfig;
+
+    this.sortConfig = {
+      fields: [{
+        id: "name",
+        title: "Name",
+        sortType: "alpha"
+      }, {
+        id: "description",
+        title: "Description",
+        sortType: "alpha"
+      }],
+      isAscending: this.isAscendingSort
+    } as SortConfig;
+  }
+
   public loadAsyncPageData(): void {
     const self = this;
     this.dataserviceService
@@ -101,7 +152,7 @@ export class DataservicesComponent extends AbstractPageComponent {
       .subscribe(
         (dataservices) => {
           self.allServices = dataservices;
-          self.filteredServices = this.filterDataservices();
+          self.filteredServices = dataservices;
           self.dataserviceService.updateDataserviceStates();  // trigger refresh in event of new deployment
           self.loaded("dataservices");
         },
@@ -235,7 +286,7 @@ export class DataservicesComponent extends AbstractPageComponent {
   }
 
   public onActivate(svcName: string): void {
-    const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
+    const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
     selectedService.setServiceDeploymentState(DeploymentState.LOADING);
 
     this.setQuickLookPanelOpenState(false);
@@ -255,7 +306,7 @@ export class DataservicesComponent extends AbstractPageComponent {
   }
 
   public onTest(svcName: string): void {
-    const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
+    const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
     this.dataserviceService.setSelectedDataservice(selectedService);
     this.allSvcViews = this.dataserviceService.getSelectedDataserviceViews();
     this.selectedSvcViews = [];
@@ -327,7 +378,7 @@ export class DataservicesComponent extends AbstractPageComponent {
    * @param {string} svcName
    */
   public onEdit(svcName: string): void {
-    const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
+    const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
     this.dataserviceService.setSelectedDataservice(selectedService);
 
     this.setQuickLookPanelOpenState(false);
@@ -347,7 +398,7 @@ export class DataservicesComponent extends AbstractPageComponent {
    * Handle showing the QuickLook panel for the specified Dataservice
    */
   public onQuickLook(svcName: string): void {
-    const selectedService =  this.filterDataservices().find((x) => x.getId() === svcName);
+    const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
     this.dataserviceService.setSelectedDataservice(selectedService);
     this.allSvcViews = this.dataserviceService.getSelectedDataserviceViews();
     this.selectedSvcViews = [];
@@ -361,43 +412,6 @@ export class DataservicesComponent extends AbstractPageComponent {
     this.setQuickLookResults(svcName);
     this.sqlControlComponent.queryText = this.quickLookQueryText;
     this.sqlControlComponent.submitCurrentQuery();
-  }
-
-  public isFiltered(): boolean {
-    return this.allServices.length !== this.filteredServices.length;
-  }
-
-  public get nameFilter(): string {
-    return this.filter.getPattern();
-  }
-
-  /**
-   * @param {string} pattern the new pattern for the dataservice name filter (can be null or empty)
-   */
-  public set nameFilter( pattern: string ) {
-    this.setQuickLookPanelOpenState(false);
-    this.filter.setFilter( pattern );
-    this.filterDataservices();
-  }
-
-  /**
-   * Toggles the direction of sort
-   */
-  public toggleSortDirection(): void {
-    if (this.sortDirection === SortDirection.ASC) {
-      this.sortDirection = SortDirection.DESC;
-    } else {
-      this.sortDirection = SortDirection.ASC;
-    }
-    this.filterDataservices();
-  }
-
-  /**
-   * Clears the dataservice filter
-   */
-  public clearFilters(): void {
-    this.filter.reset();
-    this.filterDataservices();
   }
 
   /**
@@ -420,7 +434,7 @@ export class DataservicesComponent extends AbstractPageComponent {
    * Called to doDelete all selected APIs.
    */
   public onDeleteDataservice(): void {
-    const selectedService =  this.filterDataservices().find((x) => x.getId() === this.dataserviceNameForDelete);
+    const selectedService =  this.filteredDataservices.find((x) => x.getId() === this.dataserviceNameForDelete);
 
     // const itemsToDelete: Dataservice[] = ArrayUtils.intersect(this.selectedServices, this.filteredServices);
     // const selectedService = itemsToDelete[0];
@@ -449,24 +463,75 @@ export class DataservicesComponent extends AbstractPageComponent {
   }
 
   /**
-   * Filters and sorts the list of dataservices based on the user input
+   * Filter functions
    */
-  public filterDataservices(): Dataservice[] {
-    // Clear the array first.
-    this.filteredServices.splice(0, this.filteredServices.length);
+  public applyFilters(filters: Filter[]): void {
+    this.items = [];
+    if (filters && filters.length > 0) {
+      this.allDataservices.forEach((item) => {
+        if (this.matchesFilters(item, filters)) {
+          this.items.push(item);
+        }
+      });
+    } else {
+      this.items = this.allDataservices;
+    }
+    this.filteredServices = this.items;
+    this.filterConfig.resultsCount = this.items.length;
+  }
 
-    // filter
-    for (const dataservice of this.allServices) {
-      if (this.filter.accepts(dataservice)) {
-        this.filteredServices.push(dataservice);
+  public filterChanged($event: FilterEvent): void {
+    this.filtersText = "";
+    $event.appliedFilters.forEach((filter) => {
+      this.filtersText += filter.field.title + " : " + filter.value + "\n";
+    });
+    this.applyFilters($event.appliedFilters);
+  }
+
+  public matchesFilter(item: any, filter: Filter): boolean {
+    let match = true;
+    if (filter.field.id === "name") {
+      match = item.getId().match(filter.value) !== null;
+    } else if (filter.field.id === "description") {
+      match = item.getDescription().match(filter.value) !== null;
+    } else if (filter.field.id === "view") {
+      match = item.getViews() === filter.value;
+    }
+    return match;
+  }
+
+  public matchesFilters(item: any, filters: Filter[]): boolean {
+    let matches = true;
+    filters.forEach((filter) => {
+      if (!this.matchesFilter(item, filter)) {
+        matches = false;
+        return matches;
       }
+    });
+    return matches;
+  }
+
+  /**
+   * Sort functions
+   */
+  public compare(item1: any, item2: any): number {
+    let compValue = 0;
+    if (this.currentSortField.id === "name") {
+      compValue = item1.getId().localeCompare(item2.getId());
+    } else if (this.currentSortField.id === "description") {
+      compValue = item1.getDescription().localeCompare(item2.getDescription());
     }
 
-    // sort
-    Dataservice.sort( this.filteredDataservices, this.sortDirection );
-    this.selectedServices = ArrayUtils.intersect(this.selectedServices, this.filteredServices);
+    if (!this.isAscendingSort) {
+      compValue = compValue * -1;
+    }
+    return compValue;
+  }
 
-    return this.filteredServices;
+  public sortChange($event: SortEvent): void {
+    this.currentSortField = $event.field;
+    this.isAscendingSort = $event.isAscending;
+    this.filteredServices.sort((item1: any, item2: any) => this.compare(item1, item2));
   }
 
   /*
@@ -491,7 +556,6 @@ export class DataservicesComponent extends AbstractPageComponent {
    */
   private removeDataserviceFromList(dataservice: Dataservice): void {
     this.allServices.splice(this.allServices.indexOf(dataservice), 1);
-    this.filterDataservices();
   }
 
   /*
