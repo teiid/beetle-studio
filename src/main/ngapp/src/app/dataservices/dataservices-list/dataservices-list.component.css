@@ -2,19 +2,19 @@
 .object-list .secondary-action[title*="Activate"]:before {
   color: var(--card-action-icon-color);
   content: "\f1eb";
-  font-family: "FontAwesome, monospace";
+  font-family: "FontAwesome";
 }
 
 /* Adds an icon to the left of the publish action item in dropdown of kebab. */
 .object-list .secondary-action[title*="Publish"]:before {
   color: var(--card-action-icon-color);
   content: "\f08e";
-  font-family: "FontAwesome, monospace";
+  font-family: "FontAwesome";
 }
 
 /* Adds an icon to the left of the refresh action item in dropdown of kebab. */
 .object-list .secondary-action[title*="Refresh"]:before {
   color: var(--card-action-icon-color);
   content: "\f021";
-  font-family: "FontAwesome, monospace";
+  font-family: "FontAwesome";
 }

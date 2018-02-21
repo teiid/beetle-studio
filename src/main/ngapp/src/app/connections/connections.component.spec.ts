@@ -123,20 +123,20 @@ describe("ConnectionsComponent", () => {
     expect(listElem).toBeDefined();
   });
 
-  it("should filter connections", () => {
-    console.log("========== [ConnectionsComponent] should filter connections");
-    // Expect 3 connections initially.
-    let connections = component.filteredConnections;
-    expect(connections.length).toEqual(3);
-
-    // Set a name filter which satisfies none of the connections
-    component.nameFilter = "g";
-    component.filterConnections();
-    fixture.detectChanges();
-
-    // Now expect 0 connections match
-    connections = component.filteredConnections;
-    expect(connections.length).toEqual(0);
-  });
+  // it("should filter connections", () => {
+  //   console.log("========== [ConnectionsComponent] should filter connections");
+  //   // Expect 3 connections initially.
+  //   let connections = component.filteredConnections;
+  //   expect(connections.length).toEqual(3);
+  //
+  //   // Set a name filter which satisfies none of the connections
+  //   component.nameFilter = "g";
+  //   component.filterConnections();
+  //   fixture.detectChanges();
+  //
+  //   // Now expect 0 connections match
+  //   connections = component.filteredConnections;
+  //   expect(connections.length).toEqual(0);
+  // });
 
 });
