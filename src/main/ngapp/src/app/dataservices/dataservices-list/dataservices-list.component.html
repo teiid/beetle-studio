@@ -19,11 +19,11 @@
             </div>
             <div class="list-pf-content-wrapper">
               <div class="list-pf-main-content">
-                <span class="pull-left pficon-ok object-inline-icon" *ngIf="item.serviceDeploymentActive"></span>
-                <span class="pull-left pficon-error-circle-o object-inline-icon" *ngIf="item.serviceDeploymentFailed"></span>
-                <span class="pull-left pficon-warning-triangle-o object-inline-icon" *ngIf="item.serviceDeploymentInactive"></span>
-                <span class="pull-left pficon-unknown object-inline-icon" *ngIf="item.serviceDeploymentNotDeployed"></span>
-                <span class="pull-left fa fa-spinner fa-pulse object-inline-icon" *ngIf="item.serviceDeploymentLoading"></span>
+                <span class="pull-left pficon-ok" *ngIf="item.serviceDeploymentActive"></span>
+                <span class="pull-left pficon-error-circle-o" *ngIf="item.serviceDeploymentFailed"></span>
+                <span class="pull-left pficon-warning-triangle-o" *ngIf="item.serviceDeploymentInactive"></span>
+                <span class="pull-left pficon-unknown" *ngIf="item.serviceDeploymentNotDeployed"></span>
+                <span class="pull-left fa fa-spinner fa-pulse" *ngIf="item.serviceDeploymentLoading"></span>
                 <a class="object-name-link" [routerLink]="[item.getId()]" (click)="onEditDataservice(item.getId())">{{ item.getId() }}</a>
                 <div class="list-pf-description">{{ getDescription( item ) }}</div>
               </div>

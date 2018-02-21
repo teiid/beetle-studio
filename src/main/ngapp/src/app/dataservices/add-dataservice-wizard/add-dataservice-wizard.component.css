@@ -7,7 +7,7 @@
 .wiz-review-table-checked:before {
   display: inline-block;
   margin: 0 4px;
-  font-family: "FontAwesome";
+  font-family: "FontAwesome, monospace";
   content: "\f046";
   color: green;
 }
@@ -19,7 +19,7 @@
 .wiz-review-table-unchecked:before {
   display: inline-block;
   margin: 0 4px;
-  font-family: "FontAwesome";
+  font-family: "FontAwesome, monospace";
   content: "\f096";
 }
 

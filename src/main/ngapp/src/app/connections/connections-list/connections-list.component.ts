@@ -123,7 +123,7 @@ export class ConnectionsListComponent implements OnInit {
   /**
    * Event handler for when a toolbar icon or kebab action is clicked.
    * @param {Action} action the action that was selected.
-   * @param {any} not used
+   * @param item this parameter is not used
    */
   public handleAction( action: Action,
                        item: any ): void {

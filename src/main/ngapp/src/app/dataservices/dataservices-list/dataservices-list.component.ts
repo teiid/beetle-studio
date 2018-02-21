@@ -25,7 +25,7 @@ import {
 } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
-import { Action, ActionConfig, ListConfig} from "patternfly-ng";
+import { Action, ActionConfig, ListConfig } from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -43,19 +43,20 @@ export class DataservicesListComponent implements OnInit {
   public static readonly quickLookDataserviceEvent = "quickLook";
   public static readonly testDataserviceEvent = "test";
 
-  public readonly activateEvent = DataservicesListComponent.activateDataserviceEvent;
-  public readonly deleteEvent = DataservicesListComponent.deleteDataserviceEvent;
-  public readonly editEvent = DataservicesListComponent.editDataserviceEvent;
-  public readonly publishEvent = DataservicesListComponent.publishDataserviceEvent;
-  public readonly quickLookEvent = DataservicesListComponent.quickLookDataserviceEvent;
-  public readonly testEvent = DataservicesListComponent.testDataserviceEvent;
+  private static readonly activateActionId = "activate";
+  private static readonly deleteActionId = "delete";
+  private static readonly editActionId = "edit";
+  private static readonly previewActionId = "preview";
+  private static readonly publishActionId = "publish";
+  private static readonly refreshActionId = "refresh";
+  private static readonly testActionId = "test";
 
-  public actionConfig: ActionConfig;
   public items: Dataservice[];
   public listConfig: ListConfig;
 
   @Input() public dataservices: Dataservice[];
   @Input() public selectedDataservices: Dataservice[];
+
   @Output() public dataserviceSelected: EventEmitter<Dataservice> = new EventEmitter<Dataservice>();
   @Output() public dataserviceDeselected: EventEmitter<Dataservice> = new EventEmitter<Dataservice>();
   @Output() public tagSelected: EventEmitter<string> = new EventEmitter<string>();
@@ -79,7 +80,7 @@ export class DataservicesListComponent implements OnInit {
    * Get the ActionConfig properties for each row. Note: currently PatternFly does not support templates for
    * "moreActions" but I added in the hope that they will be supported in the future.
    *
-   * @param connection the connection represented by a row
+   * @param ds the dataservice represented by a row
    * @param editActionTemplate {TemplateRef} the edit action template
    * @param testActionTemplate {TemplateRef} the test action template
    * @param quickLookActionTemplate {TemplateRef} the preview action template
@@ -97,64 +98,68 @@ export class DataservicesListComponent implements OnInit {
                           publishActionTemplate: TemplateRef< any >,
                           refreshActionTemplate: TemplateRef< any >,
                           deleteActionTemplate: TemplateRef< any > ): ActionConfig {
-    if ( this.actionConfig == null ) {
-      this.actionConfig = {
-        primaryActions: [ {
+    const actionConfig = {
+      primaryActions: [
+        {
           disabled: ds.serviceDeploymentLoading,
-          id: "edit",
+          id: DataservicesListComponent.editActionId,
           template: editActionTemplate,
           title: "Edit",
           tooltip: "Edit this data service"
         },
-          {
-            disabled: ds.serviceDeploymentLoading,
-            id: "quickLook",
-            template: quickLookActionTemplate,
-            title: "Preview",
-            tooltip: "Preview this data service"
-          },
-          {
-            disabled: ds.serviceDeploymentLoading,
-            id: "test",
-            template: testActionTemplate,
-            title: "Test",
-            tooltip: "Test this data service"
-          }
-        ],
-        moreActions: [
-          {
-            disabled: ds.serviceDeploymentLoading,
-            id: "activate",
-            template: activateActionTemplate,
-            title: "Activate",
-            tooltip: "Activate this data service"
-          },
-          {
-            disabled: ds.serviceDeploymentLoading,
-            id: "refresh",
-            template: refreshActionTemplate,
-            title: "Refresh",
-            tooltip: "Refresh this data service"
-          },
-          {
-            disabled: ds.serviceDeploymentLoading,
-            template: publishActionTemplate,
-            title: "Publish",
-            tooltip: "Publish this data service"
-          },
-          {
-            disabled: ds.serviceDeploymentLoading,
-            id: "delete",
-            template: deleteActionTemplate,
-            title: "Delete",
-            tooltip: "Delete this data service"
-          } ],
-      } as ActionConfig;
-    }
+        {
+          disabled: !ds.serviceDeploymentActive,
+          id: DataservicesListComponent.previewActionId,
+          template: quickLookActionTemplate,
+          title: "Preview",
+          tooltip: "Preview this data service"
+        },
+        {
+          disabled: !ds.serviceDeploymentActive,
+          id: DataservicesListComponent.testActionId,
+          template: testActionTemplate,
+          title: "Test",
+          tooltip: "Test this data service"
+        }
+      ],
+      moreActions: [
+        {
+          disabled: ds.serviceDeploymentLoading,
+          id: DataservicesListComponent.activateActionId,
+          template: activateActionTemplate,
+          title: "Activate",
+          tooltip: "Activate this data service"
+        },
+        {
+          disabled: ds.serviceDeploymentLoading,
+          id: DataservicesListComponent.refreshActionId,
+          template: refreshActionTemplate,
+          title: "Refresh",
+          tooltip: "Refresh this data service"
+        },
+        {
+          disabled: ds.serviceDeploymentLoading,
+          id: DataservicesListComponent.publishActionId,
+          template: publishActionTemplate,
+          title: "Publish",
+          tooltip: "Publish this data service"
+        },
+        {
+          disabled: ds.serviceDeploymentLoading,
+          id: DataservicesListComponent.deleteActionId,
+          template: deleteActionTemplate,
+          title: "Delete",
+          tooltip: "Delete this data service"
+        } ],
+    } as ActionConfig;
 
-    return this.actionConfig;
+    return actionConfig;
   }
 
+  /**
+   * @param {Dataservice} dataservice the dataservice whose description is being requested
+   * @returns {string} the description (truncated to 120 characters if needed)
+   */
   public getDescription( dataservice: Dataservice ): string {
     const description = dataservice.getDescription();
 
@@ -228,22 +233,22 @@ export class DataservicesListComponent implements OnInit {
   public handleAction($event: Action, item: any): void {
     switch ( $event.id ) {
       case DataservicesListComponent.activateDataserviceEvent:
-        this.activateDataservice.emit( item.getId() );
+        this.onActivateDataservice( item.getId() );
         break;
       case DataservicesListComponent.deleteDataserviceEvent:
-        this.deleteDataservice.emit( item.getId() );
+        this.onDeleteDataservice( item.getId() );
         break;
       case DataservicesListComponent.editDataserviceEvent:
-        this.editDataservice.emit( item.getId() );
+        this.onEditDataservice( item.getId() );
         break;
       case DataservicesListComponent.publishDataserviceEvent:
-        this.publishDataservice.emit( item.getId() );
+        this.onPublishDataservice( item.getId() );
         break;
       case DataservicesListComponent.quickLookDataserviceEvent:
-        this.quickLookDataservice.emit( item.getId() );
+        this.onQuickLookDataservice( item.getId() );
         break;
       case DataservicesListComponent.testDataserviceEvent:
-        this.testDataservice.emit( item.getId() );
+        this.onTestDataservice( item.getId() );
         break;
       default:
         this.logger.error( "Unhandled event type of '" + $event.title + "'" );
