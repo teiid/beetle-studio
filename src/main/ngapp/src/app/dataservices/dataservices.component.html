@@ -14,18 +14,13 @@
     </div>
     <div class="row toolbar-pf">
       <div class="col-sm-12">
-        <form class="toolbar-pf-actions" #filterForm="ngForm">
+        <div class="toolbar-pf-actions" >
           <div class="form-group toolbar-pf-filter">
-            <label i18n="@@dataservices.name" class="sr-only" for="filter">Name</label>
-            <div class="input-group" style="width: 100%">
-              <input name="name-filter" [(ngModel)]="nameFilter" type="text" class="form-control name-filter" id="filter" placeholder="Filter by name...">
-            </div>
+              <pfng-filter [config]="filterConfig"
+          (onChange)="filterChanged($event)"></pfng-filter>
           </div>
           <div class="form-group">
-            <button class="btn btn-link" type="button" (click)="toggleSortDirection()">
-              <span *ngIf="isSortAscending" class="fa fa-sort-alpha-asc"></span>
-              <span *ngIf="isSortDescending" class="fa fa-sort-alpha-desc"></span>
-            </button>
+              <pfng-sort [config]="sortConfig" (onChange)="sortChange($event)"></pfng-sort>
           </div>
           <div class="form-group">
             <a i18n="@@dataservices.addDataservice" class="btn btn-primary" (click)="onNew()">Add Dataservice</a>
@@ -35,14 +30,6 @@
               <li *ngIf="isListLayout"><a (click)="setCardLayout()"><i class="fa fa-th"></i></a></li>
               <li *ngIf="isCardLayout"><a (click)="setListLayout()"><i class="fa fa-th-list"></i></a></li>
             </ul>
-          </div>
-        </form>
-        <div class="row toolbar-pf-results">
-          <div class="col-sm-12">
-            <h5 i18n="@@dataservices.dataservicesFound" >{{ filteredDataservices.length }} Dataservices found
-              <a *ngIf="allDataservices.length != filteredDataservices.length"
-                 class="clear-filters" (click)="clearFilters()">(out of {{
-              allDataservices.length }} total)</a></h5>
           </div>
         </div>
       </div>
@@ -63,12 +50,6 @@
               <a i18n="@@dataservices.addDataservice" class="btn btn-primary btn-lg" (click)="onNew()">Add Dataservice</a>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="col-md-8 none-matched-state" *ngIf="filteredDataservices.length === 0 && isFiltered()">
-        <div class="alert alert-info">
-          <span class="pficon pficon-info"></span>
-          <strong i18n="@@dataservices.noDataservicesMatchedFilter">No Dataservices matched the filter!&nbsp;&nbsp;Please try changing your filter criteria... </strong>
         </div>
       </div>
 

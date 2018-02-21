@@ -29,7 +29,7 @@
       <a [routerLink]="[connection.getId()]" (click)="onClick(editEvent)">{{ connection.name }}</a>
     </div>
     <div class="row">
-      <div class="object-card-description">{{ connection.description }}</div>
+      <div class="object-card-description">{{ connection.getDescription() }}</div>
     </div>
   </ng-template>
   <div class="object-card-body">

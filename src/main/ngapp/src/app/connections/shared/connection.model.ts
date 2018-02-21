@@ -82,7 +82,7 @@ export class Connection implements Identifiable< string > {
   /**
    * @returns {string} the connection description
    */
-  public get description(): string {
+  public getDescription(): string {
     // TODO do connections have a description
     return "This is a connection description. So if you're looking for the description you found it.";
   }
