@@ -1,33 +1,27 @@
 .card-toolbar .secondary-action[title="Activate"]:before {
   color: var(--card-action-icon-color);
   content: "\f1eb";
-  font-family: "FontAwesome, monospace";
+  font-family: "FontAwesome";
 }
 
 .card-toolbar .secondary-action[title="Publish"]:before {
   color: var(--card-action-icon-color);
   content: "\f08e";
-  font-family: "FontAwesome, monospace";
+  font-family: "FontAwesome";
 }
 
 .card-toolbar .secondary-action[title="Refresh"]:before {
   color: var(--card-action-icon-color);
   content: "\f021";
-  font-family: "FontAwesome, monospace";
+  font-family: "FontAwesome";
 }
 
-.object-card .list-pf {
-  border: none;
-}
-
+.object-card .list-pf,
 .object-card-selected .list-pf {
   border: none;
 }
 
-.object-card .list-pf-item {
-  border: none;
-}
-
+.object-card .list-pf-item,
 .object-card-selected .list-pf-item {
   border: none;
 }
@@ -48,10 +42,4 @@ a.list-pf-title.view-name {
 
 .views-details {
   background-color: var(--card-body-background-color);
-  border-bottom: 2px solid lightgrey;
-}
-
-.views-details-selected {
-  border-left: var(--card-border-width) var(--card-border-style) var(--card-border-color);
-  border-right: var(--card-border-width) var(--card-border-style) var(--card-border-color);
 }

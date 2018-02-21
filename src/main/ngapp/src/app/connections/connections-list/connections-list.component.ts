@@ -111,7 +111,7 @@ export class ConnectionsListComponent implements OnInit {
   }
 
   public getDescription( conn: Connection ): string {
-    const description = conn.description;
+    const description = conn.getDescription();
 
     if ( description && description.length > 120 ) {
       return description.slice( 0, 120 ) + " ... ";
