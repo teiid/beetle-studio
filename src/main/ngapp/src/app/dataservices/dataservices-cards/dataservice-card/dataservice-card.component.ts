@@ -77,7 +77,7 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
   }
 
   private get detailsIconStyle(): string {
-    return this.showDetails ? "fa fa-close" : "fa fa-angle-right";
+    return this.showDetails ? "fa fa-close card-footer-action-icon" : "fa fa-angle-right card-footer-action-icon";
   }
 
   /**

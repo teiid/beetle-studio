@@ -19,7 +19,6 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
-import { ArrayUtils } from "@core/utils/array-utils";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
@@ -31,7 +30,6 @@ import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
-import { IdFilter } from "@shared/id-filter";
 import { LayoutType } from "@shared/layout-type.enum";
 import { SortDirection } from "@shared/sort-direction.enum";
 import { NotificationType } from "patternfly-ng";
@@ -59,12 +57,10 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   public readonly exportFailedHeader: string = "Publish Failed:  ";
   public filterConfig: FilterConfig;
   public filtersText = "";
-  public separator: object;
-  public allItems: Dataservice[];
   public items: Dataservice[];
   public sortConfig: SortConfig;
   public currentSortField: SortField;
-  public isAscendingSort: boolean = true;
+  public isAscendingSort = true;
 
   private cardListAreaCss = "dataservice-summary-top-area-no-results";
   private resultsAreaCss = "dataservice-summary-bottom-area-no-results";
@@ -80,7 +76,6 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private appSettingsService: AppSettingsService;
   private dataserviceService: DataserviceService;
   private vdbService: VdbService;
-  private filter: IdFilter = new IdFilter();
   private sortDirection: SortDirection = SortDirection.ASC;
   private exportNotificationHeader: string;
   private exportNotificationMessage: string;

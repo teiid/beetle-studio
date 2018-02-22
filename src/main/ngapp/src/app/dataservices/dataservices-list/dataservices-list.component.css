@@ -18,3 +18,9 @@
   content: "\f021";
   font-family: "FontAwesome";
 }
+
+a.list-pf-title.view-name {
+  cursor: pointer;
+  color: var(--card-body-color);
+  margin-left: 10px !important;
+}

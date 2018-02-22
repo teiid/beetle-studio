@@ -7,6 +7,7 @@
 
 :root {
   --alert-color: darkred;
+  --hover-color: #ddeaff;
   --disabled-color: lightgrey;
   --card-action-icon-color: var(--card-border-color);
   --card-action-icon-cursor: pointer;
@@ -30,7 +31,7 @@
   --card-description-margin-bottom: 10px;
   --card-description-padding: 0 5px 5px 5px;
   --card-footer-background-color: #ececec;
-  --card-hover-color: #ddeaff;
+  --card-hover-color: var(--hover-color);
   --card-title-font-size: 16px;
   --card-title-font-weight: bold;
   --card-title-margin: 10px 0 !important;
@@ -53,9 +54,9 @@
   --page-background-color: #fafafa;
 }
 
-/*********************************************************************************/
-/*                    Beetle Studio global types below here                      */
-/*********************************************************************************/
+/**********************************************************************/
+/*                    Beetle Studio Global Types                      */
+/**********************************************************************/
 
 .blank-slate-pf {
   background-color: white;
@@ -82,6 +83,10 @@
   color: var(--card-action-icon-disabled-color);
 }
 
+.card-footer-action-icon {
+  margin-left: 10px;
+}
+
 .card-toolbar {
   border-bottom: var(--card-toolbar-border-bottom);
   border-top: var(--card-toolbar-border-top);
@@ -99,6 +104,11 @@
   margin-left: var(--card-toolbar-kebab-margin-left);
   margin-right: var(--card-toolbar-kebab-margin-right);
 }
+
+.clickable-icon {
+  cursor: pointer;
+}
+
 .object-card,
 .object-card-selected {
   -webkit-transition: background-color 300ms;
@@ -133,6 +143,7 @@
 .object-card .card-pf .card-pf-footer {
   background-color: var(--card-footer-background-color);
   min-height: 20px;
+  padding: 4px 0px 4px 0px;
 }
 
 .object-card-selected .card-pf .card-pf-heading,
@@ -242,13 +253,17 @@
   text-align: left;
 }
 
-/*********************************************************************************/
-/*                    3rd Party library types below here                         */
-/*********************************************************************************/
+/***************************************************************/
+/*                    CodeMirror Types                         */
+/***************************************************************/
 
 .CodeMirror {
   height: 200px;
 }
+
+/******************************************************************/
+/*                    ngx-datatable Types                         */
+/******************************************************************/
 
 .ngx-datatable {
   position: absolute; top:0;left:0;right:0;bottom:0;
@@ -302,6 +317,22 @@
   color: white;
 }
 
+/**************************************************************/
+/*                    PatternFly Types                        */
+/**************************************************************/
+
+.card-pf-footer-text {
+  margin-left: 20px;
+}
+
+.pfng-list-expansion .list-pf-content {
+  width: 100%;
+}
+
+.pfng-list-expansion .pfng-list-content {
+  width: 100%;
+}
+
 /* Patternfly-NG kebab dropdown actions. */
 .secondary-action:before {
   color: var(--card-toolbar-dropdown-action-icon-color);
@@ -316,4 +347,8 @@
   color: var(--alert-color);
   content: "\f014";
   font-family: "FontAwesome";
+}
+
+.toolbar-pf-actions {
+  margin-bottom: 0;
 }

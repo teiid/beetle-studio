@@ -1,68 +1,34 @@
-<pfng-card class="selected-table-card"
+<pfng-card class="object-card selected-table-card"
            [config]="config"
            [headerTemplate]="tableHeaderTemplate"
            (onActionSelect)="handleActionSelect($event)">
   <ng-template #tableHeaderTemplate>
-    <h3 class="selected-table-name">
-      <span class="fa fa-close pull-right selected-table-close-icon" (click)="onRemove()"></span>
+    <div class="row card-pf-title text-left object-card-title">
+      <div class="fa fa-table object-inline-icon"></div>
+      <span class="fa fa-close pull-right clickable-icon" (click)="onRemove()"></span>
       {{ table.getName() }}
-    </h3>
-    <div class="selected-table-connection">{{ table.getConnection().getId() }}</div>
+    </div>
+    <div class="text-info text-left">
+      <div class="fa fa-plug object-inline-icon"></div>
+      {{ table.getConnection().getId() }}
+    </div>
   </ng-template>
-  <div class="selected-table-body">
+  <div class="object-card-body">
     <div *ngIf="showColumns">
       <div class="selected-table-column-selection">Include/Exclude Columns</div>
-      <ngx-datatable style="max-height: 200px;"
-                     [rows]="columnDefinitions"
-                     [footerHeight]="50"
-                     [scrollbarV]="true"
-                     [scrollbarH]="true"
-                     [columnMode]="'force'"
-                     [reorderable]="false"
-                     [selectionType]="'checkbox'"
-                     [sorts]="[{prop: 'name', dir: 'asc'}]"
-                     [cssClasses]="customClasses">
-        <ngx-datatable-column name=""
-                              [prop]="'selected'"
-                              [width]="40"
-                              [sortable]="false"
-                              [canAutoResize]="true"
-                              [draggable]="false"
-                              [resizeable]="false">
-          <ngx-datatable-footer>
-            <ng-template ngx-datatable-footer-template>
-              <div style="padding: 5px 10px">{{selectedColumnCount}} of {{columnCount}} selected</div>
-            </ng-template>
-          </ngx-datatable-footer>
-          <ng-template ngx-datatable-cell-template let-row="row" let-isSelected="row.selected" let-onCheckboxChangeFn="selectedColumnChanged">
-            <input type="checkbox" [checked]="row.selected" (change)="selectedColumnChanged( row )"/>
-          </ng-template>
-        </ngx-datatable-column>
-        <ngx-datatable-column name="Name"
-                              [prop]="'name'"
-                              [sortable]="true"
-                              [checkboxable]="false"
-                              [canAutoResize]="true"
-                              [draggable]="false"
-                              [resizeable]="true">
-        </ngx-datatable-column>
-        <ngx-datatable-column name="Type"
-                              [prop]="'type'"
-                              [sortable]="true"
-                              [checkboxable]="false"
-                              [canAutoResize]="true"
-                              [draggable]="false"
-                              [resizeable]="true">
-        </ngx-datatable-column>
-        <ngx-datatable-column name="Size"
-                              [prop]="'size'"
-                              [sortable]="true"
-                              [checkboxable]="false"
-                              [canAutoResize]="true"
-                              [draggable]="false"
-                              [resizeable]="true">
-        </ngx-datatable-column>
-      </ngx-datatable>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="form-group">
+              <pfng-table
+                class="selected-table-columns"
+                [columns]="columnDefinitions"
+                [config]="tableConfig"
+                [rows]="columns"
+                (onSelectionChange)="handleSelectionChange($event)">
+              </pfng-table>
+            </div>
+          </div>
+        </div>
     </div>
   </div>
 </pfng-card>

@@ -36,13 +36,6 @@ import { Action, ActionConfig, ListConfig } from "patternfly-ng";
  })
 export class DataservicesListComponent implements OnInit {
 
-  public static readonly activateDataserviceEvent = "activate";
-  public static readonly deleteDataserviceEvent = "delete";
-  public static readonly editDataserviceEvent = "edit";
-  public static readonly publishDataserviceEvent = "publish";
-  public static readonly quickLookDataserviceEvent = "quickLook";
-  public static readonly testDataserviceEvent = "test";
-
   private static readonly activateActionId = "activate";
   private static readonly deleteActionId = "delete";
   private static readonly editActionId = "edit";
@@ -174,19 +167,10 @@ export class DataservicesListComponent implements OnInit {
     this.listConfig = {
       dblClick: false,
       multiSelect: false,
-      selectItems: false,
-      selectionMatchProp: "name",
+      selectItems: true,
       showCheckbox: false,
       useExpandItems: true
     } as ListConfig;
-  }
-
-  public toggleDataserviceSelected(dataservice: Dataservice): void {
-    if (this.isSelected(dataservice)) {
-      this.dataserviceDeselected.emit(dataservice);
-    } else {
-      this.dataserviceSelected.emit(dataservice);
-    }
   }
 
   public isSelected(dataservice: Dataservice): boolean {
@@ -226,28 +210,28 @@ export class DataservicesListComponent implements OnInit {
     this.editDataservice.emit(dataserviceName);
   }
 
-  public onQuickLookDataservice(dataserviceName: string): void {
+  public onPreviewDataservice( dataserviceName: string): void {
     this.quickLookDataservice.emit(dataserviceName);
   }
 
   public handleAction($event: Action, item: any): void {
     switch ( $event.id ) {
-      case DataservicesListComponent.activateDataserviceEvent:
+      case DataservicesListComponent.activateActionId:
         this.onActivateDataservice( item.getId() );
         break;
-      case DataservicesListComponent.deleteDataserviceEvent:
+      case DataservicesListComponent.deleteActionId:
         this.onDeleteDataservice( item.getId() );
         break;
-      case DataservicesListComponent.editDataserviceEvent:
+      case DataservicesListComponent.editActionId:
         this.onEditDataservice( item.getId() );
         break;
-      case DataservicesListComponent.publishDataserviceEvent:
+      case DataservicesListComponent.publishActionId:
         this.onPublishDataservice( item.getId() );
         break;
-      case DataservicesListComponent.quickLookDataserviceEvent:
-        this.onQuickLookDataservice( item.getId() );
+      case DataservicesListComponent.previewActionId:
+        this.onPreviewDataservice( item.getId() );
         break;
-      case DataservicesListComponent.testDataserviceEvent:
+      case DataservicesListComponent.testActionId:
         this.onTestDataservice( item.getId() );
         break;
       default:
