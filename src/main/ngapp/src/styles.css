@@ -116,12 +116,21 @@
 //-ms-transition: background-color 300ms;
   -o-transition: background-color 300ms;
   transition: background-color 300ms;
-  height: 160px;
 }
 
 .object-card .card-pf,
 .object-card-selected .card-pf {
   margin: 8px 0;
+}
+
+.object-card-container {
+  display: grid;
+  grid-template-columns: repeat( auto-fill, minmax( 300px, 300px ) );
+}
+
+.object-card-container>* {
+  flex: 1 1 80px;
+  margin: 5px;
 }
 
 .object-card-selected .card-pf {

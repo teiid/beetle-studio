@@ -1,5 +1,5 @@
-<div class="row-cards-pf">
-  <div class="col-xs-12 col-sm-3 col-md-3" *ngFor="let connection of connections">
+<div class="object-card-container">
+  <div *ngFor="let connection of connections">
     <app-connection-card [connection]="connection"
                          [selectedConnections]="selectedConnections"
                          (cardEvent)="onCardEvent($event)"

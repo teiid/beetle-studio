@@ -1,5 +1,5 @@
-<div class="row-cards-pf">
-  <div class="col-xs-12 col-sm-3 col-md-3" *ngFor="let dataservice of dataservices">
+<div class="object-card-container">
+  <div *ngFor="let dataservice of dataservices">
     <app-dataservice-card-component [dataservice]="dataservice"
                                     [selectedDataservices]="selectedDataservices"
                                     (cardEvent)="onCardEvent($event)"
