@@ -52,15 +52,13 @@ export class MockActivityService extends ActivityService {
     this.newAct1.setName("newActivity1");
     const srcConn = new NewConnection();
     srcConn.setName("new1Src");
-    srcConn.setJndiName("new1SrcJndi");
-    srcConn.setDriverName("new1SrcDriver");
-    srcConn.setJdbc(true);
+    srcConn.setDescription("new1SrcDescription");
+    srcConn.setServiceCatalogSource("new1SvcCatSrc");
     this.newAct1.setSourceConnection(srcConn);
     const tgtConn = new NewConnection();
     tgtConn.setName("new1Tgt");
-    tgtConn.setJndiName("new1TgtJndi");
-    tgtConn.setDriverName("new1TgtDriver");
-    tgtConn.setJdbc(false);
+    tgtConn.setDescription("new1TgtDescription");
+    tgtConn.setServiceCatalogSource("new1SvcCatSrc");
     this.newAct1.setTargetConnection(tgtConn);
 
   }

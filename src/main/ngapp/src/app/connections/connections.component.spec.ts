@@ -13,6 +13,7 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { WizardService } from "@dataservices/shared/wizard.service";
 import { SharedModule } from "@shared/shared.module";
 import { ModalModule } from "ngx-bootstrap";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -38,6 +39,9 @@ describe("ConnectionsComponent", () => {
         ConnectionsListComponent,
         ConnectionCardComponent,
         ConnectionsCardsComponent
+      ],
+      providers: [
+        WizardService
       ]
     });
 

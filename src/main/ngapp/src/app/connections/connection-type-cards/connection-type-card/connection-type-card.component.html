@@ -1,0 +1,16 @@
+<pfng-card [config]="cardConfig"
+           [headerTemplate]="tableHeaderTemplate"
+           (click)="onSelect()"
+           [class]="isSelected() ? 'object-card-selected' : 'object-card'">
+  <ng-template #tableHeaderTemplate>
+    <div class="row card-pf-title text-center object-card-title">
+      <span><img src="{{imageSrc}}" alt="{{imageAlt}}" /></span>
+    </div>
+    <div class="row card-pf-title text-center object-card-title">
+      <span>{{ name }}</span>
+    </div>
+    <div class="row">
+      <div class="object-card-description">{{ description }}</div>
+    </div>
+  </ng-template>
+</pfng-card>

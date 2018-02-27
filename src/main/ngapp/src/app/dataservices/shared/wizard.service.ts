@@ -10,6 +10,7 @@ export class WizardService {
   private edit = false;
   private currentConnections: Connection[] = [];
   private selectedDataservice: Dataservice;
+  private selectedConnection: Connection;
 
   constructor() {
     // Nothing to do
@@ -29,6 +30,22 @@ export class WizardService {
    */
   public isEdit(): boolean {
     return this.edit;
+  }
+
+  /**
+   * Gets the selected connection
+   * @returns {Connection} the selected connection
+   */
+  public getSelectedConnection(): Connection {
+    return this.selectedConnection;
+  }
+
+  /**
+   * Sets the selected connection
+   * @param {Connection} connection the selected connection
+   */
+  public setSelectedConnection(connection: Connection): void {
+    this.selectedConnection = connection;
   }
 
   /**

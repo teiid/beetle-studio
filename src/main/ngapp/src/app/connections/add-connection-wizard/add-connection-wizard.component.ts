@@ -24,19 +24,18 @@ import {
 
 import { FormControl, FormGroup } from "@angular/forms";
 import { AbstractControl } from "@angular/forms";
-import { Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { ConnectionType } from "@connections/shared/connection-type.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
-import { TemplateDefinition } from "@connections/shared/template-definition.model";
+import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { LoggerService } from "@core/logger.service";
-import { PropertyDefinition } from "@shared/property-form/property-definition.model";
-import { PropertyFormComponent } from "@shared/property-form/property-form.component";
-import { WizardComponent } from "patternfly-ng";
-import { WizardEvent } from "patternfly-ng";
+import { WizardService } from "@dataservices/shared/wizard.service";
+import { NotificationType, WizardEvent } from "patternfly-ng";
 import { WizardStepConfig } from "patternfly-ng";
 import { WizardConfig } from "patternfly-ng";
+import { WizardComponent } from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -46,45 +45,56 @@ import { WizardConfig } from "patternfly-ng";
 })
 export class AddConnectionWizardComponent implements OnInit {
   public readonly connectionSummaryLink: string = ConnectionsConstants.connectionsRootPath;
+  public emptyServiceCatalogSource = new ServiceCatalogSource(); // a bogus service catalog source used in drop down to give instructions
+  public readonly selectServiceCatalogSourceErrorMsg = "A service catalog source must be selected";
 
   // Wizard Config
   public wizardConfig: WizardConfig;
 
-  public basicPropertyForm: FormGroup;
+  public connectionBasicPropertyForm: FormGroup;
   public createComplete = true;
   public createSuccessful = false;
-  public detailPropertiesLoading = true;
-  public detailPropertiesLoadSuccess = false;
-  public detailPropertiesLoadedType = "";
-  public requiredPropValues: Array<[string, string]> = [];
-  public templatesLoading = true;
-  public templatesLoadSuccess = false;
+  public connectionTypesLoading = true;
+  public connectionTypesLoadSuccess = false;
+  public serviceCatalogSourcesLoading = true;
+  public serviceCatalogSourcesLoadSuccess = false;
+  public nameValidationError = "";
+  public selectedServiceCatalogSource: ServiceCatalogSource;
 
   // Wizard Step 1
   public step1Config: WizardStepConfig;
 
   // Wizard Step 2
   public step2Config: WizardStepConfig;
-
-  // Wizard Step 3
-  public step3Config: WizardStepConfig;
-  public step3aConfig: WizardStepConfig;
-  public step3bConfig: WizardStepConfig;
+  public step2aConfig: WizardStepConfig;
+  public step2bConfig: WizardStepConfig;
+  public noSourcesNotificationDismissable = false;
+  public noSourcesNotificationHeader = "No Sources Available";
+  public noSourcesNotificationMessage = "No Sources of the correct type to select. ";
+  public noSourcesNotificationType = NotificationType.DANGER;
 
   @ViewChild("wizard") public wizard: WizardComponent;
-  @ViewChild(PropertyFormComponent) public detailPropForm: PropertyFormComponent;
 
   private connectionService: ConnectionService;
-  private allTemplates: TemplateDefinition[] = [];
-  private detailProperties: Array<PropertyDefinition<any>> = [];
+  private wizardService: WizardService;
+  private selectedConnTypes: ConnectionType[] = [];
+  private connTypes: ConnectionType[] = [];
+  private serviceCatSources: ServiceCatalogSource[] = [];
   private logger: LoggerService;
   private router: Router;
+  private errorDetailMessage: string;
+  private theFinalPageTitle = "";
+  private theFinalPageMessage = "";
 
-  constructor( router: Router, connectionService: ConnectionService, logger: LoggerService ) {
+  constructor( router: Router, connectionService: ConnectionService,
+               wizardService: WizardService, logger: LoggerService ) {
     this.connectionService = connectionService;
+    this.wizardService = wizardService;
     this.router = router;
     this.logger = logger;
-    this.createBasicPropertyForm();
+    this.emptyServiceCatalogSource.setId( " -- select catalog source -- " );
+    this.selectedServiceCatalogSource = this.emptyServiceCatalogSource;
+    this.createConnectionBasicPropertyForm();
   }
 
   /*
@@ -95,35 +105,27 @@ export class AddConnectionWizardComponent implements OnInit {
     this.step1Config = {
       id: "step1",
       priority: 0,
-      title: "Basic Properties",
-      allowClickNav: false
-    } as WizardStepConfig;
-
-    // Step 2 - Advanced Properties
-    this.step2Config = {
-      id: "step2",
-      priority: 0,
-      title: "Detail Properties",
+      title: "Connection Type",
       allowClickNav: false
     } as WizardStepConfig;
 
     // Step 3 - Review and Create
-    this.step3Config = {
-      id: "step3",
+    this.step2Config = {
+      id: "step2",
       priority: 0,
-      title: "Review and Create",
+      title: "Connection Definition",
       allowClickNav: false
     } as WizardStepConfig;
-    this.step3aConfig = {
-      id: "step3a",
+    this.step2aConfig = {
+      id: "step2a",
       priority: 0,
-      title: "Review",
+      title: "Define",
       allowClickNav: false
     } as WizardStepConfig;
-    this.step3bConfig = {
-      id: "step3b",
+    this.step2bConfig = {
+      id: "step2b",
       priority: 1,
-      title: "Create",
+      title: "Review",
       allowClickNav: false
     } as WizardStepConfig;
 
@@ -137,24 +139,22 @@ export class AddConnectionWizardComponent implements OnInit {
       done: false
     } as WizardConfig;
 
-    // Load the templates for the first step
-    this.templatesLoading = true;
-    this.templatesLoadSuccess = true;
-    const self = this;
-    this.connectionService
-      .getConnectionTemplates()
-      .subscribe(
-        (templates) => {
-          self.allTemplates = templates;
-          self.templatesLoading = false;
-          self.templatesLoadSuccess = true;
-        },
-        (error) => {
-          self.logger.error("[AddConnectionWizardComponent] Error getting templates: %o", error);
-          self.templatesLoading = false;
-          self.templatesLoadSuccess = false;
+    // Load the available connection types for the first step
+    this.connTypes = this.connectionService.getConnectionTypes();
+    this.connectionTypesLoadSuccess = true;
+    this.connectionTypesLoading = false;
+
+    // Select connection type if editing
+    if (this.wizardService.isEdit()) {
+      const selectedConnection = this.wizardService.getSelectedConnection();
+      const connType = selectedConnection.getDriverName();
+      for (const cType of this.connectionTypes) {
+        if (connType === cType.getName()) {
+          this.onConnectionTypeSelected(cType);
+          break;
         }
-      );
+      }
+    }
 
     this.setNavAway(false);
   }
@@ -162,61 +162,128 @@ export class AddConnectionWizardComponent implements OnInit {
   // ----------------
   // Public Methods
   // ----------------
+
+  public handleNameChanged( input: AbstractControl ): void {
+    const self = this;
+
+    this.connectionService.isValidName( input.value ).subscribe(
+      ( errorMsg ) => {
+        if ( errorMsg ) {
+          // only update if error has changed
+          if ( errorMsg !== self.nameValidationError ) {
+            self.nameValidationError = errorMsg;
+          }
+        } else { // name is valid
+          self.nameValidationError = "";
+        }
+        self.updatePage2ValidStatus();
+      },
+      ( error ) => {
+        self.logger.error( "[handleNameChanged] Error: %o", error );
+      } );
+  }
+
   /*
    * Return the name valid state
    */
   public get nameValid(): boolean {
-    return this.basicPropertyForm.controls["name"].valid;
+    if (this.wizardService.isEdit()) {
+      return true;
+    }
+    return this.nameValidationError == null || this.nameValidationError.length === 0;
+  }
+
+  /**
+   * Handles service catalog source change
+   * @param {string} newValue the new serviceCatalog source
+   */
+  public selectedServiceCatalogSourceChanged( newValue ): void {
+    this.selectedServiceCatalogSource = this.serviceCatSources.find((src) => src.getId() === newValue);
+    this.updatePage2ValidStatus();
   }
 
   /*
-   * Return the driver valid state
+   * Determine if there are one or more service catalog sources
    */
-  public get driverValid(): boolean {
-    return this.basicPropertyForm.controls["driver"].valid;
+  public get hasServiceCatalogSources(): boolean {
+    return this.serviceCatSources.length > 0;
   }
 
-  /*
-   * Return the jndi valid state
+  /**
+   * @returns {boolean} `true` if a service catalog source has been selected
    */
-  public get jndiValid(): boolean {
-    return this.basicPropertyForm.controls["jndi"].valid;
+  public get hasSelectedServiceCatalogSource(): boolean {
+    return ( this.selectedServiceCatalogSource != null ) && ( this.selectedServiceCatalogSource !== this.emptyServiceCatalogSource );
+  }
+
+  /**
+   * @returns {boolean} `true` if the serviceCatalogSource is selected, but type is different than
+   * the selected connection type.
+   */
+  public get serviceCatalogSelectedWrongType(): boolean {
+    if (!this.hasSelectedServiceCatalogSource) {
+      return false;
+    }
+    const selectedSvcCatSourceType = this.selectedServiceCatalogSource.getType();
+    const selectedConnType = this.selectedConnTypes[0];
+
+    return selectedConnType.getName() !== selectedSvcCatSourceType;
+  }
+
+  /**
+   * Gets the Title to be displayed on the final wizard page
+   * @returns {string}
+   */
+  public get finalPageTitle(): string {
+    return this.theFinalPageTitle;
+  }
+
+  /**
+   * Gets the message to be displayed on the final wizard page
+   * @returns {string}
+   */
+  public get finalPageMessage(): string {
+    return this.theFinalPageMessage;
+  }
+
+  /**
+   * @returns {string} the error details message
+   */
+  public get errorDetails(): string {
+    return this.errorDetailMessage;
   }
 
   /*
    * Step 1 instruction message
    */
   public get step1InstructionMessage(): string {
-    if (!this.driverValid) {
-      return "Please select a Connection type";
-    } else if (!this.nameValid) {
-      return "Please enter a name for the Connection";
-    } else if (!this.jndiValid) {
-      return "Please enter a JNDI identifier for the Connection";
-    } else {
-      return "When finished entering properties, click Next to continue";
-    }
+    return "Please select a Connection type";
   }
 
   /*
    * Step 2 instruction message
    */
   public get step2InstructionMessage(): string {
-    return "Enter advanced properties for the Connection, then click Next to continue";
-  }
-
-  /*
-   * Step 3 instruction message
-   */
-  public get step3InstructionMessage(): string {
-    return "Review your entries.  When finished, click Create to create the Connection";
+    if (this.serviceCatSources.length === 0) {
+      return "No sources available";
+    } else if (!this.nameValid) {
+      return "Please enter a name for the Connection";
+    } else if (!this.hasSelectedServiceCatalogSource) {
+      return "Please select a catalog source for the Connection";
+    } else {
+      if (this.wizardService.isEdit()) {
+        return "Review selections.  Click Update to update the Connection";
+      } else {
+        return "When finished, click Create to create the Connection";
+      }
+    }
   }
 
   /*
    * Return the name error message if invalid
    */
-  public getBasicPropertyErrorMessage( name: string ): string {
-    const control: AbstractControl = this.basicPropertyForm.controls[name];
+  public getConnectionBasicPropertyErrorMessage( name: string ): string {
+    const control: AbstractControl = this.connectionBasicPropertyForm.controls[name];
     if (control.invalid) {
       // The first error found is returned
       if (control.errors.required) {
@@ -227,23 +294,53 @@ export class AddConnectionWizardComponent implements OnInit {
   }
 
   /*
-   * Return the array of template names
+   * Return the array of ConnectionTypes
    */
-  public get templateNames(): string[] {
-    const templateNames: string[] = [];
-    for ( const templ of this.allTemplates ) {
-      templateNames.push(templ.getId());
-    }
-    return templateNames.sort();
+  public get connectionTypes(): ConnectionType[] {
+    return this.connTypes;
+  }
+
+  /*
+   * Return the currently selected ConnectionType
+   */
+  public get selectedConnectionTypes(): ConnectionType[] {
+    return this.selectedConnTypes;
+  }
+
+  /**
+   * Handles connection type selection
+   * @param {ConnectionType} connectionType the connection type
+   */
+  public onConnectionTypeSelected(connectionType: ConnectionType): void {
+    // Only allow one item to be selected
+    this.selectedConnTypes.shift();
+    this.selectedConnTypes.push(connectionType);
+    // Selecting type clears the serviceCatalog source selection
+    this.selectedServiceCatalogSource = this.emptyServiceCatalogSource;
+    this.updatePage1ValidStatus();
+  }
+
+  /**
+   * Handles connection type de-selection
+   * @param {ConnectionType} connectionType the connection type
+   */
+  public onConnectionTypeDeselected(connectionType: ConnectionType): void {
+    // Only one item is selected at a time
+    this.selectedConnTypes.shift();
+  }
+
+  /*
+   * Return the array of ServiceCatalogSources
+   */
+  public get serviceCatalogSources(): ServiceCatalogSource[] {
+    return this.serviceCatSources;
   }
 
   public nextClicked($event: WizardEvent): void {
-    // When leaving page 1, load the driver-specific property definitions
+    // When leaving page 1, load the available service catalog sources for the selected type
     if ($event.step.config.id === "step1") {
-      const selectedDriver = this.basicPropertyForm.controls["driver"].value;
-      if (!this.detailPropertiesLoadSuccess || (this.detailPropertiesLoadedType !== selectedDriver)) {
-        this.loadPropertyDefinitions(selectedDriver);
-      }
+      // load the available catalog sources
+      this.loadServiceCatalogSources(this.selectedConnTypes[0]);
     }
   }
 
@@ -256,14 +353,6 @@ export class AddConnectionWizardComponent implements OnInit {
   }
 
   /*
-   * Return the array of [name,value] for the required properties.
-   * So that the current required property entries can be shown on page 3 (review)
-   */
-  public get requiredPropertyValues(): Array<[string, string]> {
-    return this.requiredPropValues;
-  }
-
-  /*
    * Create the Connection via komodo REST interface,
    * using the currently entered properties
    */
@@ -273,189 +362,261 @@ export class AddConnectionWizardComponent implements OnInit {
 
     const connection: NewConnection = new NewConnection();
 
-    // Connection basic properties from step 1
+    // Connection basic properties
     connection.setName(this.connectionName);
-    connection.setJndiName(this.connectionJndiName);
-    connection.setDriverName(this.connectionDriverName);
-    connection.setJdbc(this.isJdbc);
-
-    // Connection advanced properties from step 2
-    const propMap: Map<string, string> = this.detailPropForm.propertyValuesNonDefault;
-    connection.setProperties(propMap);
+    connection.setDescription(this.connectionDescription);
+    connection.setServiceCatalogSource(this.selectedServiceCatalogSource.getId());
 
     const self = this;
-    this.connectionService
-      .createAndDeployConnection(connection)
-      .subscribe(
-        (wasSuccess) => {
-          self.createComplete = true;
-          self.createSuccessful = wasSuccess;
-          self.step3bConfig.nextEnabled = false;
-        },
-        (error) => {
-          self.logger.error("[AddConnectionWizardComponent] Error: %o", error);
-          self.createComplete = true;
-          self.createSuccessful = false;
-          self.step3bConfig.nextEnabled = false;
-        }
-      );
+    if (this.wizardService.isEdit()) {
+      this.updateAndBindConnection(connection);
+    } else {
+      this.createAndBindConnection(connection);
+    }
   }
 
   public stepChanged($event: WizardEvent): void {
     if ($event.step.config.id === "step1") {
+      this.wizardConfig.nextTitle = "Next >";
       this.updatePage1ValidStatus();
-    } else if ($event.step.config.id === "step3a") {
-      this.wizardConfig.nextTitle = "Create";
-      this.updateRequiredPropertyValues();
-    } else if ($event.step.config.id === "step3b") {
-      // Note: The next button is not disabled by default when wizard is done
-      this.step3Config.nextEnabled = false;
+    } else if ($event.step.config.id === "step2a") {
+      if (this.wizardService.isEdit()) {
+        this.wizardConfig.nextTitle = "Update";
+      } else {
+        this.wizardConfig.nextTitle = "Create";
+      }
+      this.updatePage2ValidStatus();
+    } else if ($event.step.config.id === "step2b") {
+      this.step2Config.nextEnabled = false;
     } else {
       this.wizardConfig.nextTitle = "Next >";
     }
   }
 
   /**
-   * Handler for property form initialization
-   * @param {boolean} isValid form valid state
-   */
-  public onDetailPropertyInit(isValid: boolean): void {
-    this.updatePage2ValidStatus(isValid);
-  }
-
-  /**
-   * Handler for property form changes
-   * @param {boolean} isValid form valid state
-   */
-  public onDetailPropertyChanged(isValid: boolean): void {
-    this.updatePage2ValidStatus(isValid);
-  }
-
-  /**
    * @returns {string} the name of the connection
    */
   public get connectionName(): string {
-    return this.basicPropertyForm.controls["name"].value;
+    return this.connectionBasicPropertyForm.controls["name"].value;
   }
 
   /**
-   * @returns {string} the driver name of the connection
+   * @returns {string} the description of the connection
    */
-  public get connectionDriverName(): string {
-    return this.basicPropertyForm.controls["driver"].value;
-  }
-
-  /**
-   * @returns {string} the JNDI name of the connection
-   */
-  public get connectionJndiName(): string {
-    return this.basicPropertyForm.controls["jndi"].value;
-  }
-
-  /**
-   * @returns {boolean} 'true' if connection is JDBC
-   */
-  public get isJdbc(): boolean {
-    const driver = this.connectionDriverName;
-    let jdbc = true;
-    // TODO: this needs to be a hooked up to komodo call instead
-    if (driver === null || driver === "cassandra" || driver === "file" || driver === "google"
-                        || driver === "ldap" || driver === "mongodb" || driver === "salesforce"
-                        || driver === "salesforce-34" || driver === "solr" || driver === "webservice") {
-      jdbc = false;
-    }
-    return jdbc;
+  public get connectionDescription(): string {
+    return this.connectionBasicPropertyForm.controls["description"].value;
   }
 
   // ----------------
   // Private Methods
   // ----------------
 
-  /*
-   * Create the BasicProperty form (page 1)
+  /**
+   * Create the Connection Basic properties form
    */
-  private createBasicPropertyForm(): void {
-    this.basicPropertyForm = new FormGroup({
-      name: new FormControl("", Validators.required),
-      jndi: new FormControl("", Validators.required),
-      driver: new FormControl("", Validators.required)
+  private createConnectionBasicPropertyForm(): void {
+    this.connectionBasicPropertyForm = new FormGroup({
+      name: new FormControl( "", this.handleNameChanged.bind( this ) ),
+      description: new FormControl(""),
     });
+
+    // Initialize form values
+    if (!this.wizardService.isEdit()) {
+      this.connectionBasicPropertyForm.controls["name"].setValue(null);
+      this.connectionBasicPropertyForm.controls["description"].setValue(null);
+    } else {
+      const selectedConnection = this.wizardService.getSelectedConnection();
+      this.connectionBasicPropertyForm.controls["name"].setValue(selectedConnection.name);
+      this.connectionBasicPropertyForm.controls["description"].setValue(selectedConnection.getDescription());
+      this.connectionBasicPropertyForm.get("name").disable();
+    }
+
     // Responds to basic property changes - updates the page status
-    const self = this;
-    this.basicPropertyForm.valueChanges.subscribe((val) => {
-      self.updatePage1ValidStatus( );
+    this.connectionBasicPropertyForm.valueChanges.subscribe((val) => {
+      this.updatePage2ValidStatus( );
     });
+  }
+
+  /**
+   * Load the available service catalog sources for the supplied connection type
+   * @param {ConnectionType} connType the connection type
+   */
+  private loadServiceCatalogSources(connType: ConnectionType): void {
+    // Load the available service catalog sources for the second step
+    this.serviceCatalogSourcesLoading = true;
+    this.serviceCatalogSourcesLoadSuccess = false;
+
+    const self = this;
+    this.connectionService
+      .getAllServiceCatalogSources()
+      .subscribe(
+        (sources) => {
+          // Only keep the service catalog sources whose type matches the connectionType.  empty source is always included.
+          self.serviceCatSources = [];
+          for ( const source of sources ) {
+            if ( source.getType() === connType.getName() ) {
+              self.serviceCatSources.push(source);
+            }
+          }
+
+          // Edit mode select the service catalog source
+          if (self.wizardService.isEdit() && (!self.hasSelectedServiceCatalogSource || self.serviceCatalogSelectedWrongType)) {
+            const selectedConnection = self.wizardService.getSelectedConnection();
+            const connSvcSourceName = selectedConnection.getServiceCatalogSourceName();
+            self.selectedServiceCatalogSource = this.emptyServiceCatalogSource;
+            for (const svcSource of self.serviceCatSources) {
+              if (svcSource.getId() === connSvcSourceName) {
+                self.selectedServiceCatalogSource = svcSource;
+                break;
+              }
+            }
+          }
+
+          self.updatePage2ValidStatus();
+          self.serviceCatalogSourcesLoading = false;
+          self.serviceCatalogSourcesLoadSuccess = true;
+        },
+        (error) => {
+          // Creates the connection property form
+          this.createConnectionBasicPropertyForm();
+
+          self.logger.error("[AddConnectionWizardComponent] Error getting service catalog sources: %o", error);
+          self.updatePage2ValidStatus();
+          self.serviceCatalogSourcesLoading = false;
+          self.serviceCatalogSourcesLoadSuccess = false;
+        }
+      );
   }
 
   private setNavAway(allow: boolean): void {
     this.step1Config.allowNavAway = allow;
   }
 
+  /**
+   * Updates the page 1 status
+   */
   private updatePage1ValidStatus( ): void {
-    this.step1Config.nextEnabled = this.basicPropertyForm.valid;
+    this.step1Config.nextEnabled = this.selectedConnTypes.length > 0;
     this.setNavAway(this.step1Config.nextEnabled);
   }
 
-  private updatePage2ValidStatus(formValid: boolean): void {
-    this.step2Config.nextEnabled = formValid;
-    this.setNavAway(this.step2Config.nextEnabled);
+  /**
+   * Updates the page 2 status
+   */
+  private updatePage2ValidStatus( ): void {
+    if (!this.step2aConfig) {
+      return;
+    }
+    if (this.wizardService.isEdit()) {
+      this.step2aConfig.nextEnabled = this.connectionBasicPropertyForm.valid;
+    } else {
+      this.step2aConfig.nextEnabled = this.nameValid && this.hasSelectedServiceCatalogSource;
+    }
+    this.setNavAway(this.step2aConfig.nextEnabled);
   }
 
   /**
-   * Load the driver-specific property definitions
+   * Creates the connection ensuring it is bound
+   * @param {Connection} connection the new connection
    */
-  private loadPropertyDefinitions( driverName ): void {
-    this.detailPropertiesLoading = false;
-    this.detailPropertiesLoadSuccess = false;
+  private createAndBindConnection(connection: NewConnection): void {
     const self = this;
     this.connectionService
-      .getConnectionTemplateProperties(driverName)
+      .createAndBindConnection(connection)
       .subscribe(
-        (props) => {
-          // Sort the properties.  (Required properties first)
-          const firstProps: any[] = [];
-          const nextProps: any[] = [];
-          for (const prop of props) {
-            if (prop.isRequired()) {
-              firstProps.push(prop);
-            } else {
-              nextProps.push(prop);
-            }
-          }
-
-          self.detailProperties = firstProps.concat(nextProps);
-          self.detailPropertiesLoading = false;
-          self.detailPropertiesLoadSuccess = true;
-          self.detailPropertiesLoadedType = driverName;
+        (wasSuccess) => {
+          self.setFinalPageComplete(wasSuccess);
         },
         (error) => {
-          self.logger.error("[AddConnectionWizardComponent] Error: %o", error);
-          self.detailPropertiesLoading = false;
-          self.detailPropertiesLoadSuccess = false;
+          self.logger.error("[AddConnectionWizardComponent] Error creating connection: %o", error);
+          self.setErrorDetails(error);
+          self.setFinalPageComplete(false);
         }
       );
   }
 
   /**
-   * @returns {PropertyDefinition<any>[]} the property definitions (can be null)
+   * Updates the connection ensuring it is bound
+   * @param {Connection} connection the new connection
    */
-  private getPropertyDefinitions(): Array<PropertyDefinition<any>> {
-    return this.detailProperties;
+  private updateAndBindConnection(connection: NewConnection): void {
+    const self = this;
+    this.connectionService
+      .updateAndBindConnection(connection)
+      .subscribe(
+        (wasSuccess) => {
+          self.setFinalPageComplete(wasSuccess);
+        },
+        (error) => {
+          self.logger.error("[AddConnectionWizardComponent] Error updating connection: %o", error);
+          self.setErrorDetails(error);
+          self.setFinalPageComplete(false);
+        }
+      );
   }
 
   /**
-   * Generates array of required property values when page 3 (Review) is shown
+   * Sets the final page in progress status
    */
-  private updateRequiredPropertyValues(): void {
-    const propMap: Map<string, string> = new Map<string, string>();
-    for (const property of this.detailProperties) {
-      if (property.isRequired()) {
-        const name = property.getId();
-        const theValue = this.detailPropForm.getPropertyValue(name);
-        propMap.set(name, theValue);
-      }
+  private setFinalPageInProgress(): void {
+    this.createComplete = false;
+    this.createSuccessful = false;
+    if (this.wizardService.isEdit()) {
+      this.theFinalPageTitle = "Update in progress";
+      this.theFinalPageMessage = "The connection is being updated.";
+    } else {
+      this.theFinalPageTitle = "Creation in progress";
+      this.theFinalPageMessage = "The connection is being created.";
     }
-    this.requiredPropValues = Array.from(propMap);
+    this.step2bConfig.nextEnabled = false;
+    this.step2bConfig.previousEnabled = false;
   }
 
+  /**
+   * Sets the final page completion status
+   * @param {boolean} wasSuccessful 'true' if the create or update was successful
+   */
+  private setFinalPageComplete(wasSuccessful: boolean): void {
+    this.createComplete = true;
+    this.createSuccessful = wasSuccessful;
+    this.step2bConfig.nextEnabled = false;
+    this.step2bConfig.previousEnabled = true;
+    if (wasSuccessful) {
+      if (this.wizardService.isEdit()) {
+        this.theFinalPageTitle = "Update was successful";
+        this.theFinalPageMessage = "The connection was updated successfully. Click on the button to see all connections.";
+      } else {
+        this.theFinalPageTitle = "Creation was successful";
+        this.theFinalPageMessage = "The connection was created successfully. Click on the button to see all connections.";
+      }
+    } else {
+      if (this.wizardService.isEdit()) {
+        this.theFinalPageTitle = "Update failed";
+        this.theFinalPageMessage = "The connection update failed!";
+      } else {
+        this.theFinalPageTitle = "Creation failed";
+        this.theFinalPageMessage = "The connection creation failed!";
+      }
+    }
+  }
+
+  /**
+   * Sets the error details for the response
+   * @param resp the rest call response
+   */
+  private setErrorDetails( resp: any ): void {
+    // Get the error from the response json
+    this.errorDetailMessage = "";
+    if (resp) {
+      try {
+        this.errorDetailMessage = resp.json().error;
+      } catch ( e ) {
+        this.errorDetailMessage = resp.text();
+      }
+    }
+    // Error visible if message has content
+    if (this.errorDetailMessage.length === 0) {
+      this.errorDetailMessage = "Please check dataservice entries and retry";
+    }
+  }
 }
