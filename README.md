@@ -10,7 +10,7 @@ for more information.
 ## Get the code
 
 The easiest way to get started with the code is to [create your own fork](http://help.github.com/forking/)
-of this repository, and then clone your fork:
+ of this repository, and then clone your fork:
 
 ```bash
   $ git clone git@github.com:teiid/beetle-studio.git
@@ -62,38 +62,63 @@ are installed. See **Requirements** section above.
       $ mvn clean install
     ```
 
-The `beetle-studio.war` file can then be found in the `target/` directory.
+This will run the build and all of the unit tests.
 
-### Deploy to a Komodo Server
+### Deploy _Beetle Studio_ to Openshift
 
-1. Install a _Komodo_ server. The _Data Service Builder_ kit comes with a _Komodo_ server. 
-Download the kit [here](https://developer.jboss.org/wiki/GettingStartedWithDataServicesBuilder). 
-Then extract the zipfile into the directory you want to install the server.
+1. Utilize an existing Openshift installation, or install your own local Openshift.  Refer to [Openshift Setup]((https://github.com/teiid/beetle-studio/blob/master/documentation/openshift-setup/openshift-setup.md)).  
 
-1. Start the _Komodo_ server by issuing the following commands:
+1. Login to Openshift, then initiate the _Beetle Studio_ deployment:
 
     ```bash
-      $ cd <komodo-server-install-dir>/teiid-8.12.4/bin/
-      $ ./standalone.sh -c standalone-teiid.xml
+      $ cd <BEETLE_STUDIO_REPO_DIR>/openshift
+      $ ./beetle-os-setup.sh -h <OPENSHIFT_IP>
     ```
 
-1. Copy the `beetle-studio.war` file into the _Komodo_ server's `standalone/deployments` directory.
+1. Monitor the pod deployments in your Openshift console.  When all pods have successfully been started, you are ready to access _Beetle Studio_.
 
-### Test
+### Access _Beetle Studio_
 
-In a browser, navigate to `http://localhost:8080/beetle-studio` to test _Beetle Studio_.
+In the Openshift console, go to the _beetle studio_ project.  View the routes: __'Application > Routes'__.  To access _Beetle Studio_, navigate to the route for `das`.
 
 ## Contribute fixes and features
 
 _Beetle Studio_ is open source, and we welcome anybody who wants to participate and contribute!
 
-TBD
+If you want to fix a bug or make any changes, please log an issue in the [Teiid Tools JIRA](https://issues.jboss.org/browse/TEIIDTOOLS) describing the bug or new feature. Then we highly recommend making the changes on a topic branch named with the JIRA issue number. For example, this command creates
+a branch for the TEIIDTOOLS-1234 issue:
+
+	$ git checkout -b teiidtools-1234
+
+After you're happy with your changes and a full build (with unit tests) runs successfully, commit your changes on your topic branch
+(using really good comments). Then it's time to check for and pull any recent changes that were made in the official repository:
+
+	$ git checkout master               # switches to the 'master' branch
+	$ git pull upstream master          # fetches all 'upstream' changes and merges 'upstream/master' onto your 'master' branch
+	$ git checkout teiidtools-1234      # switches to your topic branch
+	$ git rebase master                 # reapplies your changes on top of the latest in master
+	                                      (i.e., the latest from master will be the new base for your changes)
+
+If the pull grabbed a lot of changes, you should rerun your build to make sure your changes are still good.
+You can then either [create patches](http://progit.org/book/ch5-2.html) (one file per commit, saved in `~/teiidtools-1234`) with 
+
+	$ git format-patch -M -o ~/teiidtools-1234 orgin/master
+
+and upload them to the JIRA issue, or you can push your topic branch and its changes into your public fork repository
+
+	$ git push origin teiidtools-1234   # pushes your topic branch into your public fork of beetle-studio
+
+and [generate a pull-request](http://help.github.com/pull-requests/) for your changes. 
+
+We prefer pull-requests, because we can review the proposed changes, comment on them,
+discuss them with you, and likely merge the changes right into the official repository.
 
 ## Developer Guidelines
 
 - IDE - The [WebStorm IDE](https://www.jetbrains.com/webstorm/) is the preferred development environment. See our
 [Beetle Studio WebStorm IDE Guide](https://github.com/teiid/beetle-studio/blob/master/documentation/ide/webstorm-guide.md) 
 for IDE development practices.
+- Openshift environment - Openshift is required for Beetle Studio deployment.  More detail can be found in our [Openshift Setup](https://github.com/teiid/beetle-studio/blob/master/documentation/openshift-setup/openshift-setup.md).
 - Style and Coding Guide - In general, we try to follow the style outlined by Angular defined
 in their [style guide](https://angular.io/guide/styleguide). More specific syntax, conventions,
 project structure, and formatting can be found in our [Beetle Studio Style Guide](https://github.com/teiid/beetle-studio/blob/master/documentation/style-guide/style-guide.md).
