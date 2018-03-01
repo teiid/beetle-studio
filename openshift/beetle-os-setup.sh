@@ -76,8 +76,8 @@ echo "Local maven repository: $LOCAL_MVN_REPO"
 echo "Komodo source repository: $KOMODO_SOURCE_REPO"
 echo "Beetle source repository: $BEETLE_SOURCE_REPO"
 
-echo -e '\n\n=== Logging into oc tool as admin ==='
-oc login https://${OS_HOST}:8443 -u admin -p admin
+echo -e '\n\n=== Logging into oc tool as developer ==='
+oc login https://${OS_HOST}:8443 -u developer -p developer
 oc whoami 2>&1 > /dev/null || { echo "Cannot log in ... exiting" && exit 1; }
 
 echo "Switch to the new project, creating it if necessary"

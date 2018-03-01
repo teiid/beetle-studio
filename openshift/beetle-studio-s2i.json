@@ -27,10 +27,24 @@
             "required": false
         },
         {
+            "description": "The branch of the beetle-studio source repository",
+            "displayName": "Beetle-studio Source Branch",
+            "name": "BEETLE_GIT_BRANCH",
+            "value": "master",
+            "required": false
+        },
+        {
             "description": "The location url of the teiid-komodo engine source repository",
             "displayName": "Komodo Source URL",
             "name": "KOMODO_GIT_URL",
             "value": "git://github.com/teiid/teiid-komodo.git",
+            "required": false
+        },
+        {
+            "description": "The branch of the komodo source repository",
+            "displayName": "Komodo Source Branch",
+            "name": "KOMODO_GIT_BRANCH",
+            "value": "master",
             "required": false
         },
         {
@@ -356,7 +370,8 @@
                 "source" : {
                     "type" : "Git",
                     "git" : {
-                        "uri": "${KOMODO_GIT_URL}"
+                        "uri": "${KOMODO_GIT_URL}",
+                        "ref": "${KOMODO_GIT_BRANCH}"
                     },
                     "contextDir": "."
                 },
@@ -415,7 +430,8 @@
                 "source" : {
                     "type" : "Git",
                     "git" : {
-                        "uri": "${BEETLE_GIT_URL}"
+                        "uri": "${BEETLE_GIT_URL}",
+                        "ref": "${BEETLE_GIT_BRANCH}"
                     },
                     "contextDir": "src/main/ngapp"
                 },
