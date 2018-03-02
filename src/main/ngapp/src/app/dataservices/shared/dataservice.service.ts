@@ -25,9 +25,9 @@ import { DataservicesConstants } from "@dataservices/shared/dataservices-constan
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { ObjectVdbStatus } from "@dataservices/shared/object-vdb-status.model";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { Table } from "@dataservices/shared/table.model";
-import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { environment } from "@environments/environment";
@@ -65,8 +65,8 @@ export class DataserviceService extends ApiService {
     this.notifierService = notifierService;
     this.vdbService = vdbService;
     this.appSettingsService = appSettings;
-    // Polls to fire Dataservice state updates every minute
-    this.pollDataserviceStatus(60);
+    // Polls to fire Dataservice state updates every 15 sec
+    this.pollDataserviceStatus(15);
   }
 
   /**
@@ -186,6 +186,20 @@ export class DataserviceService extends ApiService {
       .map((response) => {
         const dataservices = response.json();
         return dataservices.map((dataservice) => Dataservice.create( dataservice ));
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Get the dataservice VdbStatuses from the komodo rest interface
+   * @returns {Observable<ObjectVdbStatus[]>}
+   */
+  public getDataserviceVdbStatuses(): Observable<ObjectVdbStatus[]> {
+    return this.http
+      .get(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesStatusPath, this.getAuthRequestOptions())
+      .map((response) => {
+        const statuses = response.json();
+        return statuses.map((dataserviceStatus) => ObjectVdbStatus.create( dataserviceStatus ));
       })
       .catch( ( error ) => this.handleError( error ) );
   }
@@ -430,14 +444,18 @@ export class DataserviceService extends ApiService {
    */
   public updateDataserviceStates(): void {
     const self = this;
-    this.getAllDataservices()
+    this.getDataserviceVdbStatuses()
       .subscribe(
-        (dataservices) => {
-          self.updateServiceStateMap(dataservices);
+        (dataserviceVdbStatuses) => {
+          console.log("[ConnectionService] Sending valid dataservice vdbStatuses: " + new Date(Date.now()).toLocaleString());
+          self.cachedDataserviceStates = self.createDeploymentStateMap(dataserviceVdbStatuses);
+          this.notifierService.sendDataserviceStateMap(self.cachedDataserviceStates);
         },
         (error) => {
+          console.log("[ConnectionService] Error getting dataservice vdbStatuses, sending cached: "
+                      + new Date(Date.now()).toLocaleString());
           // On error, broadcast the cached states
-          this.notifierService.sendDataserviceStateMap(this.cachedDataserviceStates);
+          this.notifierService.sendDataserviceStateMap(self.cachedDataserviceStates);
         }
       );
   }
@@ -458,58 +476,31 @@ export class DataserviceService extends ApiService {
   }
 
   /*
-   * Get updates for the provided array of Dataservices and broadcast the map of states
-   * @param {Dataservice[]} services the array of Dataservices
-   */
-  private updateServiceStateMap(services: Dataservice[]): void {
-    const self = this;
-    this.vdbService.getTeiidVdbStatuses()
-      .subscribe(
-        (vdbStatuses) => {
-          self.cachedDataserviceStates = self.createDeploymentStateMap(services, vdbStatuses);
-          this.notifierService.sendDataserviceStateMap(self.cachedDataserviceStates);
-        },
-        (error) => {
-          // On error, broadcast the cached states
-          this.notifierService.sendDataserviceStateMap(self.cachedDataserviceStates);
-        }
-      );
-  }
-
-  /*
-   * Creates a Map of dataservice name to DeploymentState, given the list of dataservices and vdbStatuses
-   * @param {Dataservice[]} dataservices the Dataservice array
-   * @param {VdbStatus[]} vdbStatuses the VdbStatus array
+   * Creates a Map of dataservice name to DeploymentState
+   * @param {ObjectVdbStatus[]} objectVdbStatuses the object VdbStatus array
    * @returns {Map<string,DeploymentState>} the map of dataservice name to DeploymentState
    */
-  private createDeploymentStateMap(dataservices: Dataservice[], vdbStatuses: VdbStatus[]): Map<string, DeploymentState> {
-    const dsStateMap: Map<string, DeploymentState> = new Map<string, DeploymentState>();
+  private createDeploymentStateMap(objectVdbStatuses: ObjectVdbStatus[]): Map<string, DeploymentState> {
+    const dataserviceStateMap: Map<string, DeploymentState> = new Map<string, DeploymentState>();
 
-    // For each dataservice, find the corresponding VDB status.  Add the map entry
-    for ( const dService of dataservices ) {
-      const serviceId = dService.getId();
-      const serviceVdbName = dService.getServiceVdbName();
-      let statusFound = false;
-      for ( const vdbStatus of vdbStatuses ) {
-        if ( vdbStatus.getName() === serviceVdbName ) {
-          statusFound = true;
-          if ( vdbStatus.isActive() ) {
-            dsStateMap.set(serviceId, DeploymentState.ACTIVE);
-          } else if ( vdbStatus.isFailed() ) {
-            dsStateMap.set(serviceId, DeploymentState.FAILED);
-          } else if ( vdbStatus.isLoading() ) {
-            dsStateMap.set(serviceId, DeploymentState.LOADING);
-          } else {
-            dsStateMap.set(serviceId, DeploymentState.INACTIVE);
-          }
-        }
-      }
-      if ( !statusFound ) {
-        dsStateMap.set(serviceId, DeploymentState.NOT_DEPLOYED);
+    // For each dataservice, use the corresponding VDB status to create the map entry
+    for ( const objectVdbStatus of objectVdbStatuses ) {
+      const dataserviceName = objectVdbStatus.getName();
+      const dataserviceStatus = objectVdbStatus.getVdbStatus();
+      if ( !dataserviceStatus || dataserviceStatus === null ) {
+        dataserviceStateMap.set(dataserviceName, DeploymentState.NOT_DEPLOYED);
+      } else if ( dataserviceStatus.isFailed() ) {
+        dataserviceStateMap.set(dataserviceName, DeploymentState.FAILED);
+      } else if ( dataserviceStatus.isActive() ) {
+        dataserviceStateMap.set(dataserviceName, DeploymentState.ACTIVE);
+      } else if ( dataserviceStatus.isLoading() ) {
+        dataserviceStateMap.set(dataserviceName, DeploymentState.LOADING);
+      } else {
+        dataserviceStateMap.set(dataserviceName, DeploymentState.INACTIVE);
       }
     }
 
-    return dsStateMap;
+    return dataserviceStateMap;
   }
 
 }

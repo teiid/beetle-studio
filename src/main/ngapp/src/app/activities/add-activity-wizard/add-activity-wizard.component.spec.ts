@@ -9,6 +9,9 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -23,9 +26,11 @@ describe("AddActivityWizardComponent", () => {
       imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule ],
       declarations: [ AddActivityWizardComponent, PropertyFormComponent, PropertyFormPropertyComponent ],
       providers: [
+        NotifierService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ActivityService, useClass: MockActivityService },
-        { provide: ConnectionService, useClass: MockConnectionService }
+        { provide: ConnectionService, useClass: MockConnectionService },
+        { provide: VdbService, useClass: MockVdbService }
       ]
     })
       .compileComponents().then(() => {

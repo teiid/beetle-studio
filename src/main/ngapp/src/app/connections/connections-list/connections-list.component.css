@@ -1,3 +1,10 @@
+/* Adds an icon to the left of the activate action item in dropdown of kebab. */
+.object-list .secondary-action[title*="Activate"]:before {
+  color: var(--card-action-icon-color);
+  content: "\f1eb";
+  font-family: "FontAwesome";
+}
+
 .connection-details-properties {
   padding-left: 40px;
 }

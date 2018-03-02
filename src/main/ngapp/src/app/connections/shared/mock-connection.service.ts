@@ -24,6 +24,8 @@ import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { TemplateDefinition } from "@connections/shared/template-definition.model";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
@@ -82,8 +84,9 @@ export class MockConnectionService extends ConnectionService {
     return newConn;
   }
 
-  constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
-    super(http, appSettings, logger);
+  constructor( http: Http, vdbService: VdbService, notifierService: NotifierService,
+               appSettings: AppSettingsService, logger: LoggerService ) {
+    super(http, vdbService, notifierService, appSettings, logger);
   }
 
   /**
@@ -136,6 +139,21 @@ export class MockConnectionService extends ConnectionService {
     tableNames.push( "table2" );
     tableNames.push( "table3" );
     return Observable.of( tableNames );
+  }
+
+  /**
+   * Updates the current Connection VDB states - triggers update to be broadcast to interested components
+   */
+  public updateConnectionVdbStates(): void {
+    // Nothing to do
+  }
+
+  /**
+   * Polls the server and sends Connection state updates at the specified interval
+   * @param {number} pollIntervalSec the interval (sec) between polling attempts
+   */
+  public pollConnectionVdbStatus(pollIntervalSec: number): void {
+    // Nothing to do
   }
 
 }

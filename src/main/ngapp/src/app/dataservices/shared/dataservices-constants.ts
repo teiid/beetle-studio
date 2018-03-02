@@ -28,6 +28,8 @@ export class DataservicesConstants {
   public static readonly testDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/test-dataservice";
   public static readonly testDataservicePath = DataservicesConstants.dataservicesRootPath + "/test-dataservice";
 
+  public static readonly dataservicesStatusPath = DataservicesConstants.dataservicesRootPath + "/vdbStatus";
+
   public static readonly dataservicesNavItem: NavigationItemConfig = {
     title: "Data Services",
     iconStyleClass: "fa fa-fw fa-table",

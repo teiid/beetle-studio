@@ -81,7 +81,7 @@
                         [ngValue]="emptyServiceCatalogSource">{{ emptyServiceCatalogSource.getId() }}</option>
                 <option *ngFor="let catalogSource of serviceCatalogSources"
                         [ngValue]="catalogSource"
-                        [selected]="catalogSource.getId() == selectedServiceCatalogSource.getId()">{{catalogSource.getId()}}</option>
+                        [selected]="catalogSource.getId() == selectedServiceCatalogSource.getId()">{{ catalogSource.getId() }}</option>
               </select>
               <div class="help-block" *ngIf="!hasSelectedServiceCatalogSource">{{ selectServiceCatalogSourceErrorMsg }}</div>
             </div>
