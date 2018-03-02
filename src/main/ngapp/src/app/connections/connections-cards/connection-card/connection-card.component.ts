@@ -29,12 +29,11 @@ import { Action, ActionConfig, CardAction, CardConfig, ListConfig } from "patter
 })
 export class ConnectionCardComponent implements DoCheck, OnInit {
 
+  public static readonly activateConnectionEvent = "activate";
   public static readonly deleteConnectionEvent = "delete";
   public static readonly editConnectionEvent = "edit";
-  public static readonly pingConnectionEvent = "ping";
 
   public readonly editEvent = ConnectionCardComponent.editConnectionEvent;
-  public readonly pingEvent = ConnectionCardComponent.pingConnectionEvent;
 
   @Input() public connection: Connection;
   @Input() public selectedConnections: Connection[];
@@ -46,7 +45,12 @@ export class ConnectionCardComponent implements DoCheck, OnInit {
   public listConfig: ListConfig;
   public showDetails = false;
 
+  private readonly activateActionId = "activate";
+  private readonly activateActionIndex = 0; // index in moreActions
   private readonly deleteActionId = "delete";
+  private readonly deleteActionIndex = 1; // index in moreActions
+
+  private isLoading = false;
   private logger: LoggerService;
 
   constructor( logger: LoggerService ) {
@@ -62,7 +66,9 @@ export class ConnectionCardComponent implements DoCheck, OnInit {
    * @param {Action} action the action that was selected.
    */
   public handleAction( action: Action ): void {
-    if ( action.id === this.deleteActionId ) {
+    if ( action.id === this.activateActionId ) {
+      this.onClick( ConnectionCardComponent.activateConnectionEvent);
+    } else if ( action.id === this.deleteActionId ) {
       this.onClick( ConnectionCardComponent.deleteConnectionEvent );
     } else {
       this.logger.error( "Action '" + action.id + "' not handled." );
@@ -77,6 +83,13 @@ export class ConnectionCardComponent implements DoCheck, OnInit {
   }
 
   public ngDoCheck(): void {
+    if ( this.isLoading !== this.connection.schemaLoading ) {
+      this.isLoading = this.connection.schemaLoading;
+
+      this.actionConfig.moreActions[ this.activateActionIndex ].disabled = this.isLoading;
+      this.actionConfig.moreActions[ this.deleteActionIndex ].disabled = this.isLoading;
+    }
+
     this.cardConfig.action.iconStyleClass = this.detailsIconStyle;
   }
 
@@ -88,11 +101,16 @@ export class ConnectionCardComponent implements DoCheck, OnInit {
       primaryActions: [
       ],
       moreActions: [
-          {
-            id: this.deleteActionId,
-            title: "Delete",
-            tooltip: "Delete the connection"
-          }
+        {
+          id: this.activateActionId,
+          title: "Activate",
+          tooltip: "Activate"
+        },
+        {
+          id: this.deleteActionId,
+          title: "Delete",
+          tooltip: "Delete"
+        }
       ]
     } as ActionConfig;
 

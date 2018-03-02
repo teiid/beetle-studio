@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { Identifiable } from "@shared/identifiable";
 import { SortDirection } from "@shared/sort-direction.enum";
 
@@ -29,6 +30,7 @@ export class Connection implements Identifiable< string > {
   private dv__driverName: string;
   private dv__type: boolean;
   private keng__properties: object[] = [];
+  private schemaState: DeploymentState = DeploymentState.LOADING;
 
   /**
    * @param {Object} json the JSON representation of a Connection
@@ -154,6 +156,53 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
+   * @returns {DeploymentState} the connection schema state
+   */
+  public getSchemaState(): DeploymentState {
+    return this.schemaState;
+  }
+
+  /**
+   * Accessor to determine if connection schema is active
+   * @returns {boolean} the connection schema active state
+   */
+  public get schemaActive(): boolean {
+    return this.schemaState === DeploymentState.ACTIVE;
+  }
+
+  /**
+   * Accessor to determine if connection schema is inactive
+   * @returns {boolean} the connection schema inactive state
+   */
+  public get schemaInactive(): boolean {
+    return this.schemaState === DeploymentState.INACTIVE;
+  }
+
+  /**
+   * Accessor to determine if connection schema is loading
+   * @returns {boolean} the connection schema loading state
+   */
+  public get schemaLoading(): boolean {
+    return this.schemaState === DeploymentState.LOADING;
+  }
+
+  /**
+   * Accessor to determine if connection schema is failed
+   * @returns {boolean} the connection schema failed state
+   */
+  public get schemaFailed(): boolean {
+    return this.schemaState === DeploymentState.FAILED;
+  }
+
+  /**
+   * Accessor to determine if connection schema is not deployed
+   * @returns {boolean} the connection schema not deployed state
+   */
+  public get schemaNotDeployed(): boolean {
+    return this.schemaState === DeploymentState.NOT_DEPLOYED;
+  }
+
+  /**
    * @param {string} driverName the connection driver name (optional)
    */
   public setDriverName( driverName?: string ): void {
@@ -194,6 +243,13 @@ export class Connection implements Identifiable< string > {
     prop.value = serviceCatalog;
 
     this.keng__properties.push(prop);
+  }
+
+  /**
+   * @param {DeploymentState} state the connection schema state
+   */
+  public setSchemaState( state: DeploymentState ): void {
+    this.schemaState = state;
   }
 
   /**

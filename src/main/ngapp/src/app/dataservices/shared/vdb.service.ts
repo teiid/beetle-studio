@@ -23,7 +23,6 @@ import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { NameValue } from "@dataservices/shared/name-value.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
-import { Table } from "@dataservices/shared/table.model";
 import { VdbModelSource } from "@dataservices/shared/vdb-model-source.model";
 import { VdbModel } from "@dataservices/shared/vdb-model.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
@@ -335,15 +334,11 @@ export class VdbService extends ApiService {
   }
 
   /**
-   * Create and deploy a VDB for the provided tables.  Currently we require all tables to
-   * be from the same connection source.
-   * @param {Table[]} tables
+   * Create and deploy a VDB for the provided connection.
+   * @param {Connection} connection
    * @returns {Observable<boolean>}
    */
-  public deployVdbForTables(tables: Table[]): Observable<boolean> {
-    // Currently requiring all tables from same connection
-    const connection: Connection = tables[0].getConnection();
-
+  public deployVdbForConnection(connection: Connection): Observable<boolean> {
     const vdbName = this.deriveVdbName(connection);
     const vdbModelName = this.deriveVdbModelName(connection);
     const vdbModelSourceName = this.deriveVdbModelSourceName(connection);

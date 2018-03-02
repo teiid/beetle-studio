@@ -41,7 +41,7 @@
           <div class="form-group">
             <pfng-empty-state
                 [config]="noConnectionsEmptyConfig"
-                (onActionSelect)="onNewConnection()"></pfng-empty-state>
+                (onActionSelect)="onNew()"></pfng-empty-state>
           </div>
         </div>
       </div>
@@ -66,16 +66,16 @@
         <app-connections-list *ngIf="isListLayout"
                               [connections]="filteredConnections"
                               [selectedConnections]="selectedConnections"
+                              (activateConnection)="onActivate($event)"
                               (editConnection)="onEdit($event)"
-                              (pingConnection)="onPing($event)"
                               (deleteConnection)="onDelete($event)"
                               (connectionSelected)="onSelected($event)"
                               (connectionDeselected)="onDeselected($event)"></app-connections-list>
         <app-connections-cards *ngIf="isCardLayout"
                                [connections]="filteredConnections"
                                [selectedConnections]="selectedConnections"
+                               (activateConnection)="onActivate($event)"
                                (editConnection)="onEdit($event)"
-                               (pingConnection)="onPing($event)"
                                (deleteConnection)="onDelete($event)"
                                (connectionSelected)="onSelected($event)"
                                (connectionDeselected)="onDeselected($event)"></app-connections-cards>

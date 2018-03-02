@@ -33,6 +33,8 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { environment } from "@environments/environment";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -66,7 +68,7 @@ import { ConnectionTypeCardsComponent } from "./connection-type-cards/connection
     {
       provide: ConnectionService,
       useFactory: connectionServiceFactory,
-      deps: [ Http, AppSettingsService, LoggerService ],
+      deps: [ Http, VdbService, NotifierService, AppSettingsService, LoggerService ],
       multi: false
     },
     LoggerService
@@ -80,13 +82,25 @@ export class ConnectionsModule { }
  * A factory that produces the appropriate instande of the service based on current environment settings.
  *
  * @param {Http} http the HTTP service
+ * @param {VdbService} vdbService the vdb service
+ * @param {NotifierService} notifierService the notifier service
  * @param {AppSettingsService} appSettings the app settings service
  * @param {LoggerService} logger the logger
  * @returns {ConnectionService} the requested service
  */
 export function connectionServiceFactory( http: Http,
+                                          vdbService: VdbService,
+                                          notifierService: NotifierService,
                                           appSettings: AppSettingsService,
                                           logger: LoggerService ): ConnectionService {
-  return environment.production || !environment.uiDevMode ? new ConnectionService( http, appSettings, logger )
-                                                          : new MockConnectionService( http, appSettings, logger );
+  return environment.production || !environment.uiDevMode ? new ConnectionService( http,
+                                                                                   vdbService,
+                                                                                   notifierService,
+                                                                                   appSettings,
+                                                                                   logger )
+                                                          : new MockConnectionService( http,
+                                                                                       vdbService,
+                                                                                       notifierService,
+                                                                                       appSettings,
+                                                                                       logger );
 }

@@ -34,16 +34,16 @@ export class ConnectionsListComponent implements OnInit {
 
   @Output() public connectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();
   @Output() public connectionSelected: EventEmitter<Connection> = new EventEmitter<Connection>();
+  @Output() public activateConnection: EventEmitter<string> = new EventEmitter<string>();
   @Output() public deleteConnection: EventEmitter<string> = new EventEmitter<string>();
   @Output() public editConnection: EventEmitter<string> = new EventEmitter<string>();
-  @Output() public pingConnection: EventEmitter<string> = new EventEmitter<string>();
 
   public listConfig: ListConfig;
   private router: Router;
 
-  private readonly deleteActionId = "delecteActionId";
+  private readonly activateActionId = "activateActionId";
+  private readonly deleteActionId = "deleteActionId";
   private readonly editActionId = "editActionId";
-  private readonly pingActionId = "pingActionId";
 
   /**
    * Constructor.
@@ -72,35 +72,38 @@ export class ConnectionsListComponent implements OnInit {
    *
    * @param connection the connection represented by a row
    * @param editActionTemplate {TemplateRef} the edit action template
-   * @param pingActionTemplate {TemplateRef} the ping action template
+   * @param activateActionTemplate {TemplateRef} the activate action template
    * @param deleteActionTemplate {TemplateRef} the delete action template
    * @returns {ActionConfig} the actions configuration
    */
   public getActionConfig( connection: Connection,
                           editActionTemplate: TemplateRef< any >,
-                          pingActionTemplate: TemplateRef< any >,
+                          activateActionTemplate: TemplateRef< any >,
                           deleteActionTemplate: TemplateRef< any > ): ActionConfig {
     const actionConfig = {
       primaryActions: [
         {
+          disabled: connection.schemaLoading,
           id: this.editActionId,
           template: editActionTemplate,
           title: "Edit",
-          tooltip: "Edit properties"
-        },
-        {
-          id: this.pingActionId,
-          template: pingActionTemplate,
-          title: "Ping",
-          tooltip: "Determine if accessible"
+          tooltip: "Edit this connection"
         }
       ],
       moreActions: [
         {
+          disabled: connection.schemaLoading,
+          id: this.activateActionId,
+          template: activateActionTemplate,
+          title: "Activate",
+          tooltip: "Activate this connection"
+        },
+        {
+          disabled: connection.schemaLoading,
           id: this.deleteActionId,
           template: deleteActionTemplate,
           title: "Delete",
-          tooltip: "Delete the connection"
+          tooltip: "Delete this connection"
         }
       ],
       moreActionsDisabled: false,
@@ -133,10 +136,10 @@ export class ConnectionsListComponent implements OnInit {
     // now perform action
     if ( action.id === this.deleteActionId ) {
       this.onDeleteConnection( this.selectedConnections[ 0 ].getId() );
+    } else if ( action.id === this.activateActionId ) {
+      this.onActivateConnection( this.selectedConnections[ 0 ].getId() );
     } else if ( action.id === this.editActionId ) {
       this.onEditConnection( this.selectedConnections[ 0 ].getId() );
-    } else if ( action.id === this.pingActionId ) {
-      this.onPingConnection( this.selectedConnections[ 0 ].getId() );
     }
   }
 
@@ -145,6 +148,13 @@ export class ConnectionsListComponent implements OnInit {
    */
   public isSelected( connection: Connection ): boolean {
     return this.selectedConnections.indexOf( connection ) !== -1;
+  }
+
+  /**
+   * @param {string} connectionName the name of the connection to activate
+   */
+  public onActivateConnection(connectionName: string): void {
+    this.activateConnection.emit(connectionName);
   }
 
   /**
@@ -159,13 +169,6 @@ export class ConnectionsListComponent implements OnInit {
    */
   public onEditConnection( connectionName: string ): void {
     this.editConnection.emit( connectionName );
-  }
-
-  /**
-   * @param {string} connectionName the name of the connection to ping
-   */
-  public onPingConnection( connectionName: string ): void {
-    this.pingConnection.emit( connectionName );
   }
 
   /**

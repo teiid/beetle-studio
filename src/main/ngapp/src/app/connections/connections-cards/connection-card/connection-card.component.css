@@ -1,0 +1,23 @@
+.card-toolbar .secondary-action[title="Activate"]:before {
+  color: var(--card-action-icon-color);
+  content: "\f1eb";
+  font-family: "FontAwesome";
+}
+
+.object-card .list-pf,
+.object-card-selected .list-pf {
+  border: none;
+}
+
+.object-card .list-pf-item,
+.object-card-selected .list-pf-item {
+  border: none;
+}
+
+.object-card .list-pf-item:hover {
+  background-color: transparent;
+}
+
+.object-card-selected .list-pf-item:hover {
+  background-color: transparent;
+}

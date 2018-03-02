@@ -121,9 +121,13 @@ export class ConnectionTableSelectorComponent implements OnInit {
     this.connectionLoadingState = LoadingState.LOADING;
     const self = this;
     this.connectionService
-      .getAllConnections()
+      .getConnections(true, false)
       .subscribe(
-        (conns) => {
+        (connectionSummaries) => {
+          const conns = [];
+          for ( const connectionSummary of connectionSummaries ) {
+            conns.push(connectionSummary.getConnection());
+          }
           self.allConnections = conns;
           self.filteredConnections = conns;
           self.connectionLoadingState = LoadingState.LOADED_VALID;

@@ -11,17 +11,49 @@
                      (onActionSelect)="handleAction($event)">
         </pfng-action>
       </div>
-      <span class="pull-right fa pficon-connected card-action-icon"
-            (click)="onClick(pingEvent)"
+      <span class="pull-left fa fa-check-circle-o fa-2x card-action-icon"
+            style="color:green;"
+            *ngIf="connection.schemaActive"
             data-toggle="tooltip"
             data-placement="right"
-            title="Determine if accessible">
+            title="Active">
       </span>
-      <span class="pull-right fa fa-edit card-action-icon"
+      <span class="pull-left fa fa-times-circle-o fa-2x card-action-icon"
+            style="color:red;"
+            *ngIf="connection.schemaFailed"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Failed to activate">
+      </span>
+      <span class="pull-left fa fa-exclamation-triangle fa-2x card-action-icon"
+            style="color:orange;"
+            *ngIf="connection.schemaInactive"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Inactive">
+      </span>
+      <span class="pull-left fa fa-times-circle-o fa-2x card-action-icon"
+            style="color:red;"
+            *ngIf="connection.schemaNotDeployed"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Inactive">
+      </span>
+      <span class="pull-left fa fa-spinner fa-pulse fa-2x card-action-icon"
+            *ngIf="connection.schemaLoading">
+      </span>
+      <span *ngIf="!connection.schemaLoading"
+            class="pull-right fa fa-edit card-action-icon"
             (click)="onClick(editEvent)"
             data-toggle="tooltip"
             data-placement="right"
-            title="Edit properties">
+            title="Edit">
+      </span>
+      <span *ngIf="connection.schemaLoading"
+            class="pull-right fa fa-edit card-action-icon-disabled"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Edit">
       </span>
     </div>
     <div class="row card-pf-title text-center object-card-title">

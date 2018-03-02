@@ -286,7 +286,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
 
     const self = this;
     this.vdbService
-      .deployVdbForTables(this.tableSelector.getSelectedTables())
+      .deployVdbForConnection(this.tableSelector.getSelectedTables()[0].getConnection())
       .subscribe(
         (wasSuccess) => {
           // Deployment succeeded - wait for source vdb to become active

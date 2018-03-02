@@ -19,13 +19,14 @@ import { Injectable } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
+import { ConnectionSummary } from "@dataservices/shared/connection-summary.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
+import { NamedVdbStatus } from "@dataservices/shared/named-vdb-status.model";
+import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
-import { VirtualAction } from "rxjs/scheduler/VirtualTimeScheduler";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
-import { PublishState } from "@dataservices/shared/publish-state.enum";
 
 @Injectable()
 export class TestDataService {
@@ -82,6 +83,42 @@ export class TestDataService {
   // VDB Status
   // =================================================================
 
+  private static status1 = VdbStatus.create(
+    {
+      "name": TestDataService.accountsVdb.getName(),
+      "deployedName": TestDataService.accountsVdb.getName() + "-vdb.xml",
+      "version": TestDataService.accountsVdb.getVersion(),
+      "active": true,
+      "loading": false,
+      "failed": false,
+      "errors": []
+    }
+  );
+
+  private static status2 = VdbStatus.create(
+    {
+      "name": TestDataService.employeesVdb.getName(),
+      "deployedName": TestDataService.employeesVdb.getName() + "-vdb.xml",
+      "version": TestDataService.employeesVdb.getVersion(),
+      "active": true,
+      "loading": false,
+      "failed": false,
+      "errors": []
+    }
+  );
+
+  private static status3 = VdbStatus.create(
+    {
+      "name": TestDataService.productsVdb.getName(),
+      "deployedName": TestDataService.productsVdb.getName() + "-vdb.xml",
+      "version": TestDataService.productsVdb.getVersion(),
+      "active": true,
+      "loading": false,
+      "failed": false,
+      "errors": []
+    }
+  );
+
   private static vdbStatuses =
     {
       "keng__baseUri": "http://das-beetle-studio.192.168.42.142.nip.io/vdb-builder/v1/",
@@ -125,6 +162,30 @@ export class TestDataService {
         }
       ]
     };
+
+  // =================================================================
+  // NamedVdbStatus
+  // =================================================================
+
+  private static namedStatus1 = NamedVdbStatus.create(
+    {
+      "objectName": "AccountConn",
+      "vdbStatus": TestDataService.status1
+    },
+  );
+
+  private static namedStatus2 = NamedVdbStatus.create(
+    {
+      "objectName": "EmployeeConn",
+      "vdbStatus": TestDataService.status2
+    }
+  );
+
+  private static namedStatus3 = NamedVdbStatus.create(
+    {
+      "objectName": "ProductConn"
+    }
+  );
 
   // =================================================================
   // ServiceCatalog DataSources
@@ -301,6 +362,28 @@ export class TestDataService {
       ]
     }
   );
+
+  // =================================================================
+  // Connection Summaries
+  // =================================================================
+
+  private static connSummariesConnOnly = [
+    TestDataService.createConnectionSummary(TestDataService.conn1, null),
+    TestDataService.createConnectionSummary(TestDataService.conn2, null),
+    TestDataService.createConnectionSummary(TestDataService.conn3, null)
+  ];
+
+  private static connSummariesSchemaStatusOnly = [
+    TestDataService.createConnectionSummary(null, TestDataService.namedStatus1),
+    TestDataService.createConnectionSummary(null, TestDataService.namedStatus2),
+    TestDataService.createConnectionSummary(null, TestDataService.namedStatus3)
+  ];
+
+  private static connSummariesBothConnAndStatus = [
+    TestDataService.createConnectionSummary(TestDataService.conn1, TestDataService.namedStatus1),
+    TestDataService.createConnectionSummary(TestDataService.conn2, TestDataService.namedStatus2),
+    TestDataService.createConnectionSummary(TestDataService.conn3, TestDataService.namedStatus3)
+  ];
 
   // =================================================================
   // SchemaInfos for the connections
@@ -844,6 +927,19 @@ export class TestDataService {
     return catalogSource;
   }
 
+  /**
+   * Create a ConnectionSummary using the specified info
+   * @param {Connection} conn the connection
+   * @param {NamedVdbStatus} status the named vdb status
+   * @returns {ConnectionSummary}
+   */
+  private static createConnectionSummary( conn: Connection, status: NamedVdbStatus ): ConnectionSummary {
+    const connectionSummary = new ConnectionSummary();
+    connectionSummary.setConnection(conn);
+    connectionSummary.setNamedVdbStatus(status);
+    return connectionSummary;
+  }
+
   constructor() {
     this.vdbStatuses = TestDataService.vdbStatuses.vdbs.map(( vdbStatus ) => VdbStatus.create( vdbStatus ) );
     this.virtualizations = [
@@ -953,10 +1049,19 @@ export class TestDataService {
   }
 
   /**
+   * Get connection summaries based on supplied parameters
+   * @param {boolean} includeConnection include connection in the summary
+   * @param {boolean} includeSchemaStatus include schema status in the summary
    * @returns {Connection[]} the array of test connections
    */
-  public getConnections(): Connection[] {
-    return this.connections;
+  public getConnectionSummaries(includeConnection: boolean, includeSchemaStatus: boolean): ConnectionSummary[] {
+    if (includeConnection && includeSchemaStatus) {
+      return TestDataService.connSummariesBothConnAndStatus;
+    } else if (includeConnection && !includeSchemaStatus) {
+      return TestDataService.connSummariesConnOnly;
+    } else if (includeSchemaStatus && !includeConnection) {
+      return TestDataService.connSummariesSchemaStatusOnly;
+    }
   }
 
   /**
