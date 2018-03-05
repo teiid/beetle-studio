@@ -20,7 +20,6 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { SharedModule } from "@shared/shared.module";
-import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { CodemirrorModule } from "ng2-codemirror";
 import { ModalModule } from "ngx-bootstrap";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -32,7 +31,7 @@ describe("DataservicesComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), PatternFlyNgModule,
-                 RouterTestingModule, SharedModule, CodemirrorModule, NgxDatatableModule ],
+                 RouterTestingModule, SharedModule, CodemirrorModule ],
       declarations: [ BasicContentComponent,
                       DataservicesComponent,
                       DataservicesListComponent,

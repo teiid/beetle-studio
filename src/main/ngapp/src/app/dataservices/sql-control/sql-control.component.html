@@ -1,25 +1,13 @@
 <div class="row">
   <div class="col-sm-12">
     <div [ngClass]="quicklook ? 'col-sm-3 view-table-quicklook-div': 'col-sm-3 view-table-full-div'">
-      <ngx-datatable [rows]="serviceViews"
-                     [footerHeight]="0"
-                     [scrollbarV]="false"
-                     [scrollbarH]="true"
-                     [columnMode]="'force'"
-                     [reorderable]="false"
-                     [selectionType]="'single'"
-                     [selected]="selectedViews"
-                     (select)="onViewSelect($event)"
-                     [sorts]="[{prop: 'name', dir: 'asc'}]"
-                     [cssClasses]="customClasses">
-        <ngx-datatable-column name="Dataservice Views"
-                              [prop]="'name'"
-                              [sortable]="true"
-                              [width]="100"
-                              [draggable]="false"
-                              [resizeable]="false">
-        </ngx-datatable-column>
-      </ngx-datatable>
+      <pfng-table
+        [columns]="viewColumns"
+        [config]="viewTableConfig"
+        [dataTableConfig]="ngxViewConfig"
+        (onSelect)="selectionChange($event)"
+        [rows]="serviceViews">
+      </pfng-table>
     </div>
     <div *ngIf="!quicklook" class="col-sm-8 sql-control-editor">
       <codemirror [(ngModel)]="queryText" [config]="config"></codemirror>
@@ -57,14 +45,13 @@
       </div>
     </div>
     <div class="col-sm-12 sql-results-panel" *ngIf="queryRanValid">
-      <ngx-datatable [rows]="rows"
-                     [columns]="columns"
-                     [scrollbarV]="true"
-                     [scrollbarH]="true"
-                     [columnMode]="'force'"
-                     [reorderable]="true"
-                     [cssClasses]='customClasses'>
-      </ngx-datatable>
+      <pfng-table
+        [columns]="columns"
+        [config]="tableConfig"
+        [dataTableConfig]="ngxConfig"
+        (onSelectionChange)="onSchemaSelect($event)"
+        [rows]="rows">
+      </pfng-table>
     </div>
   </div>
 

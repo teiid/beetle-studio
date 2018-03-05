@@ -9,37 +9,20 @@
     </div>
   </div>
   <div class="col-sm-3 connection-selector-container" *ngIf="connectionsLoadedValid">
-    <ngx-datatable [rows]="filteredConnections"
-                   [messages]="connectionsTableMessages"
-                   [footerHeight]="24"
-                   [headerHeight]="60"
-                   [scrollbarV]="false"
-                   [scrollbarH]="true"
-                   [columnMode]="'force'"
-                   [reorderable]="false"
-                   [selectionType]="'single'"
-                   (select)="onSelect($event)"
-                   [sorts]="[{prop: 'keng__id', dir: 'asc'}]"
-                   [cssClasses]="customClasses">
-      <ngx-datatable-column name="Connections"
-                            [prop]="'keng__id'"
-                            [sortable]="true"
-                            [comparator]="connectionComparator"
-                            [width]="300"
-                            [resizeable]="false">
-        <ng-template ngx-datatable-header-template title="Connections" let-value="value">Connections
-          <input type="text"
-                 class="col-sm-12"
-                 style='border:solid 1px #dddddd;padding:8px;margin:0 auto;width:100%;height:24px'
-                 placeholder='Filter connections'
-                 (keyup)='connectionFilterChanged($event)'/>
-        </ng-template>
-        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-          <i class="fa fa-plug list-view-pf-icon-sm"></i>
-          {{ row.keng__id }}
-        </ng-template>
-      </ngx-datatable-column>
-    </ngx-datatable>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="form-group">
+          <pfng-table
+            [columns]="columnDefinitions"
+            [config]="tableConfig"
+            [dataTableConfig]="ngxConfig"
+            (onFilterChange)="filterChanged($event)"
+            (onSelect)="selectionChange($event)"
+            [rows]="filteredConnections">
+          </pfng-table>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- ------------------------------------------- -->
   <!-- Connection Content Area                     -->
@@ -87,3 +70,7 @@
       </div>
   </div>
 </div>
+<ng-template #cellTemplate let-row="row" let-value="value">
+  <i class="fa fa-plug list-view-pf-icon-sm"></i>
+  {{ row.name }}
+</ng-template>

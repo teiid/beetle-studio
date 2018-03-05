@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
-import { EventEmitter } from "@angular/core";
+import { Component, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from "@angular/core";
 import { Output } from "@angular/core";
 import { Input } from "@angular/core";
+import { EventEmitter } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
@@ -29,8 +29,14 @@ import { TableSelector } from "@dataservices/shared/table-selector";
 import { Table } from "@dataservices/shared/table.model";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { LoadingState } from "@shared/loading-state.enum";
+import {
+  Filter,
+  FilterConfig, FilterEvent, FilterField, FilterType, NgxDataTableConfig, TableConfig, TableEvent,
+  ToolbarConfig
+} from "patternfly-ng";
 
 @Component({
+  encapsulation: ViewEncapsulation.None,
   selector: "app-jdbc-table-selector",
   templateUrl: "./jdbc-table-selector.component.html",
   styleUrls: ["./jdbc-table-selector.component.css"]
@@ -38,16 +44,29 @@ import { LoadingState } from "@shared/loading-state.enum";
 
 export class JdbcTableSelectorComponent implements OnInit, TableSelector {
 
+  private static readonly schemaFilterId = "schemeFilter";
+  private static readonly tableFilterId = "tableFilter";
+
+  @ViewChild("schemaCellTemplate") public schemaCellTemplate: TemplateRef< any >;
   @Input() public connection: Connection;
   @Output() public tableSelectionAdded: EventEmitter<Table> = new EventEmitter<Table>();
   @Output() public tableSelectionRemoved: EventEmitter<Table> = new EventEmitter<Table>();
 
-  public selectedAllRows = false;
+  public schemaColumns: any[];
+  public schemaFiltersText = "";
+  public schemaFilterConfig: FilterConfig;
+  public ngxSchemaConfig: NgxDataTableConfig;
+  public schemaTableConfig: TableConfig;
+  public schemaToolbarConfig: ToolbarConfig;
 
-  public readonly customClasses = {
-    sortAscending: "fa fa-sort-asc",
-    sortDescending: "fa fa-sort-desc"
-  };
+  public tableColumns: any[];
+  public tableFiltersText = "";
+  public tableFilterConfig: FilterConfig;
+  public ngxTableConfig: NgxDataTableConfig;
+  public tableTableConfig: TableConfig;
+  public tableToolbarConfig: ToolbarConfig;
+
+  public selectedAllRows = false;
 
   private connectionService: ConnectionService;
   private wizardService: WizardService;
@@ -69,6 +88,88 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   }
 
   public ngOnInit(): void {
+    this.schemaColumns = [
+      {
+        cellTemplate: this.schemaCellTemplate,
+        comparator: "nameComparator",
+        draggable: false,
+        name: "Schemas",
+        prop: "name",
+        resizeable: false,
+        sortable: true,
+        width: "300"
+      }
+    ];
+
+    this.ngxSchemaConfig = {
+      footerHeight: 24,
+      messages: this.schemaTableMessages,
+      selectionType: "single",
+    } as NgxDataTableConfig;
+
+    this.schemaFilterConfig = {
+      fields: [
+        {
+          id: JdbcTableSelectorComponent.schemaFilterId,
+          title: "Name",
+          placeholder: "Filter by name...",
+          type: FilterType.TEXT
+        }
+      ] as FilterField[],
+      appliedFilters: [],
+      resultsCount: this.filteredSchemas.length,
+      totalCount: this.schemas.length
+    } as FilterConfig;
+
+    this.schemaToolbarConfig = {
+      filterConfig: this.schemaFilterConfig
+    } as ToolbarConfig;
+
+    this.schemaTableConfig = {
+      toolbarConfig: this.schemaToolbarConfig
+    } as TableConfig;
+
+    this.tableColumns = [
+      {
+        comparator: "nameComparator",
+        draggable: false,
+        name: "Tables",
+        prop: "name",
+        resizeable: false,
+        sortable: true,
+        width: "300"
+      }
+    ];
+
+    this.ngxTableConfig = {
+      footerHeight: 24,
+      messages: this.tableTableMessages,
+      selectionType: "checkbox",
+    } as NgxDataTableConfig;
+
+    this.tableFilterConfig = {
+      fields: [
+        {
+          id: JdbcTableSelectorComponent.tableFilterId,
+          title: "Name",
+          placeholder: "Filter by name...",
+          type: FilterType.TEXT
+        }
+      ] as FilterField[],
+      appliedFilters: [],
+      resultsCount: this.filteredTables.length,
+      totalCount: this.tables.length
+    } as FilterConfig;
+
+    this.tableToolbarConfig = {
+      filterConfig: this.tableFilterConfig
+    } as ToolbarConfig;
+
+    this.tableTableConfig = {
+      showCheckbox: true,
+      toolbarConfig: this.tableToolbarConfig
+    } as TableConfig;
+
     // Load the schema info for a connection
     this.setConnection(this.connection);
   }
@@ -114,8 +215,10 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     this.tableLoadingState = LoadingState.LOADING;
   }
 
-  // callback from schema selection in datatable
-  public onSchemaSelect( { selected }): void {
+  // callback from schema row selection in table
+  public schemaSelectionChange( $event ): void {
+    const selected: CatalogSchema[] = $event.selected;
+
     // schema table is single select so use first element
     const schema: CatalogSchema = selected[ 0 ];
 
@@ -203,16 +306,16 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   }
 
   /**
-   * Callback when key is pressed in schema column filter.
+   * Callback when schema filters are changed.
    */
-  public schemaFilterChanged( event: any ): void {
-    this.schemaFilter = event.target.value;
+  public schemaFilterChanged( $event: FilterEvent ): void {
+    this.schemaFiltersText = "";
 
-    if ( this.schemaFilter.length !== 0 ) {
-      this.schemaFilter = "^" + this.schemaFilter.replace( "*", ".*" );
-    }
+    $event.appliedFilters.forEach( ( filter ) => {
+      this.schemaFiltersText += filter.field.title + " : " + filter.value + "\n";
+    } );
 
-    this.filteredSchemas = this.schemas.filter( ( schema ) => schema.getDisplayName().match( this.schemaFilter ) != null );
+    this.applySchemaFilters( $event.appliedFilters );
   }
 
   public get schemaTableMessages(): { emptyMessage: string; totalMessage: string | string } {
@@ -313,28 +416,14 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
   /**
    * Callback when key is pressed in table column filter.
    */
-  public tableFilterChanged( event: any ): void {
-    this.tableFilter = event.target.value;
+  public tableFilterChanged( $event ): void {
+    this.tableFiltersText = "";
 
-    if ( this.tableFilter.length !== 0 ) {
-      this.tableFilter = "^" + this.tableFilter.replace( "*", ".*" );
-    }
+    $event.appliedFilters.forEach( ( filter ) => {
+      this.tableFiltersText += filter.field.title + " : " + filter.value + "\n";
+    } );
 
-    this.filteredTables = this.tables.filter( ( table ) => table.getName().match( this.tableFilter ) != null );
-
-    // need to set column header checkbox state
-    let enable = true;
-
-    for ( const filteredTable of this.filteredTables ) {
-      if ( !filteredTable.selected ) {
-        enable = false;
-        break;
-      }
-    }
-
-    if ( this.selectedAllRows !== enable ) {
-      this.selectedAllRows = enable;
-    }
+    this.applyTableFilters( $event.appliedFilters );
   }
 
   /*
@@ -367,46 +456,28 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
     return this.tables.filter( ( table ) => table.selected );
   }
 
-  public selectAllTables(): void {
-    this.selectedAllRows = !this.selectedAllRows;
-    const self = this;
-
-    this.filteredTables.forEach( ( table ) => {
-      if ( table.selected !== self.selectedAllRows ) {
-        self.selectedTableChanged( table );
-      }
-    } );
-  }
-
   /*
    * Handler for changes in table selection
    */
-  public selectedTableChanged( table: Table ): void {
-    table.selected = !table.selected;
+  public selectedTableChanged( $event: TableEvent ): void {
+    console.error( $event );
+    const table: Table = $event.row;
 
-    if ( table.selected ) {
-      this.tableSelectionAdded.emit(table);
-
-      // check column header checkbox if all are selected
-      if ( !this.selectedAllRows ) {
-        let selectAll = true;
-
-        for ( const tbl of this.filteredTables ) {
-          if ( !tbl.selected ) {
-            selectAll = false;
-          }
-        }
-
-        if ( selectAll ) {
-          this.selectedAllRows = true;
-        }
+    if ( table ) {
+      if ( table.selected ) {
+        this.tableSelectionAdded.emit( table );
+      } else {
+        this.tableSelectionRemoved.emit( table );
       }
     } else {
-      this.tableSelectionRemoved.emit(table);
-
-      // uncheck column header checkbox if needed
-      if ( this.selectedAllRows ) {
-        this.selectedAllRows = false;
+      if ( $event.selectedRows.length === 0 ) {
+        this.tables.forEach( ( tbl ) => {
+          this.tableSelectionRemoved.emit( tbl );
+        } );
+      } else {
+        this.tables.forEach( ( tbl ) => {
+          this.tableSelectionAdded.emit( tbl );
+        } );
       }
     }
   }
@@ -442,6 +513,38 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
         break;
       }
     }
+  }
+
+  private applySchemaFilters( filters: Filter[] ): void {
+    this.filteredSchemas = [];
+
+    if ( filters && filters.length > 0 ) {
+      this.schemas.forEach( ( item ) => {
+        if ( this.matchesFilters( item, filters ) ) {
+          this.filteredSchemas.push( item );
+        }
+      } );
+    } else {
+      this.filteredSchemas = this.schemas;
+    }
+
+    this.schemaToolbarConfig.filterConfig.resultsCount = this.filteredSchemas.length;
+  }
+
+  private applyTableFilters( filters: Filter[] ): void {
+    this.filteredTables = [];
+
+    if ( filters && filters.length > 0 ) {
+      this.tables.forEach( ( item ) => {
+        if ( this.matchesFilters( item, filters ) ) {
+          this.filteredTables.push( item );
+        }
+      } );
+    } else {
+      this.filteredTables = this.tables;
+    }
+
+    this.tableToolbarConfig.filterConfig.resultsCount = this.filteredTables.length;
   }
 
   private isSelected( selectedTables: Table[],
@@ -525,6 +628,35 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
           self.tableLoadingState = LoadingState.LOADED_INVALID;
         }
       );
+  }
+
+  private matchesFilter( item: any,
+                         filter: Filter ): boolean {
+    let matches = true;
+
+    if ( filter.field.id === JdbcTableSelectorComponent.schemaFilterId ) {
+      const pattern = "^" + filter.value.replace( "*", ".*" );
+      matches = item.getDisplayName().match( pattern ) !== null;
+    } else if ( filter.field.id === JdbcTableSelectorComponent.tableFilterId ) {
+      const pattern = "^" + filter.value.replace( "*", ".*" );
+      matches = item.name.match( pattern ) !== null;
+    }
+
+    return matches;
+  }
+
+  private matchesFilters( item: any,
+                          filters: Filter[] ): boolean {
+    let matches = true;
+
+    filters.forEach( ( filter ) => {
+      if ( !this.matchesFilter( item, filter ) ) {
+        matches = false;
+        return matches;
+      }
+    });
+
+    return matches;
   }
 
   private setInitialTableSelections(): void {

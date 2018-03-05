@@ -18,7 +18,6 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
-import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddDataserviceWizardComponent } from "./add-dataservice-wizard.component";
 
@@ -28,7 +27,7 @@ describe("AddDataserviceWizardComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule, NgxDatatableModule ],
+      imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule ],
       declarations: [ AddDataserviceWizardComponent, ConnectionTableSelectorComponent, JdbcTableSelectorComponent,
                       PropertyFormComponent, PropertyFormPropertyComponent, SelectedTableComponent ],
       providers: [

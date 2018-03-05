@@ -43,22 +43,9 @@ export class SelectedTableComponent implements OnInit {
 
   public ngOnInit(): void {
     this.columnDefinitions = [
-      {
-        draggable: false,
-        prop: "name",
-        name: "Name",
-        resizeable: false
-      }, {
-        draggable: false,
-        prop: "type",
-        name: "Type",
-        resizeable: false
-      }, {
-        draggable: false,
-        prop: "size",
-        name: "Size",
-        resizeable: false
-      }
+      { prop: "name" },
+      { prop: "type" },
+      { prop: "size" }
     ];
 
     // TODO: replace with call to get the column metadata

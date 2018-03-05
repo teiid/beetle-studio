@@ -4,6 +4,7 @@
 @import "~codemirror/theme/mdn-like.css";
 @import "~patternfly/dist/css/patternfly.css";
 @import "~patternfly/dist/css/patternfly-additions.css";
+@import "~patternfly-ng/dist/css/patternfly-ng.css";
 
 :root {
   --alert-color: darkred;
@@ -144,15 +145,16 @@
 
 .object-card-selected .card-pf .card-pf-body,
 .object-card .card-pf .card-pf-body {
-  margin: 0;
+  margin: 20px;
   padding: 0;
 }
 
 .object-card-selected .card-pf .card-pf-footer,
 .object-card .card-pf .card-pf-footer {
   background-color: var(--card-footer-background-color);
+  margin: 0 !important;
   min-height: 20px;
-  padding: 4px 0px 4px 0px;
+  padding: 4px 0 4px 0;
 }
 
 .object-card-selected .card-pf .card-pf-heading,
@@ -268,62 +270,6 @@
 
 .CodeMirror {
   height: 200px;
-}
-
-/******************************************************************/
-/*                    ngx-datatable Types                         */
-/******************************************************************/
-
-.ngx-datatable {
-  position: absolute; top:0;left:0;right:0;bottom:0;
-}
-
-.datatable-header {
-  color: white;
-  background-color: #bbbbbb;
-  text-align: left;
-}
-
-.datatable-header-cell {
-  vertical-align: bottom;
-  border-bottom: 2px solid #ddd;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-  padding: 8px;
-  line-height: 1.42857143;
-  font-weight: bold;
-  color: rgb(51, 51, 51);
-}
-
-.datatable-body-row {
-  border-bottom: 1px solid #d8d8d8;
-}
-
-.datatable-row-even {
-  background-color: white;
-}
-
-.datatable-row-even:hover {
-  background-color: #def3ff;
-}
-
-.datatable-row-odd {
-  background-color: #f2f2f2;
-}
-
-.datatable-row-odd:hover {
-  background-color: #def3ff;
-}
-
-.datatable-body-cell {
-  padding: 0.25em 0.25em 0.25em 1.0em;
-  border-left: 1px solid #d8d8d8;
-  border-right: 1px solid #d8d8d8;
-}
-
-.datatable-body-row.active .datatable-row-group {
-  background-color: #0088ce !important;
-  color: white;
 }
 
 /**************************************************************/

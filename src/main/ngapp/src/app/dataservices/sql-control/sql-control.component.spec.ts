@@ -11,8 +11,8 @@ import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { CodemirrorModule } from "ng2-codemirror";
+import { PatternFlyNgModule } from "patternfly-ng";
 import { SqlControlComponent } from "./sql-control.component";
 
 describe("SqlControlComponent", () => {
@@ -21,7 +21,7 @@ describe("SqlControlComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, HttpModule, NgxDatatableModule, CodemirrorModule  ],
+      imports: [ FormsModule, HttpModule, CodemirrorModule, PatternFlyNgModule  ],
       declarations: [ SqlControlComponent ],
       providers: [
         AppSettingsService,

@@ -20,7 +20,6 @@ import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
-import { NewConnection } from "@connections/shared/new-connection.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { TemplateDefinition } from "@connections/shared/template-definition.model";
 import { AppSettingsService } from "@core/app-settings.service";
