@@ -46,5 +46,4 @@ export class AboutService extends ApiService {
       } )
       .catch( ( error ) => this.handleError( error ) );
   }
-
 }

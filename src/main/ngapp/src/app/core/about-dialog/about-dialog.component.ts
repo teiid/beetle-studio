@@ -15,9 +15,13 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, Output, ViewEncapsulation } from "@angular/core";
-import { AboutEvent } from "@core/about-dialog/about-event";
-import { About } from "@core/about-dialog/about.model";
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
+import { AboutEvent } from "app/core/about-dialog/about-event";
+import { About } from "app/core/about-dialog/about.model";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { AboutModalConfig } from "patternfly-ng/modal";
+import { AboutService } from "@core/about-dialog/about.service";
+import { LoggerService } from "@core/logger.service";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -25,7 +29,7 @@ import { About } from "@core/about-dialog/about.model";
   templateUrl: "./about-dialog.component.html",
   styleUrls: ["./about-dialog.component.css"]
 })
-export class AboutDialogComponent {
+export class AboutDialogComponent implements OnInit {
 
   /**
    * The Event is emitted when modal is closed
@@ -37,11 +41,43 @@ export class AboutDialogComponent {
    */
   @Input() public info: About;
 
+  private aboutConfig: AboutModalConfig;
+  private aboutService: AboutService;
+  private logger: LoggerService;
+
   /**
    * The default contructor
    */
-  constructor() {
-    // nothing to do
+  constructor(private modalService: BsModalService,
+              logger: LoggerService,
+              aboutService: AboutService) {
+    this.aboutService = aboutService;
+    this.logger = logger;
+  }
+
+  public ngOnInit(): void {
+
+    const self = this;
+
+    this.aboutService.getAboutInformation().subscribe(
+      ( result ) => {
+        this.aboutConfig = {
+          additionalInfo: result.appDescription,
+          copyright: result.copyright,
+          logoImageAlt: this.appImageAlt,
+          logoImageSrc: this.appImageSrc,
+          title: result.appTitle,
+          productInfo: [
+            { name: "Version", value: result.appVersion },
+            { name: "Server Name", value: "Localhost_update_me" },
+            { name: "User Name", value: "admin_update_me" },
+            { name: "User Role", value: "Administrator_update_me" }]
+        } as AboutModalConfig;
+      },
+      ( error ) => {
+        this.logger.error( error, "Error getting about information.");
+      }
+    );
   }
 
   public get appImageAlt(): string {
