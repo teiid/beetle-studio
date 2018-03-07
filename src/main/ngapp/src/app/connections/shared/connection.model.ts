@@ -20,11 +20,14 @@ import { SortDirection } from "@shared/sort-direction.enum";
 
 export class Connection implements Identifiable< string > {
 
+  public static descriptionProp = "description";
+  public static serviceCatalogSourceProp = "serviceCatalogSource";
+
   private keng__id: string;
   private dv__jndiName: string;
   private dv__driverName: string;
   private dv__type: boolean;
-  private keng__properties: Map< string, string > = new Map< string, string >();
+  private keng__properties: object[] = [];
 
   /**
    * @param {Object} json the JSON representation of a Connection
@@ -80,11 +83,24 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
+   * @returns {string} the connection name
+   */
+  public get name(): string {
+    return this.keng__id;
+  }
+
+  /**
    * @returns {string} the connection description
    */
   public getDescription(): string {
-    // TODO do connections have a description
-    return "This is a connection description. So if you're looking for the description you found it.";
+    let description: string = null;
+    for (const propMap of this.keng__properties) {
+      if (propMap["name"] === Connection.descriptionProp) {
+        description = propMap["value"];
+        break;
+      }
+    }
+    return description;
   }
 
   /**
@@ -109,14 +125,6 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
-   * @returns {string} the service catalog source name of this connection
-   */
-  public getServiceCatalogSourceName(): string {
-    // TODO: finish implementing getServiceCatalogSourceName()
-    return "TBD";
-  }
-
-  /**
    * @returns {boolean} the jdbc status (true == jdbc)
    */
   public isJdbc(): boolean {
@@ -124,17 +132,17 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
-   * @returns {string} the connection name
+   * @returns {string} the service catalog source name
    */
-  public get name(): string {
-    return this.keng__id;
-  }
-
-  /**
-   * @returns {Map<string, string>} the connection properties (never null)
-   */
-  public getProperties(): Map< string, string > {
-    return this.keng__properties;
+  public getServiceCatalogSourceName(): string {
+    let serviceCatalogName: string = null;
+    for (const propMap of this.keng__properties) {
+      if (propMap["name"] === Connection.serviceCatalogSourceProp) {
+        serviceCatalogName = propMap["value"];
+        break;
+      }
+    }
+    return serviceCatalogName;
   }
 
   /**
@@ -166,10 +174,18 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
-   * @param {Map<string, string>} props the connection properties (optional)
+   * @param {string} serviceCatalog the service catalog source name
    */
-  public setProperties( props?: Map< string, string > ): void {
-    this.keng__properties = props ? props : new Map< string, string >();
+  public setServiceCatalogSourceName( serviceCatalog: string ): void {
+    interface IProp {
+      name?: string;
+      value?: string;
+    }
+    const prop: IProp = {};
+    prop.name = Connection.serviceCatalogSourceProp;
+    prop.value = serviceCatalog;
+
+    this.keng__properties.push(prop);
   }
 
   /**

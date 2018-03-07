@@ -4,14 +4,14 @@
              (onNext)="nextClicked($event)"
              (onStepChange)="stepChanged($event)">
   <!-- ------------------------- -->
-  <!-- Step 1 : Basic Properties -->
+  <!-- Step 1 : Connection Types -->
   <!-- ------------------------- -->
   <pfng-wizard-step [config]="step1Config">
-    <div *ngIf="templatesLoading">
+    <div *ngIf="connectionTypesLoading">
       <div class="spinner spinner-lg blank-slate-pf-icon"></div>
     </div>
-    <!-- Connection Templates failed to load -->
-    <div class="card-pf card-pf-accented card-pf-error" *ngIf="!templatesLoading && !templatesLoadSuccess">
+    <!-- Connection Types failed to load -->
+    <div class="card-pf card-pf-accented card-pf-error" *ngIf="!connectionTypesLoading && !connectionTypesLoadSuccess">
       <div class="card-pf-heading">
         <h2 class="card-pf-title">
           <span class="fa fa-fw fa-exclamation"></span>
@@ -19,120 +19,106 @@
         </h2>
       </div>
       <div class="card-pf-body">
-        <p i18n="@@addConnectionWizard.couldNotLoadConnections">
+        <p i18n="@@addConnectionWizard.couldNotLoadConnectionTypes">
           Could not load the connection types.  Please Try relaunching the wizard or check the console log.
         </p>
       </div>
     </div>
-    <h3 *ngIf="!templatesLoading && templatesLoadSuccess"><i>{{ step1InstructionMessage }}</i></h3>
-    <form [formGroup]=basicPropertyForm class="form-horizontal" *ngIf="!templatesLoading && templatesLoadSuccess">
-      <div [ngClass]="driverValid ? 'form-group' : 'form-group has-error'">
-        <label class="col-sm-2 control-label">Connection Type</label>
-        <div class="col-sm-5">
-          <select class="form-control" formControlName="driver" title="">
-            <option value="" selected hidden>-- Select a Connection Type ---</option>
-            <option *ngFor="let driver of templateNames" [value]="driver">{{ driver }}</option>
-          </select>
-          <div class="help-block" *ngIf="!driverValid">{{ getBasicPropertyErrorMessage("driver") }}</div>
-        </div>
-      </div>
-
-      <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
-        <label class="col-sm-2 control-label">Name</label>
-        <div class="col-sm-5">
-          <input class="form-control" formControlName="name" title="">
-          <div class="help-block" *ngIf="!nameValid">{{ getBasicPropertyErrorMessage("name") }}</div>
-        </div>
-      </div>
-      <div [ngClass]="jndiValid ? 'form-group' : 'form-group has-error'">
-        <label class="col-sm-2 control-label">JNDI Identifier</label>
-        <div class="col-sm-5">
-          <input class="form-control" formControlName="jndi" title="">
-          <div class="help-block" *ngIf="!jndiValid">{{ getBasicPropertyErrorMessage("jndi") }}</div>
-        </div>
-      </div>
-    </form>
+    <h3 *ngIf="!connectionTypesLoading && connectionTypesLoadSuccess"><i>{{ step1InstructionMessage }}</i></h3>
+    <!-- Connection Type Cards -->
+    <app-connection-type-cards [connectionTypes]="connectionTypes" [selectedConnectionTypes]="selectedConnectionTypes"
+                               (connectionTypeSelected)="onConnectionTypeSelected($event)"
+                               (connectionTypeDeselected)="onConnectionTypeDeselected($event)"></app-connection-type-cards>
   </pfng-wizard-step>
-  <!-- ---------------------------- -->
-  <!-- Step 2 : Advanced Properties -->
-  <!-- ---------------------------- -->
+  <!-- ------------------------------------------------ -->
+  <!-- Step 2 : Connection Definition and Create Status -->
+  <!-- ------------------------------------------------ -->
   <pfng-wizard-step [config]="step2Config">
-    <div *ngIf="detailPropertiesLoading">
-      <div class="spinner spinner-lg blank-slate-pf-icon"></div>
-    </div>
-    <!-- Detail properties failed to load -->
-    <div class="card-pf card-pf-accented card-pf-error" *ngIf="!detailPropertiesLoading && !detailPropertiesLoadSuccess">
-      <div class="card-pf-heading">
-        <h2 class="card-pf-title">
-          <span class="fa fa-fw fa-exclamation"></span>
-          <span i18n="@@addConnectionWizard.step2InitError">Step Initialization Error</span>
-        </h2>
+    <!-- Step 2A: Review -->
+    <pfng-wizard-substep [config]="step2aConfig">
+      <!-- spinner while service catalog sources are 'loading' -->
+      <div *ngIf="serviceCatalogSourcesLoading">
+        <div class="spinner spinner-lg blank-slate-pf-icon"></div>
       </div>
-      <div class="card-pf-body">
-        <p i18n="@@addConnectionWizard.couldNotLoadConnections">
-          Could not load the detail properties.  Please Try relaunching the wizard or check the console log.
-        </p>
+      <div class="col-sm-12" *ngIf="!serviceCatalogSourcesLoading && !hasServiceCatalogSources">
+        <pfng-inline-notification
+          [header]="noSourcesNotificationHeader"
+          [message]="noSourcesNotificationMessage"
+          [dismissable]="noSourcesNotificationDismissable"
+          [type]="noSourcesNotificationType">
+        </pfng-inline-notification>
       </div>
-    </div>
-    <h3 *ngIf="!detailPropertiesLoading && detailPropertiesLoadSuccess"><i>{{ step2InstructionMessage }}</i></h3>
-    <div class="add-connection-form row" *ngIf="!detailPropertiesLoading && detailPropertiesLoadSuccess">
-      <app-property-form [formProperties]="getPropertyDefinitions()" (formInitialized)="onDetailPropertyInit($event)"
-                         (formChanged)="onDetailPropertyChanged($event)"></app-property-form>
-    </div>
-  </pfng-wizard-step>
-  <!-- -------------------------- -->
-  <!-- Step 3 : Review and Create -->
-  <!-- -------------------------- -->
-  <pfng-wizard-step [config]="step3Config">
-    <!-- Step 3A: Review -->
-    <pfng-wizard-substep [config]="step3aConfig">
-      <h3><i>{{ step3InstructionMessage }}</i></h3>
-      <h4>Connection Properties:</h4>
-      <form class="form-horizontal">
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Connection Type:</label>
-          <label class="col-sm-10">{{ connectionDriverName }}</label>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Name:</label>
-          <label class="col-sm-10">{{ connectionName }}</label>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-2 control-label">JNDI Identifier:</label>
-          <label class="col-sm-10">{{ connectionJndiName }}</label>
-        </div>
-      </form>
-      <h4>Connection Detail Required Properties:</h4>
-      <form class="form-horizontal">
-        <div *ngFor="let prop of requiredPropertyValues">
-          <div class="form-group">
-            <label class="col-sm-2 control-label">{{ prop[0] }}:</label>
-            <label class="col-sm-10">{{ prop[1] }}</label>
+      <div class="col-md-12" *ngIf="!serviceCatalogSourcesLoading && serviceCatalogSourcesLoadSuccess">
+        <h3 *ngIf="hasServiceCatalogSources"><i>{{ step2InstructionMessage }}</i></h3>
+        <form [formGroup]=connectionBasicPropertyForm class="form-horizontal">
+          <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'" *ngIf="hasServiceCatalogSources">
+            <label class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-5">
+              <input class="form-control" formControlName="name" title="">
+              <div class="help-block" *ngIf="!nameValid">{{ nameValidationError }}</div>
+            </div>
           </div>
-        </div>
-      </form>
+          <div [ngClass]="'form-group'" *ngIf="!hasServiceCatalogSources">
+            <label class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-5">
+              <input class="form-control" formControlName="name" title="" disabled="true">
+            </div>
+          </div>
+          <div [ngClass]="'form-group'">
+            <label class="col-sm-2 control-label">Description</label>
+            <div class="col-sm-5" *ngIf="hasServiceCatalogSources">
+              <textarea class="form-control" rows="2" maxlength="256" formControlName="description"></textarea>
+            </div>
+            <div class="col-sm-5" *ngIf="!hasServiceCatalogSources">
+              <textarea class="form-control" rows="2" maxlength="256" formControlName="description" disabled="true"></textarea>
+            </div>
+          </div>
+          <div [ngClass]="hasSelectedServiceCatalogSource ? 'form-group' : 'form-group has-error'">
+            <label class="col-sm-2 control-label">ServiceCatalog Source</label>
+            <div class="col-sm-5" *ngIf="hasServiceCatalogSources">
+              <select (change)="selectedServiceCatalogSourceChanged($event.target.value)">
+                <option disabled
+                        [ngValue]="emptyServiceCatalogSource">{{ emptyServiceCatalogSource.getId() }}</option>
+                <option *ngFor="let catalogSource of serviceCatalogSources"
+                        [ngValue]="catalogSource"
+                        [selected]="catalogSource.getId() == selectedServiceCatalogSource.getId()">{{catalogSource.getId()}}</option>
+              </select>
+              <div class="help-block" *ngIf="!hasSelectedServiceCatalogSource">{{ selectServiceCatalogSourceErrorMsg }}</div>
+            </div>
+            <div class="col-sm-5" *ngIf="!hasServiceCatalogSources">
+              <select class="form-control" formControlName="serviceCatalogSource" title="" disabled>
+                <option value="" selected hidden>-- No Sources Found ---</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
     </pfng-wizard-substep>
-    <!-- Step 3B: Create -->
-    <pfng-wizard-substep [config]="step3bConfig" (onShow)="createConnection()">
+    <!-- Step 2B: Status -->
+    <pfng-wizard-substep [config]="step2bConfig" (onShow)="createConnection()">
       <div class="wizard-pf-contents">
         <!-- In progress -->
         <div class="wizard-pf-process blank-slate-pf" *ngIf="!createComplete">
           <div class="spinner spinner-lg blank-slate-pf-icon"></div>
-          <h3 class="blank-slate-pf-main-action">Creation in progress</h3>
-          <p class="blank-slate-pf-secondary-action">The connection is being created. </p>
+          <h3 class="blank-slate-pf-main-action">{{ finalPageTitle }}</h3>
+          <p class="blank-slate-pf-secondary-action">{{ finalPageMessage }}</p>
         </div>
         <!-- Create Successful -->
         <div class="wizard-pf-complete blank-slate-pf" *ngIf="createComplete && createSuccessful">
           <div class="wizard-pf-success-icon"><span class="glyphicon glyphicon-ok-circle"></span></div>
-          <h3 class="blank-slate-pf-main-action">Creation was successful</h3>
-          <p class="blank-slate-pf-secondary-action">The connection was created successfully. Click on the button to see all connections.</p>
+          <h3 class="blank-slate-pf-main-action">{{ finalPageTitle }}</h3>
+          <p class="blank-slate-pf-secondary-action">{{ finalPageMessage }}</p>
           <a class="btn btn-lg btn-primary" [routerLink]="[connectionSummaryLink]">View All Connections</a>
         </div>
         <!-- Create Failed -->
         <div class="wizard-pf-complete blank-slate-pf" *ngIf="createComplete && !createSuccessful">
           <div class="wizard-pf-failed-icon"><span class="glyphicon glyphicon-remove-circle"></span></div>
-          <h3 class="blank-slate-pf-main-action">Creation failed</h3>
-          <p class="blank-slate-pf-secondary-action">The connection creation failed.  Correct any properties and retry.</p>
+          <h3 class="blank-slate-pf-main-action">{{ finalPageTitle }}</h3>
+          <div class="blank-slate-pf-secondary-action">
+            {{ finalPageMessage }}
+            <br>
+            <div style="font-style: italic;">{{ errorDetails }}</div>
+          </div>
         </div>
       </div>
     </pfng-wizard-substep>

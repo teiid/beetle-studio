@@ -1,0 +1,3 @@
+.object-card-selected .card-pf .card-pf-heading {
+  border-bottom: var(--card-border-width) var(--card-border-style) var(--card-border-color) !important;
+}

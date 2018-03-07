@@ -1,0 +1,7 @@
+<div class="row-cards-pf">
+  <div class="col-xs-12 col-sm-2 col-md-2" *ngFor="let connType of connectionTypes">
+    <app-connection-type-card [connectionType]="connType"
+                              [selectedConnectionTypes]="selectedConnectionTypes"
+                              (selectEvent)="onSelectEvent($event)"></app-connection-type-card>
+  </div>
+</div>

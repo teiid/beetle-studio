@@ -17,11 +17,13 @@
 
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
+import { ConnectionType } from "@connections/shared/connection-type.model";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
+import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { TemplateDefinition } from "@connections/shared/template-definition.model";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
@@ -34,11 +36,41 @@ import { Observable } from "rxjs/Observable";
 @Injectable()
 export class ConnectionService extends ApiService {
 
+  private static readonly nameValidationUrl = environment.komodoWorkspaceUrl
+    + ConnectionsConstants.connectionsRootPath
+    + "/nameValidation/";
+
   private http: Http;
 
   constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
     super( appSettings, logger  );
     this.http = http;
+  }
+
+  /**
+   * Validates the specified connection name. If the name contains valid characters and the name is unique, the
+   * service returns 'null'. Otherwise, a 'string' containing an error message is returned.
+   *
+   * @param {string} name the connection name
+   * @returns {Observable<String>}
+   */
+  public isValidName( name: string ): Observable< string > {
+    if ( !name || name.length === 0 ) {
+      return Observable.of( "Connection name cannot be empty" );
+    }
+
+    const url = ConnectionService.nameValidationUrl + encodeURIComponent( name );
+
+    return this.http.get( url, this.getAuthRequestOptions() )
+      .map( ( response ) => {
+        if ( response.ok ) {
+          if ( response.text() ) {
+            return response.text();
+          }
+
+          return "";
+        } } )
+      .catch( ( error ) => this.handleError( error ) );
   }
 
   /**
@@ -51,21 +83,6 @@ export class ConnectionService extends ApiService {
       .map((response) => {
         const connections = response.json();
         return connections.map((connection) => Connection.create( connection ));
-      })
-      .catch( ( error ) => this.handleError( error ) );
-  }
-
-  /**
-   * Create a connection via the komodo rest interface
-   * @param {NewConnection} connection
-   * @returns {Observable<boolean>}
-   */
-  public createConnection(connection: NewConnection): Observable<boolean> {
-    return this.http
-      .post(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath + "/" + connection.getName(),
-             connection, this.getAuthRequestOptions())
-      .map((response) => {
-        return response.ok;
       })
       .catch( ( error ) => this.handleError( error ) );
   }
@@ -87,6 +104,21 @@ export class ConnectionService extends ApiService {
   }
 
   /**
+   * Bind a service catalog source via the komodo rest interface
+   * @param {string} serviceCatalogSourceName
+   * @returns {Observable<boolean>}
+   */
+  public bindServiceCatalogSource(serviceCatalogSourceName: string): Observable<boolean> {
+    return this.http
+      .post(environment.komodoTeiidUrl + ConnectionsConstants.serviceCatalogSourcesRootPath,
+        { name: serviceCatalogSourceName}, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
    * Delete a connection via the komodo rest interface
    * @param {string} connectionId
    * @returns {Observable<boolean>}
@@ -97,6 +129,47 @@ export class ConnectionService extends ApiService {
                this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Get the connection types from the komodo rest interface
+   * @returns {ConnectionType[]}
+   */
+  public getConnectionTypes(): ConnectionType[] {
+    const connectionTypes: ConnectionType[] = [];
+    const connType1: ConnectionType = new ConnectionType();
+    connType1.setName(ConnectionsConstants.connectionType_postgresql);
+    connType1.setDescription(ConnectionsConstants.connectionTypeDescription_postgresql);
+    const connType2: ConnectionType = new ConnectionType();
+    connType2.setName(ConnectionsConstants.connectionType_mysql);
+    connType2.setDescription(ConnectionsConstants.connectionTypeDescription_mysql);
+    // const connType3: ConnectionType = new ConnectionType();
+    // connType3.setName(ConnectionsConstants.connectionType_mongodb);
+    // connType3.setDescription(ConnectionsConstants.connectionTypeDescription_mongodb);
+    // const connType4: ConnectionType = new ConnectionType();
+    // connType4.setName(ConnectionsConstants.connectionType_mariadb);
+    // connType4.setDescription(ConnectionsConstants.connectionTypeDescription_mariadb);
+
+    connectionTypes.push(connType1);
+    connectionTypes.push(connType2);
+    // connectionTypes.push(connType3);
+    // connectionTypes.push(connType4);
+
+    return connectionTypes;
+  }
+
+  /**
+   * Get the available ServiceCatalogSources from the komodo rest interface
+   * @returns {Observable<ServiceCatalogSource[]>}
+   */
+  public getAllServiceCatalogSources(): Observable<ServiceCatalogSource[]> {
+    return this.http
+      .get(environment.komodoTeiidUrl + ConnectionsConstants.serviceCatalogSourcesRootPath, this.getAuthRequestOptions())
+      .map((response) => {
+        const catalogSources = response.json();
+        return catalogSources.map((catSource) => ServiceCatalogSource.create( catSource ));
       })
       .catch( ( error ) => this.handleError( error ) );
   }
@@ -171,14 +244,33 @@ export class ConnectionService extends ApiService {
   }
 
   /**
-   * Create a connection and deploy it to server via the komodo rest interface
-   * @param {NewConnection} connection
+   * Create a connection in the Komodo repo - also binds the specified serviceCatalogSource
+   * @param {NewConnection} connection the connection object
    * @returns {Observable<boolean>}
    */
-  public createAndDeployConnection(connection: NewConnection): Observable<boolean> {
-    // Chain the individual calls together in series to build the DataService
-    return this.createConnection(connection)
-      .flatMap((res) => this.deployConnection(connection.getName()));
+  public createAndBindConnection(connection: NewConnection): Observable<boolean> {
+    return this.http
+      .post(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath  + "/" + connection.getName(),
+        connection, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Update a connection in the Komodo repo - also binds the specified serviceCatalogSource.
+   * @param {NewConnection} connection the connection object
+   * @returns {Observable<boolean>}
+   */
+  public updateAndBindConnection(connection: NewConnection): Observable<boolean> {
+    return this.http
+      .put(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath  + "/" + connection.getName(),
+        connection, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
   }
 
 }
