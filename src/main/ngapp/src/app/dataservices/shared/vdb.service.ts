@@ -309,20 +309,11 @@ export class VdbService extends ApiService {
     vdbModel.setDataPath(vdbPath + "/" + connName);
     vdbModel.setModelType("PHYSICAL");
 
-    // TODO: Narrow the filters.  Currently fetches entire schema.  (Schema generation will be changing anyway)
-    const catNamePattern = "%";
-    const schemaNamePattern = "%";
-    const tableNamePattern = "%";
-
     // Set the importer properties for the physical model
     const props: NameValue[] = [];
     props.push(new NameValue("importer.TableTypes", "TABLE"));
-    props.push(new NameValue("importer.UseFullSchemaName", "false"));
-    props.push(new NameValue("importer.UseQualifiedName", "false"));
+    props.push(new NameValue("importer.UseQualifiedName", "true"));
     props.push(new NameValue("importer.UseCatalogName", "false"));
-    props.push(new NameValue("importer.catalog", catNamePattern));
-    props.push(new NameValue("importer.schemaPattern", schemaNamePattern));
-    props.push(new NameValue("importer.tableNamePattern", tableNamePattern));
     vdbModel.setProperties(props);
 
     // VdbModelSource to create
