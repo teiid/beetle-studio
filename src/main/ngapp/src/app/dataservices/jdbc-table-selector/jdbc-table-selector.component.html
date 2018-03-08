@@ -17,38 +17,16 @@
   </div>
 </div>
 <div class="list-div col-sm-6 jdbc-column-results" *ngIf="schemasLoadedValidNotEmpty">
-    <ngx-datatable [rows]="filteredSchemas"
-                   [messages]="schemaTableMessages"
-                   [footerHeight]="24"
-                   [headerHeight]="60"
-                   [scrollbarV]="false"
-                   [scrollbarH]="true"
-                   [columnMode]="'force'"
-                   [reorderable]="false"
-                   [selectionType]="'single'"
-                   [sorts]="[{prop: 'name', dir: 'asc'}]"
-                   (select)="onSchemaSelect($event)"
-                   [cssClasses]="customClasses">
-      <ngx-datatable-column name="Schemas"
-                            [prop]="'name'"
-                            [sortable]="true"
-                            [comparator]="nameComparator"
-                            [canAutoResize]="true"
-                            [width]="300"
-                            [draggable]="false"
-                            [resizeable]="false">
-        <ng-template ngx-datatable-header-template title="Schemas" let-value="value">Schemas
-          <input type="text"
-                 class="col-sm-12"
-                 style='border:solid 1px #dddddd;padding:8px;margin:0 auto;width:100%;height:24px'
-                 placeholder='Filter schemas'
-                 (keyup)='schemaFilterChanged($event)'/>
-        </ng-template>
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.getDisplayName() }}
-        </ng-template>
-      </ngx-datatable-column>
-    </ngx-datatable>
+  <div class="form-group">
+    <pfng-table
+      [columns]="schemaColumns"
+      [config]="schemaTableConfig"
+      [dataTableConfig]="ngxSchemaConfig"
+      (onFilterChange)="schemaFilterChanged($event)"
+      (onSelect)="schemaSelectionChange($event)"
+      [rows]="filteredSchemas">
+    </pfng-table>
+  </div>
 </div>
 <!-- ------------- -->
 <!--  Tables List  -->
@@ -69,36 +47,15 @@
   </div>
 </div>
 <div class = "list-div col-sm-6 jdbc-column-results" *ngIf="hasSelectedSchema && tablesLoadedValidNotEmpty">
-  <ngx-datatable [rows]="filteredTables"
-                 [messages]="tableTableMessages"
-                 [footerHeight]="24"
-                 [headerHeight]="60"
-                 [scrollbarV]="false"
-                 [scrollbarH]="true"
-                 [columnMode]="'force'"
-                 [reorderable]="false"
-                 [selectionType]="'checkbox'"
-                 [sorts]="[{prop: 'name', dir: 'asc'}]"
-                 [cssClasses]="customClasses">
-    <ngx-datatable-column name="Tables"
-                          [prop]="'name'"
-                          [sortable]="true"
-                          [comparator]="nameComparator"
-                          [canAutoResize]="true"
-                          [width]="300"
-                          [draggable]="false"
-                          [resizeable]="false">
-      <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="selectedAllRows" let-selectFn="selectAllTables">
-        <input type="checkbox" [checked]="selectedAllRows" (change)="selectAllTables()"/>Tables
-        <input type="text"
-               class="col-sm-12"
-               style="border:solid 1px #dddddd;padding:8px;margin:0 auto;width:100%;height:24px"
-               placeholder="Filter tables"
-               (keyup)="tableFilterChanged($event)"/>
-      </ng-template>
-      <ng-template ngx-datatable-cell-template let-row="row" let-isSelected="row.selected" let-onCheckboxChangeFn="selectedTableChanged">
-        <input type="checkbox" [checked]="row.selected" (change)="selectedTableChanged( row )"/>{{ row.name }}
-      </ng-template>
-    </ngx-datatable-column>
-  </ngx-datatable>
+  <pfng-table
+    [columns]="tableColumns"
+    [config]="tableTableConfig"
+    [dataTableConfig]="ngxTableConfig"
+    (onFilterChange)="tableFilterChanged($event)"
+    (onSelectionChange)="selectedTableChanged($event)"
+    [rows]="filteredTables">
+  </pfng-table>
 </div>
+<ng-template #schemaCellTemplate let-row="row" let-value="value">
+  {{ row.getDisplayName() }}
+</ng-template>

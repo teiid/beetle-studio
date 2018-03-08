@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, OnInit, Output, ViewChild, ViewEncapsulation } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { LoggerService } from "@core/logger.service";
@@ -24,6 +24,16 @@ import { Table } from "@dataservices/shared/table.model";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { LoadingState } from "@shared/loading-state.enum";
+import {
+  Filter,
+  FilterConfig,
+  FilterEvent,
+  FilterField,
+  FilterType,
+  NgxDataTableConfig,
+  TableConfig,
+  ToolbarConfig
+} from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -33,19 +43,24 @@ import { LoadingState } from "@shared/loading-state.enum";
 })
 export class ConnectionTableSelectorComponent implements OnInit {
 
+  private static readonly nameFilterId = "nameFilter";
+
+  @ViewChild("cellTemplate") public cellTemplate: TemplateRef< any >;
   @ViewChild(JdbcTableSelectorComponent) public jdbcTableSelector: JdbcTableSelectorComponent;
   @Output() public selectedTableListUpdated: EventEmitter<void> = new EventEmitter<void>();
 
-  public readonly customClasses = {
-    sortAscending: "fa fa-sort-asc",
-    sortDescending: "fa fa-sort-desc"
-  };
+  public columnDefinitions: any[];
+  public filtersText = "";
+  public filterConfig: FilterConfig;
+  public ngxConfig: NgxDataTableConfig;
+  public tableConfig: TableConfig;
+  public toolbarConfig: ToolbarConfig;
+
+  private allConnections: Connection[] = [];
+  private filteredConnections: Connection[] = [];
 
   private connectionService: ConnectionService;
   private wizardService: WizardService;
-  private allConnections: Connection[] = [];
-  private filteredConnections: Connection[] = [];
-  private connectionFilter = "";
   private selectedConn: Connection;
   private connectionLoadingState: LoadingState = LoadingState.LOADING;
   private logger: LoggerService;
@@ -61,6 +76,47 @@ export class ConnectionTableSelectorComponent implements OnInit {
    * Component initialization
    */
   public ngOnInit(): void {
+    this.columnDefinitions = [
+      {
+        cellTemplate: this.cellTemplate,
+        comparator: this.connectionComparator,
+        draggable: false,
+        name: "Connections",
+        prop: "name",
+        resizeable: false,
+        sortable: true,
+        width: "300"
+      }
+    ];
+
+    this.ngxConfig = {
+      footerHeight: 24,
+      messages: this.connectionsTableMessages,
+      selectionType: "single",
+    } as NgxDataTableConfig;
+
+    this.filterConfig = {
+      fields: [
+        {
+          id: ConnectionTableSelectorComponent.nameFilterId,
+          title: "Name",
+          placeholder: "Filter by name...",
+          type: FilterType.TEXT
+        }
+      ] as FilterField[],
+      appliedFilters: [],
+      resultsCount: this.filteredConnections.length,
+      totalCount: this.allConnections.length
+    } as FilterConfig;
+
+    this.toolbarConfig = {
+      filterConfig: this.filterConfig
+    } as ToolbarConfig;
+
+    this.tableConfig = {
+      toolbarConfig: this.toolbarConfig
+    } as TableConfig;
+
     // Load the connections
     this.connectionLoadingState = LoadingState.LOADING;
     const self = this;
@@ -82,18 +138,26 @@ export class ConnectionTableSelectorComponent implements OnInit {
       );
   }
 
+  public filterChanged( $event: FilterEvent ): void {
+    this.filtersText = "";
+
+    $event.appliedFilters.forEach( ( filter ) => {
+      this.filtersText += filter.field.title + " : " + filter.value + "\n";
+    } );
+
+    this.applyFilters( $event.appliedFilters );
+  }
+
   // callback from connection table selection
-  public onSelect( { selected } ): void {
+  public selectionChange( $event ): void {
+    const selected: Connection[] = $event.selected;
+
     // connection table is single select so use first element
     const conn: Connection = selected[ 0 ];
 
     // only set if schema selection has changed (see setter)
-    if ( this.hasSelectedConnection() ) {
-      if ( this.selectedConn.getId() !== conn.getId() ) {
-        this.selectedConnection = conn;
-      }
-    } else {
-      this.selectedConnection = conn;
+    if ( this.selectedConn == null || this.selectedConn.name !== conn.name ) {
+      this.selectedConn = conn;
     }
   }
 
@@ -237,7 +301,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
     let msg: string;
 
     if ( numAll === numFiltered ) {
-      if ( this.connectionFilter.length === 0 ) {
+      if ( this.filtersText.length === 0 ) {
         msg = numAll === 1 ? "connection" : "connections";
       } else {
         msg = numAll === 1 ? "matched connection" : "matched connections";
@@ -256,19 +320,6 @@ export class ConnectionTableSelectorComponent implements OnInit {
   }
 
   /**
-   * Callback when key is pressed in column filter.
-   */
-  public connectionFilterChanged( event: any ): void {
-    this.connectionFilter = event.target.value;
-
-    if ( this.connectionFilter.length !== 0 ) {
-      this.connectionFilter = "^" + this.connectionFilter.replace( "*", ".*" );
-    }
-
-    this.filteredConnections = this.allConnections.filter( ( connection ) => connection.getId().match( this.connectionFilter ) != null );
-  }
-
-  /**
    * Called when the table is sorted.
    * @param {string} thisName the connection name being sorted
    * @param {string} thatName the connection name being compared to
@@ -277,6 +328,48 @@ export class ConnectionTableSelectorComponent implements OnInit {
   public connectionComparator( thisName: string,
                                thatName: string ): number {
     return thisName.localeCompare( thatName );
+  }
+
+  private applyFilters( filters: Filter[] ): void {
+    this.filteredConnections = [];
+
+    if ( filters && filters.length > 0 ) {
+      this.allConnections.forEach( ( item ) => {
+        if ( this.matchesFilters( item, filters ) ) {
+          this.filteredConnections.push( item );
+        }
+      } );
+    } else {
+      this.filteredConnections = this.allConnections;
+    }
+
+    this.toolbarConfig.filterConfig.resultsCount = this.filteredConnections.length;
+  }
+
+  private matchesFilter( item: any,
+                         filter: Filter ): boolean {
+    let matches = true;
+
+    if ( filter.field.id === ConnectionTableSelectorComponent.nameFilterId ) {
+      const pattern = "^" + filter.value.replace( "*", ".*" );
+      matches = item.name.match( pattern ) !== null;
+    }
+
+    return matches;
+  }
+
+  private matchesFilters( item: any,
+                          filters: Filter[] ): boolean {
+    let matches = true;
+
+    filters.forEach( ( filter ) => {
+      if ( !this.matchesFilter( item, filter ) ) {
+        matches = false;
+        return matches;
+      }
+    });
+
+    return matches;
   }
 
   /**

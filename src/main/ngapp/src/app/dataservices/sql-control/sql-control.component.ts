@@ -27,6 +27,7 @@ import { LoadingState } from "@shared/loading-state.enum";
 import "codemirror/addon/display/placeholder.js";
 import "codemirror/addon/selection/active-line.js";
 import "codemirror/mode/sql/sql.js";
+import { NgxDataTableConfig, TableConfig } from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -41,7 +42,14 @@ export class SqlControlComponent implements OnInit {
   @Input() public serviceViews: Table[] = [];
   @Input() public viewSql = "";
 
+  public ngxConfig: NgxDataTableConfig;
+  public tableConfig: TableConfig;
+
+  public ngxViewConfig: NgxDataTableConfig;
+  public viewTableConfig: TableConfig;
+
   public columns: any[] = [];
+  public viewColumns: any[] = [];
   public rows: any[] = [];
 
   public config = {
@@ -51,11 +59,6 @@ export class SqlControlComponent implements OnInit {
     styleActiveLine: true,
     tabSize: 4,
     theme: "mdn-like" };
-
-  public customClasses = {
-    sortAscending: "fa fa-sort-asc",
-    sortDescending: "fa fa-sort-desc"
-  };
 
   private dataserviceService: DataserviceService;
   private logger: LoggerService;
@@ -76,16 +79,51 @@ export class SqlControlComponent implements OnInit {
     this.queryMap.set(this.viewName, this.queryText);
     this.previousViewName = this.viewName;
     this.submitCurrentQuery();
+
+    this.viewColumns = [
+      {
+        draggable: false,
+        name: "Views",
+        prop: "name",
+        resizeable: true,
+        sortable: true,
+        width: "100"
+      }
+    ];
+
+    this.ngxConfig = {
+      reorderable: true,
+      scrollbarH: true,
+      scrollbarV: false,
+      selectionType: "single",
+      sortable: true
+    } as NgxDataTableConfig;
+
+    this.tableConfig = {
+      // nothing to do
+    } as TableConfig;
+
+    this.ngxViewConfig = {
+      reorderable: false,
+      selected: this.selectedViews,
+      selectionType: "'single'",
+      sorts: [ { prop: "name", dir: "asc" } ],
+    } as NgxDataTableConfig;
+
+    this.viewTableConfig = {
+      // nothing to do
+    } as TableConfig;
   }
 
   /*
    * Handle View selection from the view table
    */
-  public onViewSelect( {selected} ): void {
+  public selectionChange( $event ): void {
     // Save query for current selection first
     this.queryMap.set(this.previousViewName, this.queryText);
 
     // View table is single select so use first element
+    const selected: Table[] = $event.selected;
     const view: Table = selected[ 0 ];
 
     this.selectedViews = [];
@@ -203,7 +241,6 @@ export class SqlControlComponent implements OnInit {
     //
     let firstTime = true;
     const rowNumHeader = "ROW #";
-    // const widths: Map< string, number > = new Map< string, number >();
 
     for ( let rowIndex = 0; rowIndex < rowData.length; rowIndex++ ) {
       const row = rowData[ rowIndex ];
@@ -215,22 +252,6 @@ export class SqlControlComponent implements OnInit {
       for (let colIndex = 0; colIndex < data.length; colIndex++) {
         const label = columnData[ colIndex ].getLabel();
         dataRow[ label ] = data[ colIndex ];
-
-        // size column to largest width data of first 50 rows
-        // if ( rowIndex < 50 ) {
-        //   const value = "" + dataRow[ label ];
-        //   const width = value.length;
-        //   const labelWidth = label.length
-        //
-        //   if ( firstTime ) {
-        //     const max = Math.max( width, labelWidth );
-        //     widths.set( label, max );
-        //   } else {
-        //     const currVal: number = widths.get( label );
-        //     const max = Math.max( width, currVal, labelWidth );
-        //     widths.set( label, max );
-        //   }
-        // }
       }
 
       this.rows.push( dataRow );
@@ -240,7 +261,6 @@ export class SqlControlComponent implements OnInit {
     // setup row number column
     const column = { canAutoResize: true,
                      draggable: false,
-                     // flexGrow: rowNumHeader.length,
                      maxWidth: 60,
                      minWidth: 60,
                      name: rowNumHeader,
@@ -252,20 +272,17 @@ export class SqlControlComponent implements OnInit {
     this.columns.push( column );
 
     //
-    // Setup columns
+    // Setup data columns
     //
-    for ( let i = 0; i < columnData.length; i++) {
-      const colData = columnData[ i ];
+    for ( const colData of columnData ) {
       const label = colData.getLabel();
-      // const width = widths.get( label );
-      const column = { canAutoResize: true,
-                       draggable: false,
-                       // flexGrow: width,
-                       name: label.toUpperCase(),
-                       prop: label,
-                       resizable: true,
-                       sortable: true };
-      this.columns.push( column );
+      const col = { canAutoResize: true,
+                    draggable: false,
+                    name: label.toUpperCase(),
+                    prop: label,
+                    resizable: true,
+                    sortable: true };
+      this.columns.push( col );
     }
   }
 

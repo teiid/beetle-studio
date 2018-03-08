@@ -127,6 +127,10 @@ export class ConnectionsListComponent implements OnInit {
    */
   public handleAction( action: Action,
                        item: any ): void {
+    // first select the connection
+    this.connectionSelected.emit( item );
+
+    // now perform action
     if ( action.id === this.deleteActionId ) {
       this.onDeleteConnection( this.selectedConnections[ 0 ].getId() );
     } else if ( action.id === this.editActionId ) {

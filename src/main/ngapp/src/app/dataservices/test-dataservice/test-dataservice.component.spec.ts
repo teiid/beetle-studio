@@ -11,8 +11,8 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { TestDataserviceComponent } from "@dataservices/test-dataservice/test-dataservice.component";
-import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { CodemirrorModule } from "ng2-codemirror";
+import { PatternFlyNgModule } from "patternfly-ng";
 
 describe("TestDataserviceComponent", () => {
   let component: TestDataserviceComponent;
@@ -20,7 +20,7 @@ describe("TestDataserviceComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, RouterTestingModule, NgxDatatableModule, CodemirrorModule ],
+      imports: [ CoreModule, FormsModule, RouterTestingModule, CodemirrorModule, PatternFlyNgModule ],
       declarations: [ SqlControlComponent, TestDataserviceComponent ],
       providers: [
         NotifierService,

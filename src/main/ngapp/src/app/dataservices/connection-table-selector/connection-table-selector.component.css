@@ -3,6 +3,14 @@
   padding-right: 0;
 }
 
+.connection-selector-container .filter-pf .form-group {
+  width: auto !important;
+}
+
+.connection-selector-container .toolbar-pf .form-group {
+  border-right: none;
+}
+
 .jdbc-selector-container {
   padding-left: 0;
   padding-right: 0;

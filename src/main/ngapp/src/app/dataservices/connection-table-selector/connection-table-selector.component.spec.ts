@@ -13,7 +13,6 @@ import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
-import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { ConnectionTableSelectorComponent } from "./connection-table-selector.component";
 
@@ -23,7 +22,7 @@ describe("ConnectionTableSelectorComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, HttpModule, NgxDatatableModule, PatternFlyNgModule ],
+      imports: [ FormsModule, HttpModule, PatternFlyNgModule ],
       declarations: [ ConnectionTableSelectorComponent, JdbcTableSelectorComponent, SelectedTableComponent ],
       providers: [
         { provide: AppSettingsService, useClass: MockAppSettingsService },

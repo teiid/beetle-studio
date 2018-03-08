@@ -18,7 +18,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
 import { Column } from "@dataservices/selected-table/column";
 import { Table } from "@dataservices/shared/table.model";
-import { CardAction, CardConfig } from "patternfly-ng";
+import { CardAction, CardConfig, TableConfig, TableEvent } from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -31,18 +31,11 @@ export class SelectedTableComponent implements OnInit {
   @Input() public table: Table;
   @Output() public selectionListTableRemoved: EventEmitter<Table> = new EventEmitter<Table>();
 
-  public columnDefinitions: Column[];
   public config: CardConfig;
+  public columnDefinitions: any[];
+  public columns: Column[];
   public showColumns = false;
-
-  public readonly customClasses = {
-    sortAscending: "fa fa-sort-asc",
-    sortDescending: "fa fa-sort-desc",
-    pagerLeftArrow: "fa fa-chevron-left",
-    pagerRightArrow: "fa fa-chevron-right",
-    pagerPrevious: "fa fa-step-backward",
-    pagerNext: "fa fa-step-forward"
-  };
+  public tableConfig: TableConfig;
 
   constructor() {
     // nothing to do
@@ -50,15 +43,26 @@ export class SelectedTableComponent implements OnInit {
 
   public ngOnInit(): void {
     this.columnDefinitions = [
-      { name: "name", selected: true, type: "string", size: 25 },
-      { name: "age", selected: true, type: "integer", size: 3 },
-      { name: "street", selected: true, type: "string", size: 50 },
-      { name: "state", selected: true, type: "string", size: 2 },
-      { name: "zipcode", selected: true, type: "string", size: 9 },
-      { name: "company", selected: true, type: "string", size: 50 },
-      { name: "married", selected: true, type: "boolean", size: 1 },
-      { name: "gender", selected: true, type: "string", size: 1 }
+      { prop: "name" },
+      { prop: "type" },
+      { prop: "size" }
     ];
+
+    // TODO: replace with call to get the column metadata
+    this.columns = [
+      new Column( "name", true, "string", 25 ),
+      new Column( "age", true, "integer", 3 ),
+      new Column( "street", true, "string", 30 ),
+      new Column( "state", true, "string", 2 ),
+      new Column( "zipcode", true, "string", 9 ),
+      new Column( "company", true, "string", 50 ),
+      new Column( "married", true, "boolean", 1 ),
+      new Column( "gender", true, "string", 1 ),
+    ];
+
+    this.tableConfig = {
+      showCheckbox: true
+    } as TableConfig;
 
     this.config = {
       action: {
@@ -72,8 +76,8 @@ export class SelectedTableComponent implements OnInit {
     } as CardConfig;
   }
 
-  public get columnCount(): number {
-    return this.columnDefinitions.length;
+  private get columnCount(): number {
+    return this.columns.length;
   }
 
   public handleActionSelect( $event: CardAction ): void {
@@ -81,17 +85,18 @@ export class SelectedTableComponent implements OnInit {
     $event.hypertext = this.showColumnsActionTitle;
   }
 
-  public selectedColumnChanged( column: Column ): void {
-    column.selected = !column.selected;
+  public handleSelectionChange( $event: TableEvent ): void {
+    // need to update footer action link label
+    this.config.action.hypertext = this.showColumnsActionTitle;
   }
 
   public get selectedColumnCount(): number {
-    return this.columnDefinitions.filter( ( column ) => column.selected ).length;
+    return this.columns.filter( ( column ) => column.selected ).length;
   }
 
   public get showColumnsActionTitle(): string {
-    return this.showColumns ? "Hide Columns"
-      : "Show Columns (" + this.selectedColumnCount + " of " + this.columnCount + " selected)";
+    return this.showColumns ? "Hide Columns (" + this.selectedColumnCount + " of " + this.columnCount + " selected)"
+                            : "Show Columns";
   }
 
   public onRemove(): void {

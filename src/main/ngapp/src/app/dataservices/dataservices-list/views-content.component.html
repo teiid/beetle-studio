@@ -8,7 +8,8 @@
         [items]="getViews( item )">
         <ng-template #itemTemplate let-item="item">
           <div class="list-pf-main-content">
-            <a class="list-pf-title view-name"><span class="fa fa-table object-inline-icon"></span>{{ item }}</a>
+            <span class="fa fa-table object-inline-icon"></span>
+            <a class="list-pf-title view-name">{{ item }}</a>
           </div>
         </ng-template>
         <ng-template #expandTemplate let-item="item" let-index="index">

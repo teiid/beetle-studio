@@ -1,7 +1,5 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { Connection } from "@connections/shared/connection.model";
-import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { Table } from "../shared/table.model";
 import { SelectedTableComponent } from "./selected-table.component";
@@ -16,7 +14,7 @@ describe("SelectedTableComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ NgxDatatableModule, PatternFlyNgModule ],
+      imports: [ PatternFlyNgModule ],
       declarations: [ SelectedTableComponent ]
     })
     .compileComponents().then(() => {
@@ -46,12 +44,12 @@ describe("SelectedTableComponent", () => {
   });
 
   it("should have correct table name", () => {
-    const heading = fixture.debugElement.nativeElement.querySelector( ".selected-table-name" );
+    const heading = fixture.debugElement.nativeElement.querySelector( ".object-card-title" );
     expect( heading.textContent ).toContain( tableName );
   });
 
   it("should have correct connector name", () => {
-    const heading = fixture.debugElement.nativeElement.querySelector( ".selected-table-connection" );
+    const heading = fixture.debugElement.nativeElement.querySelector( ".text-info" );
     expect( heading.textContent ).toContain( connectionName );
   });
 
