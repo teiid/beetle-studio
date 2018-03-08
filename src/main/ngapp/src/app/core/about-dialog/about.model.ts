@@ -23,6 +23,7 @@ export class About {
   //   "Information": {
   //     "App Name": "vdb-builder",
   //     "App Title": "Vdb Builder",
+  //     "copyright": "2017-1018",
   //     "App Description": "A tool that allows creating, editing and managing dynamic VDBs and their contents",
   //     "App Version": "0.0.4-SNAPSHOT",
   //     "Repository Workspace": "komodoLocalWorkspace",

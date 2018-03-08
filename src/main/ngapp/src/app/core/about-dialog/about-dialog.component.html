@@ -1,28 +1,3 @@
-<div class="about-modal-pf">
-  <div class="modal-header">
-    <button type="button" class="close" (click)="close()" aria-hidden="true">
-      <span class="pficon pficon-close"></span>
-    </button>
-    <img [src]="appImageSrc" alt="{{appImageAlt}}" />
-  </div>
-  <div *ngIf="!info" class="modal-body">
-    <h2><span i18n="@@about.loading"
-              class="spinner spinner-inverse-lg spinner-inline">
-        </span> Loading about information...
-    </h2>
-  </div>
-  <div *ngIf="info" class="modal-body">
-    <h1>{{ info.appTitle }}</h1>
-    <div class="product-versions-pf">{{ info.appDescription }}</div>
-    <div class="product-versions-pf">
-      <ul class="list-unstyled">
-        <li><strong>App Name:</strong> {{ info.appName }}</li>
-        <li><strong>App Version:</strong> {{ info.appVersion }}</li>
-      </ul>
-    </div>
-    <div class="trademark-pf">{{ info.copyright }}</div>
-  </div>
-  <div class="modal-footer">
-    <img [src]="logoImageSrc" alt="{{logoImageAlt}}" />
-  </div>
-</div>
+<pfng-about-modal [config]="aboutConfig"
+                  (onCancel)="close()">
+</pfng-about-modal>

@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, TemplateRef, ViewEncapsulation } from "@angular/core";
+import {Component, Input, OnInit, TemplateRef, ViewEncapsulation} from "@angular/core";
 import { Router } from "@angular/router";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { AboutEvent } from "@core/about-dialog/about-event";
 import { About } from "@core/about-dialog/about.model";
-import { AboutService } from "@core/about-dialog/about.service";
 import { LoggerService } from "@core/logger.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -37,23 +36,25 @@ import { NavigationItemConfig } from "patternfly-ng";
 
 export class VerticalNavComponent implements OnInit {
 
+  /**
+   * The about information.
+   */
+  @Input() public info: About;
+
   public aboutInfo: About;
   public navigationItems: NavigationItemConfig[];
 
   private aboutRef: BsModalRef;
-  private aboutService: AboutService;
   private logger: LoggerService;
   private modalService: BsModalService;
   private router: Router;
 
   constructor( router: Router,
                logger: LoggerService,
-               modalService: BsModalService,
-               aboutService: AboutService ) {
+               modalService: BsModalService ) {
     this.router = router;
     this.logger = logger;
     this.modalService = modalService;
-    this.aboutService = aboutService;
   }
 
   public closeAbout( $event: AboutEvent ): void {
@@ -77,18 +78,6 @@ export class VerticalNavComponent implements OnInit {
   }
 
   public openAbout( template: TemplateRef< any > ): void {
-    const self = this;
-
-    this.aboutService.getAboutInformation().subscribe(
-      ( result ) => {
-        self.aboutInfo = result;
-      },
-      ( error ) => {
-        this.logger.error( error, "Error getting about information.");
-      }
-    );
-
-    console.error( template );
     this.aboutRef = this.modalService.show( template );
   }
 
