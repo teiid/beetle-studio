@@ -314,6 +314,7 @@ export class VdbService extends ApiService {
     props.push(new NameValue("importer.TableTypes", "TABLE"));
     props.push(new NameValue("importer.UseQualifiedName", "true"));
     props.push(new NameValue("importer.UseCatalogName", "false"));
+    props.push(new NameValue("importer.UseFullSchemaName", "false"));
     vdbModel.setProperties(props);
 
     // VdbModelSource to create
