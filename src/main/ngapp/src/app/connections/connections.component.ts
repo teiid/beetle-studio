@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, ViewChild} from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
@@ -41,18 +41,16 @@ import { SortEvent } from "patternfly-ng";
   templateUrl: "./connections.component.html",
   styleUrls: ["./connections.component.css"]
 })
-export class ConnectionsComponent extends AbstractPageComponent implements OnInit{
+export class ConnectionsComponent extends AbstractPageComponent implements OnInit {
 
   public connectionNameForDelete: string;
 
   public filterConfig: FilterConfig;
   public filtersText = "";
-  public separator: object;
-  public allItems: Connection[];
   public items: Connection[];
   public sortConfig: SortConfig;
   public currentSortField: SortField;
-  public isAscendingSort: boolean = true;
+  public isAscendingSort = true;
 
   private allConns: Connection[] = [];
   private filteredConns: Connection[] = [];
@@ -60,7 +58,6 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   private router: Router;
   private appSettingsService: AppSettingsService;
   private connectionService: ConnectionService;
-  private layout: LayoutType = LayoutType.CARD;
   private wizardService: WizardService;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;

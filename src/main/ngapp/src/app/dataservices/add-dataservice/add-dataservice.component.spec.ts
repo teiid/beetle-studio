@@ -18,7 +18,6 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SharedModule } from "@shared/shared.module";
-import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddDataserviceComponent } from "./add-dataservice.component";
 
@@ -28,7 +27,7 @@ describe("AddDataserviceComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, PatternFlyNgModule, FormsModule, ReactiveFormsModule, RouterTestingModule, SharedModule, NgxDatatableModule ],
+      imports: [ CoreModule, PatternFlyNgModule, FormsModule, ReactiveFormsModule, RouterTestingModule, SharedModule ],
       declarations: [ AddDataserviceComponent, AddDataserviceWizardComponent,
                       ConnectionTableSelectorComponent, JdbcTableSelectorComponent, SelectedTableComponent ],
       providers: [

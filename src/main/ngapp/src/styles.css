@@ -4,9 +4,11 @@
 @import "~codemirror/theme/mdn-like.css";
 @import "~patternfly/dist/css/patternfly.css";
 @import "~patternfly/dist/css/patternfly-additions.css";
+@import "~patternfly-ng/dist/css/patternfly-ng.css";
 
 :root {
   --alert-color: darkred;
+  --hover-color: #ddeaff;
   --disabled-color: lightgrey;
   --card-action-icon-color: var(--card-border-color);
   --card-action-icon-cursor: pointer;
@@ -30,7 +32,7 @@
   --card-description-margin-bottom: 10px;
   --card-description-padding: 0 5px 5px 5px;
   --card-footer-background-color: #ececec;
-  --card-hover-color: #ddeaff;
+  --card-hover-color: var(--hover-color);
   --card-title-font-size: 16px;
   --card-title-font-weight: bold;
   --card-title-margin: 10px 0 !important;
@@ -53,9 +55,9 @@
   --page-background-color: #fafafa;
 }
 
-/*********************************************************************************/
-/*                    Beetle Studio global types below here                      */
-/*********************************************************************************/
+/**********************************************************************/
+/*                    Beetle Studio Global Types                      */
+/**********************************************************************/
 
 .blank-slate-pf {
   background-color: white;
@@ -82,6 +84,10 @@
   color: var(--card-action-icon-disabled-color);
 }
 
+.card-footer-action-icon {
+  margin-left: 10px;
+}
+
 .card-toolbar {
   border-bottom: var(--card-toolbar-border-bottom);
   border-top: var(--card-toolbar-border-top);
@@ -99,6 +105,11 @@
   margin-left: var(--card-toolbar-kebab-margin-left);
   margin-right: var(--card-toolbar-kebab-margin-right);
 }
+
+.clickable-icon {
+  cursor: pointer;
+}
+
 .object-card,
 .object-card-selected {
   -webkit-transition: background-color 300ms;
@@ -106,12 +117,21 @@
 //-ms-transition: background-color 300ms;
   -o-transition: background-color 300ms;
   transition: background-color 300ms;
-  height: 160px;
 }
 
 .object-card .card-pf,
 .object-card-selected .card-pf {
   margin: 8px 0;
+}
+
+.object-card-container {
+  display: grid;
+  grid-template-columns: repeat( auto-fill, minmax( 300px, 300px ) );
+}
+
+.object-card-container>* {
+  flex: 1 1 80px;
+  margin: 5px;
 }
 
 .object-card-selected .card-pf {
@@ -125,14 +145,16 @@
 
 .object-card-selected .card-pf .card-pf-body,
 .object-card .card-pf .card-pf-body {
-  margin: 0;
+  margin: 20px;
   padding: 0;
 }
 
 .object-card-selected .card-pf .card-pf-footer,
 .object-card .card-pf .card-pf-footer {
   background-color: var(--card-footer-background-color);
+  margin: 0 !important;
   min-height: 20px;
+  padding: 4px 0 4px 0;
 }
 
 .object-card-selected .card-pf .card-pf-heading,
@@ -242,64 +264,28 @@
   text-align: left;
 }
 
-/*********************************************************************************/
-/*                    3rd Party library types below here                         */
-/*********************************************************************************/
+/***************************************************************/
+/*                    CodeMirror Types                         */
+/***************************************************************/
 
 .CodeMirror {
   height: 200px;
 }
 
-.ngx-datatable {
-  position: absolute; top:0;left:0;right:0;bottom:0;
+/**************************************************************/
+/*                    PatternFly Types                        */
+/**************************************************************/
+
+.card-pf-footer-text {
+  margin-left: 20px;
 }
 
-.datatable-header {
-  color: white;
-  background-color: #bbbbbb;
-  text-align: left;
+.pfng-list-expansion .list-pf-content {
+  width: 100%;
 }
 
-.datatable-header-cell {
-  vertical-align: bottom;
-  border-bottom: 2px solid #ddd;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-  padding: 8px;
-  line-height: 1.42857143;
-  font-weight: bold;
-  color: rgb(51, 51, 51);
-}
-
-.datatable-body-row {
-  border-bottom: 1px solid #d8d8d8;
-}
-
-.datatable-row-even {
-  background-color: white;
-}
-
-.datatable-row-even:hover {
-  background-color: #def3ff;
-}
-
-.datatable-row-odd {
-  background-color: #f2f2f2;
-}
-
-.datatable-row-odd:hover {
-  background-color: #def3ff;
-}
-
-.datatable-body-cell {
-  padding: 0.25em 0.25em 0.25em 1.0em;
-  border-left: 1px solid #d8d8d8;
-  border-right: 1px solid #d8d8d8;
-}
-
-.datatable-body-row.active .datatable-row-group {
-  background-color: #0088ce !important;
-  color: white;
+.pfng-list-expansion .pfng-list-content {
+  width: 100%;
 }
 
 /* Patternfly-NG kebab dropdown actions. */
@@ -316,4 +302,8 @@
   color: var(--alert-color);
   content: "\f014";
   font-family: "FontAwesome";
+}
+
+.toolbar-pf-actions {
+  margin-bottom: 0;
 }

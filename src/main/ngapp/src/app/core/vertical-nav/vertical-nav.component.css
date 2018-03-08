@@ -4,8 +4,13 @@
 }
 
 .app-feature-content {
-  margin-top: 2em;
-  margin-left: 200px;
+  margin-top: 60px;
+  margin-left: 190px;
+}
+
+.app-feature-title {
+  margin: 0 0 10px 0;
+  padding: 0;
 }
 
 .navbar-brand-title {
