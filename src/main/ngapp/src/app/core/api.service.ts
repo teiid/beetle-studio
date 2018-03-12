@@ -59,8 +59,46 @@ export abstract class ApiService {
     return this.appSettings.getKomodoUserWorkspacePath();
   }
 
+  protected isJSON(item: string): boolean {
+    item = typeof item !== "string" ? JSON.stringify(item) : item;
+
+    try {
+      item = JSON.parse(item);
+    } catch (e) {
+      return false;
+    }
+
+    if (typeof item === "object" && item !== null) {
+      return true;
+    }
+
+    return false;
+  }
+
+  protected msgFromResponse(response: Response): string {
+    let msg = "";
+
+    let body = response.text();
+    if (! this.isJSON(response.text())) {
+      msg = response.text();
+    } else {
+      let body = response.json();
+
+      if (body.message)
+        msg = body.message;
+      else if (body.error)
+        msg = body.error;
+    }
+
+    if (msg.length === 0 ) {
+      return 'unknown error';
+    }
+
+    return msg;
+  }
+
   protected handleError(error: Response): ErrorObservable {
-    this.logger.error( this.constructor.name + "::handleError" );
+    this.logger.error( this.constructor.name + "::handleError => " + this.msgFromResponse(error));
     return Observable.throw(error);
   }
 

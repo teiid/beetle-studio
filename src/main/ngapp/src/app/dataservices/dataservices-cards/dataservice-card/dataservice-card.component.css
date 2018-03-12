@@ -16,6 +16,12 @@
   font-family: "FontAwesome";
 }
 
+.card-toolbar .secondary-action[title="Download"]:before {
+  color: var(--card-action-icon-color);
+  content: "\f019";
+  font-family: "FontAwesome";
+}
+
 .object-card .list-pf,
 .object-card-selected .list-pf {
   border: none;

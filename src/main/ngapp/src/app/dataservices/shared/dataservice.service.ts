@@ -35,6 +35,7 @@ import { Observable } from "rxjs/Observable";
 import { ReplaySubject } from "rxjs/ReplaySubject";
 import { Subject } from "rxjs/Subject";
 import { Subscription } from "rxjs/Subscription";
+import { saveAs } from 'file-saver/FileSaver';
 
 @Injectable()
 export class DataserviceService extends ApiService {
@@ -355,6 +356,101 @@ export class DataserviceService extends ApiService {
   public updateDataserviceForSingleSourceTables(dataservice: NewDataservice, sourceTables: Table[]): Observable<boolean> {
     return this.deleteDataservice(dataservice.getId())
       .flatMap((res) => this.createDataserviceForSingleSourceTables(dataservice, sourceTables));
+  }
+
+  /**
+   * Converts a base64 data string into a blob for use with the FileSaver library
+   * Acknowledgement to
+   * http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
+   */
+  private b64toBlob(b64Data: string, contentType: string): Blob {
+    contentType = contentType || '';
+    let sliceSize = 512;
+
+    //
+    // Decodes the base64 string back into binary data byte characters
+    //
+    let byteCharacters = atob(b64Data);
+    let byteArrays = [];
+
+    //
+    // Each character's code point (charCode) will be the value of the byte.
+    // Can create an array of byte values by applying this using the .charCodeAt
+    // method for each character in the string.
+    //
+    // The performance can be improved a little by processing the byteCharacters
+    // in smaller slices, rather than all at once. Rough testing indicates 512 bytes
+    // seems to be a good slice size.
+    //
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        let slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        let byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        //
+        // Convert the array of byte values into a real typed byte array
+        // by passing it to the Uint8Array constructor.
+        //
+        let byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    //
+    // Convert to a Blob by wrapping it in an array passing it to the Blob constructor.
+    //
+    let blob = new Blob(byteArrays, {
+        type: contentType
+    });
+
+    return blob;
+  }
+
+  /**
+   * Download a dataservice as a jar archive
+   * @param {string} dataserviceName the dataservice name
+   * @returns {Observable<boolean>}
+   */
+  public downloadDataservice(dataserviceName: string): Observable<boolean> {
+    // The payload for the rest call
+    const payload = {
+      "storageType": "file",
+      "dataPath": this.getKomodoUserWorkspacePath() + "/" + dataserviceName,
+      "parameters": {}
+    };
+
+    const url = environment.komodoImportExportUrl + "/" + DataservicesConstants.dataservicesExport;
+
+    return this.http
+      .post(url, payload, this.getAuthRequestOptions())
+      .map((response) => {
+        let status = response.json();
+        console.log("Response: " + response);
+
+        if (! status.downloadable) {
+          throw new Error(payload.dataPath + " is not downloadable");
+        }
+
+        if (! status.content) {
+          throw new Error(payload.dataPath + " has no content");
+        }
+
+        const name = status.Name || dataserviceName;
+        const fileType = status.type || 'data';
+        const enc = status.content;
+
+        const contentType = fileType === "zip" ? 'application/zip' : 'text/plain;charset=utf-8';
+        const dataBlob = this.b64toBlob(enc, contentType);
+
+        const fileExt = ( fileType == "-vdb.xml" || fileType == "-connection.xml" ) ? fileType : "." + fileType;
+
+        saveAs(dataBlob, name + fileExt);
+
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
   }
 
   /**

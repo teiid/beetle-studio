@@ -89,7 +89,8 @@
                                   (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
                                   (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
                                   (editDataservice)="onEdit($event)" (quickLookDataservice)="onQuickLook($event)"
-                                  (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"></app-dataservices-cards>
+                                  (downloadDataservice)="onDownload($event)" (dataserviceSelected)="onSelected($event)"
+                                  (dataserviceDeselected)="onDeselected($event)"></app-dataservices-cards>
         </div>
       </div>
       <div class="col-md-12 {{resultsAreaCss}}" *ngIf="showResults">
@@ -112,4 +113,3 @@
 <app-confirm-delete (deleteSelected)="onDeleteDataservice()">
   <p i18n="@@dataservices.doYouReallyWantToDeleteSelectedDataservice" >Do you really want to delete the selected Dataservice?</p>
 </app-confirm-delete>
-

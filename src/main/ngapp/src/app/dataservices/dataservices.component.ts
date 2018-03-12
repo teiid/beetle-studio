@@ -60,8 +60,11 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   public readonly exportInProgressHeader: string = "Publishing:  ";
   public readonly exportSuccessHeader: string = "Publish Succeeded:  ";
   public readonly exportFailedHeader: string = "Publish Failed:  ";
-
   public readonly connectionsLoadedTag = "connections";
+
+  public readonly downloadInProgressHeader: string = "Downloading:  ";
+  public readonly downloadSuccessHeader: string = "Download Succeeded:  ";
+  public readonly downloadFailedHeader: string = "Download Failed:  ";
 
   public filterConfig: FilterConfig;
   public filtersText = "";
@@ -401,6 +404,37 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.router.navigate(link).then(() => {
       // nothing to do
     });
+  }
+
+  /**
+   * Handle Download of the specified Dataservice
+   * @param {string} svcName
+   */
+  public onDownload(svcName: string): void {
+      this.setQuickLookPanelOpenState(false);
+
+      this.exportNotificationHeader = this.exportInProgressHeader;
+      this.exportNotificationMessage = "Downloading " + svcName + "...";
+      this.exportNotificationType = NotificationType.INFO;
+      this.exportNotificationVisible = true;
+      this.logger.log("[DataservicesPageComponent] Downloading Dataservice: " + svcName);
+      const self = this;
+      this.dataserviceService
+        .downloadDataservice(svcName)
+        .subscribe(
+          (wasSuccess) => {
+            self.exportNotificationHeader = this.downloadSuccessHeader;
+            self.exportNotificationMessage = "   " + svcName + " was downloaded successfully!";
+            self.exportNotificationType = NotificationType.SUCCESS;
+            this.logger.log("[DataservicesPageComponent] Download Dataservice was successful");
+          },
+          (error) => {
+            self.exportNotificationHeader = this.downloadFailedHeader;
+            self.exportNotificationMessage = "   Failed to downlaod dataservice " + svcName;
+            self.exportNotificationType = NotificationType.DANGER;
+            this.logger.error("[DataservicesPageComponent] Download dataservice " + svcName + " failed.");
+          }
+        );
   }
 
   public onPublish(svcName: string): void {
