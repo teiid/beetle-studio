@@ -39,8 +39,8 @@ if [ -z "$OS_HOST" ]; then
   exit 1
 fi
 
-echo -e '\n\n=== Logging into oc tool as admin ==='
-oc login https://$OS_HOST:8443 -u admin -p admin
+echo -e '\n\n=== Logging into oc tool as developer ==='
+oc login https://$OS_HOST:8443 -u developer -p developer
 oc whoami 2>&1 > /dev/null || { echo "Cannot log in ... exiting" && exit 1; }
 
 # Delete openshift template
