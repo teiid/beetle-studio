@@ -1,7 +1,12 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-
+import { HttpModule } from "@angular/http";
 import { About } from "@core/about-dialog/about.model";
+import { AboutService } from "@core/about-dialog/about.service";
 import { MockAboutService } from "@core/about-dialog/mock-about.service";
+import { AppSettingsService } from "@core/app-settings.service";
+import { LoggerService } from "@core/logger.service";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { PatternFlyNgModule } from "patternfly-ng";
 import { AboutDialogComponent } from "./about-dialog.component";
 
 describe("AboutDialogComponent", () => {
@@ -10,9 +15,16 @@ describe("AboutDialogComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AboutDialogComponent ]
+      declarations: [ AboutDialogComponent ],
+      imports: [ HttpModule, PatternFlyNgModule ],
+      providers: [
+          AboutService,
+          { provide: AppSettingsService, useClass: MockAppSettingsService },
+      LoggerService ]
     })
-    .compileComponents();
+      .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

@@ -16,12 +16,11 @@
  */
 
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
-import { AboutEvent } from "app/core/about-dialog/about-event";
-import { About } from "app/core/about-dialog/about.model";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { AboutModalConfig } from "patternfly-ng/modal";
 import { AboutService } from "@core/about-dialog/about.service";
 import { LoggerService } from "@core/logger.service";
+import { AboutEvent } from "app/core/about-dialog/about-event";
+import { About } from "app/core/about-dialog/about.model";
+import { AboutModalConfig } from "patternfly-ng/modal";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -41,15 +40,14 @@ export class AboutDialogComponent implements OnInit {
    */
   @Input() public info: About;
 
-  private aboutConfig: AboutModalConfig;
+  public aboutConfig: AboutModalConfig;
   private aboutService: AboutService;
   private logger: LoggerService;
 
   /**
    * The default contructor
    */
-  constructor(private modalService: BsModalService,
-              logger: LoggerService,
+  constructor(logger: LoggerService,
               aboutService: AboutService) {
     this.aboutService = aboutService;
     this.logger = logger;
