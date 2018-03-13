@@ -3,6 +3,8 @@ import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 import { By } from "@angular/platform-browser";
 import { RouterTestingModule } from "@angular/router/testing";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { MockConnectionService } from "@connections/shared/mock-connection.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
@@ -44,6 +46,7 @@ describe("DataservicesComponent", () => {
         NotifierService,
         WizardService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
+        { provide: ConnectionService, useClass: MockConnectionService },
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: VdbService, useClass: MockVdbService }
       ]

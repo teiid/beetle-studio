@@ -17,6 +17,8 @@
 
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { ConnectionService } from "@connections/shared/connection.service";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
@@ -32,17 +34,20 @@ import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { LayoutType } from "@shared/layout-type.enum";
 import { SortDirection } from "@shared/sort-direction.enum";
-import { NotificationType } from "patternfly-ng";
+import {
+  ActionConfig,
+  EmptyStateConfig,
+  Filter,
+  FilterConfig,
+  FilterEvent,
+  FilterField,
+  FilterType,
+  NotificationType,
+  SortConfig,
+  SortEvent,
+  SortField
+} from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
-
-import { Filter } from "patternfly-ng";
-import { FilterConfig } from "patternfly-ng";
-import { FilterField } from "patternfly-ng";
-import { FilterEvent } from "patternfly-ng";
-import { FilterType } from "patternfly-ng";
-import { SortConfig } from "patternfly-ng";
-import { SortField } from "patternfly-ng";
-import { SortEvent } from "patternfly-ng";
 
 @Component({
   moduleId: module.id,
@@ -55,12 +60,19 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   public readonly exportInProgressHeader: string = "Publishing:  ";
   public readonly exportSuccessHeader: string = "Publish Succeeded:  ";
   public readonly exportFailedHeader: string = "Publish Failed:  ";
+
+  public readonly connectionsLoadedTag = "connections";
+
   public filterConfig: FilterConfig;
   public filtersText = "";
   public items: Dataservice[];
   public sortConfig: SortConfig;
   public currentSortField: SortField;
   public isAscendingSort = true;
+
+  private connectionsExist = false;
+  private noConnectionsConfig: EmptyStateConfig;
+  private noDataservicesConfig: EmptyStateConfig;
 
   private cardListAreaCss = "dataservice-summary-top-area-no-results";
   private resultsAreaCss = "dataservice-summary-bottom-area-no-results";
@@ -69,6 +81,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private quickLookQueryText: string;
 
   private allServices: Dataservice[] = [];
+  private connectionService: ConnectionService;
   private filteredServices: Dataservice[] = [];
   private selectedServices: Dataservice[] = [];
   private dataserviceNameForDelete: string;
@@ -92,7 +105,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
 
   constructor(router: Router, route: ActivatedRoute, dataserviceService: DataserviceService,
               logger: LoggerService, appSettingsService: AppSettingsService, wizardService: WizardService,
-              notifierService: NotifierService, vdbService: VdbService ) {
+              notifierService: NotifierService, vdbService: VdbService, connectionService: ConnectionService ) {
     super(route, logger);
     this.router = router;
     this.appSettingsService = appSettingsService;
@@ -104,10 +117,10 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.dataserviceStateSubscription = this.notifierService.getDataserviceStateMap().subscribe((serviceStateMap) => {
       this.onDataserviceStateChanged(serviceStateMap);
     });
+    this.connectionService = connectionService;
   }
 
   public ngOnInit(): void {
-
     super.ngOnInit();
 
     this.filterConfig = {
@@ -140,6 +153,68 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     } as SortConfig;
   }
 
+  public get noConnectionsEmptyConfig(): EmptyStateConfig {
+    if ( !this.noConnectionsConfig ) {
+      const actionConfig = {
+        primaryActions: [
+          {
+            id: "createConnectionActionId",
+            title: "Add Connection",
+            tooltip: "Add a connection"
+          }
+        ]
+      } as ActionConfig;
+
+      this.noConnectionsConfig = {
+        actions: actionConfig,
+        iconStyleClass: "pficon-warning-triangle-o",
+        info: "No dataservices were found. In order to create a dataservice, you must first create a connection. "
+              + "Please click below to create a connection.",
+        title: "No Dataservices Available"
+      } as EmptyStateConfig;
+    }
+
+    return this.noConnectionsConfig;
+  }
+
+  public get noDataservicesEmptyConfig(): EmptyStateConfig {
+    if ( !this.noDataservicesConfig ) {
+      const actionConfig = {
+        primaryActions: [
+          {
+            id: "createDataserviceActionId",
+            title: "Add Dataservice",
+            tooltip: "Add a dataservice"
+          }
+        ]
+      } as ActionConfig;
+
+      this.noDataservicesConfig = {
+        actions: actionConfig,
+        iconStyleClass: "pficon-warning-triangle-o",
+        info: "No dataservices were found. Please click below to create a dataservice.",
+        title: "No Dataservices Available"
+      } as EmptyStateConfig;
+    }
+
+    return this.noDataservicesConfig;
+  }
+
+  public get hasConnections(): boolean {
+    return this.isLoaded( this.connectionsLoadedTag ) && this.connectionsExist;
+  }
+
+  public onNewConnection(): void {
+    // TODO ask Mark if this will work
+    this.wizardService.setEdit(false);
+
+    const link: string[] = [ ConnectionsConstants.addConnectionPath ];
+    this.logger.log( "[DataservicesPageComponent] Navigating to: %o", link );
+    this.router.navigate( link ).then(() => {
+      // nothing to do
+    } );
+  }
+
   public loadAsyncPageData(): void {
     const self = this;
     this.dataserviceService
@@ -153,6 +228,18 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
         },
         (error) => {
           self.error(error, "Error getting dataservices");
+        }
+      );
+
+    this.connectionService
+      .getAllConnections()
+      .subscribe(
+        ( connections ) => {
+          self.connectionsExist = connections.length !== 0;
+          self.loaded( self.connectionsLoadedTag );
+        },
+        ( error ) => {
+          self.error( error, "Error getting connections" );
         }
       );
   }
