@@ -87,6 +87,23 @@
             }
         },
         {
+			"kind": "RoleBinding",
+			"apiVersion": "v1",
+			"metadata": {
+			"name": "das_admin"
+		},
+			"groupNames": null,
+			"subjects": [
+				{
+					"kind": "ServiceAccount",
+					"name": "das"
+				}
+			],
+			"roleRef": {
+				"name": "admin"
+			}
+		},
+        {
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
@@ -690,7 +707,25 @@
                                     	"name": "SWARM_JAR_ARGS",
                                     	"value": "-DNAMESPACE=beetle-studio -Dkomodo.user=${PERSISTENCE_STORAGE_USER} -Dkomodo.password=${PERSISTENCE_STORAGE_PASSWORD} -Dkomodo.repositoryPersistenceHost=vdb-builder-persistence"
                                     }
-                                ]
+                                ],
+                                "livenessProbe":{
+                                    "httpGet":{
+                                        "path": "/vdb-builder",
+                                        "port": 8080
+                                    },
+                                    "initialDelaySeconds": 300,
+                                    "timeoutSeconds": 30,
+                                    "periodSeconds": 15
+                                },
+                                "readinessProbe":{
+                                    "httpGet":{
+                                        "path":"/vdb-builder",
+                                        "port":8080
+                                    },
+                                    "initialDelaySeconds": 300,
+                                    "timeoutSeconds": 30,
+                                    "periodSeconds": 15
+                                }
                             }
                         ]
                     }
