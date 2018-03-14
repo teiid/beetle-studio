@@ -447,19 +447,19 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.logger.log("[DataservicesPageComponent] Publishing Dataservice: " + svcName);
     const self = this;
     this.dataserviceService
-      .exportDataservice(svcName)
+      .publishDataservice(svcName)
       .subscribe(
         (wasSuccess) => {
           self.exportNotificationHeader = this.exportSuccessHeader;
-          self.exportNotificationMessage = "   " + svcName + " was published successfully!";
+          self.exportNotificationMessage = "   " + svcName + " publishing successfully initiated!";
           self.exportNotificationType = NotificationType.SUCCESS;
-          this.logger.log("[DataservicesPageComponent] Publish Dataservice was successful");
+          this.logger.log("[DataservicesPageComponent] Dataservice publishing initiation was successful");
         },
         (error) => {
           self.exportNotificationHeader = this.exportFailedHeader;
           self.exportNotificationMessage = "   Failed to publish dataservice " + svcName + "!";
           self.exportNotificationType = NotificationType.DANGER;
-          this.logger.log("[DataservicesPageComponent] Publish Dataservice failed.");
+          this.logger.log("[DataservicesPageComponent] Publish dataservice " + svcName + " failed.");
         }
       );
   }

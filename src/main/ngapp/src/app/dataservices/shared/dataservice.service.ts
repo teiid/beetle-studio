@@ -454,36 +454,18 @@ export class DataserviceService extends ApiService {
   }
 
   /**
-   * Export a dataservice to a git repository
+   * Publish a dataservice
    * @param {string} dataserviceName the dataservice name
    * @returns {Observable<boolean>}
    */
-  public exportDataservice(dataserviceName: string): Observable<boolean> {
-    const repoPathKey = this.appSettings.GIT_REPO_PATH_KEY;
-    const repoBranchKey = this.appSettings.GIT_REPO_BRANCH_KEY;
-    const repoUsernameKey = this.appSettings.GIT_REPO_USERNAME_KEY;
-    const repoPasswordKey = this.appSettings.GIT_REPO_PASSWORD_KEY;
-    const repoAuthorEmailKey = this.appSettings.GIT_REPO_AUTHOR_EMAIL_KEY;
-    const repoAuthorNameKey = this.appSettings.GIT_REPO_AUTHOR_NAME_KEY;
-    const repoFilePathKey = this.appSettings.GIT_REPO_FILE_PATH_KEY;
+  public publishDataservice(dataserviceName: string): Observable<boolean> {
 
     // The payload for the rest call
     const payload = {
-      "storageType": "git",
-      "dataPath": "/" + this.getKomodoUserWorkspacePath() + "/" + dataserviceName,
-      "parameters":
-        {
-          [repoPathKey] : this.appSettings.getGitRepoProperty(repoPathKey),
-          [repoBranchKey] : this.appSettings.getGitRepoProperty(repoBranchKey),
-          [repoFilePathKey] : dataserviceName,
-          [repoUsernameKey] : this.appSettings.getGitRepoProperty(repoUsernameKey),
-          [repoPasswordKey] : btoa(this.appSettings.getGitRepoProperty(repoPasswordKey)),
-          [repoAuthorNameKey] : this.appSettings.getGitRepoProperty(repoAuthorNameKey),
-          [repoAuthorEmailKey] : this.appSettings.getGitRepoProperty(repoAuthorEmailKey)
-        }
+      "name": dataserviceName
     };
 
-    const url = environment.komodoImportExportUrl + "/" + DataservicesConstants.dataservicesExport;
+    const url = environment.komodoTeiidUrl + "/" + DataservicesConstants.dataservicesPublish;
 
     return this.http
       .post(url, payload, this.getAuthRequestOptions())

@@ -15,6 +15,7 @@ import { NavigationItemConfig } from "patternfly-ng";
 export class DataservicesConstants {
 
   public static readonly dataservicesExport = "export";
+  public static readonly dataservicesPublish = "publish";
 
   public static readonly dataserviceRootRoute = "dataservice";
   public static readonly dataserviceRootPath = "/" + DataservicesConstants.dataserviceRootRoute;
