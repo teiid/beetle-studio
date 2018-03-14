@@ -26,6 +26,8 @@ export class ConnectionsConstants {
   public static readonly serviceCatalogSourcesRootRoute = "serviceCatalogSources";
   public static readonly serviceCatalogSourcesRootPath = "/" + ConnectionsConstants.serviceCatalogSourcesRootRoute;
 
+  public static readonly connectionsStatusPath = ConnectionsConstants.connectionsRootPath + "/vdbStatus";
+
   public static readonly connectionType_postgresql = "postgresql";
   public static readonly connectionType_mysql = "mysql";
   public static readonly connectionType_mongodb = "mongodb";

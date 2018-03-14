@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { Identifiable } from "@shared/identifiable";
 import { SortDirection } from "@shared/sort-direction.enum";
 
@@ -28,6 +29,7 @@ export class Connection implements Identifiable< string > {
   private dv__driverName: string;
   private dv__type: boolean;
   private keng__properties: object[] = [];
+  private vdbState: DeploymentState = DeploymentState.LOADING;
 
   /**
    * @param {Object} json the JSON representation of a Connection
@@ -146,6 +148,53 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
+   * @returns {DeploymentState} the connection VDB Deployment state
+   */
+  public getVdbDeploymentState(): DeploymentState {
+    return this.vdbState;
+  }
+
+  /**
+   * Accessor to determine if connection VDB deployment is active
+   * @returns {boolean} the connection VDB deployment active state
+   */
+  public get vdbDeploymentActive(): boolean {
+    return this.vdbState === DeploymentState.ACTIVE;
+  }
+
+  /**
+   * Accessor to determine if connection VDB deployment is inactive
+   * @returns {boolean} the connection VDB deployment inactive state
+   */
+  public get vdbDeploymentInactive(): boolean {
+    return this.vdbState === DeploymentState.INACTIVE;
+  }
+
+  /**
+   * Accessor to determine if connection VDB deployment is loading
+   * @returns {boolean} the connection VDB deployment loading state
+   */
+  public get vdbDeploymentLoading(): boolean {
+    return this.vdbState === DeploymentState.LOADING;
+  }
+
+  /**
+   * Accessor to determine if connection VDB deployment is failed
+   * @returns {boolean} the connection VDB deployment failed state
+   */
+  public get vdbDeploymentFailed(): boolean {
+    return this.vdbState === DeploymentState.FAILED;
+  }
+
+  /**
+   * Accessor to determine if connection VDB is not deployed
+   * @returns {boolean} the connection VDB not deployed state
+   */
+  public get vdbDeploymentNotDeployed(): boolean {
+    return this.vdbState === DeploymentState.NOT_DEPLOYED;
+  }
+
+  /**
    * @param {string} driverName the connection driver name (optional)
    */
   public setDriverName( driverName?: string ): void {
@@ -186,6 +235,13 @@ export class Connection implements Identifiable< string > {
     prop.value = serviceCatalog;
 
     this.keng__properties.push(prop);
+  }
+
+  /**
+   * @param {DeploymentState} state the connecton VDB deployment state
+   */
+  public setVdbDeploymentState( state: DeploymentState ): void {
+    this.vdbState = state;
   }
 
   /**

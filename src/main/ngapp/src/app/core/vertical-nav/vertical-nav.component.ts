@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Component, Input, OnInit, TemplateRef, ViewEncapsulation} from "@angular/core";
+import { Component, Input, OnInit, TemplateRef, ViewEncapsulation } from "@angular/core";
 import { Router } from "@angular/router";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { AboutEvent } from "@core/about-dialog/about-event";
