@@ -36,25 +36,26 @@
     </div>
     <!-- List of Dataservices -->
     <div class="row object-collection-page">
-      <div class="col-md-12 empty-state" *ngIf="isLoaded('dataservices') && allDataservices.length === 0">
-        <div class="blank-slate-pf">
-          <div class="blank-slate-pf-icon">
-            <span class="pficon pficon pficon-add-circle-o"></span>
-          </div>
-          <h1 i18n="@@dataservices.noDataservicesFound">No Dataservices Found</h1>
-          <p i18n="@@dataservices.noDataservicesFoundPleaseClick">
-            No Dataservices were found - please click below to create a new Dataservice!
-          </p>
-          <div class="blank-slate-pf-main-action">
-            <div class="btn-group">
-              <a i18n="@@dataservices.addDataservice" class="btn btn-primary btn-lg" (click)="onNew()">Add Dataservice</a>
+        <div class="row" *ngIf="isLoaded( connectionsLoadedTag) && !connectionsExist" >
+          <div class="col-sm-12">
+            <div class="form-group">
+              <pfng-empty-state
+                [config]="noConnectionsEmptyConfig"
+                (onActionSelect)="onNewConnection()"></pfng-empty-state>
             </div>
           </div>
         </div>
-      </div>
-
+        <div class="row" *ngIf="connectionsExist && isLoaded('dataservices') && allDataservices.length === 0" >
+          <div class="col-sm-12">
+            <div class="form-group">
+              <pfng-empty-state
+                [config]="noDataservicesEmptyConfig"
+                (onActionSelect)="onNew()"></pfng-empty-state>
+            </div>
+          </div>
+        </div>
       <!-- The 'loading Dataservices' card -->
-      <div class="col-md-12" *ngIf="!isLoaded('dataservices')">
+      <div class="col-md-12" *ngIf="!isLoaded('dataservices') || !isLoaded( connectionsLoadedTag )">
         <div class="container-fluid container-cards-pf">
           <div class="row row-cards-pf">
             <div class="card-pf card-pf-accented">
