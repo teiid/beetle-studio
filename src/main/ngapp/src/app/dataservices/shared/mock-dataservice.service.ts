@@ -106,20 +106,20 @@ export class MockDataserviceService extends DataserviceService {
     return tables;
   }
 
-  /**
-   * Updates the current Dataservice states - triggers update to be broadcast to interested components
-   */
-  public updateDataserviceStates(): void {
-    // Nothing to do
-  }
+  // /**
+  //  * Updates the current Dataservice states - triggers update to be broadcast to interested components
+  //  */
+  // public updateDataserviceStates(): void {
+  //   // Nothing to do
+  // }
 
-  /**
-   * Polls the server and sends Dataservice state updates at the specified interval
-   * @param {number} pollIntervalSec the interval (sec) between polling attempts
-   */
-  public pollDataserviceStatus(pollIntervalSec: number): void {
-    // Nothing to do
-  }
+  // /**
+  //  * Polls the server and sends Dataservice state updates at the specified interval
+  //  * @param {number} pollIntervalSec the interval (sec) between polling attempts
+  //  */
+  // public pollDataserviceStatus(pollIntervalSec: number): void {
+  //   // Nothing to do
+  // }
 
   /**
    * Query a Dataservice via the komodo rest interface

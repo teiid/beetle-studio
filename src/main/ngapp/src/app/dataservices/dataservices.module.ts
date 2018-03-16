@@ -18,7 +18,9 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { Http } from "@angular/http";
 import { RouterModule } from "@angular/router";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
@@ -28,9 +30,13 @@ import { ViewsContentComponent } from "@dataservices/dataservices-list/views-con
 import { DataservicesRoutingModule } from "@dataservices/dataservices-routing.module";
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
+import { MockNotifierService } from "@dataservices/shared/mock-notifier.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
+import { environment } from "@environments/environment";
 import { SharedModule } from "@shared/shared.module";
 import { CodemirrorModule } from "ng2-codemirror";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -71,13 +77,87 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
     DataserviceCardComponent
   ],
   providers: [
-    DataserviceService,
-    VdbService,
+    {
+      provide: DataserviceService,
+      useFactory: dataserviceServiceFactory,
+      deps: [ Http, VdbService, AppSettingsService, NotifierService, LoggerService ],
+      multi: false
+    },
+    {
+      provide: NotifierService,
+      useFactory: notifierServiceFactory,
+      multi: false
+    },
+    {
+      provide: VdbService,
+      useFactory: vdbServiceFactory,
+      deps: [ Http, AppSettingsService, NotifierService, LoggerService ],
+      multi: false
+    },
     LoggerService,
-    NotifierService,
     WizardService
   ],
   exports: [
   ]
 })
 export class DataservicesModule { }
+
+/**
+ * A factory that produces the appropriate instance of the service based on current environment settings.
+ *
+ * @param {Http} http the HTTP service
+ * @param {VdbService} vdbService the VDB service
+ * @param {AppSettingsService} appSettings the app settings service
+ * @param {NotifierService} notifierService the notifier service
+ * @param {LoggerService} logger the logger
+ * @returns {DataserviceService} the requested service
+ */
+export function dataserviceServiceFactory( http: Http,
+                                           vdbService: VdbService,
+                                           appSettings: AppSettingsService,
+                                           notifierService: NotifierService,
+                                           logger: LoggerService ): DataserviceService {
+  return environment.production || !environment.uiDevMode ? new DataserviceService( http,
+                                                                                    vdbService,
+                                                                                    appSettings,
+                                                                                    notifierService,
+                                                                                    logger )
+                                                          : new MockDataserviceService( http,
+                                                                                        vdbService,
+                                                                                        appSettings,
+                                                                                        notifierService,
+                                                                                        logger );
+}
+
+/**
+ * A factory that produces the appropriate instance of the service based on current environment settings.
+ *
+ * @returns {NotifierService} the requested service
+ */
+export function notifierServiceFactory(): NotifierService {
+  return environment.production || !environment.uiDevMode ? new NotifierService()
+                                                          : new MockNotifierService();
+}
+
+/**
+ * A factory that produces the appropriate instance of the service based on current environment settings.
+ *
+ * @param {Http} http the HTTP service
+ * @param {AppSettingsService} appSettings the app settings service
+ * @param {NotifierService} notifierService the notifier service
+ * @param {LoggerService} logger the logger
+ * @returns {VdbService} the requested service
+ */
+export function vdbServiceFactory( http: Http,
+                                   appSettings: AppSettingsService,
+                                   notifierService: NotifierService,
+                                   logger: LoggerService ): VdbService {
+  return environment.production || !environment.uiDevMode ? new VdbService( http,
+                                                                            appSettings,
+                                                                            notifierService,
+                                                                            logger )
+                                                           : new MockVdbService( http,
+                                                                                 appSettings,
+                                                                                 notifierService,
+                                                                                 logger );
+}
