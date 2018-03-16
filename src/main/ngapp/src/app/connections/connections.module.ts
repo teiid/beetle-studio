@@ -34,6 +34,10 @@ import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { ConnectionTypeCardComponent } from "./connection-type-cards/connection-type-card/connection-type-card.component";
 import { ConnectionTypeCardsComponent } from "./connection-type-cards/connection-type-cards.component";
+import { AppSettingsService } from "@core/app-settings.service";
+import { Http } from "@angular/http";
+import { environment } from "@environments/environment";
+import { MockConnectionService } from "@connections/shared/mock-connection.service";
 
 @NgModule({
   imports: [
@@ -59,10 +63,30 @@ import { ConnectionTypeCardsComponent } from "./connection-type-cards/connection
     ConnectionTypeCardComponent
   ],
   providers: [
-    ConnectionService,
+    {
+      provide: ConnectionService,
+      useFactory: connectionServiceFactory,
+      deps: [ Http, AppSettingsService, LoggerService ],
+      multi: false
+    },
     LoggerService
   ],
   exports: [
   ]
 })
 export class ConnectionsModule { }
+
+/**
+ * A factory that produces the appropriate instande of the service based on current environment settings.
+ *
+ * @param {Http} http the HTTP service
+ * @param {AppSettingsService} appSettings the app settings service
+ * @param {LoggerService} logger the logger
+ * @returns {ConnectionService} the requested service
+ */
+export function connectionServiceFactory( http: Http,
+                                          appSettings: AppSettingsService,
+                                          logger: LoggerService ): ConnectionService {
+  return environment.production || !environment.uiDevMode ? new ConnectionService( http, appSettings, logger )
+                                                          : new MockConnectionService( http, appSettings, logger );
+}

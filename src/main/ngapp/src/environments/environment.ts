@@ -56,6 +56,9 @@ export const environment = {
   komodoTeiidUrl: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/metadata",
 
   // REST URL - Komodo service
-  komodoServiceUrl: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/service"
+  komodoServiceUrl: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/service",
+
+  // Indicates if in UI development mode where OpenShift will not be used.
+  uiDevMode: true
 
 };

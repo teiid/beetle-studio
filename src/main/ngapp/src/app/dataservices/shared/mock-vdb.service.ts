@@ -48,8 +48,19 @@ export class MockVdbService extends VdbService {
   constructor(http: Http, appSettings: AppSettingsService, notifierService: NotifierService, logger: LoggerService ) {
     super(http, appSettings, notifierService, logger);
     this.vdb1.setId("serv1");
+    this.vdbStatus1.setName( "serv1" );
+    this.vdbStatus1.setLoading( false );
+    this.vdbStatus1.setActive( true );
+
     this.vdb2.setId("serv2");
+    this.vdbStatus2.setName("serv2");
+    this.vdbStatus2.setLoading( false );
+    this.vdbStatus2.setActive( true );
+
     this.vdb3.setId("serv3");
+    this.vdbStatus3.setName("serv2");
+    this.vdbStatus3.setLoading( false );
+    this.vdbStatus3.setActive( true );
   }
 
   /**
@@ -65,6 +76,7 @@ export class MockVdbService extends VdbService {
    * @returns {Observable<Vdb[]>}
    */
   public getTeiidVdbStatuses(): Observable<VdbStatus[]> {
+    super.getTeiidVdbStatuses();
     return Observable.of(this.statuses);
   }
 
