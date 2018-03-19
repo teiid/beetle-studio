@@ -176,7 +176,12 @@ export class VdbService extends ApiService {
       .post(environment.komodoTeiidUrl + VdbsConstants.vdbRootPath,
         { path: vdbPath}, this.getAuthRequestOptions())
       .map((response) => {
-        return response.ok;
+        let status = response.json();
+        if (status.Information.deploymentSuccess !== 'true') {
+          this.handleError(response);
+        }
+
+        return status.Information.deploymentSuccess === 'true';
       })
       .catch( ( error ) => this.handleError( error ) );
   }

@@ -88,6 +88,8 @@ export abstract class ApiService {
         msg = body.message;
       else if (body.error)
         msg = body.error;
+      else if (body.Information && body.Information.ErrorMessage1)
+        msg = body.Information.ErrorMessage1;
     }
 
     if (msg.length === 0 ) {
