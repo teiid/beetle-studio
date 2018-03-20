@@ -73,6 +73,11 @@ export class MockDataserviceService extends DataserviceService {
    * @returns {Observable<boolean>}
    */
   public createDataservice(dataservice: NewDataservice): Observable<boolean> {
+    const ds = new Dataservice();
+    ds.setId( dataservice.getId() );
+    ds.setDescription( dataservice.getDescription() );
+
+    this.services.push( ds );
     return Observable.of(true);
   }
 
@@ -106,21 +111,6 @@ export class MockDataserviceService extends DataserviceService {
     return tables;
   }
 
-  // /**
-  //  * Updates the current Dataservice states - triggers update to be broadcast to interested components
-  //  */
-  // public updateDataserviceStates(): void {
-  //   // Nothing to do
-  // }
-
-  // /**
-  //  * Polls the server and sends Dataservice state updates at the specified interval
-  //  * @param {number} pollIntervalSec the interval (sec) between polling attempts
-  //  */
-  // public pollDataserviceStatus(pollIntervalSec: number): void {
-  //   // Nothing to do
-  // }
-
   /**
    * Query a Dataservice via the komodo rest interface
    * @param {string} query the SQL query
@@ -135,6 +125,43 @@ export class MockDataserviceService extends DataserviceService {
 
   protected handleError(error: Response): ErrorObservable {
     return Observable.throw(error);
+  }
+
+  public createReadonlyDataRole( dataserviceName: string,
+                                 model1Name: string ): Observable< boolean > {
+    return Observable.of( true );
+  }
+
+  public isValidName( name: string ): Observable<string> {
+    if ( !name || name.length === 0 ) {
+      return Observable.of( "Dataservice name cannot be empty" );
+    }
+
+    // make sure no dataservice exists with that name
+    for ( const ds of this.services ) {
+      if ( ds.getId() === name ) {
+        return Observable.of( "Dataservice with that name already exists" );
+      }
+    }
+
+    // just implement a case where no special characters allowed
+    for ( let i = 0; i < name.length; i++ ) {
+      const c = name.charAt( i );
+
+      // special characters have the same upper and lower case values
+      if ( c.toUpperCase() === c.toLowerCase() ) {
+        return Observable.of( "No special characters allowed" );
+      }
+    }
+
+    // valid
+    return Observable.of( "" );
+  }
+
+  public setServiceVdbForSingleSourceTables( dataserviceName: string,
+                                             tablePaths: string[],
+                                             modelSourcePath: string ): Observable< boolean > {
+    return Observable.of( true );
   }
 
 }

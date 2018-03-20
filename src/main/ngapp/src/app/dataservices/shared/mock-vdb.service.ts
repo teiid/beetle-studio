@@ -160,7 +160,19 @@ export class MockVdbService extends VdbService {
    * @param {number} pollIntervalSec the interval (sec) between polling attempts
    */
   public pollForActiveVdb(vdbName: string, pollDurationSec: number, pollIntervalSec: number): void {
-    return;
+    const pollIntervalMillis = pollIntervalSec * 1000;
+    const timer = Observable.timer(1000, pollIntervalMillis);
+    this.deploymentSubscription = timer.subscribe(( t: any ) => {
+      const vdbStatus = new VdbStatus();
+      vdbStatus.setName( vdbName );
+      vdbStatus.setActive( true );
+      vdbStatus.setLoading( false );
+      vdbStatus.setFailed( false );
+
+      this.notifierService.sendVdbDeploymentStatus( vdbStatus );
+      this.deploymentSubscription.unsubscribe();
+    } );
+
   }
 
   /**
