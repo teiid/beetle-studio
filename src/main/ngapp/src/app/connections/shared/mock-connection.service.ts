@@ -43,7 +43,7 @@ export class MockConnectionService extends ConnectionService {
     super(http, appSettings, logger);
 
     // Inject service for test data
-    let injector = ReflectiveInjector.resolveAndCreate([TestDataService]);
+    const injector = ReflectiveInjector.resolveAndCreate([TestDataService]);
     const testDataService = injector.get(TestDataService);
 
     // Get test data

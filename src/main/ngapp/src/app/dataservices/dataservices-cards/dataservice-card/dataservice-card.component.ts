@@ -107,13 +107,7 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
    * @returns {string[]} the names of the views
    */
   public getViews(): string[] {
-    const result: string[] = [];
-
-    for (const viewName of this.dataservice.getServiceViewNames()) {
-      result.push(viewName);
-    }
-
-    return result;
+    return this.dataservice.getServiceViewNames();
   }
 
   /**

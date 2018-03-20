@@ -116,10 +116,10 @@ export class Dataservice implements Identifiable< string > {
    */
   public getServiceViewNames(): string[] {
     if ( this.serviceViews ) {
-      this.serviceViews = [];
+      return this.serviceViews;
     }
 
-    return this.serviceViews;
+    return [];
   }
 
   /**
