@@ -31,6 +31,7 @@ import { environment } from "@environments/environment";
 import { ModalModule } from "ngx-bootstrap/modal";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PatternFlyNgModule } from "patternfly-ng";
+import { MockAboutService } from "@core/about-dialog/mock-about.service";
 
 @NgModule({
   imports: [
@@ -59,6 +60,12 @@ import { PatternFlyNgModule } from "patternfly-ng";
       deps: [ Http, LoggerService ],
       multi: false
     },
+    {
+      provide: AboutService,
+      useFactory: aboutServiceFactory,
+      deps: [ Http, AppSettingsService, LoggerService],
+      multi: false
+    },
     LoggerService,
     BsModalService
   ]
@@ -84,4 +91,19 @@ export function appSettingsServiceFactory( http: Http,
                                            logger: LoggerService ): AppSettingsService {
   return environment.production || !environment.uiDevMode ? new AppSettingsService( http, logger )
                                                           : new MockAppSettingsService( http, logger );
+}
+
+/**
+ * A factory that produces the appropriate instance of the service based on current environment settings.
+ *
+ * @param {Http} http the HTTP service
+ * @param {AppSettingsService} appSettings the app settings
+ * @param {LoggerService} logger the logger
+ * @returns {AboutService} the requested service
+ */
+export function aboutServiceFactory( http: Http,
+                                     appSettings: AppSettingsService,
+                                     logger: LoggerService ): AboutService {
+  return environment.production || !environment.uiDevMode ? new AboutService( http, appSettings, logger )
+                                                          : new MockAboutService( http, appSettings, logger );
 }
