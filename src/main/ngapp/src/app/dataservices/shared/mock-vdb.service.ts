@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
+import { Injectable, ReflectiveInjector } from "@angular/core";
 import { Http } from "@angular/http";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
@@ -26,6 +26,7 @@ import { VdbModel } from "@dataservices/shared/vdb-model.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { TestDataService } from "@shared/test-data.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
@@ -35,32 +36,19 @@ import { Observable } from "rxjs/Observable";
 @Injectable()
 export class MockVdbService extends VdbService {
 
-  private vdb1 = new Vdb();
-  private vdb2 = new Vdb();
-  private vdb3 = new Vdb();
-  private vdbs: Vdb[] = [this.vdb1, this.vdb2, this.vdb3];
-
-  private vdbStatus1 = new VdbStatus();
-  private vdbStatus2 = new VdbStatus();
-  private vdbStatus3 = new VdbStatus();
-  private statuses: VdbStatus[] = [this.vdbStatus1, this.vdbStatus3, this.vdbStatus3];
+  private vdbs: Vdb[];
+  private statuses: VdbStatus[];
 
   constructor(http: Http, appSettings: AppSettingsService, notifierService: NotifierService, logger: LoggerService ) {
     super(http, appSettings, notifierService, logger);
-    this.vdb1.setId("serv1");
-    this.vdbStatus1.setName( "serv1" );
-    this.vdbStatus1.setLoading( false );
-    this.vdbStatus1.setActive( true );
 
-    this.vdb2.setId("serv2");
-    this.vdbStatus2.setName("serv2");
-    this.vdbStatus2.setLoading( false );
-    this.vdbStatus2.setActive( true );
+    // Inject service for test data
+    const injector = ReflectiveInjector.resolveAndCreate([TestDataService]);
+    const testDataService = injector.get(TestDataService);
 
-    this.vdb3.setId("serv3");
-    this.vdbStatus3.setName("serv2");
-    this.vdbStatus3.setLoading( false );
-    this.vdbStatus3.setActive( true );
+    // Get test data
+    this.statuses = testDataService.getVdbStatuses();
+    this.vdbs = testDataService.getVdbs();
   }
 
   /**
