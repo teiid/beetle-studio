@@ -25,6 +25,7 @@ import { ModalModule } from "ngx-bootstrap";
 import { PageNotFoundComponent } from "./page-not-found/page-not-found.component";
 import { PropertyFormPropertyComponent } from "./property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "./property-form/property-form.component";
+import { TestDataService } from "@shared/test-data.service";
 
 @NgModule({
   imports: [
@@ -45,7 +46,10 @@ import { PropertyFormComponent } from "./property-form/property-form.component";
     PageNotFoundComponent,
     PropertyFormComponent,
     PropertyFormPropertyComponent
-  ]
+  ],
+  providers: [
+    TestDataService
+  ],
 })
 export class SharedModule {
 }
