@@ -164,7 +164,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
       this.basicPropertyForm.controls["name"].setValue(null);
       this.basicPropertyForm.controls["description"].setValue(null);
     }
-    this.setNavAway(false);
   }
 
   public ngOnDestroy(): void {
@@ -440,7 +439,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    */
   public updatePage1ValidStatus( ): void {
     this.step1Config.nextEnabled = this.tableSelector.valid();
-    this.setNavAway(this.step1Config.nextEnabled);
   }
 
   /**
@@ -475,10 +473,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setNavAway(allow: boolean): void {
-    this.step1Config.allowNavAway = allow;
-  }
-
   private updatePage2aValidStatus( ): void {
     if (!this.step2aConfig) {
       return;
@@ -488,7 +482,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     } else {
       this.step2aConfig.nextEnabled = this.nameValid && this.hasSelectedConnection();
     }
-    this.setNavAway(this.step2aConfig.nextEnabled);
   }
 
   /*
