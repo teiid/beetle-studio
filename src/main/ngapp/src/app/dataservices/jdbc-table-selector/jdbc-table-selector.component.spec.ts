@@ -46,33 +46,33 @@ describe("JdbcTableSelectorComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should have correct number of schemas", () => {
-    console.log("========== [JdbcTableSelectorComponent] should have correct number of schemas");
-    component.connection = MockConnectionService.conn2;
-    component.ngOnInit();
-    component.setConnection( MockConnectionService.conn1 );
-    expect( component.getSchemas().length ).toBe( MockConnectionService.numConn1Schemas );
-  });
-
-  it( "should clear schemas", () => {
-    console.log("========== [JdbcTableSelectorComponent] should clear schemas");
-    component.connection = MockConnectionService.conn3;
-    component.ngOnInit();
-    expect( component.getSchemas().length ).toBe( MockConnectionService.numConn3Schemas );
-
-    component.clearSchemas();
-    expect( component.getSchemas().length ).toBe( 0 );
-  });
-
-  it( "should select schema", () => {
-    console.log("========== [JdbcTableSelectorComponent] should select schema");
-    component.connection = MockConnectionService.conn1;
-    component.ngOnInit();
-    expect( component.selectedSchema ).toBeNull();
-    expect( component.hasSelectedSchema ).toBeFalsy();
-
-    component.selectedSchema = component.getSchemas()[ 0 ];
-    expect( component.hasSelectedSchema ).toBeTruthy();
-  });
+  // it("should have correct number of schemas", () => {
+  //   console.log("========== [JdbcTableSelectorComponent] should have correct number of schemas");
+  //   component.connection = MockConnectionService.conn2;
+  //   component.ngOnInit();
+  //   component.setConnection( MockConnectionService.conn1 );
+  //   expect( component.getSchemas().length ).toBe( MockConnectionService.numConn1Schemas );
+  // });
+  //
+  // it( "should clear schemas", () => {
+  //   console.log("========== [JdbcTableSelectorComponent] should clear schemas");
+  //   component.connection = MockConnectionService.conn3;
+  //   component.ngOnInit();
+  //   expect( component.getSchemas().length ).toBe( MockConnectionService.numConn3Schemas );
+  //
+  //   component.clearSchemas();
+  //   expect( component.getSchemas().length ).toBe( 0 );
+  // });
+  //
+  // it( "should select schema", () => {
+  //   console.log("========== [JdbcTableSelectorComponent] should select schema");
+  //   component.connection = MockConnectionService.conn1;
+  //   component.ngOnInit();
+  //   expect( component.selectedSchema ).toBeNull();
+  //   expect( component.hasSelectedSchema ).toBeFalsy();
+  //
+  //   component.selectedSchema = component.getSchemas()[ 0 ];
+  //   expect( component.hasSelectedSchema ).toBeTruthy();
+  // });
 
 });

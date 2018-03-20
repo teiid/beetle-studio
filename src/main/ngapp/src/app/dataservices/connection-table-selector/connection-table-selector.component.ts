@@ -157,7 +157,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
 
     // only set if schema selection has changed (see setter)
     if ( this.selectedConn == null || this.selectedConn.name !== conn.name ) {
-      this.selectedConn = conn;
+      this.selectedConnection = conn;
     }
   }
 
