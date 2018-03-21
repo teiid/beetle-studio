@@ -64,7 +64,6 @@ export class MockVdbService extends VdbService {
    * @returns {Observable<Vdb[]>}
    */
   public getTeiidVdbStatuses(): Observable<VdbStatus[]> {
-    super.getTeiidVdbStatuses();
     return Observable.of(this.statuses);
   }
 

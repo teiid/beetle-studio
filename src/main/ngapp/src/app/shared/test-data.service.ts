@@ -20,13 +20,13 @@ import { Connection } from "@connections/shared/connection.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
-import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
 
 @Injectable()
 export class TestDataService {
 
+  private static pgConnCatalogSourceId = "postgresql-persistent-lq6sg";
   private static catalogSourceId1 = "postgresql-persistent-j9vqv";
   private static catalogSourceId2 = "postgresql-persistent-a8xrt";
   private static catalogSourceId3 = "mysql-persistent-t3irv";
@@ -45,19 +45,6 @@ export class TestDataService {
       vdb__originalFile: "/Users/dsbUser/vdbs/accounts.vdb",
       vdb__preview: false,
       vdb__version: "1"
-    },
-  );
-
-  private static accountsVdbStatus = VdbStatus.create(
-    {
-      name: TestDataService.accountsVdb.getName(),
-      deployedName: TestDataService.accountsVdb.getName() + "-vdb.xml",
-      version: TestDataService.accountsVdb.getVersion(),
-      active: true,
-      loading: false,
-      failed: false,
-      errors: [
-      ]
     }
   );
 
@@ -71,19 +58,6 @@ export class TestDataService {
       vdb__originalFile: "/Users/dsbUser/vdbs/employees.vdb",
       vdb__preview: false,
       vdb__version: "1"
-    },
-  );
-
-  private static employeesVdbStatus = VdbStatus.create(
-    {
-      name: TestDataService.employeesVdb.getName(),
-      deployedName: TestDataService.employeesVdb.getName() + "-vdb.xml",
-      version: TestDataService.employeesVdb.getVersion(),
-      active: true,
-      loading: false,
-      failed: false,
-      errors: [
-      ]
     }
   );
 
@@ -97,25 +71,65 @@ export class TestDataService {
       vdb__originalFile: "/Users/dsbUser/vdbs/products.vdb",
       vdb__preview: false,
       vdb__version: "1"
-    },
-  );
-
-  private static productsVdbStatus = VdbStatus.create(
-    {
-      name: TestDataService.productsVdb.getName(),
-      deployedName: TestDataService.productsVdb.getName() + "-vdb.xml",
-      version: TestDataService.productsVdb.getVersion(),
-      active: true,
-      loading: false,
-      failed: false,
-      errors: [
-      ]
     }
   );
 
   // =================================================================
+  // VDB Status
+  // =================================================================
+
+  private static vdbStatuses =
+    {
+      "keng__baseUri": "http://das-beetle-studio.192.168.42.142.nip.io/vdb-builder/v1/",
+      "vdbs": [
+        {
+          "name": TestDataService.accountsVdb.getName(),
+          "deployedName": TestDataService.accountsVdb.getName() + "-vdb.xml",
+          "version": TestDataService.accountsVdb.getVersion(),
+          "active": true,
+          "loading": false,
+          "failed": false,
+          "errors": []
+        },
+        {
+          "name": TestDataService.employeesVdb.getName(),
+          "deployedName": TestDataService.employeesVdb.getName() + "-vdb.xml",
+          "version": TestDataService.employeesVdb.getVersion(),
+          "active": true,
+          "loading": false,
+          "failed": false,
+          "errors": []
+        },
+        {
+          "name": TestDataService.productsVdb.getName(),
+          "deployedName": TestDataService.productsVdb.getName() + "-vdb.xml",
+          "version": TestDataService.productsVdb.getVersion(),
+          "active": true,
+          "loading": false,
+          "failed": false,
+          "errors": []
+        }
+      ],
+      "keng___links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:4200/vdb-builder/v1/metadata/status/vdbs"
+        },
+        {
+          "rel": "parent",
+          "href": "http://localhost:4200/vdb-builder/v1/metadata/status"
+        }
+      ]
+    };
+
+  // =================================================================
   // ServiceCatalog DataSources
   // =================================================================
+  private static pgConnCatalogSource = TestDataService.createServiceCatalogSource(
+    TestDataService.pgConnCatalogSourceId,
+    TestDataService.pgConnCatalogSourceId,
+    "postgresql",
+    true );
   private static catalogSource1 = TestDataService.createServiceCatalogSource(
     TestDataService.catalogSourceId1,
     TestDataService.catalogSourceId1,
@@ -135,32 +149,180 @@ export class TestDataService {
   // =================================================================
   // Connections
   // =================================================================
-  private static connId1 = "conn1";
-  private static connId2 = "conn2";
-  private static connId3 = "conn3";
-  private static conn1 = TestDataService.createConnection(TestDataService.connId1, TestDataService.catalogSource1 );
-  private static conn2 = TestDataService.createConnection(TestDataService.connId2, TestDataService.catalogSource2 );
-  private static conn3 = TestDataService.createConnection(TestDataService.connId3, TestDataService.catalogSource3 );
+
+  private static pgConn = Connection.create(
+    {
+      "keng__baseUri": "http://localhost:4200/vdb-builder/v1/",
+      "keng__id": "PGConn",
+      "keng__dataPath": "/tko:komodo/tko:workspace/admin/PGConn",
+      "keng__kType": "Connection",
+      "keng__hasChildren": false,
+      "dv__jndiName": "java:/postgresql-persistent-lq6sg",
+      "dv__driverName": "postgresql",
+      "dv__type": true,
+      "keng__properties": [
+        {
+          "name": "description",
+          "value": "Postgres connection"
+        },
+        {
+          "name": "serviceCatalogSource",
+          "value": "postgresql-persistent-lq6sg"
+        }
+      ],
+      "keng___links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/connections/PGConn"
+        },
+        {
+          "rel": "parent",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/connections"
+        },
+        {
+          "rel": "children",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/search?parent=%2Ftko%3Akomodo%2Ftko%3Aworkspace%2Fadmin%2FPGConn"
+        }
+      ]
+    }
+  );
+
+  private static conn1 = Connection.create(
+    {
+      "keng__baseUri": "http://localhost:4200/vdb-builder/v1/",
+      "keng__id": "conn1",
+      "keng__dataPath": "/tko:komodo/tko:workspace/admin/conn1",
+      "keng__kType": "Connection",
+      "keng__hasChildren": false,
+      "dv__jndiName": "java:/postgresql-persistent-j9vqv",
+      "dv__driverName": "postgresql",
+      "dv__type": true,
+      "keng__properties": [
+        {
+          "name": "description",
+          "value": "Postgres connection"
+        },
+        {
+          "name": "serviceCatalogSource",
+          "value": "postgresql-persistent-j9vqv"
+        }
+      ],
+      "keng___links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/connections/conn1"
+        },
+        {
+          "rel": "parent",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/connections"
+        },
+        {
+          "rel": "children",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/search?parent=%2Ftko%3Akomodo%2Ftko%3Aworkspace%2Fadmin%2Fconn1"
+        }
+      ]
+    }
+  );
+
+  private static conn2 = Connection.create(
+    {
+      "keng__baseUri": "http://localhost:4200/vdb-builder/v1/",
+      "keng__id": "conn2",
+      "keng__dataPath": "/tko:komodo/tko:workspace/admin/conn2",
+      "keng__kType": "Connection",
+      "keng__hasChildren": false,
+      "dv__jndiName": "java:/postgresql-persistent-a8xrt",
+      "dv__driverName": "postgresql",
+      "dv__type": true,
+      "keng__properties": [
+        {
+          "name": "description",
+          "value": "Postgres connection"
+        },
+        {
+          "name": "serviceCatalogSource",
+          "value": "postgresql-persistent-a8xrt"
+        }
+      ],
+      "keng___links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/connections/conn2"
+        },
+        {
+          "rel": "parent",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/connections"
+        },
+        {
+          "rel": "children",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/search?parent=%2Ftko%3Akomodo%2Ftko%3Aworkspace%2Fadmin%2Fconn2"
+        }
+      ]
+    }
+  );
+
+  private static conn3 = Connection.create(
+    {
+      "keng__baseUri": "http://localhost:4200/vdb-builder/v1/",
+      "keng__id": "conn3",
+      "keng__dataPath": "/tko:komodo/tko:workspace/admin/conn3",
+      "keng__kType": "Connection",
+      "keng__hasChildren": false,
+      "dv__jndiName": "java:/mysql-persistent-t3irv",
+      "dv__driverName": "mysql",
+      "dv__type": true,
+      "keng__properties": [
+        {
+          "name": "description",
+          "value": "MySQL connection"
+        },
+        {
+          "name": "serviceCatalogSource",
+          "value": "mysql-persistent-t3irv"
+        }
+      ],
+      "keng___links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/connections/conn3"
+        },
+        {
+          "rel": "parent",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/connections"
+        },
+        {
+          "rel": "children",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/search?parent=%2Ftko%3Akomodo%2Ftko%3Aworkspace%2Fadmin%2Fconn3"
+        }
+      ]
+    }
+  );
 
   // =================================================================
   // SchemaInfos for the connections
   // =================================================================
+
+  private static pgConnSchemaInfos = [
+    SchemaInfo.create( { name: "pgConnSchemaInfo1", type: "Schema" } ),
+    SchemaInfo.create( { name: "pgConnCatalogInfo", type: "Catalog", schemaNames: [ "pgConnCatalogSchema1", "pgConnCatalogSchema2" ] } )
+  ];
+
   private static conn1SchemaInfos = [
     SchemaInfo.create( { name: "conn1SchemaInfo1", type: "Schema" } ),
-    SchemaInfo.create( { name: "conn1CatalogInfo", type: "Catalog", schemaNames: [ "conn1CatalogSchema1", "conn1CatalogSchema1" ] } )
+    SchemaInfo.create( { name: "conn1CatalogInfo", type: "Catalog", schemaNames: [ "conn1CatalogSchema1", "conn1CatalogSchema2" ] } )
   ];
 
   private static conn2SchemaInfos = [
-    SchemaInfo.create( { name: "conn2CatalogInfo", type: "Catalog", schemaNames: [ "conn2CatalogSchema1", "conn2CatalogSchema1" ] } ),
+    SchemaInfo.create( { name: "conn2CatalogInfo", type: "Catalog", schemaNames: [ "conn2CatalogSchema1", "conn2CatalogSchema2" ] } ),
     SchemaInfo.create( { name: "conn2SchemaInfo1", type: "Schema" } ),
     SchemaInfo.create( { name: "conn2SchemaInfo2", type: "Schema" } )
   ];
 
   private static conn3SchemaInfos = [
-    SchemaInfo.create( { name: "conn3CatalogInfo", type: "Catalog", schemaNames: [ "conn3CatalogSchema1", "conn3CatalogSchema1" ] } ),
+    SchemaInfo.create( { name: "conn3CatalogInfo", type: "Catalog", schemaNames: [ "conn3CatalogSchema1", "conn3CatalogSchema2" ] } ),
     SchemaInfo.create( { name: "conn3SchemaInfo1", type: "Schema" } ),
     SchemaInfo.create( { name: "conn3SchemaInfo2", type: "Schema" } ),
-    SchemaInfo.create( { name: "conn3SchemaInfo2", type: "Schema" } )
+    SchemaInfo.create( { name: "conn3SchemaInfo3", type: "Schema" } )
   ];
 
   // =================================================================
@@ -169,61 +331,120 @@ export class TestDataService {
 
   private static accountsService = Dataservice.create(
     {
-      keng__id: "Accounts",
-      tko__description: "A dataservice for accounts.",
-      serviceVdbName: TestDataService.accountsVdb.getName(),
-      serviceVdbVersion: TestDataService.accountsVdb.getVersion(),
-      serviceViews: [
+      "keng__baseUri": "http://localhost:4200/vdb-builder/v1/",
+      "keng__id": "Accounts",
+      "keng__dataPath": "/tko:komodo/tko:workspace/admin/Accounts",
+      "keng__kType": "Dataservice",
+      "keng__hasChildren": true,
+      "tko__description": "A dataservice for accounts.",
+      "serviceVdbName": TestDataService.accountsVdb.getName(),
+      "serviceVdbVersion": TestDataService.accountsVdb.getVersion(),
+      "serviceViewModel": "views",
+      "serviceViews": [
         "AcctView1",
         "AcctView2"
       ],
-      serviceViewModel: "AccountsViewModel",
-      serviceViewTables: [
-        "AcctView1Table1",
-        "AcctView1Table2",
-        "AcctView1Table3",
-        "AcctView2Table1"
+      "serviceViewTables": [
+        TestDataService.conn1.getId() + "BtlSource.AcctView1Table1",
+        TestDataService.conn1.getId() + "BtlSource.AcctView1Table2",
+        TestDataService.conn1.getId() + "BtlSource.AcctView1Table3",
+        TestDataService.conn1.getId() + "BtlSource.AcctView2Table1"
       ],
-      deploymentState: DeploymentState.LOADING
+      "connections": 0,
+      "drivers": 0,
+      "keng___links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices/Accounts"
+        },
+        {
+          "rel": "parent",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices"
+        },
+        {
+          "rel": "children",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/search?parent=%2Ftko%3Akomodo%2Ftko%3Aworkspace%2Fadmin%2FAccounts"
+        },
+        {
+          "rel": "vdbs",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices/CustService/Vdbs"
+        },
+        {
+          "rel": "connections",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices/CustService/connections"
+        }
+      ]
     }
   );
 
   private static employeesService = Dataservice.create(
     {
-      keng__id: "Employees",
-      tko__description: "A dataservice for employees.",
-      serviceVdbName: TestDataService.employeesVdb.getName(),
-      serviceVdbVersion: TestDataService.employeesVdb.getVersion(),
-      serviceViews: [
+      "keng__baseUri": "http://localhost:4200/vdb-builder/v1/",
+      "keng__id": "Employees",
+      "keng__dataPath": "/tko:komodo/tko:workspace/admin/Employees",
+      "keng__kType": "Dataservice",
+      "keng__hasChildren": true,
+      "tko__description": "A dataservice for employees.",
+      "serviceVdbName": TestDataService.employeesVdb.getName(),
+      "serviceVdbVersion": TestDataService.employeesVdb.getVersion(),
+      "serviceViewModel": "views",
+      "serviceViews": [
         "EmpView1",
         "EmpView2",
         "EmpView3",
         "EmpView4"
       ],
-      serviceViewModel: "EmployeesViewModel",
-      serviceViewTables: [
-        "EmpView1Table1",
-        "EmpView2Table1",
-        "EmpView2Table2",
-        "EmpView3Table1",
-        "EmpView3Table2",
-        "EmpView3Table3",
-        "EmpView4Table1",
-        "EmpView4Table2",
-        "EmpView4Table3",
-        "EmpView4Table4"
+      "serviceViewTables": [
+        TestDataService.conn2.getId() + "BtlSource.EmpView1Table1",
+        TestDataService.conn2.getId() + "BtlSource.EmpView2Table1",
+        TestDataService.conn2.getId() + "BtlSource.EmpView2Table2",
+        TestDataService.conn2.getId() + "BtlSource.EmpView3Table1",
+        TestDataService.conn2.getId() + "BtlSource.EmpView3Table2",
+        TestDataService.conn2.getId() + "BtlSource.EmpView3Table3",
+        TestDataService.conn2.getId() + "BtlSource.EmpView4Table1",
+        TestDataService.conn2.getId() + "BtlSource.EmpView4Table2",
+        TestDataService.conn2.getId() + "BtlSource.EmpView4Table3",
+        TestDataService.conn2.getId() + "BtlSource.EmpView4Table4"
       ],
-      deploymentState: DeploymentState.LOADING
+      "connections": 0,
+      "drivers": 0,
+      "keng___links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices/Employees"
+        },
+        {
+          "rel": "parent",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices"
+        },
+        {
+          "rel": "children",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/search?parent=%2Ftko%3Akomodo%2Ftko%3Aworkspace%2Fadmin%2FEmployees"
+        },
+        {
+          "rel": "vdbs",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices/CustService/Vdbs"
+        },
+        {
+          "rel": "connections",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices/CustService/connections"
+        }
+      ]
     }
   );
 
   private static productsService = Dataservice.create(
     {
-      keng__id: "Products",
-      tko__description: "A dataservice for products. These are really good products. These products are the best products money can buy.",
-      serviceVdbName: TestDataService.productsVdb.getName(),
-      serviceVdbVersion: TestDataService.productsVdb.getVersion(),
-      serviceViews: [
+      "keng__baseUri": "http://localhost:4200/vdb-builder/v1/",
+      "keng__id": "Products",
+      "keng__dataPath": "/tko:komodo/tko:workspace/admin/Products",
+      "keng__kType": "Dataservice",
+      "keng__hasChildren": true,
+      "tko__description": "A dataservice for products.",
+      "serviceVdbName": TestDataService.productsVdb.getName(),
+      "serviceVdbVersion": TestDataService.productsVdb.getVersion(),
+      "serviceViewModel": "views",
+      "serviceViews": [
         "ProdView1",
         "ProdView2",
         "ProdView3",
@@ -231,39 +452,65 @@ export class TestDataService {
         "ProdView5",
         "ProdView6"
       ],
-      serviceViewModel: "ProductsViewModel",
-      serviceViewTables: [
-        "ProdView1Table1",
-        "ProdView2Table1",
-        "ProdView2Table2",
-        "ProdView3Table1",
-        "ProdView3Table2",
-        "ProdView3Table3",
-        "ProdView4Table1",
-        "ProdView4Table2",
-        "ProdView4Table3",
-        "ProdView4Table4",
-        "ProdView5Table1",
-        "ProdView5Table2",
-        "ProdView5Table3",
-        "ProdView5Table4",
-        "ProdView5Table5",
-        "ProdView6Table1",
-        "ProdView6Table2",
-        "ProdView6Table3",
-        "ProdView6Table4",
-        "ProdView6Table5",
-        "ProdView6Table6"
+      "serviceViewTables": [
+        TestDataService.conn3.getId() + "BtlSource.ProdView1Table1",
+        TestDataService.conn3.getId() + "BtlSource.ProdView2Table1",
+        TestDataService.conn3.getId() + "BtlSource.ProdView2Table2",
+        TestDataService.conn3.getId() + "BtlSource.ProdView3Table1",
+        TestDataService.conn3.getId() + "BtlSource.ProdView3Table2",
+        TestDataService.conn3.getId() + "BtlSource.ProdView3Table3",
+        TestDataService.conn3.getId() + "BtlSource.ProdView4Table1",
+        TestDataService.conn3.getId() + "BtlSource.ProdView4Table2",
+        TestDataService.conn3.getId() + "BtlSource.ProdView4Table3",
+        TestDataService.conn3.getId() + "BtlSource.ProdView4Table4",
+        TestDataService.conn3.getId() + "BtlSource.ProdView5Table1",
+        TestDataService.conn3.getId() + "BtlSource.ProdView5Table2",
+        TestDataService.conn3.getId() + "BtlSource.ProdView5Table3",
+        TestDataService.conn3.getId() + "BtlSource.ProdView5Table4",
+        TestDataService.conn3.getId() + "BtlSource.ProdView5Table5",
+        TestDataService.conn3.getId() + "BtlSource.ProdView6Table1",
+        TestDataService.conn3.getId() + "BtlSource.ProdView6Table2",
+        TestDataService.conn3.getId() + "BtlSource.ProdView6Table3",
+        TestDataService.conn3.getId() + "BtlSource.ProdView6Table4",
+        TestDataService.conn3.getId() + "BtlSource.ProdView6Table5",
+        TestDataService.conn3.getId() + "BtlSource.ProdView6Table6"
       ],
-      deploymentState: DeploymentState.LOADING
+      "connections": 0,
+      "drivers": 0,
+      "keng___links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices/Products"
+        },
+        {
+          "rel": "parent",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices"
+        },
+        {
+          "rel": "children",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/search?parent=%2Ftko%3Akomodo%2Ftko%3Aworkspace%2Fadmin%2FProducts"
+        },
+        {
+          "rel": "vdbs",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices/CustService/Vdbs"
+        },
+        {
+          "rel": "connections",
+          "href": "http://localhost:4200/vdb-builder/v1/workspace/dataservices/CustService/connections"
+        }
+      ]
     }
   );
 
-  private catalogSources: ServiceCatalogSource[] = [TestDataService.catalogSource1,
+  private catalogSources: ServiceCatalogSource[] = [
+    TestDataService.pgConnCatalogSource,
+    TestDataService.catalogSource1,
     TestDataService.catalogSource2,
     TestDataService.catalogSource3];
 
-  private connections: Connection[] = [TestDataService.conn1,
+  private connections: Connection[] = [
+    TestDataService.pgConn,
+    TestDataService.conn1,
     TestDataService.conn2,
     TestDataService.conn3];
 
@@ -279,32 +526,8 @@ export class TestDataService {
     TestDataService.productsVdb
   ];
 
-  private vdbStatuses: VdbStatus[] = [
-    TestDataService.accountsVdbStatus,
-    TestDataService.employeesVdbStatus,
-    TestDataService.productsVdbStatus
-  ];
-
-  /**
-   * Create a connection of the specified id using the supplied ServiceCatalogSource
-   * @param {string} id
-   * @param {ServiceCatalogSource} serviceCatalogSource
-   * @returns {Connection}
-   */
-  private static createConnection( id: string, serviceCatalogSource: ServiceCatalogSource ): Connection {
-    const newConn = new Connection();
-    newConn.setId( id );
-    const driverName = serviceCatalogSource.getType();
-    newConn.setDriverName( driverName );
-    if ( driverName === "mysql" || driverName === "postgresql") {
-      newConn.setJdbc( true );
-    } else {
-      newConn.setJdbc( false );
-    }
-    newConn.setServiceCatalogSourceName(serviceCatalogSource.getName());
-    newConn.setJndiName("java:/" + serviceCatalogSource.getName());
-    return newConn;
-  }
+  private jdbcTableMap = new Map<string, string[]>();
+  private vdbStatuses: VdbStatus[];
 
   /**
    * Create a ServiceCatalogSource using the specified info
@@ -324,7 +547,106 @@ export class TestDataService {
   }
 
   constructor() {
-    // nothing to do
+    this.vdbStatuses = TestDataService.vdbStatuses.vdbs.map(( vdbStatus ) => VdbStatus.create( vdbStatus ) );
+
+    this.jdbcTableMap.set( "pgConnSchemaInfo1", [
+      "pgConnTable1",
+      "pgConnTable2",
+      "pgConnTable3",
+      "pgConnTable4",
+      "pgConnTable5",
+      "pgConnTable6"
+    ] );
+    this.jdbcTableMap.set( "pgConnCatalogSchema1", [
+      "pgConnTableA",
+      "pgConnTableB",
+      "pgConnTableC",
+      "pgConnTableD",
+      "pgConnTableE",
+      "pgConnTableF",
+      "pgConnTableG"
+    ] );
+    this.jdbcTableMap.set( "pgConnCatalogSchema2", [
+      "cat2TableRed",
+      "cat2TableWhite",
+      "cat2TableBlue"
+    ] );
+    this.jdbcTableMap.set( "conn1SchemaInfo1", [
+      "conn1Table1",
+      "conn1Table2",
+      "conn1Table3",
+      "conn1Table4",
+      "conn1Table5",
+      "conn1Table6"
+    ] );
+    this.jdbcTableMap.set( "conn1CatalogSchema1", [
+      "conn1TableA",
+      "conn1TableB",
+      "conn1TableC",
+      "conn1TableD",
+      "conn1TableE",
+      "conn1TableF",
+      "conn1TableG"
+    ] );
+    this.jdbcTableMap.set( "conn1CatalogSchema2", [
+      "conn1TableRed",
+      "conn1TableWhite",
+      "conn1TableBlue"
+    ] );
+    this.jdbcTableMap.set( "conn2CatalogSchema1", [
+      "conn2Table1",
+      "conn2Table2",
+      "conn2Table3",
+      "conn2Table4",
+      "conn2Table5",
+      "conn2Table6",
+      "conn2Table7"
+    ] );
+    this.jdbcTableMap.set( "conn2CatalogSchema2", [
+      "conn2Cat2TableA",
+      "conn2Cat2TableB",
+      "conn2Cat2TableC",
+      "conn2Cat2TableD",
+      "conn2Cat2TableE",
+      "conn2Cat2TableF",
+      "conn2Cat2TableG"
+    ] );
+    this.jdbcTableMap.set( "conn2SchemaInfo1", [
+      "conn2TableLarry",
+      "conn2TableCurly",
+      "conn2TableMoe"
+    ] );
+    this.jdbcTableMap.set( "conn2SchemaInfo2", [
+      "conn2TableRed",
+      "conn2TableWhite",
+      "conn2TableBlue"
+    ] );
+    this.jdbcTableMap.set( "conn3CatalogSchema1", [
+      "conn3Table1",
+      "conn3Table2",
+      "conn3Table3",
+      "conn2Table4"
+    ] );
+    this.jdbcTableMap.set( "conn3CatalogSchema2", [
+      "conn3Cat2TableA",
+      "conn3Cat2TableB",
+      "conn3Cat2TableC"
+    ] );
+    this.jdbcTableMap.set( "conn3SchemaInfo1", [
+      "conn3TableJohn",
+      "conn3TablePaul",
+      "conn3TableRingo"
+    ] );
+    this.jdbcTableMap.set( "conn3SchemaInfo2", [
+      "conn3TablePurple",
+      "conn3TableBlue",
+      "conn3TableGreen"
+    ] );
+    this.jdbcTableMap.set( "conn3SchemaInfo3", [
+      "conn3TableOrange",
+      "conn3TableYellow",
+      "conn3TableBrown"
+    ] );
   }
 
   /**
@@ -346,6 +668,7 @@ export class TestDataService {
    */
   public getConnectionSourceSchemaInfoMap( ): Map<string, SchemaInfo[]> {
     const infoMap = new Map<string, SchemaInfo[]>();
+    infoMap.set( TestDataService.pgConn.getServiceCatalogSourceName(), TestDataService.pgConnSchemaInfos );
     infoMap.set( TestDataService.conn1.getServiceCatalogSourceName(), TestDataService.conn1SchemaInfos );
     infoMap.set( TestDataService.conn2.getServiceCatalogSourceName(), TestDataService.conn2SchemaInfos );
     infoMap.set( TestDataService.conn3.getServiceCatalogSourceName(), TestDataService.conn3SchemaInfos );
@@ -357,6 +680,10 @@ export class TestDataService {
    */
   public getDataservices(): Dataservice[] {
     return this.dataServices;
+  }
+
+  public getJdbcConnectionTableMap(): Map<string, string[]> {
+    return this.jdbcTableMap;
   }
 
   /**

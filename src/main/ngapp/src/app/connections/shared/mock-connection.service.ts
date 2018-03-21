@@ -38,6 +38,7 @@ export class MockConnectionService extends ConnectionService {
   private connections: Connection[];
   private serviceCatalogSources: ServiceCatalogSource[];
   private connectionSourceSchemaInfoMap: Map<string, SchemaInfo[]>;
+  private tableMap = new Map<string, string[]>();
 
   constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
     super(http, appSettings, logger);
@@ -50,6 +51,7 @@ export class MockConnectionService extends ConnectionService {
     this.connections = testDataService.getConnections();
     this.serviceCatalogSources = testDataService.getServiceCatalogSources();
     this.connectionSourceSchemaInfoMap = testDataService.getConnectionSourceSchemaInfoMap();
+    this.tableMap = testDataService.getJdbcConnectionTableMap();
   }
 
   public isValidName( name: string ): Observable< string > {
@@ -124,11 +126,7 @@ export class MockConnectionService extends ConnectionService {
    * @returns {Observable<string>}
    */
   public getJdbcConnectionTables( tableFilter: JdbcTableFilter ): Observable< string[] > {
-    const tableNames = [];
-    tableNames.push( "table1" );
-    tableNames.push( "table2" );
-    tableNames.push( "table3" );
-    return Observable.of( tableNames );
+    return Observable.of( this.tableMap.get( tableFilter.getSchemaFilter() ) );
   }
 
   /**
