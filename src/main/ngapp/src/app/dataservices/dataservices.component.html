@@ -71,13 +71,15 @@
 
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('dataservices')">
-        <!-- Notification for Dataservice Export -->
-        <pfng-toast-notification *ngIf="showExportNotification" [header]="exportNotificationHeader"
+        <div class="dataservices-toast">
+          <!-- Notification for Dataservice Export -->
+          <pfng-toast-notification *ngIf="showExportNotification" [header]="exportNotificationHeader"
                                  [message]="exportNotificationMessage"
                                  [type]="exportNotificationType"
                                  [showClose]="true"
                                  (onCloseSelect)="onCloseExportNotification()">
-        </pfng-toast-notification>
+          </pfng-toast-notification>
+        </div>
 
         <div class="{{cardListAreaCss}}">
           <app-dataservices-list *ngIf="isListLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
