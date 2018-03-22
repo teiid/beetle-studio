@@ -8,7 +8,7 @@
 /* Adds an icon to the left of the publish action item in dropdown of kebab. */
 .object-list .secondary-action[title*="Publish"]:before {
   color: var(--card-action-icon-color);
-  content: "\f08e";
+  content: "\f085";
   font-family: "FontAwesome";
 }
 

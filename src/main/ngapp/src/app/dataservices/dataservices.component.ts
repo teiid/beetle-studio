@@ -25,6 +25,8 @@ import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
+import { PublishState } from "@dataservices/shared/publish-state.enum";
+import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
@@ -58,8 +60,8 @@ import { Subscription } from "rxjs/Subscription";
 export class DataservicesComponent extends AbstractPageComponent implements OnInit {
 
   public readonly exportInProgressHeader: string = "Publishing:  ";
-  public readonly exportSuccessHeader: string = "Publish Succeeded:  ";
-  public readonly exportFailedHeader: string = "Publish Failed:  ";
+  public readonly exportSuccessHeader: string = "Publishing Begun:  ";
+  public readonly exportFailedHeader: string = "Publishing Failed:  ";
   public readonly connectionsLoadedTag = "connections";
 
   public readonly downloadInProgressHeader: string = "Downloading:  ";
@@ -97,7 +99,8 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private exportNotificationMessage: string;
   private exportNotificationType = NotificationType.SUCCESS;
   private exportNotificationVisible = false;
-  private dataserviceStateSubscription: Subscription;
+  private dataserviceDeployStateSubscription: Subscription;
+  private dataservicePublishStateSubscription: Subscription;
   private notifierService: NotifierService;
   private wizardService: WizardService;
   private selectedSvcViews: Table[] = [];
@@ -116,9 +119,13 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.vdbService = vdbService;
     this.notifierService = notifierService;
     this.wizardService = wizardService;
+    // Register for dataservice deployment state changes
+    this.dataserviceDeployStateSubscription = this.notifierService.getDataserviceDeployStateMap().subscribe((serviceStateMap) => {
+      this.onDataserviceDeploymentStateChanged(serviceStateMap);
+    });
     // Register for dataservice state changes
-    this.dataserviceStateSubscription = this.notifierService.getDataserviceStateMap().subscribe((serviceStateMap) => {
-      this.onDataserviceStateChanged(serviceStateMap);
+    this.dataservicePublishStateSubscription = this.notifierService.getDataserviceVirtualizationMap().subscribe((serviceStateMap) => {
+      this.onDataservicePublishStateChanged(serviceStateMap);
     });
     this.connectionService = connectionService;
   }
@@ -438,6 +445,9 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   public onPublish(svcName: string): void {
+    const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
+    const virtual: Virtualization = new Virtualization(selectedService.getServiceVdbName(), PublishState.PUBLISHING);
+    selectedService.setServiceVirtualization(virtual);
     this.setQuickLookPanelOpenState(false);
 
     this.exportNotificationHeader = this.exportInProgressHeader;
@@ -449,15 +459,15 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.dataserviceService
       .publishDataservice(svcName)
       .subscribe(
-        (wasSuccess) => {
+        (status) => {
           self.exportNotificationHeader = this.exportSuccessHeader;
-          self.exportNotificationMessage = "   " + svcName + " publishing successfully initiated!";
-          self.exportNotificationType = NotificationType.SUCCESS;
-          this.logger.log("[DataservicesPageComponent] Dataservice publishing initiation was successful");
+          self.exportNotificationMessage = "   " + svcName + " publishing successfully initiated.";
+          self.exportNotificationType = NotificationType.INFO;
+          this.logger.log("[DataservicesPageComponent] Initiated publishing of dataservice");
         },
         (error) => {
           self.exportNotificationHeader = this.exportFailedHeader;
-          self.exportNotificationMessage = "   Failed to publish dataservice " + svcName + "!";
+          self.exportNotificationMessage = "   Failed to publish dataservice " + svcName + ".";
           self.exportNotificationType = NotificationType.DANGER;
           this.logger.log("[DataservicesPageComponent] Publish dataservice " + svcName + " failed.");
         }
@@ -675,14 +685,27 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   /*
-   * Update the displayed dataservice states using the provided states
+   * Update the displayed dataservice deployment states using the provided states
    */
-  private onDataserviceStateChanged(stateMap: Map<string, DeploymentState>): void {
-      // For displayed dataservices, update the State using supplied services
+  private onDataserviceDeploymentStateChanged(stateMap: Map<string, DeploymentState>): void {
+      // For displayed dataservices, update the Deployment State using supplied services
       for ( const dService of this.filteredDataservices ) {
         const serviceId = dService.getId();
         if (stateMap && stateMap.has(serviceId)) {
           dService.setServiceDeploymentState(stateMap.get(serviceId));
+        }
+      }
+  }
+
+  /*
+   * Update the displayed dataservice publish states using the provided states
+   */
+  private onDataservicePublishStateChanged(stateMap: Map<string, Virtualization>): void {
+      // For displayed dataservices, update the Publish State using supplied services
+      for ( const dService of this.filteredDataservices ) {
+        const serviceId = dService.getId();
+        if (stateMap && stateMap.has(serviceId)) {
+          dService.setServiceVirtualization(stateMap.get(serviceId));
         }
       }
   }

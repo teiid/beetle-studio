@@ -29,6 +29,7 @@ import { VdbModel } from "@dataservices/shared/vdb-model.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Rx";
 import { Subscription } from "rxjs/Subscription";
@@ -85,7 +86,7 @@ export class VdbService extends ApiService {
   }
 
   /**
-   * Get the vdbs from the komodo rest interface
+   * Get the status of any deployed vdbs
    * @returns {Observable<Vdb[]>}
    */
   public getTeiidVdbStatuses(): Observable<VdbStatus[]> {
@@ -99,6 +100,19 @@ export class VdbService extends ApiService {
   }
 
   /**
+   * Get the status of all published vdbs (virtualizations)
+   * @returns {Observable<Vdb[]>}
+   */
+  public getVirtualizations(): Observable<Virtualization[]> {
+    return this.http
+      .get(environment.komodoTeiidUrl + "/" + VdbsConstants.vdbPublish, this.getAuthRequestOptions())
+      .map((response) => {
+        const virtuals = response.json();
+        return virtuals.map((virtualStatus) => Virtualization.create( virtualStatus ));
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
   /**
    * Derive the vdb name from the given connection
    *

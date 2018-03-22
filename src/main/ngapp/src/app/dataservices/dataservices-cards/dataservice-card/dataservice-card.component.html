@@ -78,6 +78,35 @@
             data-placement="right"
             title="Edit">
       </span>
+
+      <span class="pull-left fa fa-cogs fa-2x card-action-icon"
+            style="color:grey;"
+            *ngIf="dataservice.serviceNotPublished"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Not Published">
+      </span>
+      <span class="pull-left fa fa-cogs fa-2x card-action-icon"
+            style="color:red;"
+            *ngIf="dataservice.servicePublishFailed"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Publishing Failed">
+      </span>
+      <span class="pull-left fa fa-cog fa-spin fa-2x card-action-icon"
+            style="color:orange;"
+            *ngIf="dataservice.servicePublishing"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Publishing">
+      </span>
+      <span class="pull-left fa fa-cogs fa-2x card-action-icon"
+            style="color:green;"
+            *ngIf="dataservice.servicePublished"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Published">
+      </span>
     </div>
     <div class="row card-pf-title text-center object-card-title">
       <span class="fa fa-table object-inline-icon"></span>

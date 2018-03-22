@@ -6,7 +6,7 @@
 
 .card-toolbar .secondary-action[title="Publish"]:before {
   color: var(--card-action-icon-color);
-  content: "\f08e";
+  content: "\f085";
   font-family: "FontAwesome";
 }
 

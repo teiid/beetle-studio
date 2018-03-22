@@ -30,4 +30,6 @@ export class VdbsConstants {
 
   public static readonly vdbModelSourcesRootRoute = "VdbModelSources";
   public static readonly vdbModelSourcesRootPath = "/" + VdbsConstants.vdbModelSourcesRootRoute;
+
+  public static readonly vdbPublish = "publish";
 }

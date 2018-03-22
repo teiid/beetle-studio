@@ -24,6 +24,7 @@ import { Connection } from "@connections/shared/connection.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
+import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { QueryResults } from "@dataservices/shared/query-results.model";
@@ -31,6 +32,7 @@ import { Table } from "@dataservices/shared/table.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Observable";
 import { ReplaySubject } from "rxjs/ReplaySubject";
@@ -55,7 +57,8 @@ export class DataserviceService extends ApiService {
   private vdbService: VdbService;
   private selectedDataservice: Dataservice;
   private dataserviceCurrentView: Table[] = [];
-  private cachedDataserviceStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
+  private cachedDataserviceDeployStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
+  private cachedDataserviceVirtualizations: Map<string, Virtualization> = new Map<string, Virtualization>();
   private updatesSubscription: Subscription;
 
   constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
@@ -244,8 +247,7 @@ export class DataserviceService extends ApiService {
    * @param {string} model1Name,
    * @returns {Observable<boolean>}
    */
-  public createReadonlyDataRole(dataserviceName: string, model1Name: string): Observable<boolean> {
-    const serviceVdbName = dataserviceName + this.serviceVdbSuffix;
+  public createReadonlyDataRole(serviceVdbName: string, model1Name: string): Observable<boolean> {
     const READ_ONLY_DATA_ROLE_NAME = VdbsConstants.DEFAULT_READONLY_DATA_ROLE;
     const VIEW_MODEL = VdbsConstants.SERVICE_VIEW_MODEL_NAME;
     const userWorkspacePath = this.getKomodoUserWorkspacePath();
@@ -440,7 +442,6 @@ export class DataserviceService extends ApiService {
       .post(url, payload, this.getAuthRequestOptions())
       .map((response) => {
         let status = response.json();
-        console.log("Response: " + response);
 
         if (! status.downloadable) {
           throw new Error(payload.dataPath + " is not downloadable");
@@ -483,6 +484,12 @@ export class DataserviceService extends ApiService {
     return this.http
       .post(url, payload, this.getAuthRequestOptions())
       .map((response) => {
+        let status = response.json();
+
+        if (status.Information && status.Information['Build Status'] === 'FAILED') {
+          throw new Error(status.Information['Build Message']);
+        }
+
         return response.ok;
       })
       .catch( ( error ) => this.handleError( error ) );
@@ -524,11 +531,12 @@ export class DataserviceService extends ApiService {
     this.getAllDataservices()
       .subscribe(
         (dataservices) => {
-          self.updateServiceStateMap(dataservices);
+          self.updateServiceStateMaps(dataservices);
         },
         (error) => {
           // On error, broadcast the cached states
-          this.notifierService.sendDataserviceStateMap(this.cachedDataserviceStates);
+          this.notifierService.sendDataserviceDeployStateMap(this.cachedDataserviceDeployStates);
+          this.notifierService.sendDataserviceVirtualizationMap(this.cachedDataserviceVirtualizations);
         }
       );
   }
@@ -552,17 +560,28 @@ export class DataserviceService extends ApiService {
    * Get updates for the provided array of Dataservices and broadcast the map of states
    * @param {Dataservice[]} services the array of Dataservices
    */
-  private updateServiceStateMap(services: Dataservice[]): void {
+  private updateServiceStateMaps(services: Dataservice[]): void {
     const self = this;
     this.vdbService.getTeiidVdbStatuses()
       .subscribe(
         (vdbStatuses) => {
-          self.cachedDataserviceStates = self.createDeploymentStateMap(services, vdbStatuses);
-          this.notifierService.sendDataserviceStateMap(self.cachedDataserviceStates);
+          self.cachedDataserviceDeployStates = self.createDeploymentStateMap(services, vdbStatuses);
+          this.notifierService.sendDataserviceDeployStateMap(self.cachedDataserviceDeployStates);
         },
         (error) => {
           // On error, broadcast the cached states
-          this.notifierService.sendDataserviceStateMap(self.cachedDataserviceStates);
+          this.notifierService.sendDataserviceDeployStateMap(self.cachedDataserviceDeployStates);
+        }
+      );
+    this.vdbService.getVirtualizations()
+      .subscribe(
+        (vdbStatuses) => {
+          self.cachedDataserviceVirtualizations = self.createPublishStateMap(services, vdbStatuses);
+          this.notifierService.sendDataserviceVirtualizationMap(self.cachedDataserviceVirtualizations);
+        },
+        (error) => {
+          // On error, broadcast the cached states
+          this.notifierService.sendDataserviceVirtualizationMap(self.cachedDataserviceVirtualizations);
         }
       );
   }
@@ -603,4 +622,33 @@ export class DataserviceService extends ApiService {
     return dsStateMap;
   }
 
+  /*
+   * Creates a Map of dataservice name to PublishState, given the list of dataservices and virtualizations
+   * @param {Dataservice[]} dataservices the Dataservice array
+   * @param {virtualization[]} virtualizations the Virtualization array
+   * @returns {Map<string,PublishState>} the map of dataservice name to PublishState
+   */
+  private createPublishStateMap(dataservices: Dataservice[], virtualizations: Virtualization[]): Map<string, Virtualization> {
+    const dsStateMap: Map<string, Virtualization> = new Map<string, Virtualization>();
+
+    // For each dataservice, find the corresponding Virtualization.  Add the map entry
+    for ( const dService of dataservices ) {
+      const serviceId = dService.getId();
+      const serviceVdbName = dService.getServiceVdbName();
+      let statusFound = false;
+      for ( const virtualization of virtualizations ) {
+        if ( virtualization.getVdbName() === serviceVdbName ) {
+          statusFound = true;
+          dsStateMap.set(serviceId, virtualization);
+        }
+      }
+
+      if ( !statusFound ) {
+        const virtual = new Virtualization(serviceVdbName, PublishState.NOT_PUBLISHED);
+        dsStateMap.set(serviceId, virtual);
+      }
+    }
+
+    return dsStateMap;
+  }
 }
