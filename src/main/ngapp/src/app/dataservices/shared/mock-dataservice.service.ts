@@ -23,6 +23,7 @@ import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { QueryResults } from "@dataservices/shared/query-results.model";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { TestDataService } from "@shared/test-data.service";
@@ -37,6 +38,7 @@ import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 export class MockDataserviceService extends DataserviceService {
 
   private services: Dataservice[];
+  private queryResults: QueryResults;
 
   constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
               notifierService: NotifierService, logger: LoggerService ) {
@@ -48,6 +50,7 @@ export class MockDataserviceService extends DataserviceService {
 
     // Get test data
     this.services = testDataService.getDataservices();
+    this.queryResults = testDataService.getQueryResults();
   }
 
   /**
@@ -111,7 +114,7 @@ export class MockDataserviceService extends DataserviceService {
    * @returns {Observable<boolean>}
    */
   public queryDataservice(query: string, dataserviceName: string, limit: number, offset: number): Observable<any> {
-    return Observable.of<any>();
+    return Observable.of(this.queryResults);
   }
 
   protected handleError(error: Response): ErrorObservable {

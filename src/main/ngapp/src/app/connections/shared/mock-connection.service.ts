@@ -20,17 +20,17 @@ import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
+import { NewConnection } from "@connections/shared/new-connection.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
+import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { TestDataService } from "@shared/test-data.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
-import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
-import { NewConnection } from "@connections/shared/new-connection.model";
-import { TestDataService } from "@shared/test-data.service";
 
 @Injectable()
 export class MockConnectionService extends ConnectionService {
@@ -113,7 +113,7 @@ export class MockConnectionService extends ConnectionService {
    */
   public getConnectionSchemaInfos( connSource: string): Observable< SchemaInfo[] > {
     const schemaInfos: SchemaInfo[] = this.connectionSourceSchemaInfoMap.get(connSource);
-    if( !schemaInfos || schemaInfos == null ) {
+    if ( !schemaInfos || schemaInfos == null ) {
       const empty: SchemaInfo[] = [];
       return Observable.of( empty );
     }
