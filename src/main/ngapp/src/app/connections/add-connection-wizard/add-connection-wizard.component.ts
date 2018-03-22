@@ -155,8 +155,6 @@ export class AddConnectionWizardComponent implements OnInit {
         }
       }
     }
-
-    this.setNavAway(false);
   }
 
   // ----------------
@@ -488,16 +486,11 @@ export class AddConnectionWizardComponent implements OnInit {
       );
   }
 
-  private setNavAway(allow: boolean): void {
-    this.step1Config.allowNavAway = allow;
-  }
-
   /**
    * Updates the page 1 status
    */
   private updatePage1ValidStatus( ): void {
     this.step1Config.nextEnabled = this.selectedConnTypes.length > 0;
-    this.setNavAway(this.step1Config.nextEnabled);
   }
 
   /**
@@ -512,7 +505,6 @@ export class AddConnectionWizardComponent implements OnInit {
     } else {
       this.step2aConfig.nextEnabled = this.nameValid && this.hasSelectedServiceCatalogSource;
     }
-    this.setNavAway(this.step2aConfig.nextEnabled);
   }
 
   /**

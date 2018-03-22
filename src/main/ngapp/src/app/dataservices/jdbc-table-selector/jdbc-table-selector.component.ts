@@ -460,7 +460,6 @@ export class JdbcTableSelectorComponent implements OnInit, TableSelector {
    * Handler for changes in table selection
    */
   public selectedTableChanged( $event: TableEvent ): void {
-    console.error( $event );
     const table: Table = $event.row;
 
     if ( table ) {

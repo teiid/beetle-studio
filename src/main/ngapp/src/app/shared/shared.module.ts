@@ -21,6 +21,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { PageErrorComponent } from "@shared/page-error/page-error.component";
+import { TestDataService } from "@shared/test-data.service";
 import { ModalModule } from "ngx-bootstrap";
 import { PageNotFoundComponent } from "./page-not-found/page-not-found.component";
 import { PropertyFormPropertyComponent } from "./property-form/property-form-property/property-form-property.component";
@@ -45,7 +46,10 @@ import { PropertyFormComponent } from "./property-form/property-form.component";
     PageNotFoundComponent,
     PropertyFormComponent,
     PropertyFormPropertyComponent
-  ]
+  ],
+  providers: [
+    TestDataService
+  ],
 })
 export class SharedModule {
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
+import { Injectable, ReflectiveInjector } from "@angular/core";
 import { Http, Response } from "@angular/http";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
@@ -23,8 +23,10 @@ import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { QueryResults } from "@dataservices/shared/query-results.model";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { TestDataService } from "@shared/test-data.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
@@ -35,28 +37,20 @@ import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 @Injectable()
 export class MockDataserviceService extends DataserviceService {
 
-  private serv1 = new Dataservice();
-  private serv2 = new Dataservice();
-  private serv3 = new Dataservice();
-  private services: Dataservice[] = [this.serv1, this.serv2, this.serv3];
+  private services: Dataservice[];
+  private queryResults: QueryResults;
 
   constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
               notifierService: NotifierService, logger: LoggerService ) {
     super(http, vdbService, appSettings, notifierService, logger);
-    this.serv1.setId("serv1");
-    this.serv1.setServiceViewTables(["table1", "table2"]);
-    this.serv1.setServiceViewModel("viewModel");
-    const viewNames: string[] = [];
-    viewNames.push("views");
-    this.serv1.setServiceViewNames(viewNames);
-    this.serv2.setId("serv2");
-    this.serv2.setServiceViewTables(["table1", "table2"]);
-    this.serv2.setServiceViewModel("viewModel");
-    this.serv2.setServiceViewNames(viewNames);
-    this.serv3.setId("serv3");
-    this.serv3.setServiceViewTables(["table1", "table2"]);
-    this.serv3.setServiceViewModel("viewModel");
-    this.serv3.setServiceViewNames(viewNames);
+
+    // Inject service for test data
+    const injector = ReflectiveInjector.resolveAndCreate([TestDataService]);
+    const testDataService = injector.get(TestDataService);
+
+    // Get test data
+    this.services = testDataService.getDataservices();
+    this.queryResults = testDataService.getQueryResults();
   }
 
   /**
@@ -73,6 +67,11 @@ export class MockDataserviceService extends DataserviceService {
    * @returns {Observable<boolean>}
    */
   public createDataservice(dataservice: NewDataservice): Observable<boolean> {
+    const ds = new Dataservice();
+    ds.setId( dataservice.getId() );
+    ds.setDescription( dataservice.getDescription() );
+
+    this.services.push( ds );
     return Observable.of(true);
   }
 
@@ -84,14 +83,14 @@ export class MockDataserviceService extends DataserviceService {
   public deleteDataservice(dataserviceId: string): Observable<boolean> {
     return Observable.of(true);
   }
-
-  /**
-   * Get the current Dataservice selection
-   * @returns {Dataservice} the selected Dataservice
-   */
-  public getSelectedDataservice( ): Dataservice {
-    return this.serv1;
-  }
+  //
+  // /**
+  //  * Get the current Dataservice selection
+  //  * @returns {Dataservice} the selected Dataservice
+  //  */
+  // public getSelectedDataservice( ): Dataservice {
+  //   return this.serv1;
+  // }
 
   /**
    * Get the views for the selected Dataservice
@@ -107,21 +106,6 @@ export class MockDataserviceService extends DataserviceService {
   }
 
   /**
-   * Updates the current Dataservice states - triggers update to be broadcast to interested components
-   */
-  public updateDataserviceStates(): void {
-    // Nothing to do
-  }
-
-  /**
-   * Polls the server and sends Dataservice state updates at the specified interval
-   * @param {number} pollIntervalSec the interval (sec) between polling attempts
-   */
-  public pollDataserviceStatus(pollIntervalSec: number): void {
-    // Nothing to do
-  }
-
-  /**
    * Query a Dataservice via the komodo rest interface
    * @param {string} query the SQL query
    * @param {string} dataserviceName the dataservice name
@@ -130,11 +114,48 @@ export class MockDataserviceService extends DataserviceService {
    * @returns {Observable<boolean>}
    */
   public queryDataservice(query: string, dataserviceName: string, limit: number, offset: number): Observable<any> {
-    return Observable.of<any>();
+    return Observable.of(this.queryResults);
   }
 
   protected handleError(error: Response): ErrorObservable {
     return Observable.throw(error);
+  }
+
+  public createReadonlyDataRole( dataserviceName: string,
+                                 model1Name: string ): Observable< boolean > {
+    return Observable.of( true );
+  }
+
+  public isValidName( name: string ): Observable<string> {
+    if ( !name || name.length === 0 ) {
+      return Observable.of( "Dataservice name cannot be empty" );
+    }
+
+    // make sure no dataservice exists with that name
+    for ( const ds of this.services ) {
+      if ( ds.getId() === name ) {
+        return Observable.of( "Dataservice with that name already exists" );
+      }
+    }
+
+    // just implement a case where no special characters allowed
+    for ( let i = 0; i < name.length; i++ ) {
+      const c = name.charAt( i );
+
+      // special characters have the same upper and lower case values
+      if ( c.toUpperCase() === c.toLowerCase() ) {
+        return Observable.of( "No special characters allowed" );
+      }
+    }
+
+    // valid
+    return Observable.of( "" );
+  }
+
+  public setServiceVdbForSingleSourceTables( dataserviceName: string,
+                                             tablePaths: string[],
+                                             modelSourcePath: string ): Observable< boolean > {
+    return Observable.of( true );
   }
 
 }

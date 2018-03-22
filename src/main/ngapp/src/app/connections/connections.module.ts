@@ -18,6 +18,7 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { Http } from "@angular/http";
 import { RouterModule } from "@angular/router";
 import { AddConnectionWizardComponent } from "@connections/add-connection-wizard/add-connection-wizard.component";
 import { AddConnectionComponent } from "@connections/add-connection/add-connection.component";
@@ -28,8 +29,11 @@ import { ConnectionsListComponent } from "@connections/connections-list/connecti
 import { ConnectionsRoutingModule } from "@connections/connections-routing.module";
 import { ConnectionsComponent } from "@connections/connections.component";
 import { ConnectionService } from "@connections/shared/connection.service";
+import { MockConnectionService } from "@connections/shared/mock-connection.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
+import { environment } from "@environments/environment";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { ConnectionTypeCardComponent } from "./connection-type-cards/connection-type-card/connection-type-card.component";
@@ -59,10 +63,30 @@ import { ConnectionTypeCardsComponent } from "./connection-type-cards/connection
     ConnectionTypeCardComponent
   ],
   providers: [
-    ConnectionService,
+    {
+      provide: ConnectionService,
+      useFactory: connectionServiceFactory,
+      deps: [ Http, AppSettingsService, LoggerService ],
+      multi: false
+    },
     LoggerService
   ],
   exports: [
   ]
 })
 export class ConnectionsModule { }
+
+/**
+ * A factory that produces the appropriate instande of the service based on current environment settings.
+ *
+ * @param {Http} http the HTTP service
+ * @param {AppSettingsService} appSettings the app settings service
+ * @param {LoggerService} logger the logger
+ * @returns {ConnectionService} the requested service
+ */
+export function connectionServiceFactory( http: Http,
+                                          appSettings: AppSettingsService,
+                                          logger: LoggerService ): ConnectionService {
+  return environment.production || !environment.uiDevMode ? new ConnectionService( http, appSettings, logger )
+                                                          : new MockConnectionService( http, appSettings, logger );
+}

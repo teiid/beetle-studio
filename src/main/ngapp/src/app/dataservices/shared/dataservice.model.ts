@@ -112,10 +112,14 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
-   * @returns {string[]} the dataservice view names (can be null)
+   * @returns {string[]} the dataservice view names (never null or undefined)
    */
   public getServiceViewNames(): string[] {
-    return this.serviceViews;
+    if ( this.serviceViews ) {
+      return this.serviceViews;
+    }
+
+    return [];
   }
 
   /**

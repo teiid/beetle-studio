@@ -39,9 +39,9 @@ import { Subscription } from "rxjs/Subscription";
  */
 export class VdbService extends ApiService {
 
+  protected deploymentSubscription: Subscription;
+  protected notifierService: NotifierService;
   private http: Http;
-  private deploymentSubscription: Subscription;
-  private notifierService: NotifierService;
 
   constructor(http: Http, appSettings: AppSettingsService,
               notifierService: NotifierService, logger: LoggerService ) {
