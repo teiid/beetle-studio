@@ -31,7 +31,6 @@ import { DataservicesRoutingModule } from "@dataservices/dataservices-routing.mo
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
-import { MockNotifierService } from "@dataservices/shared/mock-notifier.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
@@ -84,17 +83,13 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
       multi: false
     },
     {
-      provide: NotifierService,
-      useFactory: notifierServiceFactory,
-      multi: false
-    },
-    {
       provide: VdbService,
       useFactory: vdbServiceFactory,
       deps: [ Http, AppSettingsService, NotifierService, LoggerService ],
       multi: false
     },
     LoggerService,
+    NotifierService,
     WizardService
   ],
   exports: [
@@ -127,16 +122,6 @@ export function dataserviceServiceFactory( http: Http,
                                                                                         appSettings,
                                                                                         notifierService,
                                                                                         logger );
-}
-
-/**
- * A factory that produces the appropriate instance of the service based on current environment settings.
- *
- * @returns {NotifierService} the requested service
- */
-export function notifierServiceFactory(): NotifierService {
-  return environment.production || !environment.uiDevMode ? new NotifierService()
-                                                          : new MockNotifierService();
 }
 
 /**

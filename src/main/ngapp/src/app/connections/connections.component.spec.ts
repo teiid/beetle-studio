@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 import { By } from "@angular/platform-browser";
@@ -22,7 +22,7 @@ describe("ConnectionsComponent", () => {
   let component: ConnectionsComponent;
   let fixture: ComponentFixture<ConnectionsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         CoreModule,
@@ -58,7 +58,7 @@ describe("ConnectionsComponent", () => {
     fixture = TestBed.createComponent(ConnectionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it("should be created", () => {
     console.log("========== [ConnectionsComponent] should be created");
@@ -84,12 +84,12 @@ describe("ConnectionsComponent", () => {
     console.log("========== [ConnectionsComponent] should have Connections");
     // Check component object
     const connections = component.allConnections;
-    expect(connections.length).toEqual(3);
+    expect(connections.length).toEqual(4);
 
     // Check html has the same number of connection cards
     const cardDebugElems = fixture.debugElement.queryAll(By.css(".object-card"));
     expect(cardDebugElems).toBeDefined();
-    expect(cardDebugElems.length).toEqual(3);
+    expect(cardDebugElems.length).toEqual(4);
   });
 
   it("should have initial card layout", () => {

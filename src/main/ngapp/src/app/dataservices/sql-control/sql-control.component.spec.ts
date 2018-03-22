@@ -5,6 +5,7 @@ import { HttpModule } from "@angular/http";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
@@ -38,6 +39,13 @@ describe("SqlControlComponent", () => {
   }));
 
   beforeEach(() => {
+    // select a dataservice before constructing component
+    const service = TestBed.get( DataserviceService );
+    let dataservices: Dataservice[];
+    service.getAllDataservices().subscribe( ( values ) => { dataservices = values; } );
+    // noinspection JSUnusedAssignment
+    service.setSelectedDataservice( dataservices[ 0 ] );
+
     fixture = TestBed.createComponent(SqlControlComponent);
     component = fixture.componentInstance;
 

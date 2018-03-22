@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 import { By } from "@angular/platform-browser";
@@ -30,7 +30,7 @@ describe("DataservicesComponent", () => {
   let component: DataservicesComponent;
   let fixture: ComponentFixture<DataservicesComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), PatternFlyNgModule,
                  RouterTestingModule, SharedModule, CodemirrorModule ],
@@ -55,7 +55,7 @@ describe("DataservicesComponent", () => {
     fixture = TestBed.createComponent(DataservicesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it("should be created", () => {
     console.log("========== [DataservicesComponent] should be created");

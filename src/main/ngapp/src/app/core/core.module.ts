@@ -21,6 +21,7 @@ import { Http, HttpModule } from "@angular/http";
 import { RouterModule } from "@angular/router";
 import { AboutDialogComponent } from "@core/about-dialog/about-dialog.component";
 import { AboutService } from "@core/about-dialog/about.service";
+import { MockAboutService } from "@core/about-dialog/mock-about.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { BreadcrumbComponent } from "@core/breadcrumbs/breadcrumb/breadcrumb.component";
 import { BreadcrumbsComponent } from "@core/breadcrumbs/breadcrumbs.component";
@@ -31,7 +32,6 @@ import { environment } from "@environments/environment";
 import { ModalModule } from "ngx-bootstrap/modal";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PatternFlyNgModule } from "patternfly-ng";
-import { MockAboutService } from "@core/about-dialog/mock-about.service";
 
 @NgModule({
   imports: [
