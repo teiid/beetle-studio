@@ -62,7 +62,7 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
   private readonly refreshActionId = "refresh";
   private readonly refreshActionIndex = 1; // index in moreActions
 
-  private isLoading = false;
+  private isLoading = true;
   private logger: LoggerService;
 
   constructor( logger: LoggerService ) {
@@ -154,11 +154,13 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
       ],
       moreActions: [
         {
+          disabled: true,
           id: this.activateActionId,
           title: "Activate",
           tooltip: "Activate"
         },
         {
+          disabled: true,
           id: this.refreshActionId,
           title: "Refresh",
           tooltip: "Refresh"

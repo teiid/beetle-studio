@@ -20,17 +20,17 @@ import { Http } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
+import { NewConnection } from "@connections/shared/new-connection.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
+import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { TestDataService } from "@shared/test-data.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
-import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
-import { NewConnection } from "@connections/shared/new-connection.model";
-import { TestDataService } from "@shared/test-data.service";
 
 @Injectable()
 export class MockConnectionService extends ConnectionService {
@@ -38,6 +38,7 @@ export class MockConnectionService extends ConnectionService {
   private connections: Connection[];
   private serviceCatalogSources: ServiceCatalogSource[];
   private connectionSourceSchemaInfoMap: Map<string, SchemaInfo[]>;
+  private tableMap = new Map<string, string[]>();
 
   constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
     super(http, appSettings, logger);
@@ -50,6 +51,7 @@ export class MockConnectionService extends ConnectionService {
     this.connections = testDataService.getConnections();
     this.serviceCatalogSources = testDataService.getServiceCatalogSources();
     this.connectionSourceSchemaInfoMap = testDataService.getConnectionSourceSchemaInfoMap();
+    this.tableMap = testDataService.getJdbcConnectionTableMap();
   }
 
   public isValidName( name: string ): Observable< string > {
@@ -111,7 +113,7 @@ export class MockConnectionService extends ConnectionService {
    */
   public getConnectionSchemaInfos( connSource: string): Observable< SchemaInfo[] > {
     const schemaInfos: SchemaInfo[] = this.connectionSourceSchemaInfoMap.get(connSource);
-    if( !schemaInfos || schemaInfos == null ) {
+    if ( !schemaInfos || schemaInfos == null ) {
       const empty: SchemaInfo[] = [];
       return Observable.of( empty );
     }
@@ -124,11 +126,7 @@ export class MockConnectionService extends ConnectionService {
    * @returns {Observable<string>}
    */
   public getJdbcConnectionTables( tableFilter: JdbcTableFilter ): Observable< string[] > {
-    const tableNames = [];
-    tableNames.push( "table1" );
-    tableNames.push( "table2" );
-    tableNames.push( "table3" );
-    return Observable.of( tableNames );
+    return Observable.of( this.tableMap.get( tableFilter.getSchemaFilter() ) );
   }
 
   /**
