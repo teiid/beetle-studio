@@ -20,6 +20,7 @@ import { Http } from "@angular/http";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { Connection } from "@connections/shared/connection.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
@@ -47,8 +48,6 @@ export class DataserviceService extends ApiService {
   // Observable dataservice state changes
   // Using replay status with cache of 1, so subscribers dont get an initial value on subscription
   public dataserviceStateChange: Subject< Map<string, DeploymentState> > = new ReplaySubject< Map<string, DeploymentState> >(1);
-
-  public serviceVdbSuffix = "VDB";  // Don't change - must match komodo naming convention
 
   private http: Http;
   private notifierService: NotifierService;
@@ -318,6 +317,17 @@ export class DataserviceService extends ApiService {
   }
 
   /**
+   * Derive the service vdb name from the given dataservice
+   *
+   * @param {Dataservice} dataservice
+   * @returns {string}
+   */
+  public deriveServiceVdbName(dataservice: NewDataservice): string {
+    let name = dataservice.getId() + VdbsConstants.DATASERVICE_VDB_SUFFIX;
+    return name.toLowerCase();
+  }
+
+  /**
    * Create a dataservice which is a straight passthru to the supplied tables
    * @param {NewDataservice} dataservice
    * @param {Table[]} sourceTables
@@ -325,23 +335,26 @@ export class DataserviceService extends ApiService {
    */
   public createDataserviceForSingleSourceTables(dataservice: NewDataservice, sourceTables: Table[]): Observable<boolean> {
     // All tables from same connection
-    const connectionName = sourceTables[0].getConnection().getId();
-    const sourceVdbName = connectionName + VdbsConstants.SOURCE_VDB_SUFFIX;
-    const sourceModelName = connectionName;
+    const connection: Connection = sourceTables[0].getConnection();
+    const sourceVdbName = this.vdbService.deriveVdbName(connection);
+    const sourceModelName = this.vdbService.deriveVdbModelName(connection);
+    const sourceModelSourceName = this.vdbService.deriveVdbModelSourceName(connection);
     const vdbPath = this.getKomodoUserWorkspacePath() + "/" + sourceVdbName;
     const tablePaths = [];
     for ( const sourceTable of sourceTables ) {
       const tablePath = vdbPath + "/" + sourceModelName + "/" + sourceTable.getName();
       tablePaths.push(tablePath);
     }
-    const modelSourcePath = vdbPath + "/" + sourceModelName + "/vdb:sources/" + sourceModelName;
+    const modelSourcePath = vdbPath + "/" + sourceModelName + "/vdb:sources/" + sourceModelSourceName;
+
+    const dsVdbName = this.deriveServiceVdbName(dataservice);
 
     // Chain the individual calls together in series to build the DataService
     return this.createDataservice(dataservice)
       .flatMap((res) => this.vdbService.updateVdbModelFromTeiid(sourceVdbName, sourceModelName,
                                                                 sourceVdbName, sourceModelName))
       .flatMap((res) => this.setServiceVdbForSingleSourceTables(dataservice.getId(), tablePaths, modelSourcePath))
-      .flatMap((res) => this.createReadonlyDataRole(dataservice.getId(), sourceModelName))
+      .flatMap((res) => this.createReadonlyDataRole(dsVdbName, sourceModelName))
       .flatMap((res) => this.vdbService.undeployVdb(sourceVdbName))
       .flatMap((res) => this.vdbService.deleteVdb(sourceVdbName));
   }

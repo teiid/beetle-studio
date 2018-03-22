@@ -99,6 +99,39 @@ export class VdbService extends ApiService {
   }
 
   /**
+  /**
+   * Derive the vdb name from the given connection
+   *
+   * @param {Connection} connection
+   * @returns {string}
+   */
+  public deriveVdbName(connection: Connection): string {
+    let name = connection.getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
+    return name.toLowerCase();
+  }
+
+  /**
+   * Derive the vdb model name from the given connection
+   *
+   * @param {Connection} connection
+   * @returns {string}
+   */
+  public deriveVdbModelName(connection: Connection): string {
+    return connection.getId().toLowerCase();
+  }
+
+  /**
+   * Derive the vdb model source name from the given connection
+   *
+   * @param {Connection} connection
+   * @returns {string}
+   */
+  public deriveVdbModelSourceName(connection: Connection): string {
+    return connection.getServiceCatalogSourceName() ?
+                connection.getServiceCatalogSourceName() : connection.getId().toLowerCase();
+  }
+
+  /**
    * Create a vdb via the komodo rest interface
    * @param {Vdb} vdb
    * @returns {Observable<boolean>}
@@ -297,10 +330,12 @@ export class VdbService extends ApiService {
     // Currently requiring all tables from same connection
     const connection: Connection = tables[0].getConnection();
 
+    const vdbName = this.deriveVdbName(connection);
+    const vdbModelName = this.deriveVdbModelName(connection);
+    const vdbModelSourceName = this.deriveVdbModelSourceName(connection);
+
     // VDB to create
     const vdb = new Vdb();
-    const vdbName = connection.getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
-    const connName = connection.getId();
     vdb.setName(vdbName);
     vdb.setId(vdbName);
     const vdbPath = this.getKomodoUserWorkspacePath() + "/" + vdbName;
@@ -310,8 +345,8 @@ export class VdbService extends ApiService {
 
     // VDB Model to create
     const vdbModel = new VdbModel();
-    vdbModel.setId(connName);
-    vdbModel.setDataPath(vdbPath + "/" + connName);
+    vdbModel.setId(vdbModelName);
+    vdbModel.setDataPath(vdbPath + "/" + vdbModelName);
     vdbModel.setModelType("PHYSICAL");
 
     // Set the importer properties for the physical model
@@ -324,10 +359,11 @@ export class VdbService extends ApiService {
 
     // VdbModelSource to create
     const vdbModelSource = new VdbModelSource();
-    vdbModelSource.setId(connName);
-    vdbModelSource.setDataPath(vdbPath + "/" + connName + "/vdb:sources/" + connName);
+    vdbModelSource.setId(vdbModelSourceName);
+    vdbModelSource.setDataPath(vdbPath + "/" + vdbModelName + "/vdb:sources/" + vdbModelSourceName);
     vdbModelSource.setJndiName(connection.getJndiName());
     vdbModelSource.setTranslatorName(connection.getDriverName());
+    vdbModelSource.setAssociatedConnection(connection.getDataPath());
 
     // Chain the individual calls together in series to build the Vdb and deploy it
     return this.deleteVdbIfFound(vdb.getId())
