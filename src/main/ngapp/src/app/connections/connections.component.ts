@@ -26,7 +26,7 @@ import { WizardService } from "@dataservices/shared/wizard.service";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { LayoutType } from "@shared/layout-type.enum";
-import { Filter } from "patternfly-ng";
+import { ActionConfig, EmptyStateConfig, Filter } from "patternfly-ng";
 import { FilterConfig } from "patternfly-ng";
 import { FilterField } from "patternfly-ng";
 import { FilterEvent } from "patternfly-ng";
@@ -56,6 +56,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   private filteredConns: Connection[] = [];
   private selectedConns: Connection[] = [];
   private router: Router;
+  private noConnectionsConfig: EmptyStateConfig;
   private appSettingsService: AppSettingsService;
   private connectionService: ConnectionService;
   private wizardService: WizardService;
@@ -103,6 +104,29 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
       }],
       isAscending: this.isAscendingSort
     } as SortConfig;
+  }
+
+  public get noConnectionsEmptyConfig(): EmptyStateConfig {
+    if ( !this.noConnectionsConfig ) {
+      const actionConfig = {
+        primaryActions: [
+          {
+            id: "createConnectionActionId",
+            title: "Add Connection",
+            tooltip: "Add a connection"
+          }
+        ]
+      } as ActionConfig;
+
+      this.noConnectionsConfig = {
+        actions: actionConfig,
+        iconStyleClass: "pficon-warning-triangle-o",
+        info: "No Connections were found. Please click below to create a connection. ",
+        title: "No Connections Available"
+      } as EmptyStateConfig;
+    }
+
+    return this.noConnectionsConfig;
   }
 
   public loadAsyncPageData(): void {
