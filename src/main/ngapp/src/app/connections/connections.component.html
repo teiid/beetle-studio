@@ -36,19 +36,12 @@
     </div>
     <!-- List of Connections -->
     <div class="row object-collection-page">
-      <div class="col-md-12 empty-state" *ngIf="isLoaded('connections') && allConnections.length === 0">
-        <div class="blank-slate-pf">
-          <div class="blank-slate-pf-icon">
-            <span class="pficon pficon pficon-add-circle-o"></span>
-          </div>
-          <h1 i18n="@@connections.noConnectionsFound">No Connections Found</h1>
-          <p i18n="@@connections.noConnectionsFoundPleaseClick">
-            No Connections were found - please click below to create a new Connection!
-          </p>
-          <div class="blank-slate-pf-main-action">
-            <div class="btn-group">
-              <a i18n="@@connections.addConnection" class="btn btn-primary btn-lg" (click)="onNew()">Add Connection</a>
-            </div>
+      <div class="row" *ngIf="isLoaded('connections') && allConnections.length === 0">
+        <div class="col-sm-12">
+          <div class="form-group">
+            <pfng-empty-state
+                [config]="noConnectionsEmptyConfig"
+                (onActionSelect)="onNewConnection()"></pfng-empty-state>
           </div>
         </div>
       </div>
