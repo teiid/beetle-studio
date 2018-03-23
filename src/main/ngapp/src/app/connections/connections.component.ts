@@ -214,7 +214,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   /**
    * Handle request for new Connection
    */
-  public onNew(): void {
+  public onNewConnection(): void {
     this.wizardService.setEdit(false);
 
     const link: string[] = [ ConnectionsConstants.addConnectionPath ];
