@@ -20,6 +20,12 @@
     },
     "parameters": [
         {
+            "description":"Namespace for the application. Note: The namespace is required for creating proper RoleBindings. Specifying wrong namespace will prevent cluster from forming. This should be same as your project name.",
+            "name":"NAMESPACE",
+            "required":true,
+            "value":"beetle-studio"
+        },
+        {
             "description": "The location url of the beetle-studio source repository",
             "displayName": "BeETLe-Studio Source URL",
             "name": "BEETLE_GIT_URL",
@@ -851,7 +857,7 @@
                                     "--skip-auth-preflight",
                                     "--openshift-ca=/etc/pki/tls/certs/ca-bundle.crt",
                                     "--openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt",
-                                    "--scope=user:info user:check-access role:admin:beetle-studio:! role:cluster-admin:beetle-studio:!"
+                                    "--scope=user:info user:check-access role:admin:${NAMESPACE}:! role:cluster-admin:${NAMESPACE}:!"
                                 ],
                                 "volumeMounts": [
                                     {
