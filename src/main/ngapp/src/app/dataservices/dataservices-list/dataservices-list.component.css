@@ -5,6 +5,13 @@
   font-family: "FontAwesome";
 }
 
+/* Adds an icon to the left of the download action item in dropdown of kebab. */
+.object-list .secondary-action[title*="Download"]:before {
+  color: var(--card-action-icon-color);
+  content: "\f019";
+  font-family: "FontAwesome";
+}
+
 /* Adds an icon to the left of the publish action item in dropdown of kebab. */
 .object-list .secondary-action[title*="Publish"]:before {
   color: var(--card-action-icon-color);

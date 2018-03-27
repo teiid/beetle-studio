@@ -22,7 +22,7 @@ import { ServiceCatalogSource } from "@connections/shared/service-catalog-source
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
-import { QueryResults } from "../dataservices/shared/query-results.model";
+import { QueryResults } from "@dataservices/shared/query-results.model";
 
 @Injectable()
 export class TestDataService {

@@ -41,6 +41,7 @@ export class DataservicesListComponent implements OnInit {
   private static readonly editActionId = "edit";
   private static readonly previewActionId = "preview";
   private static readonly publishActionId = "publish";
+  private static readonly downloadActionId = "download";
   private static readonly refreshActionId = "refresh";
   private static readonly testActionId = "test";
 
@@ -56,6 +57,7 @@ export class DataservicesListComponent implements OnInit {
   @Output() public activateDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public testDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public publishDataservice: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public downloadDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public deleteDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public editDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
@@ -79,6 +81,7 @@ export class DataservicesListComponent implements OnInit {
    * @param quickLookActionTemplate {TemplateRef} the preview action template
    * @param activateActionTemplate {TemplateRef} the activate action template
    * @param publishActionTemplate {TemplateRef} the publish action template
+   * @param downloadActionTemplate {TemplateRef} the download action template
    * @param refreshActionTemplate {TemplateRef} the refresh action template
    * @param deleteActionTemplate {TemplateRef} the delete action template
    * @returns {ActionConfig} the actions configuration
@@ -89,6 +92,7 @@ export class DataservicesListComponent implements OnInit {
                           quickLookActionTemplate: TemplateRef< any >,
                           activateActionTemplate: TemplateRef< any >,
                           publishActionTemplate: TemplateRef< any >,
+                          downloadActionTemplate: TemplateRef< any >,
                           refreshActionTemplate: TemplateRef< any >,
                           deleteActionTemplate: TemplateRef< any > ): ActionConfig {
     const actionConfig = {
@@ -136,6 +140,13 @@ export class DataservicesListComponent implements OnInit {
           template: publishActionTemplate,
           title: "Publish",
           tooltip: "Publish this data service"
+        },
+        {
+          disabled: ds.serviceDeploymentLoading,
+          id: DataservicesListComponent.downloadActionId,
+          template: downloadActionTemplate,
+          title: "Download",
+          tooltip: "Download this data service"
         },
         {
           disabled: ds.serviceDeploymentLoading,
@@ -202,6 +213,10 @@ export class DataservicesListComponent implements OnInit {
     this.publishDataservice.emit(dataserviceName);
   }
 
+  public onDownloadDataservice(dataserviceName: string): void {
+    this.downloadDataservice.emit(dataserviceName);
+  }
+
   public onDeleteDataservice(dataserviceName: string): void {
     this.deleteDataservice.emit(dataserviceName);
   }
@@ -221,6 +236,9 @@ export class DataservicesListComponent implements OnInit {
         break;
       case DataservicesListComponent.deleteActionId:
         this.onDeleteDataservice( item.getId() );
+        break;
+      case DataservicesListComponent.downloadActionId:
+        this.onDownloadDataservice( item.getId() );
         break;
       case DataservicesListComponent.editActionId:
         this.onEditDataservice( item.getId() );
