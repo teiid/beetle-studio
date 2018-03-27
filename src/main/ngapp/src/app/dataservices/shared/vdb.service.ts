@@ -29,6 +29,7 @@ import { VdbModel } from "@dataservices/shared/vdb-model.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Rx";
 import { Subscription } from "rxjs/Subscription";
@@ -85,7 +86,7 @@ export class VdbService extends ApiService {
   }
 
   /**
-   * Get the vdbs from the komodo rest interface
+   * Get the status of any deployed vdbs
    * @returns {Observable<Vdb[]>}
    */
   public getTeiidVdbStatuses(): Observable<VdbStatus[]> {
@@ -96,6 +97,52 @@ export class VdbService extends ApiService {
         return vdbStatuses.vdbs.map((vdbStatus) => VdbStatus.create( vdbStatus ));
       })
       .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Get the status of all published vdbs (virtualizations)
+   * @returns {Observable<Vdb[]>}
+   */
+  public getVirtualizations(): Observable<Virtualization[]> {
+    return this.http
+      .get(environment.komodoTeiidUrl + "/" + VdbsConstants.vdbPublish, this.getAuthRequestOptions())
+      .map((response) => {
+        const virtuals = response.json();
+        return virtuals.map((virtualStatus) => Virtualization.create( virtualStatus ));
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Derive the vdb name from the given connection
+   *
+   * @param {Connection} connection
+   * @returns {string}
+   */
+  public deriveVdbName(connection: Connection): string {
+    let name = connection.getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
+    return name.toLowerCase();
+  }
+
+  /**
+   * Derive the vdb model name from the given connection
+   *
+   * @param {Connection} connection
+   * @returns {string}
+   */
+  public deriveVdbModelName(connection: Connection): string {
+    return connection.getId().toLowerCase();
+  }
+
+  /**
+   * Derive the vdb model source name from the given connection
+   *
+   * @param {Connection} connection
+   * @returns {string}
+   */
+  public deriveVdbModelSourceName(connection: Connection): string {
+    return connection.getServiceCatalogSourceName() ?
+                connection.getServiceCatalogSourceName() : connection.getId().toLowerCase();
   }
 
   /**
@@ -176,7 +223,12 @@ export class VdbService extends ApiService {
       .post(environment.komodoTeiidUrl + VdbsConstants.vdbRootPath,
         { path: vdbPath}, this.getAuthRequestOptions())
       .map((response) => {
-        return response.ok;
+        let status = response.json();
+        if (status.Information.deploymentSuccess !== 'true') {
+          this.handleError(response);
+        }
+
+        return status.Information.deploymentSuccess === 'true';
       })
       .catch( ( error ) => this.handleError( error ) );
   }
@@ -292,10 +344,12 @@ export class VdbService extends ApiService {
     // Currently requiring all tables from same connection
     const connection: Connection = tables[0].getConnection();
 
+    const vdbName = this.deriveVdbName(connection);
+    const vdbModelName = this.deriveVdbModelName(connection);
+    const vdbModelSourceName = this.deriveVdbModelSourceName(connection);
+
     // VDB to create
     const vdb = new Vdb();
-    const vdbName = connection.getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
-    const connName = connection.getId();
     vdb.setName(vdbName);
     vdb.setId(vdbName);
     const vdbPath = this.getKomodoUserWorkspacePath() + "/" + vdbName;
@@ -305,8 +359,8 @@ export class VdbService extends ApiService {
 
     // VDB Model to create
     const vdbModel = new VdbModel();
-    vdbModel.setId(connName);
-    vdbModel.setDataPath(vdbPath + "/" + connName);
+    vdbModel.setId(vdbModelName);
+    vdbModel.setDataPath(vdbPath + "/" + vdbModelName);
     vdbModel.setModelType("PHYSICAL");
 
     // Set the importer properties for the physical model
@@ -319,10 +373,11 @@ export class VdbService extends ApiService {
 
     // VdbModelSource to create
     const vdbModelSource = new VdbModelSource();
-    vdbModelSource.setId(connName);
-    vdbModelSource.setDataPath(vdbPath + "/" + connName + "/vdb:sources/" + connName);
+    vdbModelSource.setId(vdbModelSourceName);
+    vdbModelSource.setDataPath(vdbPath + "/" + vdbModelName + "/vdb:sources/" + vdbModelSourceName);
     vdbModelSource.setJndiName(connection.getJndiName());
     vdbModelSource.setTranslatorName(connection.getDriverName());
+    vdbModelSource.setAssociatedConnection(connection.getDataPath());
 
     // Chain the individual calls together in series to build the Vdb and deploy it
     return this.deleteVdbIfFound(vdb.getId())

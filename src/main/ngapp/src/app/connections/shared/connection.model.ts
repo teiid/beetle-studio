@@ -24,6 +24,7 @@ export class Connection implements Identifiable< string > {
   public static serviceCatalogSourceProp = "serviceCatalogSource";
 
   private keng__id: string;
+  private keng__dataPath: string;
   private dv__jndiName: string;
   private dv__driverName: string;
   private dv__type: boolean;
@@ -115,6 +116,13 @@ export class Connection implements Identifiable< string > {
    */
   public getId(): string {
     return this.keng__id;
+  }
+
+  /**
+   * @returns {string} the connection data path (can be null)
+   */
+  public getDataPath(): string {
+    return this.keng__dataPath;
   }
 
   /**

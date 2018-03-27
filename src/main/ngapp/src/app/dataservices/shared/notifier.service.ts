@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
+import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { Observable } from "rxjs/Observable";
 import { ReplaySubject } from "rxjs/ReplaySubject";
 import { Subject } from "rxjs/Subject";
@@ -13,7 +14,8 @@ import { Subject } from "rxjs/Subject";
 export class NotifierService {
 
   private deploymentStatusSubject: Subject<VdbStatus> = new ReplaySubject<VdbStatus>(1);
-  private dataserviceStateSubject: Subject< Map<string, DeploymentState> > = new ReplaySubject< Map<string, DeploymentState> >(1);
+  private dataserviceDeployStateSubject: Subject< Map<string, DeploymentState> > = new ReplaySubject< Map<string, DeploymentState> >(1);
+  private dataserviceVirtualizationSubject: Subject< Map<string, Virtualization> > = new ReplaySubject< Map<string, Virtualization> >(1);
 
   constructor() {
     // Nothing to do
@@ -46,22 +48,45 @@ export class NotifierService {
    * Sends map of dataservice DeploymentState
    * @param {Map<string, DeploymentState>} stateMap
    */
-  public sendDataserviceStateMap(stateMap: Map<string, DeploymentState>): void {
-    this.dataserviceStateSubject.next(stateMap);
+  public sendDataserviceDeployStateMap(stateMap: Map<string, DeploymentState>): void {
+    this.dataserviceDeployStateSubject.next(stateMap);
   }
 
   /**
    * Get the map of dataservice DeploymentState
    * @returns {Observable<Map<string, DeploymentState>>}
    */
-  public getDataserviceStateMap(): Observable<Map<string, DeploymentState>> {
-    return this.dataserviceStateSubject.asObservable();
+  public getDataserviceDeployStateMap(): Observable<Map<string, DeploymentState>> {
+    return this.dataserviceDeployStateSubject.asObservable();
   }
 
   /**
    * Clears the dataservice DeploymentState
    */
-  public clearDataserviceStateMap(): void {
-    this.dataserviceStateSubject.next(null);
+  public clearDataserviceDeployStateMap(): void {
+    this.dataserviceDeployStateSubject.next(null);
+  }
+
+  /**
+   * Sends map of dataservice virtualizations
+   * @param {Map<string, Virtualization>} stateMap
+   */
+  public sendDataserviceVirtualizationMap(stateMap: Map<string, Virtualization>): void {
+    this.dataserviceVirtualizationSubject.next(stateMap);
+  }
+
+  /**
+   * Get the map of dataservice Virtualization
+   * @returns {Observable<Map<string, Virtualization>>}
+   */
+  public getDataserviceVirtualizationMap(): Observable<Map<string, Virtualization>> {
+    return this.dataserviceVirtualizationSubject.asObservable();
+  }
+
+  /**
+   * Clears the dataservice Virtualization
+   */
+  public clearDataserviceVirtualizationMap(): void {
+    this.dataserviceVirtualizationSubject.next(null);
   }
 }

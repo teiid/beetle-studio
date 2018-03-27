@@ -43,18 +43,67 @@ echo -e '\n\n=== Logging into oc tool as developer ==='
 oc login https://$OS_HOST:8443 -u developer -p developer
 oc whoami 2>&1 > /dev/null || { echo "Cannot log in ... exiting" && exit 1; }
 
+# Access the project if it exists
+oc project ${OPENSHIFT_PROJECT} || { echo "ERROR: Project ${OPENSHIFT_PROJECT} does not exist" && exit 1; }
+
 # Delete openshift template
-oc delete template ${OS_TEMPLATE} || { echo "WARNING: Could not delete old application template" ; }
+oc delete template ${OS_TEMPLATE} || { echo "WARNING: Could not delete application template" ; }
 
-# Delete service account
-oc project ${OPENSHIFT_PROJECT}
-oc delete sa ${OPENSHIFT_SERVICE_ACCOUNT} || { echo "WARNING: Could not delete old service account" ; }
+echo
 
-# Delete secrets
-oc delete secret ${OPENSHIFT_APP_SECRET} || { echo "WARNING: Could not delete old secrets" ; }
+# Delete services
+for i in "${SERVICES[@]}"
+do
+	echo "Deleting service: $i"
+	oc delete service $i || { echo "WARNING: Service $i not found" ; }
+done
 
-# Delete application resources
-oc delete all -l app=${OPENSHIFT_APPLICATION_NAME}  || { echo "WARNING: Could not delete old application resources" ; }
+echo
+
+# Delete routes
+for i in "${ROUTES[@]}"
+do
+	echo "Deleting route: $i"
+	oc delete route $i || { echo "WARNING: Route $i not found" ; }
+done
+
+echo
+
+# Delete deployment configs
+for i in "${DEPLOY_CONFIGS[@]}"
+do
+	echo "Deleting deployment config: $i"
+	oc delete dc $i || { echo "WARNING: Deployment Config $i not found" ; }
+done
+
+echo
+
+# Delete deployments
+for i in "${DEPLOYMENTS[@]}"
+do
+	echo "Deleting deployment: $i"
+	oc delete deploy $i || { echo "WARNING: Deployment $i not found" ; }
+done
+
+echo
+
+# Delete build configs
+for i in "${BUILD_CONFIGS[@]}"
+do
+	echo "Deleting build config: $i"
+	oc delete bc $i || { echo "WARNING: Build Config $i not found" ; }
+done
+
+echo
+
+# Delete service accounts
+for i in "${SERVICE_ACCOUNTS[@]}"
+do
+	echo "Deleting service account: $i"
+	oc delete sa $i || { echo "WARNING: Service Account $i not found" ; }
+done
+
+echo
 
 # Delete the project
 if [ -n "${KILL_PROJECT}" ]; then
@@ -63,5 +112,6 @@ else
 	echo "== Skipping project deletion =="
 fi
 
-oc whoami ||  echo `oc whoami` "still logged in; use 'oc logout' to logout of openshift"
+echo
+
 echo "Done"

@@ -16,6 +16,8 @@
  */
 
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
+import { PublishState } from "@dataservices/shared/publish-state.enum";
+import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { Identifiable } from "@shared/identifiable";
 import { SortDirection } from "@shared/sort-direction.enum";
 
@@ -29,6 +31,7 @@ export class Dataservice implements Identifiable< string > {
   private serviceViewModel: string;
   private serviceViewTables: string[];
   private deploymentState: DeploymentState = DeploymentState.LOADING;
+  private virtualization: Virtualization = null;
 
   /**
    * @param {Object} json the JSON representation of a Dataservice
@@ -191,6 +194,45 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
+   * @returns {DeploymentState} the dataservice Deployment state
+   */
+  public getServicePublishState(): PublishState {
+    return this.virtualization ? this.virtualization.getPublishState() : PublishState.NOT_PUBLISHED;
+  }
+
+  /**
+   * Accessor to determine if service has not been published
+   * @returns {boolean} the dataservice service not published state
+   */
+  public get serviceNotPublished(): boolean {
+    return this.getServicePublishState() === PublishState.NOT_PUBLISHED;
+  }
+
+  /**
+   * Accessor to determine if service publishing is active
+   * @returns {boolean} the dataservice service publishing active state
+   */
+  public get servicePublishing(): boolean {
+    return this.getServicePublishState() === PublishState.PUBLISHING;
+  }
+
+  /**
+   * Accessor to determine if service has been published
+   * @returns {boolean} the dataservice service published state
+   */
+  public get servicePublished(): boolean {
+    return this.getServicePublishState() === PublishState.PUBLISHED;
+  }
+
+  /**
+   * Accessor to determine if service has failed publishing
+   * @returns {boolean} the dataservice service publishing failed state
+   */
+  public get servicePublishFailed(): boolean {
+    return this.getServicePublishState() === PublishState.FAILED;
+  }
+
+  /**
    * @param {string} id the dataservice identifier (optional)
    */
   public setId( id?: string ): void {
@@ -244,6 +286,13 @@ export class Dataservice implements Identifiable< string > {
    */
   public setServiceDeploymentState( state: DeploymentState ): void {
     this.deploymentState = state;
+  }
+
+  /**
+   * @param {Virtualization} state the dataservice virtualization
+   */
+  public setServiceVirtualization( state: Virtualization ): void {
+    this.virtualization = state ? state : null;
   }
 
   // overrides toJSON - we do not want the appSettings

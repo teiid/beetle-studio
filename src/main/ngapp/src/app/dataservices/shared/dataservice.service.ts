@@ -20,9 +20,11 @@ import { Http } from "@angular/http";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { Connection } from "@connections/shared/connection.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
+import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { QueryResults } from "@dataservices/shared/query-results.model";
@@ -30,11 +32,13 @@ import { Table } from "@dataservices/shared/table.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Observable";
 import { ReplaySubject } from "rxjs/ReplaySubject";
 import { Subject } from "rxjs/Subject";
 import { Subscription } from "rxjs/Subscription";
+import { saveAs } from 'file-saver/FileSaver';
 
 @Injectable()
 export class DataserviceService extends ApiService {
@@ -47,15 +51,14 @@ export class DataserviceService extends ApiService {
   // Using replay status with cache of 1, so subscribers dont get an initial value on subscription
   public dataserviceStateChange: Subject< Map<string, DeploymentState> > = new ReplaySubject< Map<string, DeploymentState> >(1);
 
-  public serviceVdbSuffix = "VDB";  // Don't change - must match komodo naming convention
-
   private http: Http;
   private notifierService: NotifierService;
   private appSettingsService: AppSettingsService;
   private vdbService: VdbService;
   private selectedDataservice: Dataservice;
   private dataserviceCurrentView: Table[] = [];
-  private cachedDataserviceStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
+  private cachedDataserviceDeployStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
+  private cachedDataserviceVirtualizations: Map<string, Virtualization> = new Map<string, Virtualization>();
   private updatesSubscription: Subscription;
 
   constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
@@ -244,8 +247,7 @@ export class DataserviceService extends ApiService {
    * @param {string} model1Name,
    * @returns {Observable<boolean>}
    */
-  public createReadonlyDataRole(dataserviceName: string, model1Name: string): Observable<boolean> {
-    const serviceVdbName = dataserviceName + this.serviceVdbSuffix;
+  public createReadonlyDataRole(serviceVdbName: string, model1Name: string): Observable<boolean> {
     const READ_ONLY_DATA_ROLE_NAME = VdbsConstants.DEFAULT_READONLY_DATA_ROLE;
     const VIEW_MODEL = VdbsConstants.SERVICE_VIEW_MODEL_NAME;
     const userWorkspacePath = this.getKomodoUserWorkspacePath();
@@ -317,6 +319,17 @@ export class DataserviceService extends ApiService {
   }
 
   /**
+   * Derive the service vdb name from the given dataservice
+   *
+   * @param {Dataservice} dataservice
+   * @returns {string}
+   */
+  public deriveServiceVdbName(dataservice: NewDataservice): string {
+    let name = dataservice.getId() + VdbsConstants.DATASERVICE_VDB_SUFFIX;
+    return name.toLowerCase();
+  }
+
+  /**
    * Create a dataservice which is a straight passthru to the supplied tables
    * @param {NewDataservice} dataservice
    * @param {Table[]} sourceTables
@@ -324,23 +337,26 @@ export class DataserviceService extends ApiService {
    */
   public createDataserviceForSingleSourceTables(dataservice: NewDataservice, sourceTables: Table[]): Observable<boolean> {
     // All tables from same connection
-    const connectionName = sourceTables[0].getConnection().getId();
-    const sourceVdbName = connectionName + VdbsConstants.SOURCE_VDB_SUFFIX;
-    const sourceModelName = connectionName;
+    const connection: Connection = sourceTables[0].getConnection();
+    const sourceVdbName = this.vdbService.deriveVdbName(connection);
+    const sourceModelName = this.vdbService.deriveVdbModelName(connection);
+    const sourceModelSourceName = this.vdbService.deriveVdbModelSourceName(connection);
     const vdbPath = this.getKomodoUserWorkspacePath() + "/" + sourceVdbName;
     const tablePaths = [];
     for ( const sourceTable of sourceTables ) {
       const tablePath = vdbPath + "/" + sourceModelName + "/" + sourceTable.getName();
       tablePaths.push(tablePath);
     }
-    const modelSourcePath = vdbPath + "/" + sourceModelName + "/vdb:sources/" + sourceModelName;
+    const modelSourcePath = vdbPath + "/" + sourceModelName + "/vdb:sources/" + sourceModelSourceName;
+
+    const dsVdbName = this.deriveServiceVdbName(dataservice);
 
     // Chain the individual calls together in series to build the DataService
     return this.createDataservice(dataservice)
       .flatMap((res) => this.vdbService.updateVdbModelFromTeiid(sourceVdbName, sourceModelName,
                                                                 sourceVdbName, sourceModelName))
       .flatMap((res) => this.setServiceVdbForSingleSourceTables(dataservice.getId(), tablePaths, modelSourcePath))
-      .flatMap((res) => this.createReadonlyDataRole(dataservice.getId(), sourceModelName))
+      .flatMap((res) => this.createReadonlyDataRole(dsVdbName, sourceModelName))
       .flatMap((res) => this.vdbService.undeployVdb(sourceVdbName))
       .flatMap((res) => this.vdbService.deleteVdb(sourceVdbName));
   }
@@ -358,33 +374,66 @@ export class DataserviceService extends ApiService {
   }
 
   /**
-   * Export a dataservice to a git repository
+   * Converts a base64 data string into a blob for use with the FileSaver library
+   * Acknowledgement to
+   * http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
+   */
+  private b64toBlob(b64Data: string, contentType: string): Blob {
+    contentType = contentType || '';
+    let sliceSize = 512;
+
+    //
+    // Decodes the base64 string back into binary data byte characters
+    //
+    let byteCharacters = atob(b64Data);
+    let byteArrays = [];
+
+    //
+    // Each character's code point (charCode) will be the value of the byte.
+    // Can create an array of byte values by applying this using the .charCodeAt
+    // method for each character in the string.
+    //
+    // The performance can be improved a little by processing the byteCharacters
+    // in smaller slices, rather than all at once. Rough testing indicates 512 bytes
+    // seems to be a good slice size.
+    //
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        let slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        let byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        //
+        // Convert the array of byte values into a real typed byte array
+        // by passing it to the Uint8Array constructor.
+        //
+        let byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    //
+    // Convert to a Blob by wrapping it in an array passing it to the Blob constructor.
+    //
+    let blob = new Blob(byteArrays, {
+        type: contentType
+    });
+
+    return blob;
+  }
+
+  /**
+   * Download a dataservice as a jar archive
    * @param {string} dataserviceName the dataservice name
    * @returns {Observable<boolean>}
    */
-  public exportDataservice(dataserviceName: string): Observable<boolean> {
-    const repoPathKey = this.appSettings.GIT_REPO_PATH_KEY;
-    const repoBranchKey = this.appSettings.GIT_REPO_BRANCH_KEY;
-    const repoUsernameKey = this.appSettings.GIT_REPO_USERNAME_KEY;
-    const repoPasswordKey = this.appSettings.GIT_REPO_PASSWORD_KEY;
-    const repoAuthorEmailKey = this.appSettings.GIT_REPO_AUTHOR_EMAIL_KEY;
-    const repoAuthorNameKey = this.appSettings.GIT_REPO_AUTHOR_NAME_KEY;
-    const repoFilePathKey = this.appSettings.GIT_REPO_FILE_PATH_KEY;
-
+  public downloadDataservice(dataserviceName: string): Observable<boolean> {
     // The payload for the rest call
     const payload = {
-      "storageType": "git",
-      "dataPath": "/" + this.getKomodoUserWorkspacePath() + "/" + dataserviceName,
-      "parameters":
-        {
-          [repoPathKey] : this.appSettings.getGitRepoProperty(repoPathKey),
-          [repoBranchKey] : this.appSettings.getGitRepoProperty(repoBranchKey),
-          [repoFilePathKey] : dataserviceName,
-          [repoUsernameKey] : this.appSettings.getGitRepoProperty(repoUsernameKey),
-          [repoPasswordKey] : btoa(this.appSettings.getGitRepoProperty(repoPasswordKey)),
-          [repoAuthorNameKey] : this.appSettings.getGitRepoProperty(repoAuthorNameKey),
-          [repoAuthorEmailKey] : this.appSettings.getGitRepoProperty(repoAuthorEmailKey)
-        }
+      "storageType": "file",
+      "dataPath": this.getKomodoUserWorkspacePath() + "/" + dataserviceName,
+      "parameters": {}
     };
 
     const url = environment.komodoImportExportUrl + "/" + DataservicesConstants.dataservicesExport;
@@ -392,6 +441,55 @@ export class DataserviceService extends ApiService {
     return this.http
       .post(url, payload, this.getAuthRequestOptions())
       .map((response) => {
+        let status = response.json();
+
+        if (! status.downloadable) {
+          throw new Error(payload.dataPath + " is not downloadable");
+        }
+
+        if (! status.content) {
+          throw new Error(payload.dataPath + " has no content");
+        }
+
+        const name = status.Name || dataserviceName;
+        const fileType = status.type || 'data';
+        const enc = status.content;
+
+        const contentType = fileType === "zip" ? 'application/zip' : 'text/plain;charset=utf-8';
+        const dataBlob = this.b64toBlob(enc, contentType);
+
+        const fileExt = ( fileType == "-vdb.xml" || fileType == "-connection.xml" ) ? fileType : "." + fileType;
+
+        saveAs(dataBlob, name + fileExt);
+
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Publish a dataservice
+   * @param {string} dataserviceName the dataservice name
+   * @returns {Observable<boolean>}
+   */
+  public publishDataservice(dataserviceName: string): Observable<boolean> {
+
+    // The payload for the rest call
+    const payload = {
+      "name": dataserviceName
+    };
+
+    const url = environment.komodoTeiidUrl + "/" + DataservicesConstants.dataservicesPublish;
+
+    return this.http
+      .post(url, payload, this.getAuthRequestOptions())
+      .map((response) => {
+        let status = response.json();
+
+        if (status.Information && status.Information['Build Status'] === 'FAILED') {
+          throw new Error(status.Information['Build Message']);
+        }
+
         return response.ok;
       })
       .catch( ( error ) => this.handleError( error ) );
@@ -433,11 +531,12 @@ export class DataserviceService extends ApiService {
     this.getAllDataservices()
       .subscribe(
         (dataservices) => {
-          self.updateServiceStateMap(dataservices);
+          self.updateServiceStateMaps(dataservices);
         },
         (error) => {
           // On error, broadcast the cached states
-          this.notifierService.sendDataserviceStateMap(this.cachedDataserviceStates);
+          this.notifierService.sendDataserviceDeployStateMap(this.cachedDataserviceDeployStates);
+          this.notifierService.sendDataserviceVirtualizationMap(this.cachedDataserviceVirtualizations);
         }
       );
   }
@@ -461,17 +560,28 @@ export class DataserviceService extends ApiService {
    * Get updates for the provided array of Dataservices and broadcast the map of states
    * @param {Dataservice[]} services the array of Dataservices
    */
-  private updateServiceStateMap(services: Dataservice[]): void {
+  private updateServiceStateMaps(services: Dataservice[]): void {
     const self = this;
     this.vdbService.getTeiidVdbStatuses()
       .subscribe(
         (vdbStatuses) => {
-          self.cachedDataserviceStates = self.createDeploymentStateMap(services, vdbStatuses);
-          this.notifierService.sendDataserviceStateMap(self.cachedDataserviceStates);
+          self.cachedDataserviceDeployStates = self.createDeploymentStateMap(services, vdbStatuses);
+          this.notifierService.sendDataserviceDeployStateMap(self.cachedDataserviceDeployStates);
         },
         (error) => {
           // On error, broadcast the cached states
-          this.notifierService.sendDataserviceStateMap(self.cachedDataserviceStates);
+          this.notifierService.sendDataserviceDeployStateMap(self.cachedDataserviceDeployStates);
+        }
+      );
+    this.vdbService.getVirtualizations()
+      .subscribe(
+        (vdbStatuses) => {
+          self.cachedDataserviceVirtualizations = self.createPublishStateMap(services, vdbStatuses);
+          this.notifierService.sendDataserviceVirtualizationMap(self.cachedDataserviceVirtualizations);
+        },
+        (error) => {
+          // On error, broadcast the cached states
+          this.notifierService.sendDataserviceVirtualizationMap(self.cachedDataserviceVirtualizations);
         }
       );
   }
@@ -512,4 +622,33 @@ export class DataserviceService extends ApiService {
     return dsStateMap;
   }
 
+  /*
+   * Creates a Map of dataservice name to PublishState, given the list of dataservices and virtualizations
+   * @param {Dataservice[]} dataservices the Dataservice array
+   * @param {virtualization[]} virtualizations the Virtualization array
+   * @returns {Map<string,PublishState>} the map of dataservice name to PublishState
+   */
+  private createPublishStateMap(dataservices: Dataservice[], virtualizations: Virtualization[]): Map<string, Virtualization> {
+    const dsStateMap: Map<string, Virtualization> = new Map<string, Virtualization>();
+
+    // For each dataservice, find the corresponding Virtualization.  Add the map entry
+    for ( const dService of dataservices ) {
+      const serviceId = dService.getId();
+      const serviceVdbName = dService.getServiceVdbName();
+      let statusFound = false;
+      for ( const virtualization of virtualizations ) {
+        if ( virtualization.getVdbName() === serviceVdbName ) {
+          statusFound = true;
+          dsStateMap.set(serviceId, virtualization);
+        }
+      }
+
+      if ( !statusFound ) {
+        const virtual = new Virtualization(serviceVdbName, PublishState.NOT_PUBLISHED);
+        dsStateMap.set(serviceId, virtual);
+      }
+    }
+
+    return dsStateMap;
+  }
 }

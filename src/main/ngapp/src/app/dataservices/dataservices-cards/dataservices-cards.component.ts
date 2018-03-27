@@ -39,6 +39,7 @@ export class DataservicesCardsComponent {
   @Output() public deleteDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public editDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public downloadDataservice: EventEmitter<string> = new EventEmitter<string>();
 
   public logger: LoggerService;
 
@@ -72,6 +73,10 @@ export class DataservicesCardsComponent {
         break;
       case DataserviceCardComponent.testDataserviceEvent:
         this.testDataservice.emit( event.dataserviceName );
+        break;
+      case DataserviceCardComponent.downloadDataserviceEvent:
+        this.downloadDataservice.emit ( event.dataserviceName );
+        this.logger.error( "Download dataservice event type of '" + event.eventType + "'" );
         break;
       default:
         this.logger.error( "Unhandled event type of '" + event.eventType + "'" );
