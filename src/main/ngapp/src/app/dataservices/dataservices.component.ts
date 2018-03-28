@@ -437,7 +437,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
           },
           (error) => {
             self.exportNotificationHeader = this.downloadFailedHeader;
-            self.exportNotificationMessage = "   Failed to downlaod dataservice " + svcName;
+            self.exportNotificationMessage = "   Failed to download dataservice " + svcName;
             self.exportNotificationType = NotificationType.DANGER;
             this.logger.error("[DataservicesPageComponent] Download dataservice " + svcName + " failed.");
           }
