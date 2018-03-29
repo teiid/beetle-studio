@@ -76,7 +76,6 @@ export class DataservicesCardsComponent {
         break;
       case DataserviceCardComponent.downloadDataserviceEvent:
         this.downloadDataservice.emit ( event.dataserviceName );
-        this.logger.error( "Download dataservice event type of '" + event.eventType + "'" );
         break;
       default:
         this.logger.error( "Unhandled event type of '" + event.eventType + "'" );

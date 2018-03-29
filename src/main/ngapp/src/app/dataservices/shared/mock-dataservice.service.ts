@@ -83,14 +83,11 @@ export class MockDataserviceService extends DataserviceService {
   public deleteDataservice(dataserviceId: string): Observable<boolean> {
     return Observable.of(true);
   }
-  //
-  // /**
-  //  * Get the current Dataservice selection
-  //  * @returns {Dataservice} the selected Dataservice
-  //  */
-  // public getSelectedDataservice( ): Dataservice {
-  //   return this.serv1;
-  // }
+
+  public downloadDataservice( dataserviceName: string ): Observable< boolean > {
+    alert( "Download of " + dataserviceName + " happens here" );
+    return Observable.of( true );
+  }
 
   /**
    * Get the views for the selected Dataservice

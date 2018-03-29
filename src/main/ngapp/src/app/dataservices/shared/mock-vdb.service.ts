@@ -32,12 +32,14 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
+import { Virtualization } from "@dataservices/shared/virtualization.model";
 
 @Injectable()
 export class MockVdbService extends VdbService {
 
   private vdbs: Vdb[];
   private statuses: VdbStatus[];
+  private virtualizations: Virtualization[];
 
   constructor(http: Http, appSettings: AppSettingsService, notifierService: NotifierService, logger: LoggerService ) {
     super(http, appSettings, notifierService, logger);
@@ -49,6 +51,7 @@ export class MockVdbService extends VdbService {
     // Get test data
     this.statuses = testDataService.getVdbStatuses();
     this.vdbs = testDataService.getVdbs();
+    this.virtualizations = testDataService.getVirtualizations();
   }
 
   /**
@@ -169,6 +172,10 @@ export class MockVdbService extends VdbService {
    */
   public deployVdbForTables(tables: Table[]): Observable<boolean> {
     return Observable.of(true);
+  }
+
+  public getVirtualizations(): Observable< Virtualization[] > {
+    return Observable.of( this.virtualizations );
   }
 
 }
