@@ -25,7 +25,7 @@ export class VdbModelSource {
   private keng__kType = "VdbModelSource";
   private vdb__sourceJndiName: string;
   private vdb__sourceTranslator: string;
-  private tko__associatedConnection: string;
+  private vdb__originConnection: string;
 
   /**
    * @param {Object} json the JSON representation of a VdbModelSource
@@ -79,8 +79,8 @@ export class VdbModelSource {
   /**
    * @returns {string} the associated connection path (can be null)
    */
-  public getAssociatedConnection(): string {
-    return this.tko__associatedConnection;
+  public getOriginConnection(): string {
+    return this.vdb__originConnection;
   }
 
   /**
@@ -114,8 +114,8 @@ export class VdbModelSource {
   /**
    * @param {string} connectionPath the path to the associated connection (optional)
    */
-  public setAssociatedConnection( connectionPath?: string ): void {
-    this.tko__associatedConnection = connectionPath ? connectionPath : null;
+  public setOriginConnection( connectionPath?: string ): void {
+    this.vdb__originConnection = connectionPath ? connectionPath : null;
   }
 
   /**

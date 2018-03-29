@@ -377,7 +377,7 @@ export class VdbService extends ApiService {
     vdbModelSource.setDataPath(vdbPath + "/" + vdbModelName + "/vdb:sources/" + vdbModelSourceName);
     vdbModelSource.setJndiName(connection.getJndiName());
     vdbModelSource.setTranslatorName(connection.getDriverName());
-    vdbModelSource.setAssociatedConnection(connection.getDataPath());
+    vdbModelSource.setOriginConnection(connection.getDataPath());
 
     // Chain the individual calls together in series to build the Vdb and deploy it
     return this.deleteVdbIfFound(vdb.getId())
