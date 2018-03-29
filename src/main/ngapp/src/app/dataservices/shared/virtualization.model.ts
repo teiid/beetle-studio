@@ -25,7 +25,7 @@ export class Virtualization {
   private vdb_name: string;
   private build_name: string;
   private deployment_name: string;
-  private build_status : string; /* NOTFOUND, BUILDING, DEPLOYING, RUNNING, FAILED, CANCELLED */
+  private build_status: string; /* NOTFOUND, BUILDING, DEPLOYING, RUNNING, FAILED, CANCELLED */
   private build_status_message: string;
   private namespace: string;
   private last_updated: string;
@@ -98,7 +98,7 @@ export class Virtualization {
   }
 
   /**
-   * @returns {PublishedState} the published state of this virtualization (derived from build state)
+   * @returns {PublishState} the published state of this virtualization (derived from build state)
    */
   public getPublishState(): PublishState {
     return this.publishState;
@@ -111,16 +111,13 @@ export class Virtualization {
   public setValues(values: object = {}): void {
     Object.assign(this, values);
     if (this.build_status) {
-      if (this.build_status === 'BUILDING' || this.build_status === 'DEPLOYING') {
+      if (this.build_status === "BUILDING" || this.build_status === "DEPLOYING") {
         this.publishState = PublishState.PUBLISHING;
-      }
-      else if (this.build_status === 'RUNNING') {
+      } else if (this.build_status === "RUNNING") {
         this.publishState = PublishState.PUBLISHED;
-      }
-      else if (this.build_status === 'FAILED') {
+      } else if (this.build_status === "FAILED") {
         this.publishState = PublishState.FAILED;
-      }
-      else {
+      } else {
         this.publishState = PublishState.NOT_PUBLISHED;
       }
     }

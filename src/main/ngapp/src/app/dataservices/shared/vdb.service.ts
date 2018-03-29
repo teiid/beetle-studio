@@ -120,7 +120,7 @@ export class VdbService extends ApiService {
    * @returns {string}
    */
   public deriveVdbName(connection: Connection): string {
-    let name = connection.getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
+    const name = connection.getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
     return name.toLowerCase();
   }
 
@@ -223,12 +223,12 @@ export class VdbService extends ApiService {
       .post(environment.komodoTeiidUrl + VdbsConstants.vdbRootPath,
         { path: vdbPath}, this.getAuthRequestOptions())
       .map((response) => {
-        let status = response.json();
-        if (status.Information.deploymentSuccess !== 'true') {
+        const status = response.json();
+        if (status.Information.deploymentSuccess !== "true") {
           this.handleError(response);
         }
 
-        return status.Information.deploymentSuccess === 'true';
+        return status.Information.deploymentSuccess === "true";
       })
       .catch( ( error ) => this.handleError( error ) );
   }

@@ -78,22 +78,22 @@ export abstract class ApiService {
   protected msgFromResponse(response: Response): string {
     let msg = "";
 
-    let body = response.text();
     if (! this.isJSON(response.text())) {
       msg = response.text();
     } else {
-      let body = response.json();
+      const body = response.json();
 
-      if (body.message)
+      if (body.message) {
         msg = body.message;
-      else if (body.error)
+      } else if (body.error) {
         msg = body.error;
-      else if (body.Information && body.Information.ErrorMessage1)
+      } else if (body.Information && body.Information.ErrorMessage1) {
         msg = body.Information.ErrorMessage1;
+      }
     }
 
     if (msg.length === 0 ) {
-      return 'unknown error';
+      return "unknown error";
     }
 
     return msg;

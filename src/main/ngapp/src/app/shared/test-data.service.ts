@@ -20,9 +20,12 @@ import { Connection } from "@connections/shared/connection.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
+import { QueryResults } from "@dataservices/shared/query-results.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
-import { QueryResults } from "@dataservices/shared/query-results.model";
+import { VirtualAction } from "rxjs/scheduler/VirtualTimeScheduler";
+import { Virtualization } from "@dataservices/shared/virtualization.model";
+import { PublishState } from "@dataservices/shared/publish-state.enum";
 
 @Injectable()
 export class TestDataService {
@@ -753,6 +756,49 @@ export class TestDataService {
     }
   );
 
+  // =================================================================
+  // Virtualizations
+  // =================================================================
+
+  private static accountsVirtualization = Virtualization.create(
+    {
+      "vdb_name": TestDataService.accountsVdb.getName(),
+      "build_name": TestDataService.accountsVdb.getName() + "-build-1",
+      "deployment_name": TestDataService.accountsVdb.getName() + "-deployment-1",
+      "build_status": "RUNNING", /* NOTFOUND, BUILDING, DEPLOYING, RUNNING, FAILED, CANCELLED */
+      "build_status_message": "Accounts VDB build was successful",
+      "namespace": "beetle-studio",
+      "last_updated": "2018-03-29T17:02:51.181Z",
+      "publishState": PublishState.PUBLISHED
+    }
+  );
+
+  private static employeesVirtualization = Virtualization.create(
+    {
+      "vdb_name": TestDataService.employeesVdb.getName(),
+      "build_name": TestDataService.employeesVdb.getName() + "-build-1",
+      "deployment_name": TestDataService.employeesVdb.getName() + "-deployment-1",
+      "build_status": "RUNNING", /* NOTFOUND, BUILDING, DEPLOYING, RUNNING, FAILED, CANCELLED */
+      "build_status_message": "Employees VDB build was successful",
+      "namespace": "beetle-studio",
+      "last_updated": "2018-03-29T17:02:51.181Z",
+      "publishState": PublishState.PUBLISHED
+    }
+  );
+
+  private static productsVirtualization = Virtualization.create(
+    {
+      "vdb_name": TestDataService.productsVdb.getName(),
+      "build_name": TestDataService.productsVdb.getName() + "-build-1",
+      "deployment_name": TestDataService.productsVdb.getName() + "-deployment-1",
+      "build_status": "RUNNING", /* NOTFOUND, BUILDING, DEPLOYING, RUNNING, FAILED, CANCELLED */
+      "build_status_message": "Products VDB build was successful",
+      "namespace": "beetle-studio",
+      "last_updated": "2018-03-29T17:02:51.181Z",
+      "publishState": PublishState.PUBLISHED
+    }
+  );
+
   private catalogSources: ServiceCatalogSource[] = [
     TestDataService.pgConnCatalogSource,
     TestDataService.catalogSource1,
@@ -779,6 +825,7 @@ export class TestDataService {
 
   private jdbcTableMap = new Map<string, string[]>();
   private vdbStatuses: VdbStatus[];
+  private virtualizations: Virtualization[];
 
   /**
    * Create a ServiceCatalogSource using the specified info
@@ -799,6 +846,11 @@ export class TestDataService {
 
   constructor() {
     this.vdbStatuses = TestDataService.vdbStatuses.vdbs.map(( vdbStatus ) => VdbStatus.create( vdbStatus ) );
+    this.virtualizations = [
+      TestDataService.accountsVirtualization,
+      TestDataService.employeesVirtualization,
+      TestDataService.productsVirtualization
+    ];
 
     this.jdbcTableMap.set( "pgConnSchemaInfo1", [
       "pgConnTable1",
@@ -957,6 +1009,13 @@ export class TestDataService {
    */
   public getVdbStatuses(): VdbStatus[] {
     return this.vdbStatuses;
+  }
+
+  /**
+   * @returns {Virtualization[]} the virtualization collection
+   */
+  public getVirtualizations(): Virtualization[] {
+    return this.virtualizations;
   }
 
 }

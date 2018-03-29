@@ -17,16 +17,16 @@
 
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
+import { Connection } from "@connections/shared/connection.model";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
-import { Connection } from "@connections/shared/connection.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
-import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
@@ -34,11 +34,11 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { environment } from "@environments/environment";
+import { saveAs } from "file-saver/FileSaver";
 import { Observable } from "rxjs/Observable";
 import { ReplaySubject } from "rxjs/ReplaySubject";
 import { Subject } from "rxjs/Subject";
 import { Subscription } from "rxjs/Subscription";
-import { saveAs } from 'file-saver/FileSaver';
 
 @Injectable()
 export class DataserviceService extends ApiService {
@@ -243,7 +243,7 @@ export class DataserviceService extends ApiService {
 
   /**
    * Create a readonly datarole for the dataservice
-   * @param {string} dataserviceName,
+   * @param {string} serviceVdbName,
    * @param {string} model1Name,
    * @returns {Observable<boolean>}
    */
@@ -325,7 +325,7 @@ export class DataserviceService extends ApiService {
    * @returns {string}
    */
   public deriveServiceVdbName(dataservice: NewDataservice): string {
-    let name = dataservice.getId() + VdbsConstants.DATASERVICE_VDB_SUFFIX;
+    const name = dataservice.getId() + VdbsConstants.DATASERVICE_VDB_SUFFIX;
     return name.toLowerCase();
   }
 
@@ -374,56 +374,6 @@ export class DataserviceService extends ApiService {
   }
 
   /**
-   * Converts a base64 data string into a blob for use with the FileSaver library
-   * Acknowledgement to
-   * http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
-   */
-  private b64toBlob(b64Data: string, contentType: string): Blob {
-    contentType = contentType || '';
-    let sliceSize = 512;
-
-    //
-    // Decodes the base64 string back into binary data byte characters
-    //
-    let byteCharacters = atob(b64Data);
-    let byteArrays = [];
-
-    //
-    // Each character's code point (charCode) will be the value of the byte.
-    // Can create an array of byte values by applying this using the .charCodeAt
-    // method for each character in the string.
-    //
-    // The performance can be improved a little by processing the byteCharacters
-    // in smaller slices, rather than all at once. Rough testing indicates 512 bytes
-    // seems to be a good slice size.
-    //
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        let slice = byteCharacters.slice(offset, offset + sliceSize);
-
-        let byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-        }
-
-        //
-        // Convert the array of byte values into a real typed byte array
-        // by passing it to the Uint8Array constructor.
-        //
-        let byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
-    }
-
-    //
-    // Convert to a Blob by wrapping it in an array passing it to the Blob constructor.
-    //
-    let blob = new Blob(byteArrays, {
-        type: contentType
-    });
-
-    return blob;
-  }
-
-  /**
    * Download a dataservice as a jar archive
    * @param {string} dataserviceName the dataservice name
    * @returns {Observable<boolean>}
@@ -441,7 +391,7 @@ export class DataserviceService extends ApiService {
     return this.http
       .post(url, payload, this.getAuthRequestOptions())
       .map((response) => {
-        let status = response.json();
+        const status = response.json();
 
         if (! status.downloadable) {
           throw new Error(payload.dataPath + " is not downloadable");
@@ -452,13 +402,13 @@ export class DataserviceService extends ApiService {
         }
 
         const name = status.Name || dataserviceName;
-        const fileType = status.type || 'data';
+        const fileType = status.type || "data";
         const enc = status.content;
 
-        const contentType = fileType === "zip" ? 'application/zip' : 'text/plain;charset=utf-8';
+        const contentType = fileType === "zip" ? "application/zip" : "text/plain;charset=utf-8";
         const dataBlob = this.b64toBlob(enc, contentType);
 
-        const fileExt = ( fileType == "-vdb.xml" || fileType == "-connection.xml" ) ? fileType : "." + fileType;
+        const fileExt = ( fileType === "-vdb.xml" || fileType === "-connection.xml" ) ? fileType : "." + fileType;
 
         saveAs(dataBlob, name + fileExt);
 
@@ -484,10 +434,10 @@ export class DataserviceService extends ApiService {
     return this.http
       .post(url, payload, this.getAuthRequestOptions())
       .map((response) => {
-        let status = response.json();
+        const status = response.json();
 
-        if (status.Information && status.Information['Build Status'] === 'FAILED') {
-          throw new Error(status.Information['Build Message']);
+        if (status.Information && status.Information["Build Status"] === "FAILED") {
+          throw new Error(status.Information["Build Message"]);
         }
 
         return response.ok;
@@ -554,6 +504,56 @@ export class DataserviceService extends ApiService {
     this.updatesSubscription = timer.subscribe((t: any) => {
       self.updateDataserviceStates();
     });
+  }
+
+  /**
+   * Converts a base64 data string into a blob for use with the FileSaver library
+   * Acknowledgement to
+   * http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
+   */
+  private b64toBlob(b64Data: string, contentType: string): Blob {
+    contentType = contentType || "";
+    const sliceSize = 512;
+
+    //
+    // Decodes the base64 string back into binary data byte characters
+    //
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    //
+    // Each character's code point (charCode) will be the value of the byte.
+    // Can create an array of byte values by applying this using the .charCodeAt
+    // method for each character in the string.
+    //
+    // The performance can be improved a little by processing the byteCharacters
+    // in smaller slices, rather than all at once. Rough testing indicates 512 bytes
+    // seems to be a good slice size.
+    //
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+
+      //
+      // Convert the array of byte values into a real typed byte array
+      // by passing it to the Uint8Array constructor.
+      //
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    //
+    // Convert to a Blob by wrapping it in an array passing it to the Blob constructor.
+    //
+    const blob = new Blob(byteArrays, {
+      type: contentType
+    });
+
+    return blob;
   }
 
   /*
