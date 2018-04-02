@@ -75,7 +75,7 @@
             </pfng-action>
           </ng-template>
           <ng-template #expandTemplate let-item="item" let-index="index">
-            <app-basic-content [item]="item" *ngIf="item.expandId === undefined"></app-basic-content>
+            <app-dataservices-details class="dataservices-details-properties" [item]="item" *ngIf="item.expandId === undefined"></app-dataservices-details>
             <app-views-content [item]="item" *ngIf="item.expandId === 'views'"></app-views-content>
           </ng-template>
         </pfng-list>
