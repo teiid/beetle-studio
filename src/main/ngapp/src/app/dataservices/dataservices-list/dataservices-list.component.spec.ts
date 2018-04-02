@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { RouterTestingModule } from "@angular/router/testing";
 import { LoggerService } from "@core/logger.service";
-import { BasicContentComponent } from "@dataservices/dataservices-list/basic-content.component";
+import { DataservicesDetailsComponent } from "@dataservices/dataservices-list/dataservices-details.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
 import { ViewsContentComponent } from "@dataservices/dataservices-list/views-content.component";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -13,7 +13,7 @@ describe("DataservicesListComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ PatternFlyNgModule, RouterTestingModule ],
-      declarations: [ BasicContentComponent, DataservicesListComponent, ViewsContentComponent ],
+      declarations: [ DataservicesDetailsComponent, DataservicesListComponent, ViewsContentComponent ],
       providers: [ LoggerService ]
     })
     .compileComponents().then(() => {

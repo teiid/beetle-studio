@@ -10,7 +10,7 @@ import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
-import { BasicContentComponent } from "@dataservices/dataservices-list/basic-content.component";
+import { DataservicesDetailsComponent } from "@dataservices/dataservices-list/dataservices-details.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
 import { ViewsContentComponent } from "@dataservices/dataservices-list/views-content.component";
 import { DataservicesComponent } from "@dataservices/dataservices.component";
@@ -34,7 +34,7 @@ describe("DataservicesComponent", () => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), PatternFlyNgModule,
                  RouterTestingModule, SharedModule, CodemirrorModule ],
-      declarations: [ BasicContentComponent,
+      declarations: [ DataservicesDetailsComponent,
                       DataservicesComponent,
                       DataservicesListComponent,
                       DataservicesCardsComponent,

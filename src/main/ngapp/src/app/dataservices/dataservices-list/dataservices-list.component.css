@@ -31,3 +31,8 @@ a.list-pf-title.view-name {
   color: var(--card-body-color);
   margin-left: 10px !important;
 }
+
+.dataservices-details-properties {
+  padding-left: 40px;
+}
+

@@ -24,7 +24,7 @@ import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
-import { BasicContentComponent } from "@dataservices/dataservices-list/basic-content.component";
+import { DataservicesDetailsComponent } from "@dataservices/dataservices-list/dataservices-details.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
 import { ViewsContentComponent } from "@dataservices/dataservices-list/views-content.component";
 import { DataservicesRoutingModule } from "@dataservices/dataservices-routing.module";
@@ -61,7 +61,7 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
     CodemirrorModule
   ],
   declarations: [
-    BasicContentComponent,
+    DataservicesDetailsComponent,
     ViewsContentComponent,
     DataservicesCardsComponent,
     DataservicesComponent,
