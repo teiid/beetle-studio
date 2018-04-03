@@ -49,3 +49,11 @@ a.list-pf-title.view-name {
 .views-details {
   background-color: var(--card-body-background-color);
 }
+
+.list-pf-container {
+  -ms-flex-align: start;
+  align-items: flex-start;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 3px;
+}
