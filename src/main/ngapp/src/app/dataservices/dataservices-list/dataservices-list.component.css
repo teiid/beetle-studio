@@ -36,3 +36,8 @@ a.list-pf-title.view-name {
   padding-left: 40px;
 }
 
+.list-pf:not(.list-pf-stacked) .list-pf-main-content > * + * {
+  margin-left: 10px;
+}
+
+

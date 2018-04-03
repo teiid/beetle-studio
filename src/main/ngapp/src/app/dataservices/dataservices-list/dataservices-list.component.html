@@ -19,11 +19,52 @@
             </div>
             <div class="list-pf-content-wrapper">
               <div class="list-pf-main-content">
-                <span class="pull-left pficon-ok" *ngIf="item.serviceDeploymentActive"></span>
-                <span class="pull-left pficon-error-circle-o" *ngIf="item.serviceDeploymentFailed"></span>
-                <span class="pull-left pficon-warning-triangle-o" *ngIf="item.serviceDeploymentInactive"></span>
-                <span class="pull-left pficon-unknown" *ngIf="item.serviceDeploymentNotDeployed"></span>
-                <span class="pull-left fa fa-spinner fa-pulse" *ngIf="item.serviceDeploymentLoading"></span>
+                <span class="pull-left pficon-ok"
+                      *ngIf="item.serviceDeploymentActive">
+                </span>
+                <span class="pull-left pficon-error-circle-o"
+                      *ngIf="item.serviceDeploymentFailed">
+                </span>
+                <span class="pull-left pficon-warning-triangle-o"
+                      *ngIf="item.serviceDeploymentInactive">
+                </span>
+                <span class="pull-left pficon-unknown"
+                      *ngIf="item.serviceDeploymentNotDeployed">
+                </span>
+                <span class="pull-left fa fa-spinner fa-pulse"
+                      *ngIf="item.serviceDeploymentLoading">
+                </span>
+
+                <span class="pull-left fa fa-cogs fa-2x"
+                      style="color:grey;"
+                      *ngIf="item.serviceNotPublished"
+                      data-toggle="tooltip"
+                      data-placement="right"
+                      title="Not Published">
+                </span>
+                <span class="pull-left fa fa-cogs fa-2x"
+                      style="color:red;"
+                      *ngIf="item.servicePublishFailed"
+                      data-toggle="tooltip"
+                      data-placement="right"
+                      title="Publishing Failed">
+               </span>
+                <span class="pull-left fa fa-cog fa-spin fa-2x"
+                      style="color:orange;"
+                      *ngIf="item.servicePublishing"
+                      data-toggle="tooltip"
+                      data-placement="right"
+                      title="Publishing">
+                </span>
+                <span class="pull-left fa fa-cogs fa-2x"
+                      style="color:green;"
+                      *ngIf="item.servicePublished"
+                      data-toggle="tooltip"
+                      data-placement="left"
+                      title="Published">
+      </span>
+
+
                 <a class="object-name-link" [routerLink]="[item.getId()]" (click)="onEditDataservice(item.getId())">{{ item.getId() }}</a>
                 <div class="list-pf-description">{{ getDescription( item ) }}</div>
               </div>
