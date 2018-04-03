@@ -4,7 +4,7 @@
 command -v node >/dev/null 2>&1 || { echo >&2 "Requires 'node' but it's not installed.  Aborting."; exit 1; }
 
 # Check ng is available - should be post 'npm install'
-NG="node_modules/.bin/ng"
+NG=`find . -type f -name ng | head -1`
 if [ ! -f ${NG} ]; then
   echo "Error: cannot find 'ng' so nothing can be executed... exiting"
   exit 1
