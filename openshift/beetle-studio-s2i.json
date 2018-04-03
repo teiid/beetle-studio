@@ -711,7 +711,7 @@
                                     },
                                     {
                                     	"name": "SWARM_JAR_ARGS",
-                                    	"value": "-DNAMESPACE=beetle-studio -Dkomodo.user=${PERSISTENCE_STORAGE_USER} -Dkomodo.password=${PERSISTENCE_STORAGE_PASSWORD} -Dkomodo.repositoryPersistenceHost=vdb-builder-persistence"
+                                    	"value": "-DNAMESPACE=${NAMESPACE} -Dkomodo.user=${PERSISTENCE_STORAGE_USER} -Dkomodo.password=${PERSISTENCE_STORAGE_PASSWORD} -Dkomodo.repositoryPersistenceHost=vdb-builder-persistence"
                                     }
                                 ],
                                 "livenessProbe":{
