@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Check node is available
+command -v node >/dev/null 2>&1 || { echo >&2 "Requires 'node' but it's not installed.  Aborting."; exit 1; }
+
+# Check ng is available - should be post 'npm install'
+NG="node_modules/.bin/ng"
+if [ ! -f ${NG} ]; then
+  echo "Error: cannot find 'ng' so nothing can be executed... exiting"
+  exit 1
+fi
+
 #################
 #
 # Show help and exit
@@ -26,7 +36,7 @@ done
 shift "$(expr $OPTIND - 1)"
 
 if [ "${DEV}" == "1" ]; then
-  ng serve --host 0.0.0.0 --port 8080 --disable-host-check
+  ${NG} serve --host 0.0.0.0 --port 8080 --disable-host-check
 else
-  ng build && node ./server.js
+  ${NG} build && node ./server.js
 fi
