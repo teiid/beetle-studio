@@ -338,7 +338,7 @@ export class DataserviceService extends ApiService {
   public createDataserviceForSingleSourceTables(dataservice: NewDataservice, sourceTables: Table[]): Observable<boolean> {
     // All tables from same connection
     const connection: Connection = sourceTables[0].getConnection();
-    const sourceVdbName = this.vdbService.deriveVdbName(connection);
+    const sourceVdbName = this.vdbService.deriveSourceVdbName(connection);
     const sourceModelName = this.vdbService.deriveVdbModelName(connection);
     const sourceModelSourceName = this.vdbService.deriveVdbModelSourceName(connection);
     const vdbPath = this.getKomodoUserWorkspacePath() + "/" + sourceVdbName;
