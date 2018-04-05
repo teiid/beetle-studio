@@ -242,9 +242,13 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
       );
 
     this.connectionService
-      .getAllConnections()
+      .getConnections(true, false)
       .subscribe(
-        ( connections ) => {
+        ( connectionSummaries ) => {
+          const connections = [];
+          for ( const connectionSummary of connectionSummaries ) {
+            connections.push(connectionSummary.getConnection());
+          }
           self.connectionsExist = connections.length !== 0;
           self.loaded( self.connectionsLoadedTag );
         },

@@ -10,6 +10,9 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddActivityComponent } from "./add-activity.component";
@@ -23,9 +26,11 @@ describe("AddActivityComponent", () => {
       imports: [ CoreModule, PatternFlyNgModule, FormsModule, ReactiveFormsModule, RouterTestingModule, SharedModule ],
       declarations: [ AddActivityComponent, AddActivityWizardComponent ],
       providers: [
+        NotifierService,
         { provide: ActivityService, useClass: MockActivityService },
         { provide: AppSettingsService, useClass: MockAppSettingsService },
-        { provide: ConnectionService, useClass: MockConnectionService }
+        { provide: ConnectionService, useClass: MockConnectionService },
+        { provide: VdbService, useClass: MockVdbService }
       ]
     })
       .compileComponents().then(() => {

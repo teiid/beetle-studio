@@ -18,6 +18,7 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { ConnectionCardComponent } from "@connections/connections-cards/connection-card/connection-card.component";
 import { Connection } from "@connections/shared/connection.model";
+import { LoggerService } from "@core/logger.service";
 
 @Component({
   moduleId: module.id,
@@ -32,15 +33,17 @@ export class ConnectionsCardsComponent {
 
   @Output() public connectionSelected: EventEmitter<Connection> = new EventEmitter<Connection>();
   @Output() public connectionDeselected: EventEmitter<Connection> = new EventEmitter<Connection>();
+  @Output() public activateConnection: EventEmitter<string> = new EventEmitter<string>();
   @Output() public deleteConnection: EventEmitter<string> = new EventEmitter<string>();
   @Output() public editConnection: EventEmitter<string> = new EventEmitter<string>();
-  @Output() public pingConnection: EventEmitter<string> = new EventEmitter<string>();
+
+  public logger: LoggerService;
 
   /**
-   * Constructor.
+   * @param {LoggerService} logger the logging service
    */
-  constructor() {
-    // nothing to do
+  constructor( logger: LoggerService ) {
+    this.logger = logger;
   }
 
   public isSelected( connection: Connection ): boolean {
@@ -53,15 +56,14 @@ export class ConnectionsCardsComponent {
       case ConnectionCardComponent.deleteConnectionEvent:
         this.deleteConnection.emit( event.connectionName );
         break;
+      case ConnectionCardComponent.activateConnectionEvent:
+        this.activateConnection.emit( event.connectionName );
+        break;
       case ConnectionCardComponent.editConnectionEvent:
         this.editConnection.emit( event.connectionName );
         break;
-      case ConnectionCardComponent.pingConnectionEvent:
-        this.pingConnection.emit( event.connectionName );
-        break;
       default:
-        // TODO log this
-        // this.logger.error( "Unhandled event type of '" + event.eventType + "'" );
+        this.logger.error( "Unhandled event type of '" + event.eventType + "'" );
         break;
     }
   }

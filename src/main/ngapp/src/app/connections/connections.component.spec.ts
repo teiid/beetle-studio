@@ -13,6 +13,9 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SharedModule } from "@shared/shared.module";
 import { ModalModule } from "ngx-bootstrap";
@@ -41,18 +44,13 @@ describe("ConnectionsComponent", () => {
         ConnectionsCardsComponent
       ],
       providers: [
-        WizardService
+        AppSettingsService,
+        NotifierService,
+        WizardService,
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
+        { provide: ConnectionService, useClass: MockConnectionService },
+        { provide: VdbService, useClass: MockVdbService }
       ]
-    });
-
-    // use mock service
-    TestBed.overrideComponent( ConnectionsComponent, {
-      set: {
-        providers: [
-          { provide: AppSettingsService, useClass: MockAppSettingsService },
-          { provide: ConnectionService, useClass: MockConnectionService },
-        ]
-      }
     });
 
     fixture = TestBed.createComponent(ConnectionsComponent);
@@ -84,12 +82,12 @@ describe("ConnectionsComponent", () => {
     console.log("========== [ConnectionsComponent] should have Connections");
     // Check component object
     const connections = component.allConnections;
-    expect(connections.length).toEqual(4);
+    expect(connections.length).toEqual(3);
 
     // Check html has the same number of connection cards
     const cardDebugElems = fixture.debugElement.queryAll(By.css(".object-card"));
     expect(cardDebugElems).toBeDefined();
-    expect(cardDebugElems.length).toEqual(4);
+    expect(cardDebugElems.length).toEqual(3);
   });
 
   it("should have initial card layout", () => {

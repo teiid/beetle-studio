@@ -68,7 +68,7 @@ export class DataservicesCardsComponent {
       case DataserviceCardComponent.quickLookDataserviceEvent:
         this.quickLookDataservice.emit( event.dataserviceName );
         break;
-      case DataserviceCardComponent.refreshDataserviceEvent:
+      case DataserviceCardComponent.activateDataserviceEvent:
         this.activateDataservice.emit( event.dataserviceName );
         break;
       case DataserviceCardComponent.testDataserviceEvent:

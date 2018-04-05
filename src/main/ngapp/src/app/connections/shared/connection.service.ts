@@ -18,7 +18,6 @@
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { ConnectionType } from "@connections/shared/connection-type.model";
-import { Connection } from "@connections/shared/connection.model";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
 import { NewConnection } from "@connections/shared/new-connection.model";
@@ -28,10 +27,15 @@ import { TemplateDefinition } from "@connections/shared/template-definition.mode
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { ConnectionSummary } from "@dataservices/shared/connection-summary.model";
+import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { Table } from "@dataservices/shared/table.model";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { environment } from "@environments/environment";
 import { PropertyDefinition } from "@shared/property-form/property-definition.model";
 import { Observable } from "rxjs/Observable";
+import { Subscription } from "rxjs/Subscription";
 
 @Injectable()
 export class ConnectionService extends ApiService {
@@ -39,12 +43,24 @@ export class ConnectionService extends ApiService {
   private static readonly nameValidationUrl = environment.komodoWorkspaceUrl
     + ConnectionsConstants.connectionsRootPath
     + "/nameValidation/";
+  private static readonly refreshConnectionSchemaUrl = environment.komodoWorkspaceUrl
+    + ConnectionsConstants.connectionsRootPath
+    + "/refresh-schema/";
 
   private http: Http;
+  private updatesSubscription: Subscription;
+  private notifierService: NotifierService;
+  private vdbService: VdbService;
+  private cachedConnectionVdbStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
 
-  constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
+  constructor( http: Http, vdbService: VdbService, notifierService: NotifierService,
+               appSettings: AppSettingsService, logger: LoggerService ) {
     super( appSettings, logger  );
     this.http = http;
+    this.vdbService = vdbService;
+    this.notifierService = notifierService;
+    // Polls to fire Connection VDB state updates every 15 sec
+    this.pollConnectionSchemaStatus(15);
   }
 
   /**
@@ -74,29 +90,42 @@ export class ConnectionService extends ApiService {
   }
 
   /**
-   * Get the connections from the komodo rest interface
-   * @returns {Observable<Connection[]>}
+   * Get the connection summaries from the komodo rest interface.  The supplied parameters determine what portions
+   * of the ConnectionSummary are returned.
+   *   - include-connection=true (include connection [default=true])
+   *   - include-schema-status=true (include schema vdb status [default=false])
+   * @param {boolean} includeConnection 'true' to include connection
+   * @param {boolean} includeSchemaStatus 'true' to include connection schema status
+   * @returns {Observable<ConnectionSummary[]>}
    */
-  public getAllConnections(): Observable<Connection[]> {
+  public getConnections(includeConnection: boolean, includeSchemaStatus: boolean): Observable<ConnectionSummary[]> {
+    // Build the url with parameters
+    const connectionsUrl = this.buildGetConnectionsUrl(includeConnection, includeSchemaStatus);
+
     return this.http
-      .get(environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath, this.getAuthRequestOptions())
+      .get(connectionsUrl, this.getAuthRequestOptions())
       .map((response) => {
-        const connections = response.json();
-        return connections.map((connection) => Connection.create( connection ));
+        const connectionSummaries = response.json();
+        return connectionSummaries.map((connectionSummary) => ConnectionSummary.create( connectionSummary ));
       })
       .catch( ( error ) => this.handleError( error ) );
   }
 
   /**
-   * Deploy a connection via the komodo rest interface
+   * Initiates a refresh of the connection schema via the komodo rest interface
    * @param {string} connectionName
    * @returns {Observable<boolean>}
    */
-  public deployConnection(connectionName: string): Observable<boolean> {
+  public refreshConnectionSchema(connectionName: string): Observable<boolean> {
+    if ( !connectionName || connectionName.length === 0 ) {
+      return Observable.of( false );
+    }
+
+    const url = ConnectionService.refreshConnectionSchemaUrl + encodeURIComponent( connectionName );
+
     const connectionPath = this.getKomodoUserWorkspacePath() + "/" + connectionName;
     return this.http
-      .post(environment.komodoTeiidUrl + ConnectionsConstants.connectionRootPath,
-        { path: connectionPath}, this.getAuthRequestOptions())
+      .post( url, this.getAuthRequestOptions() )
       .map((response) => {
         return response.ok;
       })
@@ -271,6 +300,122 @@ export class ConnectionService extends ApiService {
         return response.ok;
       })
       .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Creates a workspace Connection, binds it to the specified serviceCatalogSource, and initiates
+   * a refresh of the connection schema.
+   * @param {NewConnection} connection the connection object
+   * @returns {Observable<boolean>}
+   */
+  public createDeployConnection(connection: NewConnection): Observable<boolean> {
+    return this.createAndBindConnection(connection)
+      .flatMap((res) => this.refreshConnectionSchema(connection.getName()));
+  }
+
+  /**
+   * Updates a workspace Connection, binds it to the specified serviceCatalogSource, and initiates
+   * a refresh of the connection schema.
+   * @param {NewConnection} connection the connection object
+   * @returns {Observable<boolean>}
+   */
+  public updateDeployConnection(connection: NewConnection): Observable<boolean> {
+    return this.updateAndBindConnection(connection)
+      .flatMap((res) => this.refreshConnectionSchema(connection.getName()));
+  }
+
+  /**
+   * Delete the repo Connection VDB (if it exists) and undeploy the Connection VDB
+   * (if exists)
+   * @param {string} connectionId
+   * @returns {Observable<boolean>}
+   */
+  public deleteUndeployConnectionVdb(connectionId: string): Observable<boolean> {
+    const vdbName = connectionId + "BtlConn";
+    return this.vdbService.deleteVdbIfFound(vdbName)
+      .flatMap((res) => this.vdbService.undeployVdb(vdbName));
+  }
+
+  /**
+   * Updates the current Connecton VDB states - triggers update to be broadcast to interested components
+   */
+  public updateConnectionSchemaStates(): void {
+    const self = this;
+    this.getConnections(false, true)
+      .subscribe(
+        (connectionSummaries) => {
+          self.cachedConnectionVdbStates = self.createConnectionSchemaStateMap(connectionSummaries);
+          this.notifierService.sendConnectionStateMap(self.cachedConnectionVdbStates);
+        },
+        (error) => {
+          // On error, broadcast the cached states
+          this.notifierService.sendConnectionStateMap(self.cachedConnectionVdbStates);
+        }
+      );
+  }
+
+  /**
+   * Polls the server and sends Connection schema state updates at the specified interval
+   * @param {number} pollIntervalSec the interval (sec) between polling attempts
+   */
+  public pollConnectionSchemaStatus(pollIntervalSec: number): void {
+    const pollIntervalMillis = pollIntervalSec * 1000;
+
+    const self = this;
+    // start the timer
+    const timer = Observable.timer(500, pollIntervalMillis);
+    this.updatesSubscription = timer.subscribe((t: any) => {
+      self.updateConnectionSchemaStates();
+    });
+  }
+
+  /**
+   * Build the getConnection Url based on the supplied parameters.
+   * @param {boolean} includeConnection 'true' to include connection, 'false' to omit
+   * @param {boolean} includeSchemaStatus 'true' to include connection schema status, 'false' to omit
+   */
+  private buildGetConnectionsUrl(includeConnection: boolean, includeSchemaStatus: boolean): string {
+    // Base getConnections service url
+    const connectionsUrl = environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath;
+
+    // Additional parameters
+    const urlParams = "?" + ConnectionsConstants.includeConnectionParameter + "=" + String(includeConnection) +
+                      "&" + ConnectionsConstants.includeSchemaStatusParameter + "=" + String(includeSchemaStatus);
+
+    return connectionsUrl + urlParams;
+  }
+
+  /*
+   * Creates a Map of connection name to DeploymentState
+   * @param {ConnectionSummary[]} connectionSummaries the array of ConnectionSummary objects
+   * @returns {Map<string,DeploymentState>} the map of connection name to DeploymentState
+   */
+  private createConnectionSchemaStateMap(connectionSummaries: ConnectionSummary[]): Map<string, DeploymentState> {
+    const connStateMap: Map<string, DeploymentState> = new Map<string, DeploymentState>();
+
+    // For each connection, determine its status.  Add the map entry
+    for ( const connectionSummary of connectionSummaries ) {
+      if (connectionSummary.hasNamedVdbStatus()) {
+        const namedVdbStatus = connectionSummary.getNamedVdbStatus();
+        const connName = namedVdbStatus.getName();
+        if ( !namedVdbStatus.hasVdbStatus() ) {
+          connStateMap.set(connName, DeploymentState.NOT_DEPLOYED);
+        } else {
+          const vdbStatus = namedVdbStatus.getVdbStatus();
+          if ( vdbStatus.isFailed() ) {
+            connStateMap.set(connName, DeploymentState.FAILED);
+          } else if ( vdbStatus.isActive() ) {
+            connStateMap.set(connName, DeploymentState.ACTIVE);
+          } else if ( vdbStatus.isLoading() ) {
+            connStateMap.set(connName, DeploymentState.LOADING);
+          } else {
+            connStateMap.set(connName, DeploymentState.INACTIVE);
+          }
+        }
+      }
+    }
+
+    return connStateMap;
   }
 
 }

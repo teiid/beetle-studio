@@ -59,6 +59,6 @@ export const environment = {
   komodoServiceUrl: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/service",
 
   // Indicates if in UI development mode where OpenShift will not be used.
-  uiDevMode: true
+  uiDevMode: false
 
 };

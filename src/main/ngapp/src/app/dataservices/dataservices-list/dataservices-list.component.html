@@ -34,7 +34,6 @@
                 <span class="pull-left fa fa-spinner fa-pulse"
                       *ngIf="item.serviceDeploymentLoading">
                 </span>
-
                 <span class="pull-left fa fa-cogs fa-2x"
                       style="color:grey;"
                       *ngIf="item.serviceNotPublished"
@@ -48,7 +47,7 @@
                       data-toggle="tooltip"
                       data-placement="right"
                       title="Publishing Failed">
-               </span>
+                </span>
                 <span class="pull-left fa fa-cog fa-spin fa-2x"
                       style="color:orange;"
                       *ngIf="item.servicePublishing"
@@ -62,9 +61,7 @@
                       data-toggle="tooltip"
                       data-placement="left"
                       title="Published">
-      </span>
-
-
+                </span>
                 <a class="object-name-link" [routerLink]="[item.getId()]" (click)="onEditDataservice(item.getId())">{{ item.getId() }}</a>
                 <div class="list-pf-description">{{ getDescription( item ) }}</div>
               </div>
@@ -86,7 +83,6 @@
                                                           activateActionTemplate,
                                                           publishActionTemplate,
                                                           downloadActionTemplate,
-                                                          refreshActionTemplate,
                                                           deleteActionTemplate )"
                          (onActionSelect)="handleAction($event, item)">
               <ng-template #editActionTemplate let-action="action">
@@ -106,9 +102,6 @@
               </ng-template>
               <ng-template #downloadActionTemplate let-action="action">
                 <span class="fa fa-download">&nbsp;</span>{{ action.title }}
-              </ng-template>
-              <ng-template #refreshActionTemplate let-action="action">
-                <span class="fa fa-refresh">&nbsp;</span>{{ action.title }}
               </ng-template>
               <ng-template #deleteActionTemplate let-action="action">
                 <span class="fa fa-trash-o">&nbsp;</span>{{ action.title }}

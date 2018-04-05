@@ -16,6 +16,7 @@ export class NotifierService {
   private deploymentStatusSubject: Subject<VdbStatus> = new ReplaySubject<VdbStatus>(1);
   private dataserviceDeployStateSubject: Subject< Map<string, DeploymentState> > = new ReplaySubject< Map<string, DeploymentState> >(1);
   private dataserviceVirtualizationSubject: Subject< Map<string, Virtualization> > = new ReplaySubject< Map<string, Virtualization> >(1);
+  private connectionStateSubject: Subject< Map<string, DeploymentState> > = new ReplaySubject< Map<string, DeploymentState> >(1);
 
   constructor() {
     // Nothing to do
@@ -88,5 +89,28 @@ export class NotifierService {
    */
   public clearDataserviceVirtualizationMap(): void {
     this.dataserviceVirtualizationSubject.next(null);
+  }
+
+  /**
+   * Sends map of Connection VDB DeploymentState
+   * @param {Map<string, DeploymentState>} stateMap
+   */
+  public sendConnectionStateMap(stateMap: Map<string, DeploymentState>): void {
+    this.connectionStateSubject.next(stateMap);
+  }
+
+  /**
+   * Get the map of Connection VDB DeploymentState
+   * @returns {Observable<Map<string, DeploymentState>>}
+   */
+  public getConnectionStateMap(): Observable<Map<string, DeploymentState>> {
+    return this.connectionStateSubject.asObservable();
+  }
+
+  /**
+   * Clears the Connection VDB DeploymentState
+   */
+  public clearConnectionStateMap(): void {
+    this.connectionStateSubject.next(null);
   }
 }

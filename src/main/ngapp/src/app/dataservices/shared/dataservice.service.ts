@@ -68,8 +68,8 @@ export class DataserviceService extends ApiService {
     this.notifierService = notifierService;
     this.vdbService = vdbService;
     this.appSettingsService = appSettings;
-    // Polls to fire Dataservice state updates every minute
-    this.pollDataserviceStatus(60);
+    // Polls to fire Dataservice state updates every 15 sec
+    this.pollDataserviceStatus(15);
   }
 
   /**

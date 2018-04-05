@@ -19,20 +19,25 @@
             </div>
             <div class="list-pf-content-wrapper">
               <div class="list-pf-main-content">
-                <a [routerLink]="[item.name]" (click)="onEditConnection(item.name)">{{ item.name }}</a>
+                <span class="pull-left pficon-ok" *ngIf="item.schemaActive"></span>
+                <span class="pull-left pficon-error-circle-o" *ngIf="item.schemaFailed"></span>
+                <span class="pull-left pficon-warning-triangle-o" *ngIf="item.schemaInactive"></span>
+                <span class="pull-left pficon-error-circle-o" *ngIf="item.schemaNotDeployed"></span>
+                <span class="pull-left fa fa-spinner fa-pulse" *ngIf="item.schemaLoading"></span>
+                <a class="object-name-link" [routerLink]="[item.name]" (click)="onEditConnection(item.name)">{{ item.name }}</a>
                 <div class="list-pf-description">{{ getDescription(item) }}</div>
               </div>
             </div>
           </ng-template>
           <ng-template #actionTemplate let-item="item" let-index="index">
             <pfng-action class="list-pf-actions"
-                         [config]="getActionConfig( item, editActionTemplate, pingActionTemplate, deleteActionTemplate )"
+                         [config]="getActionConfig( item, editActionTemplate, activateActionTemplate, deleteActionTemplate )"
                          (onActionSelect)="handleAction( $event, item )">
               <ng-template #editActionTemplate let-action="action">
                 <span class="fa fa-edit">&nbsp;</span>{{ action.title }}
               </ng-template>
-              <ng-template #pingActionTemplate let-action="action">
-                <span class="fa pficon-connected">&nbsp;</span>{{ action.title }}
+              <ng-template #activateActionTemplate let-action="action">
+                <span class="fa fa-wifi">&nbsp;</span>{{ action.title }}
               </ng-template>
               <ng-template #deleteActionTemplate let-action="action">
                 <span class="fa fa-trash-o">&nbsp;</span>{{ action.title }}

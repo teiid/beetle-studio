@@ -25,6 +25,10 @@ import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { ConnectionSummary } from "@dataservices/shared/connection-summary.model";
+import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
+import { NotifierService } from "@dataservices/shared/notifier.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { TestDataService } from "@shared/test-data.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
@@ -39,19 +43,26 @@ export class MockConnectionService extends ConnectionService {
   private serviceCatalogSources: ServiceCatalogSource[];
   private connectionSourceSchemaInfoMap: Map<string, SchemaInfo[]>;
   private tableMap = new Map<string, string[]>();
+  private testDataService: TestDataService;
 
-  constructor( http: Http, appSettings: AppSettingsService, logger: LoggerService ) {
-    super(http, appSettings, logger);
+  constructor( http: Http, vdbService: VdbService, notifierService: NotifierService,
+               appSettings: AppSettingsService, logger: LoggerService ) {
+    super(http, vdbService, notifierService, appSettings, logger);
 
     // Inject service for test data
     const injector = ReflectiveInjector.resolveAndCreate([TestDataService]);
-    const testDataService = injector.get(TestDataService);
+    this.testDataService = injector.get(TestDataService);
 
     // Get test data
-    this.connections = testDataService.getConnections();
-    this.serviceCatalogSources = testDataService.getServiceCatalogSources();
-    this.connectionSourceSchemaInfoMap = testDataService.getConnectionSourceSchemaInfoMap();
-    this.tableMap = testDataService.getJdbcConnectionTableMap();
+    const conns: Connection[] = [];
+    const connSummaries: ConnectionSummary[] = this.testDataService.getConnectionSummaries(true, true);
+    for ( const connSummary of connSummaries ) {
+      conns.push(connSummary.getConnection());
+    }
+    this.connections = conns;
+    this.serviceCatalogSources = this.testDataService.getServiceCatalogSources();
+    this.connectionSourceSchemaInfoMap = this.testDataService.getConnectionSourceSchemaInfoMap();
+    this.tableMap = this.testDataService.getJdbcConnectionTableMap();
   }
 
   public isValidName( name: string ): Observable< string > {
@@ -81,11 +92,16 @@ export class MockConnectionService extends ConnectionService {
   }
 
   /**
-   * Get the connections from the komodo rest interface
-   * @returns {Observable<Connection[]>}
+   * Get the connection summaries from the komodo rest interface.  The supplied parameters determine what portions
+   * of the ConnectionSummary are returned.
+   *   - include-connection=true (include connection [default=true])
+   *   - include-schema-status=true (include schema vdb status [default=false])
+   * @param {boolean} includeConnection 'true' to include connection
+   * @param {boolean} includeSchemaStatus 'true' to include connection schema status
+   * @returns {Observable<ConnectionSummary[]>}
    */
-  public getAllConnections(): Observable<Connection[]> {
-    return Observable.of(this.connections);
+  public getConnections(includeConnection: boolean, includeSchemaStatus: boolean): Observable<ConnectionSummary[]> {
+    return Observable.of(this.testDataService.getConnectionSummaries(includeConnection, includeSchemaStatus));
   }
 
   /**
@@ -145,6 +161,37 @@ export class MockConnectionService extends ConnectionService {
    */
   public updateAndBindConnection(connection: NewConnection): Observable<boolean> {
     return Observable.of(true);
+  }
+
+  /**
+   * Initiates a refresh of the connection schema via the komodo rest interface
+   * @param {string} connectionName
+   * @returns {Observable<boolean>}
+   */
+  public refreshConnectionSchema(connectionName: string): Observable<boolean> {
+    if ( !connectionName || connectionName.length === 0 ) {
+      return Observable.of( false );
+    }
+
+    return Observable.of( true );
+  }
+
+  /**
+   * Updates the current Connection schema states - triggers update to be broadcast to interested components
+   */
+  public updateConnectionSchemaStates(): void {
+    // Set the schema state to active to enable actions
+    for ( const conn of this.connections ) {
+      conn.setSchemaState(DeploymentState.ACTIVE);
+    }
+  }
+
+  /**
+   * Polls the server and sends Connection state updates at the specified interval
+   * @param {number} pollIntervalSec the interval (sec) between polling attempts
+   */
+  public pollConnectionSchemaStatus(pollIntervalSec: number): void {
+    // Nothing to do
   }
 
 }

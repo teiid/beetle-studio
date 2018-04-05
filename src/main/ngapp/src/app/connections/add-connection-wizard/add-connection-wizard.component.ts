@@ -367,9 +367,9 @@ export class AddConnectionWizardComponent implements OnInit {
 
     const self = this;
     if (this.wizardService.isEdit()) {
-      this.updateAndBindConnection(connection);
+      this.updateDeployConnection(connection);
     } else {
-      this.createAndBindConnection(connection);
+      this.createDeployConnection(connection);
     }
   }
 
@@ -508,13 +508,14 @@ export class AddConnectionWizardComponent implements OnInit {
   }
 
   /**
-   * Creates the connection ensuring it is bound
+   * Creates the workspace connection, binds to serviceCatalogSource,
+   * and deploys a corresponding connection VDB to teiid.
    * @param {Connection} connection the new connection
    */
-  private createAndBindConnection(connection: NewConnection): void {
+  private createDeployConnection(connection: NewConnection): void {
     const self = this;
     this.connectionService
-      .createAndBindConnection(connection)
+      .createDeployConnection(connection)
       .subscribe(
         (wasSuccess) => {
           self.setFinalPageComplete(wasSuccess);
@@ -528,13 +529,14 @@ export class AddConnectionWizardComponent implements OnInit {
   }
 
   /**
-   * Updates the connection ensuring it is bound
+   * Updates the workspace connection, binds to serviceCatalogSource,
+   * and re-deploys the corresponding connection VDB to teiid.
    * @param {Connection} connection the new connection
    */
-  private updateAndBindConnection(connection: NewConnection): void {
+  private updateDeployConnection(connection: NewConnection): void {
     const self = this;
     this.connectionService
-      .updateAndBindConnection(connection)
+      .updateDeployConnection(connection)
       .subscribe(
         (wasSuccess) => {
           self.setFinalPageComplete(wasSuccess);

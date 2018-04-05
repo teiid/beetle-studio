@@ -9,6 +9,9 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
@@ -28,6 +31,8 @@ describe("AddConnectionWizardComponent", () => {
         WizardService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ConnectionService, useClass: MockConnectionService },
+        NotifierService,
+        { provide: VdbService, useClass: MockVdbService }
       ]
     })
     .compileComponents().then(() => {

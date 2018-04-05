@@ -22,6 +22,8 @@ import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
@@ -30,10 +32,11 @@ import { ActionConfig, EmptyStateConfig, Filter } from "patternfly-ng";
 import { FilterConfig } from "patternfly-ng";
 import { FilterField } from "patternfly-ng";
 import { FilterEvent } from "patternfly-ng";
-import { FilterType } from "patternfly-ng";
 import { SortConfig } from "patternfly-ng";
 import { SortField } from "patternfly-ng";
 import { SortEvent } from "patternfly-ng";
+import { FilterType } from "patternfly-ng";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   moduleId: module.id,
@@ -60,16 +63,24 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   private appSettingsService: AppSettingsService;
   private connectionService: ConnectionService;
   private wizardService: WizardService;
+  private notifierService: NotifierService;
+  private connectionVdbStateSubscription: Subscription;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
   constructor(router: Router, route: ActivatedRoute, appSettingsService: AppSettingsService,
-              wizardService: WizardService, connectionService: ConnectionService, logger: LoggerService) {
+              wizardService: WizardService, connectionService: ConnectionService, logger: LoggerService,
+              notifierService: NotifierService, ) {
     super(route, logger);
     this.router = router;
     this.appSettingsService = appSettingsService;
     this.connectionService = connectionService;
     this.wizardService = wizardService;
+    this.notifierService = notifierService;
+    // Register for connection VDB state changes
+    this.connectionVdbStateSubscription = this.notifierService.getConnectionStateMap().subscribe((connectionStateMap) => {
+      this.onConnectionVdbStateChanged(connectionStateMap);
+    });
   }
 
   public ngOnInit(): void {
@@ -133,11 +144,16 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     const self = this;
 
     this.connectionService
-      .getAllConnections()
+      .getConnections(true, false)
       .subscribe(
-        (connections) => {
-          self.allConns = connections;
-          self.filteredConns = connections;
+        (connectionSummaries) => {
+          const conns = [];
+          for ( const connSummary of connectionSummaries ) {
+            conns.push(connSummary.getConnection());
+          }
+          self.allConns = conns;
+          self.filteredConns = conns;
+          self.connectionService.updateConnectionSchemaStates();  // triggers refresh to get latest connection states
           self.loaded("connections");
         },
         (error) => {
@@ -181,11 +197,6 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     return this.selectedConns;
   }
 
-  public onPing( connName: string ): void {
-    // TODO: implement onEdit
-    alert( "Ping the '" + connName + "' connection (not yet implemented)" );
-  }
-
   public onSelected(connection: Connection): void {
     // Only allow one item to be selected
     this.selectedConns.shift();
@@ -214,7 +225,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   /**
    * Handle request for new Connection
    */
-  public onNewConnection(): void {
+  public onNew(): void {
     this.wizardService.setEdit(false);
 
     const link: string[] = [ ConnectionsConstants.addConnectionPath ];
@@ -243,6 +254,28 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   }
 
   /**
+   * Handle Activation of the specified Connection.  Initiates refresh of the connection schema.
+   * @param {string} connName
+   */
+  public onActivate(connName: string): void {
+    const selectedConnection =  this.filteredConnections.find((x) => x.getId() === connName);
+    selectedConnection.setSchemaState(DeploymentState.LOADING);
+
+    const self = this;
+    // Start the connection deployment
+    this.connectionService
+      .refreshConnectionSchema(connName)
+      .subscribe(
+        (wasSuccess) => {
+          self.connectionService.updateConnectionSchemaStates();
+        },
+        (error) => {
+          self.connectionService.updateConnectionSchemaStates();
+        }
+      );
+  }
+
+  /**
    * Called to doDelete all selected APIs.
    */
   public onDeleteConnection(): void {
@@ -258,6 +291,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
       .deleteConnection(selectedConn.getId())
       .subscribe(
         (wasSuccess) => {
+          self.deleteUndeployConnectionVdb(selectedConn.getId());
           self.removeConnectionFromList(selectedConn);
           const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
           self.logger.log("[CreateApiPageComponent] Navigating to: %o", link);
@@ -341,7 +375,43 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     this.filteredConnections.sort((item1: Connection, item2: Connection) => this.compare(item1, item2));
   }
 
+  /**
+   * Delete the specified connection's VDB from the repo (if it exists) and undeploy it from teiid (if it exists)
+   * @param {string} connectionId
+   */
+  private deleteUndeployConnectionVdb(connectionId: string): void {
+    const self = this;
+    this.connectionService
+      .deleteUndeployConnectionVdb(connectionId)
+      .subscribe(
+        (wasSuccess) => {
+          // nothing to do
+        },
+        (error) => {
+          // nothing to do
+        }
+      );
+  }
+
+  /**
+   * Remove the specified connection from the connections list
+   * @param {Connection} connection
+   */
   private removeConnectionFromList(connection: Connection): void {
     this.allConns.splice(this.allConns.indexOf(connection), 1);
   }
+
+  /*
+   * Update the displayed connection states using the provided states
+   */
+  private onConnectionVdbStateChanged(stateMap: Map<string, DeploymentState>): void {
+    // For displayed dataservices, update the State using supplied services
+    for ( const conn of this.filteredConns ) {
+      const connId = conn.getId();
+      if (stateMap && stateMap.has(connId)) {
+        conn.setSchemaState(stateMap.get(connId));
+      }
+    }
+  }
+
 }

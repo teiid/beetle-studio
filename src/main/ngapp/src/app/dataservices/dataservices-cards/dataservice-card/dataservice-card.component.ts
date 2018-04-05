@@ -36,7 +36,6 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
   public static readonly editDataserviceEvent = "edit";
   public static readonly publishDataserviceEvent = "publish";
   public static readonly quickLookDataserviceEvent = "quickLook";
-  public static readonly refreshDataserviceEvent = "activate";
   public static readonly testDataserviceEvent = "test";
   public static readonly downloadDataserviceEvent = "download";
 
@@ -58,13 +57,11 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
   private readonly activateActionId = "activate";
   private readonly activateActionIndex = 0; // index in moreActions
   private readonly deleteActionId = "delete";
-  private readonly deleteActionIndex = 3; // index in moreActions
+  private readonly deleteActionIndex = 2; // index in moreActions
   private readonly publishActionId = "publish";
-  private readonly publishActionIndex = 2; // index in moreActions
-  private readonly refreshActionId = "refresh";
-  private readonly refreshActionIndex = 1; // index in moreActions
+  private readonly publishActionIndex = 1; // index in moreActions
   private readonly downloadActionId = "download";
-  private readonly downloadActionIndex = 4; // index in moreActions
+  private readonly downloadActionIndex = 3; // index in moreActions
 
   private isLoading = true;
   private logger: LoggerService;
@@ -125,8 +122,6 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
       this.onClick( DataserviceCardComponent.deleteDataserviceEvent );
     } else if ( action.id === this.publishActionId ) {
       this.onClick( DataserviceCardComponent.publishDataserviceEvent );
-    } else if ( action.id === this.refreshActionId ) {
-      this.onClick( DataserviceCardComponent.refreshDataserviceEvent );
     } else if ( action.id === this.downloadActionId ) {
       this.onClick( DataserviceCardComponent.downloadDataserviceEvent );
     } else {
@@ -148,7 +143,6 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
       this.actionConfig.moreActions[ this.activateActionIndex ].disabled = this.isLoading;
       this.actionConfig.moreActions[ this.deleteActionIndex ].disabled = this.isLoading;
       this.actionConfig.moreActions[ this.publishActionIndex ].disabled = this.isLoading;
-      this.actionConfig.moreActions[ this.refreshActionIndex ].disabled = this.isLoading;
       this.actionConfig.moreActions[ this.downloadActionIndex ].disabled = this.isLoading;
     }
 
@@ -165,12 +159,6 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
           id: this.activateActionId,
           title: "Activate",
           tooltip: "Activate"
-        },
-        {
-          disabled: true,
-          id: this.refreshActionId,
-          title: "Refresh",
-          tooltip: "Refresh"
         },
         {
           disabled: true,

@@ -26,13 +26,13 @@ import { VdbModel } from "@dataservices/shared/vdb-model.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { TestDataService } from "@shared/test-data.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
-import { Virtualization } from "@dataservices/shared/virtualization.model";
 
 @Injectable()
 export class MockVdbService extends VdbService {

@@ -42,7 +42,6 @@ export class DataservicesListComponent implements OnInit {
   private static readonly previewActionId = "preview";
   private static readonly publishActionId = "publish";
   private static readonly downloadActionId = "download";
-  private static readonly refreshActionId = "refresh";
   private static readonly testActionId = "test";
 
   public items: Dataservice[];
@@ -82,7 +81,6 @@ export class DataservicesListComponent implements OnInit {
    * @param activateActionTemplate {TemplateRef} the activate action template
    * @param publishActionTemplate {TemplateRef} the publish action template
    * @param downloadActionTemplate {TemplateRef} the download action template
-   * @param refreshActionTemplate {TemplateRef} the refresh action template
    * @param deleteActionTemplate {TemplateRef} the delete action template
    * @returns {ActionConfig} the actions configuration
    */
@@ -93,7 +91,6 @@ export class DataservicesListComponent implements OnInit {
                           activateActionTemplate: TemplateRef< any >,
                           publishActionTemplate: TemplateRef< any >,
                           downloadActionTemplate: TemplateRef< any >,
-                          refreshActionTemplate: TemplateRef< any >,
                           deleteActionTemplate: TemplateRef< any > ): ActionConfig {
     const actionConfig = {
       primaryActions: [
@@ -126,13 +123,6 @@ export class DataservicesListComponent implements OnInit {
           template: activateActionTemplate,
           title: "Activate",
           tooltip: "Activate this data service"
-        },
-        {
-          disabled: ds.serviceDeploymentLoading,
-          id: DataservicesListComponent.refreshActionId,
-          template: refreshActionTemplate,
-          title: "Refresh",
-          tooltip: "Refresh this data service"
         },
         {
           disabled: ds.serviceDeploymentLoading,

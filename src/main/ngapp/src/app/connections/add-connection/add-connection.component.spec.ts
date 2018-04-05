@@ -10,6 +10,9 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
@@ -25,9 +28,11 @@ describe("AddConnectionComponent", () => {
       declarations: [ AddConnectionComponent, AddConnectionWizardComponent,
                       ConnectionTypeCardComponent, ConnectionTypeCardsComponent ],
       providers: [
+        NotifierService,
         WizardService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ConnectionService, useClass: MockConnectionService },
+        { provide: VdbService, useClass: MockVdbService }
       ]
     })
     .compileComponents().then(() => {
