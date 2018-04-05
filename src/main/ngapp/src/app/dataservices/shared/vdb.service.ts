@@ -113,12 +113,12 @@ export class VdbService extends ApiService {
   }
 
   /**
-   * Derive the vdb name from the given connection
+   * Derive the source vdb name from the given connection
    *
    * @param {Connection} connection
    * @returns {string}
    */
-  public deriveVdbName(connection: Connection): string {
+  public deriveSourceVdbName(connection: Connection): string {
     const name = connection.getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
     return name.toLowerCase();
   }
@@ -339,7 +339,7 @@ export class VdbService extends ApiService {
    * @returns {Observable<boolean>}
    */
   public deployVdbForConnection(connection: Connection): Observable<boolean> {
-    const vdbName = this.deriveVdbName(connection);
+    const vdbName = this.deriveSourceVdbName(connection);
     const vdbModelName = this.deriveVdbModelName(connection);
     const vdbModelSourceName = this.deriveVdbModelSourceName(connection);
 

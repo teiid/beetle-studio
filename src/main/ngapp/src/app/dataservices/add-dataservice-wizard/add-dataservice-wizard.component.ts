@@ -281,17 +281,17 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     // Sets page in progress status
     this.setFinalPageInProgress();
 
-    const sourceVdbName = this.tableSelector.getSelectedTables()[0].getConnection().getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
-    this.sourceVdbUnderDeployment = sourceVdbName;
+    const conn = this.tableSelector.getSelectedTables()[0].getConnection();
+    this.sourceVdbUnderDeployment = this.vdbService.deriveSourceVdbName(conn);
 
     const self = this;
     this.vdbService
-      .deployVdbForConnection(this.tableSelector.getSelectedTables()[0].getConnection())
+      .deployVdbForConnection(conn)
       .subscribe(
         (wasSuccess) => {
           // Deployment succeeded - wait for source vdb to become active
           if (wasSuccess) {
-            self.vdbService.pollForActiveVdb(sourceVdbName, 240, 5);
+            self.vdbService.pollForActiveVdb(self.sourceVdbUnderDeployment, 240, 5);
           } else {
             self.setFinalPageComplete(false);
             self.sourceVdbUnderDeployment = null;
