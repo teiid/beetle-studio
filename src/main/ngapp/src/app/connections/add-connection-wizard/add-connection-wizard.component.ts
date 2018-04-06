@@ -197,6 +197,9 @@ export class AddConnectionWizardComponent implements OnInit {
    */
   public selectedServiceCatalogSourceChanged( newValue ): void {
     this.selectedServiceCatalogSource = this.serviceCatSources.find((src) => src.getId() === newValue);
+    if (!this.selectedServiceCatalogSource || this.selectedServiceCatalogSource === null) {
+      this.selectedServiceCatalogSource = this.emptyServiceCatalogSource;
+    }
     this.updatePage2ValidStatus();
   }
 
@@ -455,6 +458,11 @@ export class AddConnectionWizardComponent implements OnInit {
             if ( source.getType() === connType.getName() ) {
               self.serviceCatSources.push(source);
             }
+          }
+
+          // Create mode - if only one service catalog source available, pre-select it
+          if (!self.wizardService.isEdit() && self.serviceCatSources.length === 1) {
+            self.selectedServiceCatalogSource = self.serviceCatSources[0];
           }
 
           // Edit mode select the service catalog source
