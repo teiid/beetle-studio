@@ -77,8 +77,7 @@
             <label class="col-sm-2 control-label">ServiceCatalog Source</label>
             <div class="col-sm-5" *ngIf="hasServiceCatalogSources">
               <select (change)="selectedServiceCatalogSourceChanged($event.target.value)">
-                <option disabled
-                        [ngValue]="emptyServiceCatalogSource">{{ emptyServiceCatalogSource.getId() }}</option>
+                <option [ngValue]="emptyServiceCatalogSource">{{ emptyServiceCatalogSource.getId() }}</option>
                 <option *ngFor="let catalogSource of serviceCatalogSources"
                         [ngValue]="catalogSource"
                         [selected]="catalogSource.getId() == selectedServiceCatalogSource.getId()">{{ catalogSource.getId() }}</option>
