@@ -83,8 +83,8 @@ export class ConnectionCardComponent implements DoCheck, OnInit {
   }
 
   public ngDoCheck(): void {
-    if ( this.isLoading !== this.connection.schemaLoading ) {
-      this.isLoading = this.connection.schemaLoading;
+    if ( this.isLoading !== this.connection.isLoading ) {
+      this.isLoading = this.connection.isLoading;
 
       this.actionConfig.moreActions[ this.activateActionIndex ].disabled = this.isLoading;
       this.actionConfig.moreActions[ this.deleteActionIndex ].disabled = this.isLoading;

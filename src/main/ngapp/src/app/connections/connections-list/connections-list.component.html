@@ -19,11 +19,10 @@
             </div>
             <div class="list-pf-content-wrapper">
               <div class="list-pf-main-content">
-                <span class="pull-left pficon-ok" *ngIf="item.schemaActive"></span>
-                <span class="pull-left pficon-error-circle-o" *ngIf="item.schemaFailed"></span>
-                <span class="pull-left pficon-warning-triangle-o" *ngIf="item.schemaInactive"></span>
-                <span class="pull-left pficon-error-circle-o" *ngIf="item.schemaNotDeployed"></span>
-                <span class="pull-left fa fa-spinner fa-pulse" *ngIf="item.schemaLoading"></span>
+                <span class="pull-left pficon-ok" *ngIf="item.isActive"></span>
+                <span class="pull-left pficon-error-circle-o" *ngIf="item.isFailed"></span>
+                <span class="pull-left pficon-warning-triangle-o" *ngIf="item.isInactive"></span>
+                <span class="pull-left fa fa-spinner fa-pulse" *ngIf="item.isLoading"></span>
                 <a class="object-name-link" [routerLink]="[item.name]" (click)="onEditConnection(item.name)">{{ item.name }}</a>
                 <div class="list-pf-description">{{ getDescription(item) }}</div>
               </div>

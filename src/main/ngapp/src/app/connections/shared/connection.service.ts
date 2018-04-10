@@ -16,7 +16,8 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, RequestOptions } from "@angular/http";
+import { ConnectionStatus } from "@connections/shared/connection-status";
 import { ConnectionType } from "@connections/shared/connection-type.model";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
@@ -28,7 +29,6 @@ import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { ConnectionSummary } from "@dataservices/shared/connection-summary.model";
-import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
@@ -51,7 +51,7 @@ export class ConnectionService extends ApiService {
   private updatesSubscription: Subscription;
   private notifierService: NotifierService;
   private vdbService: VdbService;
-  private cachedConnectionVdbStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
+  private cachedConnectionStatuses: Map<string, ConnectionStatus> = new Map<string, ConnectionStatus>();
 
   constructor( http: Http, vdbService: VdbService, notifierService: NotifierService,
                appSettings: AppSettingsService, logger: LoggerService ) {
@@ -112,20 +112,33 @@ export class ConnectionService extends ApiService {
   }
 
   /**
-   * Initiates a refresh of the connection schema via the komodo rest interface
-   * @param {string} connectionName
+   * Deployes the connection server VDB if one does not already exists. If a server VDB has already been deployed, one
+   * can be redeployed. A schema can only be generated if it doesn't exist and there is already a deployed server VDB.
+   * @param {string} connectionName the name of the connection being refreshed
+   * @param {boolean} redeployServerVdb `true` if the server VDB should be deployed if one exists (defaults to `false`)
+   * @param {boolean} generateSchema `true` if the schema should be generated if one does not exist (defaults to `true`)
    * @returns {Observable<boolean>}
    */
-  public refreshConnectionSchema(connectionName: string): Observable<boolean> {
+  public refreshConnectionSchema(connectionName: string,
+                                 redeployServerVdb = false,
+                                 generateSchema = true): Observable<boolean> {
     if ( !connectionName || connectionName.length === 0 ) {
       return Observable.of( false );
     }
 
     const url = ConnectionService.refreshConnectionSchemaUrl + encodeURIComponent( connectionName );
 
-    const connectionPath = this.getKomodoUserWorkspacePath() + "/" + connectionName;
+    // setup query parameters
+    const queryParams = {
+      params: {
+        "redeploy": redeployServerVdb,
+        "generate-schema": generateSchema
+      }
+    };
+    const options = new RequestOptions( queryParams );
+
     return this.http
-      .post( url, this.getAuthRequestOptions() )
+      .post( url, this.getAuthRequestOptions().merge( options ) )
       .map((response) => {
         return response.ok;
       })
@@ -344,12 +357,12 @@ export class ConnectionService extends ApiService {
     this.getConnections(false, true)
       .subscribe(
         (connectionSummaries) => {
-          self.cachedConnectionVdbStates = self.createConnectionSchemaStateMap(connectionSummaries);
-          this.notifierService.sendConnectionStateMap(self.cachedConnectionVdbStates);
+          self.cachedConnectionStatuses = self.createConnectionStatusMap(connectionSummaries);
+          this.notifierService.sendConnectionStatusMap(self.cachedConnectionStatuses);
         },
         (error) => {
           // On error, broadcast the cached states
-          this.notifierService.sendConnectionStateMap(self.cachedConnectionVdbStates);
+          this.notifierService.sendConnectionStatusMap(self.cachedConnectionStatuses);
         }
       );
   }
@@ -386,36 +399,23 @@ export class ConnectionService extends ApiService {
   }
 
   /*
-   * Creates a Map of connection name to DeploymentState
+   * Creates a Map of connection name to ConnectionStatus
    * @param {ConnectionSummary[]} connectionSummaries the array of ConnectionSummary objects
-   * @returns {Map<string,DeploymentState>} the map of connection name to DeploymentState
+   * @returns {Map<string,ConnectionStatus>} the map of connection name to ConnectionStatus
    */
-  private createConnectionSchemaStateMap(connectionSummaries: ConnectionSummary[]): Map<string, DeploymentState> {
-    const connStateMap: Map<string, DeploymentState> = new Map<string, DeploymentState>();
+  private createConnectionStatusMap(connectionSummaries: ConnectionSummary[]): Map<string, ConnectionStatus> {
+    const connStatusMap: Map<string, ConnectionStatus> = new Map<string, ConnectionStatus>();
 
     // For each connection, determine its status.  Add the map entry
     for ( const connectionSummary of connectionSummaries ) {
-      if (connectionSummary.hasNamedVdbStatus()) {
-        const namedVdbStatus = connectionSummary.getNamedVdbStatus();
-        const connName = namedVdbStatus.getName();
-        if ( !namedVdbStatus.hasVdbStatus() ) {
-          connStateMap.set(connName, DeploymentState.NOT_DEPLOYED);
-        } else {
-          const vdbStatus = namedVdbStatus.getVdbStatus();
-          if ( vdbStatus.isFailed() ) {
-            connStateMap.set(connName, DeploymentState.FAILED);
-          } else if ( vdbStatus.isActive() ) {
-            connStateMap.set(connName, DeploymentState.ACTIVE);
-          } else if ( vdbStatus.isLoading() ) {
-            connStateMap.set(connName, DeploymentState.LOADING);
-          } else {
-            connStateMap.set(connName, DeploymentState.INACTIVE);
-          }
-        }
+      if (connectionSummary.hasStatus()) {
+        const status = connectionSummary.getStatus();
+        const connName = status.getConnectionName();
+        connStatusMap.set( connName, status );
       }
     }
 
-    return connStateMap;
+    return connStatusMap;
   }
 
 }

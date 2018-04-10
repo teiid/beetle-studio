@@ -11,6 +11,7 @@ export class WizardService {
   private currentConnections: Connection[] = [];
   private selectedDataservice: Dataservice;
   private selectedConnection: Connection;
+  private connectionForSchemaRegen = "";
 
   constructor() {
     // Nothing to do
@@ -145,6 +146,30 @@ export class WizardService {
 
     // Returns the matching connection, if found.
     return this.currentConnections.find((x) => x.getId() === connName);
+  }
+
+  /**
+   * Determine if has a connection which needs its schema regenerated
+   * @returns {boolean} 'true' if there is a connection needing schema regen
+   */
+  public get hasConnectionForSchemaRegen(): boolean {
+    return this.connectionForSchemaRegen && this.connectionForSchemaRegen.length > 0;
+  }
+
+  /**
+   * Gets the connection id which needs its schema regenerated
+   * @returns {string} the connection id needing schema regen
+   */
+  public getConnectionIdForSchemaRegen(): string {
+    return this.connectionForSchemaRegen;
+  }
+
+  /**
+   * Sets the connection id which needs its schema regenerated
+   * @param {string} connectionName the connection id which needs its schema regenerated
+   */
+  public setConnectionIdForSchemaRegen(connectionName: string): void {
+    this.connectionForSchemaRegen = connectionName !== null ? connectionName : "";
   }
 
   /**

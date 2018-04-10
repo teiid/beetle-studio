@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { ConnectionStatus } from "@connections/shared/connection-status";
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
@@ -16,7 +17,7 @@ export class NotifierService {
   private deploymentStatusSubject: Subject<VdbStatus> = new ReplaySubject<VdbStatus>(1);
   private dataserviceDeployStateSubject: Subject< Map<string, DeploymentState> > = new ReplaySubject< Map<string, DeploymentState> >(1);
   private dataserviceVirtualizationSubject: Subject< Map<string, Virtualization> > = new ReplaySubject< Map<string, Virtualization> >(1);
-  private connectionStateSubject: Subject< Map<string, DeploymentState> > = new ReplaySubject< Map<string, DeploymentState> >(1);
+  private connectionStatusSubject: Subject< Map<string, ConnectionStatus> > = new ReplaySubject< Map<string, ConnectionStatus> >(1);
 
   constructor() {
     // Nothing to do
@@ -92,25 +93,25 @@ export class NotifierService {
   }
 
   /**
-   * Sends map of Connection VDB DeploymentState
-   * @param {Map<string, DeploymentState>} stateMap
+   * Sends map of Connection Status
+   * @param {Map<string, ConnectionStatus>} statusMap
    */
-  public sendConnectionStateMap(stateMap: Map<string, DeploymentState>): void {
-    this.connectionStateSubject.next(stateMap);
+  public sendConnectionStatusMap(statusMap: Map<string, ConnectionStatus>): void {
+    this.connectionStatusSubject.next(statusMap);
   }
 
   /**
-   * Get the map of Connection VDB DeploymentState
-   * @returns {Observable<Map<string, DeploymentState>>}
+   * Get the map of Connection Status
+   * @returns {Observable<Map<string, ConnectionStatus>>}
    */
-  public getConnectionStateMap(): Observable<Map<string, DeploymentState>> {
-    return this.connectionStateSubject.asObservable();
+  public getConnectionStatusMap(): Observable<Map<string, ConnectionStatus>> {
+    return this.connectionStatusSubject.asObservable();
   }
 
   /**
-   * Clears the Connection VDB DeploymentState
+   * Clears the Connection Status
    */
-  public clearConnectionStateMap(): void {
-    this.connectionStateSubject.next(null);
+  public clearConnectionStatusMap(): void {
+    this.connectionStatusSubject.next(null);
   }
 }
