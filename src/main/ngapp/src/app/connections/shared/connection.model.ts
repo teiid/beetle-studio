@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
+import { ConnectionStatus } from "@connections/shared/connection-status";
 import { Identifiable } from "@shared/identifiable";
 import { SortDirection } from "@shared/sort-direction.enum";
 
@@ -30,7 +30,7 @@ export class Connection implements Identifiable< string > {
   private dv__driverName: string;
   private dv__type: boolean;
   private keng__properties: object[] = [];
-  private schemaState: DeploymentState = DeploymentState.LOADING;
+  private status: ConnectionStatus;
 
   /**
    * @param {Object} json the JSON representation of a Connection
@@ -156,50 +156,98 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
-   * @returns {DeploymentState} the connection schema state
+   * Accessor to determine if connection overall status is active
+   * @returns {boolean} `true` if the overall status is active
    */
-  public getSchemaState(): DeploymentState {
-    return this.schemaState;
+  public get isActive(): boolean {
+    // vdb and schema status must both be active
+    return this.serverVdbActive && this.schemaActive;
+  }
+
+  /**
+   * Accessor to determine if connection overall status is inactive
+   * @returns {boolean} `true` if the overall status is inactive
+   */
+  public get isInactive(): boolean {
+    // If vdb is missing or vdb active and schema missing - overall status is inactive
+    return (this.serverVdbMissing || (this.serverVdbActive && this.schemaMissing));
+  }
+
+  /**
+   * Accessor to determine if connection overall status is loading
+   * @returns {boolean} `true` if the overall status is loading
+   */
+  public get isLoading(): boolean {
+    // If either the vdb or schema are loading - overall status is loading
+    return (this.serverVdbLoading || (this.serverVdbActive && this.schemaLoading));
+  }
+
+  /**
+   * Accessor to determine if connection overall status is failed
+   * @returns {boolean} `true` if the overall status is failed
+   */
+  public get isFailed(): boolean {
+    return (this.serverVdbFailed || (this.serverVdbActive && this.schemaFailed));
   }
 
   /**
    * Accessor to determine if connection schema is active
-   * @returns {boolean} the connection schema active state
+   * @returns {boolean} `true` if the schema is active
    */
   public get schemaActive(): boolean {
-    return this.schemaState === DeploymentState.ACTIVE;
+    return this.status.isSchemaAvailable();
   }
 
   /**
-   * Accessor to determine if connection schema is inactive
-   * @returns {boolean} the connection schema inactive state
+   * Accessor to determine if connection schema is missing
+   * @returns {boolean} `true` if the connection schema is missing
    */
-  public get schemaInactive(): boolean {
-    return this.schemaState === DeploymentState.INACTIVE;
+  public get schemaMissing(): boolean {
+    return this.status.isSchemaMissing();
   }
 
   /**
    * Accessor to determine if connection schema is loading
-   * @returns {boolean} the connection schema loading state
+   * @returns {boolean} `true` if the connection schema is loading
    */
   public get schemaLoading(): boolean {
-    return this.schemaState === DeploymentState.LOADING;
+    return this.status.isSchemaLoading();
   }
 
   /**
    * Accessor to determine if connection schema is failed
-   * @returns {boolean} the connection schema failed state
+   * @returns {boolean} `true` if the connection schema is in a failed state
    */
   public get schemaFailed(): boolean {
-    return this.schemaState === DeploymentState.FAILED;
+    return this.status.isSchemaFailed();
   }
 
   /**
-   * Accessor to determine if connection schema is not deployed
-   * @returns {boolean} the connection schema not deployed state
+   * @returns {boolean} `true` if the connection server VDB is in an active state
    */
-  public get schemaNotDeployed(): boolean {
-    return this.schemaState === DeploymentState.NOT_DEPLOYED;
+  public get serverVdbActive(): boolean {
+    return this.status.isServerVdbActive();
+  }
+
+  /**
+   * @returns {boolean} `true` if the connection server VDB is in a failed state
+   */
+  public get serverVdbFailed(): boolean {
+    return this.status.isServerVdbFailed();
+  }
+
+  /**
+   * @returns {boolean} `true` if the connection server VDB is loading
+   */
+  public get serverVdbLoading(): boolean {
+    return this.status.isServerVdbLoading();
+  }
+
+  /**
+   * @returns {boolean} `true` if the server VDB is missing
+   */
+  public get serverVdbMissing(): boolean {
+    return this.status.isServerVdbMissing();
   }
 
   /**
@@ -246,10 +294,10 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
-   * @param {DeploymentState} state the connection schema state
+   * @param {ConnectionStatus} status the connection status
    */
-  public setSchemaState( state: DeploymentState ): void {
-    this.schemaState = state;
+  public setStatus( status: ConnectionStatus ): void {
+    this.status = status;
   }
 
   /**

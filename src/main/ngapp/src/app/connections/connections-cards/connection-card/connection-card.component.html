@@ -13,43 +13,36 @@
       </div>
       <span class="pull-left fa fa-check-circle-o fa-2x card-action-icon"
             style="color:green;"
-            *ngIf="connection.schemaActive"
+            *ngIf="connection.isActive"
             data-toggle="tooltip"
             data-placement="right"
             title="Active">
       </span>
       <span class="pull-left fa fa-times-circle-o fa-2x card-action-icon"
             style="color:red;"
-            *ngIf="connection.schemaFailed"
+            *ngIf="connection.isFailed"
             data-toggle="tooltip"
             data-placement="right"
             title="Failed to activate">
       </span>
       <span class="pull-left fa fa-exclamation-triangle fa-2x card-action-icon"
             style="color:orange;"
-            *ngIf="connection.schemaInactive"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Inactive">
-      </span>
-      <span class="pull-left fa fa-times-circle-o fa-2x card-action-icon"
-            style="color:red;"
-            *ngIf="connection.schemaNotDeployed"
+            *ngIf="connection.isInactive"
             data-toggle="tooltip"
             data-placement="right"
             title="Inactive">
       </span>
       <span class="pull-left fa fa-spinner fa-pulse fa-2x card-action-icon"
-            *ngIf="connection.schemaLoading">
+            *ngIf="connection.isLoading">
       </span>
-      <span *ngIf="!connection.schemaLoading"
+      <span *ngIf="!connection.isLoading"
             class="pull-right fa fa-edit card-action-icon"
             (click)="onClick(editEvent)"
             data-toggle="tooltip"
             data-placement="right"
             title="Edit">
       </span>
-      <span *ngIf="connection.schemaLoading"
+      <span *ngIf="connection.isLoading"
             class="pull-right fa fa-edit card-action-icon-disabled"
             data-toggle="tooltip"
             data-placement="right"

@@ -522,6 +522,8 @@ export class AddConnectionWizardComponent implements OnInit {
    */
   private createDeployConnection(connection: NewConnection): void {
     const self = this;
+    // flag with wizard service that this connection will need schema generated
+    this.wizardService.setConnectionIdForSchemaRegen(connection.getName());
     this.connectionService
       .createDeployConnection(connection)
       .subscribe(

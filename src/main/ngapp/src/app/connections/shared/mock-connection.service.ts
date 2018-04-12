@@ -26,7 +26,6 @@ import { ServiceCatalogSource } from "@connections/shared/service-catalog-source
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { ConnectionSummary } from "@dataservices/shared/connection-summary.model";
-import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { TestDataService } from "@shared/test-data.service";
@@ -35,6 +34,7 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
+import {ConnectionStatus} from "@connections/shared/connection-status";
 
 @Injectable()
 export class MockConnectionService extends ConnectionService {
@@ -180,10 +180,6 @@ export class MockConnectionService extends ConnectionService {
    * Updates the current Connection schema states - triggers update to be broadcast to interested components
    */
   public updateConnectionSchemaStates(): void {
-    // Set the schema state to active to enable actions
-    for ( const conn of this.connections ) {
-      conn.setSchemaState(DeploymentState.ACTIVE);
-    }
   }
 
   /**

@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
+import { ConnectionStatus } from "@connections/shared/connection-status";
 import { Connection } from "@connections/shared/connection.model";
-import { NamedVdbStatus } from "@dataservices/shared/named-vdb-status.model";
 
 /**
  * ConnectionSummary model.
@@ -24,7 +24,7 @@ import { NamedVdbStatus } from "@dataservices/shared/named-vdb-status.model";
 export class ConnectionSummary {
 
   private connection: Connection;
-  private status: NamedVdbStatus;
+  private status: ConnectionStatus;
 
   /**
    * @param {Object} json the JSON representation of a ConnectionSummary
@@ -41,7 +41,7 @@ export class ConnectionSummary {
       } else if (field === "status") {
         // length of 2 or shorter - no object.  TODO: better way to do this?
         if (JSON.stringify(json[field]).length > 2) {
-          connSummary.setNamedVdbStatus(NamedVdbStatus.create(json[field]));
+          connSummary.setStatus(ConnectionStatus.create(json[field]));
         }
       }
     }
@@ -60,16 +60,16 @@ export class ConnectionSummary {
   }
 
   /**
-   * @returns {boolean} 'true' if namedVdbStatus exists
+   * @returns {boolean} 'true' if a status exists
    */
-  public hasNamedVdbStatus(): boolean {
+  public hasStatus(): boolean {
     return (this.status && this.status !== null);
   }
 
   /**
-   * @returns {NamedVdbStatus} the named vdbStatus
+   * @returns {ConnectionStatus} the status
    */
-  public getNamedVdbStatus(): NamedVdbStatus {
+  public getStatus(): ConnectionStatus {
     return this.status;
   }
 
@@ -81,9 +81,9 @@ export class ConnectionSummary {
   }
 
   /**
-   * @param {NamedVdbStatus} status the named vdbStatus
+   * @param {ConnectionStatus} status the named vdbStatus
    */
-  public setNamedVdbStatus( status: NamedVdbStatus ): void {
+  public setStatus( status: ConnectionStatus ): void {
     this.status = status;
   }
 

@@ -17,25 +17,25 @@
 
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { ConnectionStatus } from "@connections/shared/connection-status";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
-import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { LayoutType } from "@shared/layout-type.enum";
-import { ActionConfig, EmptyStateConfig, Filter } from "patternfly-ng";
 import { FilterConfig } from "patternfly-ng";
 import { FilterField } from "patternfly-ng";
 import { FilterEvent } from "patternfly-ng";
-import { SortConfig } from "patternfly-ng";
 import { SortField } from "patternfly-ng";
 import { SortEvent } from "patternfly-ng";
 import { FilterType } from "patternfly-ng";
+import { ActionConfig, EmptyStateConfig, Filter } from "patternfly-ng";
+import { SortConfig } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 
 @Component({
@@ -64,7 +64,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   private connectionService: ConnectionService;
   private wizardService: WizardService;
   private notifierService: NotifierService;
-  private connectionVdbStateSubscription: Subscription;
+  private connectionStatusSubscription: Subscription;
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
 
@@ -77,9 +77,9 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     this.connectionService = connectionService;
     this.wizardService = wizardService;
     this.notifierService = notifierService;
-    // Register for connection VDB state changes
-    this.connectionVdbStateSubscription = this.notifierService.getConnectionStateMap().subscribe((connectionStateMap) => {
-      this.onConnectionVdbStateChanged(connectionStateMap);
+    // Register for connection status changes
+    this.connectionStatusSubscription = this.notifierService.getConnectionStatusMap().subscribe((connectionStatusMap) => {
+      this.onConnectionStatusChanged(connectionStatusMap);
     });
   }
 
@@ -144,12 +144,21 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     const self = this;
 
     this.connectionService
-      .getConnections(true, false)
+      .getConnections(true, true)
       .subscribe(
         (connectionSummaries) => {
           const conns = [];
+          // If there is a newly added connection, it has been flagged for schema regen
+          const newlyAddedConnName = self.wizardService.getConnectionIdForSchemaRegen();
           for ( const connSummary of connectionSummaries ) {
-            conns.push(connSummary.getConnection());
+            const conn = connSummary.getConnection();
+            let status = connSummary.getStatus();
+            // Newly added connection is given a loading status
+            if (conn.getId() === newlyAddedConnName) {
+              status = ConnectionStatus.createLoadingStatus(newlyAddedConnName);
+            }
+            conn.setStatus(status);
+            conns.push(conn);
           }
           self.allConns = conns;
           self.filteredConns = conns;
@@ -254,17 +263,31 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   }
 
   /**
-   * Handle Activation of the specified Connection.  Initiates refresh of the connection schema.
+   * Handle Activation of the specified Connection.  The activate actions taken depend on the vdb
+   * and schema states.
    * @param {string} connName
    */
   public onActivate(connName: string): void {
     const selectedConnection =  this.filteredConnections.find((x) => x.getId() === connName);
-    selectedConnection.setSchemaState(DeploymentState.LOADING);
+
+    // If connection VDB missing or failed - redeploy the vdb and then generate schema
+    const deployVdb = selectedConnection.serverVdbMissing || selectedConnection.serverVdbFailed;
+    // If vdb deployment is required, flag the need to regen the schema
+    if (deployVdb) {
+      this.wizardService.setConnectionIdForSchemaRegen(connName);
+    }
+
+    // Will trigger schema reload unless it is currently loading
+    const genSchema = !selectedConnection.schemaLoading;
+
+    // Sets a spinner on the connection until everything is done
+    const connectionStatus: ConnectionStatus = ConnectionStatus.createLoadingStatus(connName);
+    selectedConnection.setStatus(connectionStatus);
 
     const self = this;
     // Start the connection deployment
     this.connectionService
-      .refreshConnectionSchema(connName)
+      .refreshConnectionSchema(connName, deployVdb, genSchema)
       .subscribe(
         (wasSuccess) => {
           self.connectionService.updateConnectionSchemaStates();
@@ -280,9 +303,6 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
    */
   public onDeleteConnection(): void {
     const selectedConn =  this.filteredConnections.find((x) => x.getId() === this.connectionNameForDelete);
-
-    // const itemsToDelete: Connection[] = ArrayUtils.intersect(this.selectedConns, this.filteredConns);
-    // const selectedConn = itemsToDelete[0];
 
     // Note: we can only doDelete selected items that we can see in the UI.
     this.logger.log("[ConnectionsPageComponent] Deleting selected Connection.");
@@ -385,10 +405,10 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
       .deleteUndeployConnectionVdb(connectionId)
       .subscribe(
         (wasSuccess) => {
-          // nothing to do
+          self.connectionService.updateConnectionSchemaStates();
         },
         (error) => {
-          // nothing to do
+          self.connectionService.updateConnectionSchemaStates();
         }
       );
   }
@@ -402,16 +422,65 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   }
 
   /*
-   * Update the displayed connection states using the provided states
+   * Update the connection states using the provided status map
    */
-  private onConnectionVdbStateChanged(stateMap: Map<string, DeploymentState>): void {
+  private onConnectionStatusChanged(stateMap: Map<string, ConnectionStatus>): void {
+    // Get name of connection for schema regen (empty if none)
+    const connForSchemaRegen = this.wizardService.getConnectionIdForSchemaRegen();
+
     // For displayed dataservices, update the State using supplied services
     for ( const conn of this.filteredConns ) {
       const connId = conn.getId();
       if (stateMap && stateMap.has(connId)) {
-        conn.setSchemaState(stateMap.get(connId));
+        // If there is a schema marked for regen, it's status is ignored.  regen will set it
+        if (connId !== connForSchemaRegen) {
+          conn.setStatus(stateMap.get(connId));
+        }
       }
+    }
+
+    // If there is a newly added connection, initiate schema generation
+    if (this.wizardService.hasConnectionForSchemaRegen) {
+      this.initiateSchemaGeneration(connForSchemaRegen);
     }
   }
 
+  /*
+   * Initiate schema generation for the specified connection, if it is found
+   */
+  private initiateSchemaGeneration(connName: string): void {
+    const connectionExists = this.connectionExists(connName);
+    const self = this;
+    if (connectionExists) {
+      this.connectionService
+        .refreshConnectionSchema(connName, false, true)
+        .subscribe(
+          (wasSuccess) => {
+            self.wizardService.setConnectionIdForSchemaRegen("");   // reset connection for regen when done
+            self.connectionService.updateConnectionSchemaStates();  // triggers refresh to get latest connection states
+          },
+          (error) => {
+            self.wizardService.setConnectionIdForSchemaRegen("");   // reset connection for regen when done
+            self.connectionService.updateConnectionSchemaStates();  // triggers refresh to get latest connection states
+          }
+        );
+    }
+  }
+
+  /**
+   * Determine if a connection with the supplied name exists in the current connections
+   * @param {string} connName the connection name
+   * @returns {boolean} 'true' if connection exists
+   */
+  private connectionExists(connName: string): boolean {
+    let connFound = false;
+    for ( const conn of this.allConns ) {
+      const connId = conn.getId();
+      if (connName === connId) {
+        connFound = true;
+        break;
+      }
+    }
+    return connFound;
+  }
 }

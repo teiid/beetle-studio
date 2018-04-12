@@ -83,7 +83,7 @@ export class ConnectionsListComponent implements OnInit {
     const actionConfig = {
       primaryActions: [
         {
-          disabled: connection.schemaLoading,
+          disabled: connection.isLoading,
           id: this.editActionId,
           template: editActionTemplate,
           title: "Edit",
@@ -92,14 +92,14 @@ export class ConnectionsListComponent implements OnInit {
       ],
       moreActions: [
         {
-          disabled: connection.schemaLoading,
+          disabled: connection.isLoading,
           id: this.activateActionId,
           template: activateActionTemplate,
           title: "Activate",
           tooltip: "Activate this connection"
         },
         {
-          disabled: connection.schemaLoading,
+          disabled: connection.isLoading,
           id: this.deleteActionId,
           template: deleteActionTemplate,
           title: "Delete",

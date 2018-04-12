@@ -35,7 +35,6 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { Table } from "@dataservices/shared/table.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { NotificationType, WizardComponent } from "patternfly-ng";
 import { WizardEvent } from "patternfly-ng";

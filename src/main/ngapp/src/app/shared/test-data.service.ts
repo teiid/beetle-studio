@@ -16,12 +16,12 @@
  */
 
 import { Injectable } from "@angular/core";
+import { ConnectionStatus } from "@connections/shared/connection-status";
 import { Connection } from "@connections/shared/connection.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { ConnectionSummary } from "@dataservices/shared/connection-summary.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
-import { NamedVdbStatus } from "@dataservices/shared/named-vdb-status.model";
 import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
@@ -31,10 +31,14 @@ import { Virtualization } from "@dataservices/shared/virtualization.model";
 @Injectable()
 export class TestDataService {
 
-  private static pgConnCatalogSourceId = "postgresql-persistent-lq6sg";
-  private static catalogSourceId1 = "postgresql-persistent-j9vqv";
-  private static catalogSourceId2 = "postgresql-persistent-a8xrt";
-  private static catalogSourceId3 = "mysql-persistent-t3irv";
+  private static readonly connectionVdbSuffix = "btlconn";
+  private static readonly connectionSchemaModelSuffix = "schemamodel";
+  private static readonly connectionSchemaVdbSuffix = "schemavdb";
+
+  private static readonly pgConnCatalogSourceId = "postgresql-persistent-lq6sg";
+  private static readonly catalogSourceId1 = "postgresql-persistent-j9vqv";
+  private static readonly catalogSourceId2 = "postgresql-persistent-a8xrt";
+  private static readonly catalogSourceId3 = "mysql-persistent-t3irv";
 
   // =================================================================
   // VDBs
@@ -162,30 +166,6 @@ export class TestDataService {
         }
       ]
     };
-
-  // =================================================================
-  // NamedVdbStatus
-  // =================================================================
-
-  private static namedStatus1 = NamedVdbStatus.create(
-    {
-      "objectName": "AccountConn",
-      "vdbStatus": TestDataService.status1
-    },
-  );
-
-  private static namedStatus2 = NamedVdbStatus.create(
-    {
-      "objectName": "EmployeeConn",
-      "vdbStatus": TestDataService.status2
-    }
-  );
-
-  private static namedStatus3 = NamedVdbStatus.create(
-    {
-      "objectName": "ProductConn"
-    }
-  );
 
   // =================================================================
   // ServiceCatalog DataSources
@@ -364,6 +344,46 @@ export class TestDataService {
   );
 
   // =================================================================
+  // ConnectionStatus
+  // =================================================================
+
+  private static conn1Status = ConnectionStatus.create(
+    {
+      "connectionName": TestDataService.conn1.getId(),
+      "vdbState": "ACTIVE",
+      "vdbName": TestDataService.conn1.getId() + TestDataService.connectionVdbSuffix,
+      "schemaState": "ACTIVE",
+      "schemaVdbName": TestDataService.conn1.getId() + TestDataService.connectionSchemaVdbSuffix,
+      "schemaModelName": TestDataService.conn1.getId() + TestDataService.connectionSchemaModelSuffix,
+      "errors": []
+    },
+  );
+
+  private static conn2Status = ConnectionStatus.create(
+    {
+      "connectionName": TestDataService.conn2.getId(),
+      "vdbState": "ACTIVE",
+      "vdbName": TestDataService.conn2.getId() + TestDataService.connectionVdbSuffix,
+      "schemaState": "ACTIVE",
+      "schemaVdbName": TestDataService.conn2.getId() + TestDataService.connectionSchemaVdbSuffix,
+      "schemaModelName": TestDataService.conn2.getId() + TestDataService.connectionSchemaModelSuffix,
+      "errors": []
+    },
+  );
+
+  private static conn3Status = ConnectionStatus.create(
+    {
+      "connectionName": TestDataService.conn3.getId(),
+      "vdbState": "ACTIVE",
+      "vdbName": TestDataService.conn3.getId() + TestDataService.connectionVdbSuffix,
+      "schemaState": "ACTIVE",
+      "schemaVdbName": TestDataService.conn3.getId() + TestDataService.connectionSchemaVdbSuffix,
+      "schemaModelName": TestDataService.conn3.getId() + TestDataService.connectionSchemaModelSuffix,
+      "errors": []
+    },
+  );
+
+  // =================================================================
   // Connection Summaries
   // =================================================================
 
@@ -374,15 +394,15 @@ export class TestDataService {
   ];
 
   private static connSummariesSchemaStatusOnly = [
-    TestDataService.createConnectionSummary(null, TestDataService.namedStatus1),
-    TestDataService.createConnectionSummary(null, TestDataService.namedStatus2),
-    TestDataService.createConnectionSummary(null, TestDataService.namedStatus3)
+    TestDataService.createConnectionSummary(null, TestDataService.conn1Status),
+    TestDataService.createConnectionSummary(null, TestDataService.conn2Status),
+    TestDataService.createConnectionSummary(null, TestDataService.conn3Status)
   ];
 
   private static connSummariesBothConnAndStatus = [
-    TestDataService.createConnectionSummary(TestDataService.conn1, TestDataService.namedStatus1),
-    TestDataService.createConnectionSummary(TestDataService.conn2, TestDataService.namedStatus2),
-    TestDataService.createConnectionSummary(TestDataService.conn3, TestDataService.namedStatus3)
+    TestDataService.createConnectionSummary(TestDataService.conn1, TestDataService.conn1Status),
+    TestDataService.createConnectionSummary(TestDataService.conn2, TestDataService.conn2Status),
+    TestDataService.createConnectionSummary(TestDataService.conn3, TestDataService.conn3Status)
   ];
 
   // =================================================================
@@ -930,13 +950,13 @@ export class TestDataService {
   /**
    * Create a ConnectionSummary using the specified info
    * @param {Connection} conn the connection
-   * @param {NamedVdbStatus} status the named vdb status
+   * @param {ConnectionStatus} status the connection status
    * @returns {ConnectionSummary}
    */
-  private static createConnectionSummary( conn: Connection, status: NamedVdbStatus ): ConnectionSummary {
+  private static createConnectionSummary( conn: Connection, status: ConnectionStatus ): ConnectionSummary {
     const connectionSummary = new ConnectionSummary();
     connectionSummary.setConnection(conn);
-    connectionSummary.setNamedVdbStatus(status);
+    connectionSummary.setStatus(status);
     return connectionSummary;
   }
 
