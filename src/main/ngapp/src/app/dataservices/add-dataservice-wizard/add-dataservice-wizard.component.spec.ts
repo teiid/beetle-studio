@@ -8,7 +8,7 @@ import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
-import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jdbc-table-selector.component";
+import { RelationalTableSelectorComponent } from "@dataservices/relational-table-selector/relational-table-selector.component";
 import { SelectedTableComponent } from "@dataservices/selected-table/selected-table.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
@@ -28,7 +28,7 @@ describe("AddDataserviceWizardComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule ],
-      declarations: [ AddDataserviceWizardComponent, ConnectionTableSelectorComponent, JdbcTableSelectorComponent,
+      declarations: [ AddDataserviceWizardComponent, ConnectionTableSelectorComponent, RelationalTableSelectorComponent,
                       PropertyFormComponent, PropertyFormPropertyComponent, SelectedTableComponent ],
       providers: [
         NotifierService, WizardService,

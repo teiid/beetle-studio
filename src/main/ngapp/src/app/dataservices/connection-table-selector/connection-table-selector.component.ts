@@ -16,11 +16,11 @@
  */
 
 import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from "@angular/core";
+import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { LoggerService } from "@core/logger.service";
-import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jdbc-table-selector.component";
-import { Table } from "@dataservices/shared/table.model";
+import { RelationalTableSelectorComponent } from "@dataservices/relational-table-selector/relational-table-selector.component";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { LoadingState } from "@shared/loading-state.enum";
@@ -46,7 +46,7 @@ export class ConnectionTableSelectorComponent implements OnInit {
   private static readonly nameFilterId = "nameFilter";
 
   @ViewChild("cellTemplate") public cellTemplate: TemplateRef< any >;
-  @ViewChild(JdbcTableSelectorComponent) public jdbcTableSelector: JdbcTableSelectorComponent;
+  @ViewChild(RelationalTableSelectorComponent) public relationalTableSelector: RelationalTableSelectorComponent;
   @Output() public selectedTableListUpdated: EventEmitter<void> = new EventEmitter<void>();
 
   public columnDefinitions: any[];
@@ -121,12 +121,15 @@ export class ConnectionTableSelectorComponent implements OnInit {
     this.connectionLoadingState = LoadingState.LOADING;
     const self = this;
     this.connectionService
-      .getConnections(true, false)
+      .getConnections(true, true)
       .subscribe(
         (connectionSummaries) => {
           const conns = [];
           for ( const connectionSummary of connectionSummaries ) {
-            conns.push(connectionSummary.getConnection());
+            const connStatus = connectionSummary.getStatus();
+            const conn = connectionSummary.getConnection();
+            conn.setStatus(connStatus);
+            conns.push(conn);
           }
           self.allConnections = conns;
           self.filteredConnections = conns;
@@ -204,18 +207,18 @@ export class ConnectionTableSelectorComponent implements OnInit {
   }
 
   /**
-   * Determine if a JDBC connection is currently selected
-   * @returns {boolean} true if a JDBC connection is selected
+   * Determine if a relational connection is currently selected
+   * @returns {boolean} true if a relational connection is selected
    */
-  public hasJdbcConnectionSelected(): boolean {
+  public hasRelationalConnectionSelected(): boolean {
     return (this.selectedConn && this.selectedConn.isJdbc());
   }
 
   /**
-   * Determine if a non-JDBC connection is currently selected
-   * @returns {boolean} true if a non-JDBC connection is selected
+   * Determine if a non-relational connection is currently selected
+   * @returns {boolean} true if a non-relational connection is selected
    */
-  public hasNonJdbcConnectionSelected(): boolean {
+  public hasNonRelationalConnectionSelected(): boolean {
     return (this.selectedConn && !this.selectedConn.isJdbc());
   }
 
@@ -243,11 +246,11 @@ export class ConnectionTableSelectorComponent implements OnInit {
     this.selectedConn = conn;
 
     // Set the specific selector with the current connection
-    if (this.jdbcTableSelector) {
+    if (this.relationalTableSelector) {
       if (this.selectedConn && this.selectedConn.isJdbc()) {
-        this.jdbcTableSelector.setConnection(this.selectedConnection);
+        this.relationalTableSelector.setConnection(this.selectedConnection);
       } else {
-        this.jdbcTableSelector.setConnection(null);
+        this.relationalTableSelector.setConnection(null);
       }
     }
   }
@@ -263,23 +266,23 @@ export class ConnectionTableSelectorComponent implements OnInit {
   /**
    * Responds to table added event from the table selector.
    * The table is added to the accumulator list.
-   * @param {Table} addedTable the table to add to the accumulator list
+   * @param {ConnectionTable} addedTable the table to add to the accumulator list
    */
-  public onTableSelectionAdded(addedTable: Table): void {
-    this.wizardService.addToWizardSelectionTables(addedTable);
+  public onTableSelectionAdded(addedTable: ConnectionTable): void {
+    this.wizardService.addToSelectedConnectionTables(addedTable);
     this.selectedTableListUpdated.emit();
   }
 
   /**
    * Responds to table remove event from the table selector.
    * The table is removed from the accumulator list, if found.
-   * @param {Table} removedTable the table to remove from the accumulator list
+   * @param {ConnectionTable} removedTable the table to remove from the accumulator list
    */
-  public onTableSelectionRemoved(removedTable: Table): void {
-    const wasRemoved = this.wizardService.removeFromWizardSelectionTables(removedTable);
+  public onTableSelectionRemoved(removedTable: ConnectionTable): void {
+    const wasRemoved = this.wizardService.removeFromSelectedConnectionTables(removedTable);
     if (wasRemoved) {
       this.selectedTableListUpdated.emit();
-      this.jdbcTableSelector.deselectTable(removedTable);
+      this.relationalTableSelector.deselectTable(removedTable);
     }
   }
 
@@ -288,15 +291,17 @@ export class ConnectionTableSelectorComponent implements OnInit {
    * @returns {boolean} true if one or more tables are selected
    */
   public get hasSelectedTables(): boolean {
-    return this.getSelectedTables().length > 0;
+    const hasTables = this.getSelectedTables().length > 0;
+    return hasTables;
   }
 
   /*
    * Return all currently selected Tables
-   * @returns {Table[]} the list of selected Tables
+   * @returns {ConnectionTable[]} the list of selected connection Tables
    */
-  public getSelectedTables(): Table[] {
-    return this.wizardService.getWizardSelectedTables();
+  public getSelectedTables(): ConnectionTable[] {
+    const connTables = this.wizardService.getSelectedConnectionTables();
+    return connTables;
   }
 
   public get connectionsTableMessages(): { emptyMessage: string; totalMessage: string | string } {
@@ -384,21 +389,21 @@ export class ConnectionTableSelectorComponent implements OnInit {
     this.wizardService.setCurrentConnections(this.allConnections);
 
     // Initialize the selected tables in the wizard service
-    this.wizardService.clearWizardSelectedTables();
+    this.wizardService.clearSelectedConnectionTables();
     const srcTables: string[] = this.wizardService.getSelectedDataservice().getServiceViewTables();
     for ( const tableStr of srcTables ) {
       const subParts = tableStr.split(".");
-      const connectionName = subParts[0].replace(VdbsConstants.SOURCE_VDB_SUFFIX, "");
+      const connectionName = subParts[0].replace(VdbsConstants.SCHEMA_VDB_SUFFIX, "");
       const tableName = subParts[1];
       let conn = this.wizardService.getCurrentConnection(connectionName);
       if (!conn) {
         conn = new Connection();
         conn.setId(connectionName);
       }
-      const table: Table = new Table();
-      table.setName(tableName);
+      const table: ConnectionTable = new ConnectionTable();
+      table.setId(tableName);
       table.setConnection(conn);
-      this.wizardService.addToWizardSelectionTables(table);
+      this.wizardService.addToSelectedConnectionTables(table);
     }
     this.selectedTableListUpdated.emit();
 

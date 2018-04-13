@@ -18,9 +18,9 @@
 import { Connection } from "@connections/shared/connection.model";
 
 /**
- * Table model
+ * View model
  */
-export class Table {
+export class View {
   private name: string;
   private connection: Connection;
   private catalogName: string;

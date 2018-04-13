@@ -27,8 +27,8 @@ import { DataservicesConstants } from "@dataservices/shared/dataservices-constan
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { PublishState } from "@dataservices/shared/publish-state.enum";
-import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
@@ -103,8 +103,8 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private dataservicePublishStateSubscription: Subscription;
   private notifierService: NotifierService;
   private wizardService: WizardService;
-  private selectedSvcViews: Table[] = [];
-  private allSvcViews: Table[] = [];
+  private selectedSvcViews: View[] = [];
+  private allSvcViews: View[] = [];
 
   @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
   @ViewChild(SqlControlComponent) private sqlControlComponent: SqlControlComponent;
@@ -340,14 +340,14 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   /**
    * Accessor for all available service views
    */
-  public get allServiceViews( ): Table[] {
+  public get allServiceViews( ): View[] {
     return this.allSvcViews;
   }
 
   /**
    * Accessor for selected service view
    */
-  public get selectedViews( ): Table[] {
+  public get selectedViews( ): View[] {
     return this.selectedSvcViews;
   }
 
@@ -494,7 +494,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
    */
   public onNew(): void {
     this.wizardService.setEdit(false);
-    this.wizardService.clearWizardSelectedTables();
+    this.wizardService.clearSelectedConnectionTables();
 
     const link: string[] = [ DataservicesConstants.addDataservicePath ];
     this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);

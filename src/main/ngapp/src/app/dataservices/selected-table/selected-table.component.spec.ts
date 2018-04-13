@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
 import { PatternFlyNgModule } from "patternfly-ng";
-import { Table } from "../shared/table.model";
 import { SelectedTableComponent } from "./selected-table.component";
 
 describe("SelectedTableComponent", () => {
@@ -30,9 +30,9 @@ describe("SelectedTableComponent", () => {
     const connection = new Connection();
     connection.setId( connectionName );
 
-    const table = new Table();
+    const table = new ConnectionTable();
     table.setConnection(connection);
-    table.setName( tableName );
+    table.setId(tableName);
     component.table = table;
 
     fixture.detectChanges();

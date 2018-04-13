@@ -25,6 +25,7 @@ import {
 import { FormControl, FormGroup } from "@angular/forms";
 import { AbstractControl } from "@angular/forms";
 import { Router } from "@angular/router";
+import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
 import { LoggerService } from "@core/logger.service";
 import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
@@ -32,15 +33,12 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
-import { Table } from "@dataservices/shared/table.model";
-import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { NotificationType, WizardComponent } from "patternfly-ng";
 import { WizardEvent } from "patternfly-ng";
 import { WizardStepConfig } from "patternfly-ng";
 import { WizardConfig } from "patternfly-ng";
-import { Subscription } from "rxjs/Subscription";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -85,8 +83,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   private wizardService: WizardService;
   private logger: LoggerService;
   private router: Router;
-  private deploymentChangeSubscription: Subscription;
-  private sourceVdbUnderDeployment: string;
   private errorDetailMessage: string;
   private theFinalPageTitle = "";
   private theFinalPageMessage = "";
@@ -109,11 +105,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    * Initialization
    */
   public ngOnInit(): void {
-    // Subscribe to Vdb deployment change messages
-    this.deploymentChangeSubscription = this.notifierService.getVdbDeploymentStatus().subscribe((status) => {
-      this.onSourceVdbDeploymentStateChanged(status);
-    });
-
     // Step 1 - Select Tables
     this.step1Config = {
       id: "step1",
@@ -166,7 +157,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.deploymentChangeSubscription.unsubscribe();
+    // Nothing to do
   }
 
   // ----------------
@@ -280,29 +271,11 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     // Sets page in progress status
     this.setFinalPageInProgress();
 
-    const conn = this.tableSelector.getSelectedTables()[0].getConnection();
-    this.sourceVdbUnderDeployment = this.vdbService.deriveSourceVdbName(conn);
-
-    const self = this;
-    this.vdbService
-      .deployVdbForConnection(conn)
-      .subscribe(
-        (wasSuccess) => {
-          // Deployment succeeded - wait for source vdb to become active
-          if (wasSuccess) {
-            self.vdbService.pollForActiveVdb(self.sourceVdbUnderDeployment, 240, 5);
-          } else {
-            self.setFinalPageComplete(false);
-            self.sourceVdbUnderDeployment = null;
-          }
-        },
-        (error) => {
-          self.logger.error("[AddDataserviceWizardComponent] Error: %o", error);
-          self.setErrorDetails(error);
-          self.setFinalPageComplete(false);
-          self.sourceVdbUnderDeployment = null;
-        }
-      );
+    if ( !this.isEdit ) {
+      this.createDataserviceForSingleSourceTables();
+    } else {
+      this.updateDataserviceForSingleSourceTables();
+    }
   }
 
   public onDeployDataservice(): void {
@@ -323,37 +296,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     this.router.navigate(link).then(() => {
       // nothing to do
     });
-  }
-
-  /*
-   * Listens for the source VDB deployment completion.  If the source VDB is active, proceed with
-   * creation of the Dataservice
-   * @param status the VDB deployment status
-   */
-  public onSourceVdbDeploymentStateChanged(status: VdbStatus): void {
-    // if null received, ignore
-    if (!status || (status.getName() !== this.sourceVdbUnderDeployment) ) {
-      return;
-      // non-null received, unsubscribe to stop any further notifications
-    } else {
-      // source VDB state change - no longer watching it's deployment
-      this.sourceVdbUnderDeployment = null;
-    }
-
-    if (status.isActive()) {
-      if (this.wizardService.isEdit()) {
-        this.updateDataserviceForSingleSourceTables();
-      } else {
-        this.createDataserviceForSingleSourceTables();
-      }
-    } else if (status.isFailed()) {
-      // Set error message to first error, if there is one.
-      const errors = status.getErrors();
-      if (errors.length > 0) {
-        this.errorDetailMessage = errors[0];
-      }
-      this.setFinalPageComplete(false);
-    }
   }
 
   public stepChanged($event: WizardEvent): void {
@@ -390,9 +332,9 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * @returns {Table[]} the selected source table names in string form
+   * @returns {ConnectionTable[]} the selected connection tables
    */
-  public get dataserviceSourceTables(): Table[] {
+  public get dataserviceSourceTables(): ConnectionTable[] {
     return this.tableSelector.getSelectedTables();
   }
 
@@ -422,8 +364,8 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     this.updatePage2aValidStatus();
   }
 
-  public shouldCheck( table: Table ): boolean {
-    return !!( this.selectedConnection && ( table.getConnection() === this.selectedConnection ) );
+  public shouldCheck( table: ConnectionTable ): boolean {
+    return ( this.selectedConnection && ( table.getConnection() === this.selectedConnection ) );
   }
 
   /**

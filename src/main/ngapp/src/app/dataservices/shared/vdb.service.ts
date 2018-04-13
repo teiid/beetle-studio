@@ -17,11 +17,9 @@
 
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
-import { Connection } from "@connections/shared/connection.model";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
-import { NameValue } from "@dataservices/shared/name-value.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbModelSource } from "@dataservices/shared/vdb-model-source.model";
 import { VdbModel } from "@dataservices/shared/vdb-model.model";
@@ -110,38 +108,6 @@ export class VdbService extends ApiService {
         return virtuals.map((virtualStatus) => Virtualization.create( virtualStatus ));
       })
       .catch( ( error ) => this.handleError( error ) );
-  }
-
-  /**
-   * Derive the source vdb name from the given connection
-   *
-   * @param {Connection} connection
-   * @returns {string}
-   */
-  public deriveSourceVdbName(connection: Connection): string {
-    const name = connection.getId() + VdbsConstants.SOURCE_VDB_SUFFIX;
-    return name.toLowerCase();
-  }
-
-  /**
-   * Derive the vdb model name from the given connection
-   *
-   * @param {Connection} connection
-   * @returns {string}
-   */
-  public deriveVdbModelName(connection: Connection): string {
-    return connection.getId().toLowerCase();
-  }
-
-  /**
-   * Derive the vdb model source name from the given connection
-   *
-   * @param {Connection} connection
-   * @returns {string}
-   */
-  public deriveVdbModelSourceName(connection: Connection): string {
-    return connection.getServiceCatalogSourceName() ?
-                connection.getServiceCatalogSourceName() : connection.getId().toLowerCase();
   }
 
   /**
@@ -248,25 +214,6 @@ export class VdbService extends ApiService {
   }
 
   /**
-   * Update the specified repo VDB Model using the DDL from the specified Teiid VDB
-   * @param {string} vdbName the VDB in the repo to update
-   * @param {string} modelName the Model withing the specified repo VDB
-   * @param {string} teiidVdbName the deployed teiid VDB name
-   * @param {string} teiidModelName the teiid VDB Model name
-   * @returns {Observable<boolean>}
-   */
-  public updateVdbModelFromTeiid(vdbName: string, modelName: string,
-                                 teiidVdbName: string, teiidModelName: string): Observable<boolean> {
-    return this.http
-      .post(environment.komodoTeiidUrl + VdbsConstants.vdbsRootPath + "/ModelFromTeiidDdl",
-        { vdbName, modelName, teiidVdbName, teiidModelName }, this.getAuthRequestOptions())
-      .map((response) => {
-        return response.ok;
-      })
-      .catch( ( error ) => this.handleError( error ) );
-  }
-
-  /**
    * Polls the server for the specified VDB.  Polling will terminate if
    * (1) The VDB is active
    * (2) The VDB is in a failed state
@@ -331,55 +278,6 @@ export class VdbService extends ApiService {
           }
         );
     });
-  }
-
-  /**
-   * Create and deploy a VDB for the provided connection.
-   * @param {Connection} connection
-   * @returns {Observable<boolean>}
-   */
-  public deployVdbForConnection(connection: Connection): Observable<boolean> {
-    const vdbName = this.deriveSourceVdbName(connection);
-    const vdbModelName = this.deriveVdbModelName(connection);
-    const vdbModelSourceName = this.deriveVdbModelSourceName(connection);
-
-    // VDB to create
-    const vdb = new Vdb();
-    vdb.setName(vdbName);
-    vdb.setId(vdbName);
-    const vdbPath = this.getKomodoUserWorkspacePath() + "/" + vdbName;
-    vdb.setDataPath(vdbPath);
-    vdb.setOriginalFile(vdbPath);
-    vdb.setDescription(vdbName + " description");
-
-    // VDB Model to create
-    const vdbModel = new VdbModel();
-    vdbModel.setId(vdbModelName);
-    vdbModel.setDataPath(vdbPath + "/" + vdbModelName);
-    vdbModel.setModelType("PHYSICAL");
-
-    // Set the importer properties for the physical model
-    const props: NameValue[] = [];
-    props.push(new NameValue("importer.TableTypes", "TABLE"));
-    props.push(new NameValue("importer.UseQualifiedName", "true"));
-    props.push(new NameValue("importer.UseCatalogName", "false"));
-    props.push(new NameValue("importer.UseFullSchemaName", "false"));
-    vdbModel.setProperties(props);
-
-    // VdbModelSource to create
-    const vdbModelSource = new VdbModelSource();
-    vdbModelSource.setId(vdbModelSourceName);
-    vdbModelSource.setDataPath(vdbPath + "/" + vdbModelName + "/vdb:sources/" + vdbModelSourceName);
-    vdbModelSource.setJndiName(connection.getJndiName());
-    vdbModelSource.setTranslatorName(connection.getDriverName());
-    vdbModelSource.setOriginConnection(connection.getDataPath());
-
-    // Chain the individual calls together in series to build the Vdb and deploy it
-    return this.deleteVdbIfFound(vdb.getId())
-      .flatMap((res) => this.createVdb(vdb))
-      .flatMap((res) => this.createVdbModel(vdb.getId(), vdbModel))
-      .flatMap((res) => this.createVdbModelSource(vdb.getId(), vdbModel.getId(), vdbModelSource))
-      .flatMap((res) => this.deployVdb(vdb.getId()));
   }
 
   /**

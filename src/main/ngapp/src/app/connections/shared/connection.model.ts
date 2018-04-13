@@ -16,6 +16,7 @@
  */
 
 import { ConnectionStatus } from "@connections/shared/connection-status";
+import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { Identifiable } from "@shared/identifiable";
 import { SortDirection } from "@shared/sort-direction.enum";
 
@@ -251,6 +252,33 @@ export class Connection implements Identifiable< string > {
   }
 
   /**
+   * @returns {string} the connection schema vdb name
+   */
+  public get schemaVdbName(): string {
+    if (this.status && !(this.status == null)) {
+      return this.status.getSchemaVdbName();
+    }
+    return this.deriveSchemaVdbName();
+  }
+
+  /**
+   * @returns {string} the connection schema vdb model name
+   */
+  public get schemaVdbModelName(): string {
+    if (this.status && !(this.status == null)) {
+      return this.status.getSchemaModelName();
+    }
+    return this.deriveSchemaVdbModelName();
+  }
+
+  /**
+   * @returns {string} the connection schema vdb model source name
+   */
+  public get schemaVdbModelSourceName(): string {
+    return this.deriveSchemaVdbModelSourceName();
+  }
+
+  /**
    * @param {string} driverName the connection driver name (optional)
    */
   public setDriverName( driverName?: string ): void {
@@ -306,6 +334,33 @@ export class Connection implements Identifiable< string > {
    */
   public setValues(values: object = {}): void {
     Object.assign(this, values);
+  }
+
+  /**
+   * Derive the schema VDB name for this connection
+   * @returns {string} the default schema VDB name
+   */
+  private deriveSchemaVdbName( ): string {
+    const name = this.getId() + VdbsConstants.SCHEMA_VDB_SUFFIX;
+    return name.toLowerCase();
+  }
+
+  /**
+   * Derive the schema VDB model name for this connection
+   * @returns {string} the default schema VDB model name
+   */
+  private deriveSchemaVdbModelName( ): string {
+    const name = this.getId() + VdbsConstants.SCHEMA_MODEL_SUFFIX;
+    return name.toLowerCase();
+  }
+
+  /**
+   * Derive the schema VDB model source name for this connection
+   * @returns {string}
+   */
+  private deriveSchemaVdbModelSourceName( ): string {
+    return this.getServiceCatalogSourceName() ?
+      this.getServiceCatalogSourceName() : this.getId().toLowerCase();
   }
 
 }

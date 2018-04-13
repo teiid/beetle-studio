@@ -22,7 +22,7 @@ import { ColumnData } from "@dataservices/shared/column-data.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { RowData } from "@dataservices/shared/row-data.model";
-import { Table } from "@dataservices/shared/table.model";
+import { View } from "@dataservices/shared/view.model";
 import { LoadingState } from "@shared/loading-state.enum";
 import "codemirror/addon/display/placeholder.js";
 import "codemirror/addon/selection/active-line.js";
@@ -38,8 +38,8 @@ import { NgxDataTableConfig, TableConfig } from "patternfly-ng";
 export class SqlControlComponent implements OnInit {
 
   @Input() public quicklook = false;
-  @Input() public selectedViews: Table[] = [];
-  @Input() public serviceViews: Table[] = [];
+  @Input() public selectedViews: View[] = [];
+  @Input() public serviceViews: View[] = [];
   @Input() public viewSql = "";
 
   public ngxConfig: NgxDataTableConfig;
@@ -123,8 +123,8 @@ export class SqlControlComponent implements OnInit {
     this.queryMap.set(this.previousViewName, this.queryText);
 
     // View table is single select so use first element
-    const selected: Table[] = $event.selected;
-    const view: Table = selected[ 0 ];
+    const selected: View[] = $event.selected;
+    const view: View = selected[ 0 ];
 
     this.selectedViews = [];
     this.selectedViews.push(view);

@@ -16,8 +16,8 @@
  */
 
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
+import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Column } from "@dataservices/selected-table/column";
-import { Table } from "@dataservices/shared/table.model";
 import { CardAction, CardConfig, TableConfig, TableEvent } from "patternfly-ng";
 
 @Component({
@@ -28,8 +28,8 @@ import { CardAction, CardConfig, TableConfig, TableEvent } from "patternfly-ng";
 })
 export class SelectedTableComponent implements OnInit {
 
-  @Input() public table: Table;
-  @Output() public selectionListTableRemoved: EventEmitter<Table> = new EventEmitter<Table>();
+  @Input() public table: ConnectionTable;
+  @Output() public selectionListTableRemoved: EventEmitter<ConnectionTable> = new EventEmitter<ConnectionTable>();
 
   public config: CardConfig;
   public columnDefinitions: any[];

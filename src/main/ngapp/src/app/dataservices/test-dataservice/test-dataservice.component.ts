@@ -5,7 +5,7 @@ import { LoggerService } from "@core/logger.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
-import { Table } from "@dataservices/shared/table.model";
+import { View } from "@dataservices/shared/view.model";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { LoadingState } from "@shared/loading-state.enum";
 
@@ -23,8 +23,8 @@ export class TestDataserviceComponent extends AbstractPageComponent {
   private dataservice: Dataservice;
   private dataserviceService: DataserviceService;
   private pageLoadingState: LoadingState = LoadingState.LOADED_VALID;
-  private selectedSvcViews: Table[] = [];
-  private allSvcViews: Table[] = [];
+  private selectedSvcViews: View[] = [];
+  private allSvcViews: View[] = [];
   private quickLookQueryText: string;
 
   constructor( router: Router, route: ActivatedRoute, dataserviceService: DataserviceService, logger: LoggerService ) {
@@ -58,14 +58,14 @@ export class TestDataserviceComponent extends AbstractPageComponent {
   /**
    * Accessor for all available service views
    */
-  public get allServiceViews( ): Table[] {
+  public get allServiceViews( ): View[] {
     return this.allSvcViews;
   }
 
   /**
    * Accessor for selected service view
    */
-  public get selectedViews( ): Table[] {
+  public get selectedViews( ): View[] {
     return this.selectedSvcViews;
   }
 

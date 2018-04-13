@@ -7,7 +7,7 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
-import { JdbcTableSelectorComponent } from "@dataservices/jdbc-table-selector/jdbc-table-selector.component";
+import { RelationalTableSelectorComponent } from "@dataservices/relational-table-selector/relational-table-selector.component";
 import { SelectedTableComponent } from "@dataservices/selected-table/selected-table.component";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
@@ -23,7 +23,7 @@ describe("ConnectionTableSelectorComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, HttpModule, PatternFlyNgModule ],
-      declarations: [ ConnectionTableSelectorComponent, JdbcTableSelectorComponent, SelectedTableComponent ],
+      declarations: [ ConnectionTableSelectorComponent, RelationalTableSelectorComponent, SelectedTableComponent ],
       providers: [
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         LoggerService,

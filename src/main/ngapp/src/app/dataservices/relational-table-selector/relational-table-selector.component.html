@@ -1,0 +1,31 @@
+<!-- ------------- -->
+<!--  Tables List  -->
+<!-- ------------- -->
+<div class="col-sm-12" *ngIf="tablesLoading">
+  <span class="spinner spinner-sm spinner-inline"></span>
+</div>
+<div class="col-sm-12 alert-padding" *ngIf="tablesLoadedInvalid">
+  <div class="alert alert-info">
+    <span class="pficon pficon-info"></span>
+    <strong>Unable to load tables</strong>
+  </div>
+</div>
+<div class="col-sm-12 alert-padding" *ngIf="tablesLoadedValidEmpty">
+  <div class="alert alert-info">
+    <span class="pficon pficon-info"></span>
+    <strong>No tables available</strong>
+  </div>
+</div>
+<div class = "list-div col-sm-12 jdbc-column-results" *ngIf="tablesLoadedValidNotEmpty">
+  <pfng-table
+    [columns]="tableColumns"
+    [config]="tableTableConfig"
+    [dataTableConfig]="ngxTableConfig"
+    (onFilterChange)="tableFilterChanged($event)"
+    (onSelectionChange)="selectedTableChanged($event)"
+    [rows]="filteredTables">
+  </pfng-table>
+</div>
+<ng-template #tableCellTemplate let-row="row" let-value="value">
+  {{ row.getId() }}
+</ng-template>

@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
+import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
-import { Table } from "@dataservices/shared/table.model";
 
 @Injectable()
 export class WizardService {
 
-  private wizardSelectedTablesArray: Table[] = [];
+  private selectedConnectionTables: ConnectionTable[] = [];
   private edit = false;
   private currentConnections: Connection[] = [];
   private selectedDataservice: Dataservice;
@@ -67,51 +67,51 @@ export class WizardService {
 
   /**
    * Get the wizard table selections
-   * @returns {Table[]} the selections
+   * @returns {ConnectionTable[]} the selections
    */
-  public getWizardSelectedTables( ): Table[] {
-    return this.wizardSelectedTablesArray.sort(
+  public getSelectedConnectionTables( ): ConnectionTable[] {
+    return this.selectedConnectionTables.sort(
       ( thisTable, thatTable ) => {
-        return thisTable.getName().localeCompare( thatTable.getName() );
+        return thisTable.getId().localeCompare( thatTable.getId() );
       } );
   }
 
   /**
-   * Clears the list of wizard table selections
+   * Clears the list of selected connection tables
    */
-  public clearWizardSelectedTables( ): void {
-    this.wizardSelectedTablesArray = [];
+  public clearSelectedConnectionTables( ): void {
+    this.selectedConnectionTables = [];
   }
 
   /**
-   * Determine if the supplied table is one of the current selections in the wizard
-   * @param {Table} table the table
+   * Determine if the supplied table is one of the current selections
+   * @param {ConnectionTable} table the table
    */
-  public isWizardSelectedTable(table: Table): boolean {
-    return this.getWizardTableIndex(table) > -1;
+  public isConnectionTableSelected(table: ConnectionTable): boolean {
+    return this.getConnectionTableIndex(table) > -1;
   }
 
   /**
-   * Add a table to the current wizard selections
-   * @param {Table} tableToAdd table to add
+   * Add a table to the currently selected connection tables
+   * @param {ConnectionTable} tableToAdd table to add
    */
-  public addToWizardSelectionTables(tableToAdd: Table): void {
-    if (!this.isWizardSelectedTable(tableToAdd)) {
-      this.wizardSelectedTablesArray.push(tableToAdd);
+  public addToSelectedConnectionTables(tableToAdd: ConnectionTable): void {
+    if (!this.isConnectionTableSelected(tableToAdd)) {
+      this.selectedConnectionTables.push(tableToAdd);
     }
   }
 
   /**
-   * Remove a table from the current wizard selections
-   * @param {Table} tableToRemove
+   * Remove a table from the currently selected connection tables
+   * @param {ConnectionTable} tableToRemove
    * @returns {boolean}
    */
-  public removeFromWizardSelectionTables(tableToRemove: Table): boolean {
+  public removeFromSelectedConnectionTables(tableToRemove: ConnectionTable): boolean {
     let wasRemoved = false;
 
-    const index = this.getWizardTableIndex(tableToRemove);
+    const index = this.getConnectionTableIndex(tableToRemove);
     if (index > -1) {
-      this.wizardSelectedTablesArray.splice(index, 1);
+      this.selectedConnectionTables.splice(index, 1);
       wasRemoved = true;
     }
 
@@ -173,17 +173,17 @@ export class WizardService {
   }
 
   /**
-   * Find index of the table in the wizard selected tables list.  -1 if not found
-   * @param {Table} table
+   * Find index of the connection table in the wizard selected tables list.  -1 if not found
+   * @param {ConnectionTable} table connection table
    * @returns {number}
    */
-  private getWizardTableIndex(table: Table): number {
+  private getConnectionTableIndex(table: ConnectionTable): number {
     // supplied table and connection
     const connName = table.getConnection().getId();
-    const tableName = table.getName();
+    const tableName = table.getId();
     let i = 0;
-    for (const wizTable of this.wizardSelectedTablesArray) {
-      const wizTableName = wizTable.getName();
+    for (const wizTable of this.selectedConnectionTables) {
+      const wizTableName = wizTable.getId();
       const wizConnName = wizTable.getConnection().getId();
       if (wizTableName === tableName && wizConnName === connName) {
         return i;

@@ -1,14 +1,14 @@
 <div>
-  <div class="col-sm-3" *ngIf="connectionsLoading">
+  <div class="col-sm-4" *ngIf="connectionsLoading">
     <span class="spinner spinner-sm spinner-inline"></span>
   </div>
-  <div class="col-sm-3 alert-padding" *ngIf="connectionsLoadedInvalid">
+  <div class="col-sm-4 alert-padding" *ngIf="connectionsLoadedInvalid">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <strong>Problem Loading Connections!</strong>
     </div>
   </div>
-  <div class="col-sm-3 connection-selector-container" *ngIf="connectionsLoadedValid">
+  <div class="col-sm-4 connection-selector-container" *ngIf="connectionsLoadedValid">
     <div class="row">
       <div class="col-sm-12">
         <div class="form-group">
@@ -26,30 +26,29 @@
   </div>
   <!-- ------------------------------------------- -->
   <!-- Connection Content Area                     -->
-  <!-- 1) JDBC Connection selected                 -->
-  <!-- 2) Non-JDBC Connection selected             -->
+  <!-- 1) Relational Connection selected                 -->
+  <!-- 2) Non-Relational Connection selected             -->
   <!-- 3) No Connection selected                   -->
   <!-- ------------------------------------------- -->
-  <div class="col-sm-6 jdbc-column-title">
+  <div class="col-sm-4 jdbc-column-title">
     <strong>Table Selection</strong>
   </div>
-  <div class="col-sm-3 jdbc-column-title">
+  <div class="col-sm-4 jdbc-column-title">
     <strong>Current Selections</strong>
   </div>
-  <div class="col-sm-6 jdbc-selector-container">
-    <app-jdbc-table-selector [connection]="selectedConnection"
+  <div class="col-sm-4 jdbc-selector-container" *ngIf="hasRelationalConnectionSelected()">
+    <app-relational-table-selector [connection]="selectedConnection"
                              (tableSelectionAdded)="onTableSelectionAdded($event)"
-                             (tableSelectionRemoved)="onTableSelectionRemoved($event)"
-                             *ngIf="hasJdbcConnectionSelected()">
-    </app-jdbc-table-selector>
+                             (tableSelectionRemoved)="onTableSelectionRemoved($event)">
+    </app-relational-table-selector>
   </div>
-  <div class="col-sm-6 alert-padding" *ngIf="hasNonJdbcConnectionSelected()">
+  <div class="col-sm-4 alert-padding" *ngIf="hasNonRelationalConnectionSelected()">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <strong>Non-JDBC Connections are not supported</strong>
     </div>
   </div>
-  <div class="col-sm-6 alert-padding" *ngIf="!hasSelectedConnection()">
+  <div class="col-sm-4 alert-padding" *ngIf="!hasSelectedConnection()">
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       <strong>Please select a Connection</strong>
@@ -58,13 +57,13 @@
   <!-- ----------------------- -->
   <!--  Selected Tables List   -->
   <!-- ----------------------- -->
-  <div class="col-sm-3 alert-padding" *ngIf="!hasSelectedTables">
+  <div class="col-sm-4 alert-padding" *ngIf="!hasSelectedTables">
       <div class="alert alert-info">
         <span class="pficon pficon-info"></span>
         <strong>No tables selected</strong>
       </div>
   </div>
-  <div class = "container-fluid container-cards-pf col-sm-3 selected-tables-container" *ngIf="hasSelectedTables">
+  <div class = "container-fluid container-cards-pf col-sm-4 selected-tables-container" *ngIf="hasSelectedTables">
       <div class="row row-cards-pf" *ngFor="let table of getSelectedTables()">
         <app-selected-table [table]="table" (selectionListTableRemoved)="onTableSelectionRemoved($event)"></app-selected-table>
       </div>

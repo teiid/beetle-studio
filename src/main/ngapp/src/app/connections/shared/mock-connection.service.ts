@@ -17,11 +17,10 @@
 
 import { Injectable, ReflectiveInjector } from "@angular/core";
 import { Http } from "@angular/http";
+import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
-import { JdbcTableFilter } from "@connections/shared/jdbc-table-filter.model";
 import { NewConnection } from "@connections/shared/new-connection.model";
-import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
@@ -34,15 +33,13 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
-import {ConnectionStatus} from "@connections/shared/connection-status";
 
 @Injectable()
 export class MockConnectionService extends ConnectionService {
 
   private connections: Connection[];
   private serviceCatalogSources: ServiceCatalogSource[];
-  private connectionSourceSchemaInfoMap: Map<string, SchemaInfo[]>;
-  private tableMap = new Map<string, string[]>();
+  private connectionTableMap = new Map<string, ConnectionTable[]>();
   private testDataService: TestDataService;
 
   constructor( http: Http, vdbService: VdbService, notifierService: NotifierService,
@@ -61,8 +58,7 @@ export class MockConnectionService extends ConnectionService {
     }
     this.connections = conns;
     this.serviceCatalogSources = this.testDataService.getServiceCatalogSources();
-    this.connectionSourceSchemaInfoMap = this.testDataService.getConnectionSourceSchemaInfoMap();
-    this.tableMap = this.testDataService.getJdbcConnectionTableMap();
+    this.connectionTableMap = this.testDataService.getConnectionTableMap();
   }
 
   public isValidName( name: string ): Observable< string > {
@@ -124,25 +120,12 @@ export class MockConnectionService extends ConnectionService {
   }
 
   /**
-   * Get the connection schema info for a connection source
-   * @returns {Observable<SchemaInfo[]>}
+   * Get the tables for the specified Connection
+   * @param {string} connectionName the connection name
+   * @returns {Observable<ConnectionTable[]>}
    */
-  public getConnectionSchemaInfos( connSource: string): Observable< SchemaInfo[] > {
-    const schemaInfos: SchemaInfo[] = this.connectionSourceSchemaInfoMap.get(connSource);
-    if ( !schemaInfos || schemaInfos == null ) {
-      const empty: SchemaInfo[] = [];
-      return Observable.of( empty );
-    }
-    return Observable.of(schemaInfos);
-  }
-
-  /**
-   * Get the tables for the specified input (connection and filters) for a Jdbc Connection
-   * @param {JdbcTableFilter} tableFilter
-   * @returns {Observable<string>}
-   */
-  public getJdbcConnectionTables( tableFilter: JdbcTableFilter ): Observable< string[] > {
-    return Observable.of( this.tableMap.get( tableFilter.getSchemaFilter() ) );
+  public getConnectionTables( connectionName: string ): Observable< ConnectionTable[] > {
+    return Observable.of( this.connectionTableMap.get( connectionName ) );
   }
 
   /**
@@ -180,6 +163,7 @@ export class MockConnectionService extends ConnectionService {
    * Updates the current Connection schema states - triggers update to be broadcast to interested components
    */
   public updateConnectionSchemaStates(): void {
+    // Nothing to do
   }
 
   /**
