@@ -82,13 +82,13 @@
         </div>
 
         <div class="{{cardListAreaCss}}">
-          <app-dataservices-list *ngIf="isListLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
+          <app-dataservices-list *ngIf="isListLayout && hasDataservices" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
                                  (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
                                  (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
                                  (editDataservice)="onEdit($event)" (quickLookDataservice)="onQuickLook($event)"
                                  (downloadDataservice)="onDownload($event)" (dataserviceSelected)="onSelected($event)"
                                  (dataserviceDeselected)="onDeselected($event)"></app-dataservices-list>
-          <app-dataservices-cards *ngIf="isCardLayout" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
+          <app-dataservices-cards *ngIf="isCardLayout && hasDataservices" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
                                   (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
                                   (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
                                   (editDataservice)="onEdit($event)" (quickLookDataservice)="onQuickLook($event)"

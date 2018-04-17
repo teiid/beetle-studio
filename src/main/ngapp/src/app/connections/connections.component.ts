@@ -193,6 +193,13 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   }
 
   /**
+   * @returns {boolean} 'true' if any connections are available
+   */
+  public get hasConnections(): boolean {
+    return this.allConns.length > 0;
+  }
+
+  /**
    * @returns {Connection[]} the array of filtered connections
    */
   public get filteredConnections(): Connection[] {
