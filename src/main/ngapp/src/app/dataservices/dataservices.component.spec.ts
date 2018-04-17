@@ -62,12 +62,12 @@ describe("DataservicesComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should have Dataservices Title", () => {
-    console.log("========== [DataservicesComponent] should have Dataservices Title");
+  it("should have Data Virtualizations Title", () => {
+    console.log("========== [DataservicesComponent] should have Data Virtualizations Title");
     // query for the title <h2> by CSS element selector
     const de = fixture.debugElement.query(By.css("h2"));
     const el = de.nativeElement;
-    expect(el.textContent).toEqual("Dataservices");
+    expect(el.textContent).toEqual("Data Virtualizations");
   });
 
   it("should have Toolbar", () => {

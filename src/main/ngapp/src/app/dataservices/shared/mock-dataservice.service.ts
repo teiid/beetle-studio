@@ -125,13 +125,13 @@ export class MockDataserviceService extends DataserviceService {
 
   public isValidName( name: string ): Observable<string> {
     if ( !name || name.length === 0 ) {
-      return Observable.of( "Dataservice name cannot be empty" );
+      return Observable.of( "Data virtualization name cannot be empty" );
     }
 
     // make sure no dataservice exists with that name
     for ( const ds of this.services ) {
       if ( ds.getId() === name ) {
-        return Observable.of( "Dataservice with that name already exists" );
+        return Observable.of( "Data virtualization with that name already exists" );
       }
     }
 

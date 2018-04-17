@@ -178,9 +178,9 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
       this.noConnectionsConfig = {
         actions: actionConfig,
         iconStyleClass: "pficon-warning-triangle-o",
-        info: "No dataservices were found. In order to create a dataservice, you must first create a connection. "
+        info: "No Data virtualizations were found. In order to create a virtualization, you must first create a connection. "
               + "Please click below to create a connection.",
-        title: "No Dataservices Available"
+        title: "No Data Virtualizations Available"
       } as EmptyStateConfig;
     }
 
@@ -193,8 +193,8 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
         primaryActions: [
           {
             id: "createDataserviceActionId",
-            title: "Add Dataservice",
-            tooltip: "Add a dataservice"
+            title: "Add Data Virtualization",
+            tooltip: "Add a data virtualization"
           }
         ]
       } as ActionConfig;
@@ -202,8 +202,8 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
       this.noDataservicesConfig = {
         actions: actionConfig,
         iconStyleClass: "pficon-warning-triangle-o",
-        info: "No dataservices were found. Please click below to create a dataservice.",
-        title: "No Dataservices Available"
+        info: "No Data virtualizations were found. Please click below to create a virtualization.",
+        title: "No Data Virtualizations Available"
       } as EmptyStateConfig;
     }
 

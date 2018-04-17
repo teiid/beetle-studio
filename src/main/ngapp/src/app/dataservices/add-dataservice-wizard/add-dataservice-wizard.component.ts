@@ -136,7 +136,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     // Wizard Configuration
     this.wizardConfig = {
       embedInPage: true,
-      loadingTitle: "Dataservice Wizard loading",
+      loadingTitle: "Data Virtualization Wizard loading",
       loadingSecondaryInfo: "Please wait for the wizard to finish loading...",
       contentHeight: "500px",
       done: false
@@ -218,7 +218,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    */
   public get step1InstructionMessage(): string {
     if (!this.tableSelector.valid) {
-      return "Please select tables for the Dataservice";
+      return "Please select tables for the Data virtualization";
     } else {
       return "Select tables, then click Next to continue";
     }
@@ -229,9 +229,9 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    */
   public get step2InstructionMessage(): string {
     if (this.wizardService.isEdit()) {
-      return "Review selections.  Click Update to update the Dataservice";
+      return "Review selections.  Click Update to update the Virtualization";
     }
-    return "Enter a name, select a connection, and review the table selections. Click Create to create the Dataservice";
+    return "Enter a name, select a connection, and review the table selections. Click Create to create the Virtualization";
   }
 
   /*
@@ -502,10 +502,10 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     this.createSuccessful = false;
     if (this.wizardService.isEdit()) {
       this.theFinalPageTitle = "Update in progress";
-      this.theFinalPageMessage = "The dataservice is being updated.";
+      this.theFinalPageMessage = "The virtualization is being updated.";
     } else {
       this.theFinalPageTitle = "Creation in progress";
-      this.theFinalPageMessage = "The dataservice is being created.";
+      this.theFinalPageMessage = "The virtualization is being created.";
     }
     this.step2bConfig.nextEnabled = false;
     this.step2bConfig.previousEnabled = false;
@@ -523,18 +523,18 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     if (wasSuccessful) {
       if (this.wizardService.isEdit()) {
         this.theFinalPageTitle = "Update was successful";
-        this.theFinalPageMessage = "The dataservice was updated successfully. Click on the button to see all dataservices.";
+        this.theFinalPageMessage = "The data virtualization was updated successfully. Click on the button to see all virtualizations.";
       } else {
         this.theFinalPageTitle = "Creation was successful";
-        this.theFinalPageMessage = "The dataservice was created successfully. Click on the button to see all dataservices.";
+        this.theFinalPageMessage = "The data virtualization was created successfully. Click on the button to see all virtualizations.";
       }
     } else {
       if (this.wizardService.isEdit()) {
         this.theFinalPageTitle = "Update failed";
-        this.theFinalPageMessage = "The dataservice update failed!";
+        this.theFinalPageMessage = "The data virtualization update failed!";
       } else {
         this.theFinalPageTitle = "Creation failed";
-        this.theFinalPageMessage = "The dataservice creation failed!";
+        this.theFinalPageMessage = "The data virtualization creation failed!";
       }
     }
   }
@@ -555,7 +555,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     }
     // Error visible if message has content
     if (this.errorDetailMessage.length === 0) {
-      this.errorDetailMessage = "Please check dataservice entries and retry";
+      this.errorDetailMessage = "Please check data virtualization entries and retry";
     }
   }
 

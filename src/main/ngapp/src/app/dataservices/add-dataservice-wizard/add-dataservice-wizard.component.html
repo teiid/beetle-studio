@@ -43,7 +43,7 @@
         <div [ngClass]="'form-group'">
           <label class="col-sm-2 control-label">Description</label>
           <div class="col-sm-7">
-            <textarea class="form-control" rows="2" maxlength="256" formControlName="description"></textarea>
+            <textarea class="form-control" rows="2" maxlength="256" formControlName="description" title=""></textarea>
           </div>
         </div>
         <div [ngClass]="hasSelectedConnection() ? 'form-group' : 'form-group has-error'">
@@ -54,7 +54,7 @@
             Connection
           </label>
           <div class="col-sm-7">
-            <select ([ngModel])="selectedConnection" (change)="selectedConnectionChanged($event)">
+            <select ([ngModel])="selectedConnection" (change)="selectedConnectionChanged($event)" title="">
               <option disabled selected value [ngValue]="emptyConnection">{{ emptyConnection.getId() }}</option>
               <option *ngFor="let connection of sourceTableConnections" [ngValue]="connection">
                 {{ connection.getId() }}
@@ -88,7 +88,7 @@
           <div class="wizard-pf-success-icon"><span class="glyphicon glyphicon-ok-circle"></span></div>
           <h3 class="blank-slate-pf-main-action">{{ finalPageTitle }}</h3>
           <p class="blank-slate-pf-secondary-action">{{ finalPageMessage }}</p>
-          <button class="btn btn-lg btn-primary" type="button" (click)="onDeployDataservice()">View All Dataservices</button>
+          <button class="btn btn-lg btn-primary" type="button" (click)="onDeployDataservice()">View All Data Virtualizations</button>
         </div>
         <!-- Create Failed -->
         <div class="wizard-pf-complete blank-slate-pf" *ngIf="createComplete && !createSuccessful">

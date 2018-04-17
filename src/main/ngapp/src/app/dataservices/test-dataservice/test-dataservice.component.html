@@ -1,26 +1,26 @@
 <div class="app-feature-content">
   <div id="dataservices-breadcrumb-bar">
     <app-breadcrumbs>
-      <li i18n="@@testDataservice.dataservices" app-breadcrumb label="Dataservices" icon="table" [route]="[ dataservicesLink ]"></li>
-      <li i18n="@@testDataservice.testDataservice" app-breadcrumb label="Test Dataservice" icon="play" class="active"></li>
+      <li i18n="@@testDataservice.dataservices" app-breadcrumb label="Data Virtualizations" icon="table" [route]="[ dataservicesLink ]"></li>
+      <li i18n="@@testDataservice.testDataservice" app-breadcrumb label="Test Data Virtualization" icon="play" class="active"></li>
     </app-breadcrumbs>
   </div>
   <div class="container-fluid" *ngIf="!pageError">
     <div class="col-sm-12">
-      <h2>Test Dataservice &apos;<strong>{{ this.dataservice.getId() }}</strong>&apos;</h2>
+      <h2>Test Data Virtualization &apos;<strong>{{ this.dataservice.getId() }}</strong>&apos;</h2>
     </div>
     <!-- Test Dataservice Controls -->
     <div class="col-sm-10" *ngIf="pageLoading">
       <div class="alert alert-info">
         <span class="pficon pficon-info"></span>
         <span class="spinner spinner-sm spinner-inline"></span>
-        <strong>Deploying the Dataservice...</strong>
+        <strong>Deploying the Data Virtualization...</strong>
       </div>
     </div>
     <div class="col-sm-10" *ngIf="pageLoadedInvalid">
       <div class="alert alert-info">
         <span class="pficon pficon-info"></span>
-        <strong>There was an error deploying the Dataservice!</strong>
+        <strong>There was an error deploying the Data Virtualization!</strong>
       </div>
     </div>
     <div class="col-sm-10" *ngIf="pageLoadedValid">
