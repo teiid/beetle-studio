@@ -39,3 +39,15 @@
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
+
+.modal-header {
+  background-color: #fff;
+}
+
+.wizard-pf-body {
+  background: var(--page-background-color);
+}
+
+.wizard-pf-steps-indicator {
+  border-top: 0;
+}
