@@ -63,7 +63,7 @@
 
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('connections')">
-        <app-connections-list *ngIf="isListLayout"
+        <app-connections-list *ngIf="isListLayout && hasConnections"
                               [connections]="filteredConnections"
                               [selectedConnections]="selectedConnections"
                               (activateConnection)="onActivate($event)"
@@ -71,7 +71,7 @@
                               (deleteConnection)="onDelete($event)"
                               (connectionSelected)="onSelected($event)"
                               (connectionDeselected)="onDeselected($event)"></app-connections-list>
-        <app-connections-cards *ngIf="isCardLayout"
+        <app-connections-cards *ngIf="isCardLayout && hasConnections"
                                [connections]="filteredConnections"
                                [selectedConnections]="selectedConnections"
                                (activateConnection)="onActivate($event)"

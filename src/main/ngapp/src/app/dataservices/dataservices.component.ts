@@ -324,6 +324,13 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   /**
+   * @returns {boolean} 'true' if any dataservices are available
+   */
+  public get hasDataservices(): boolean {
+    return this.allServices.length > 0;
+  }
+
+  /**
    * @returns {Dataservice[]} the array of filtered dataservices
    */
   public get filteredDataservices(): Dataservice[] {
