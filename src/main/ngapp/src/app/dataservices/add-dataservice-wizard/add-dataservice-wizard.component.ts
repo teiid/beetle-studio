@@ -138,7 +138,6 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
       embedInPage: true,
       loadingTitle: "Dataservice Wizard loading",
       loadingSecondaryInfo: "Please wait for the wizard to finish loading...",
-      title: "Dataservice Wizard",
       contentHeight: "500px",
       done: false
     } as WizardConfig;

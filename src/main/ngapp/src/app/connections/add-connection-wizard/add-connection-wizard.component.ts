@@ -134,7 +134,6 @@ export class AddConnectionWizardComponent implements OnInit {
       embedInPage: true,
       loadingTitle: "Add Connection Wizard loading",
       loadingSecondaryInfo: "Please wait for the wizard to finish loading...",
-      title: "Add Connection",
       contentHeight: "500px",
       done: false
     } as WizardConfig;
