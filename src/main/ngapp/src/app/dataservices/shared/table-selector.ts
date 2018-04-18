@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
+import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
-import { Table } from "@dataservices/shared/table.model";
 
 /**
  * The table selector interface
@@ -37,14 +37,14 @@ export interface TableSelector {
 
   /**
    * Get the array of currently selected Tables
-   * @returns {Table[]} the array of selected Tables (never null, but may be empty)
+   * @returns {ConnectionTable[]} the array of selected ConnectionTable (never null, but may be empty)
    */
-  getSelectedTables(): Table[];
+  getSelectedTables(): ConnectionTable[];
 
   /**
    * Deselect the table if a table with the same name and connection is currently selected.
-   * @param {Table} table the table to deselect
+   * @param {ConnectionTable} table the table to deselect
    */
-  deselectTable(table: Table): void;
+  deselectTable(table: ConnectionTable): void;
 
 }

@@ -20,7 +20,6 @@ import { Http } from "@angular/http";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
-import { Table } from "@dataservices/shared/table.model";
 import { VdbModelSource } from "@dataservices/shared/vdb-model-source.model";
 import { VdbModel } from "@dataservices/shared/vdb-model.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
@@ -128,19 +127,6 @@ export class MockVdbService extends VdbService {
   }
 
   /**
-   * Update the specified repo VDB Model using the DDL from the specified Teiid VDB
-   * @param {string} vdbName the VDB in the repo to update
-   * @param {string} modelName the Model withing the specified repo VDB
-   * @param {string} teiidVdbName the deployed teiid VDB name
-   * @param {string} teiidModelName the teiid VDB Model name
-   * @returns {Observable<boolean>}
-   */
-  public updateVdbModelFromTeiid(vdbName: string, modelName: string,
-                                 teiidVdbName: string, teiidModelName: string): Observable<boolean> {
-    return Observable.of(true);
-  }
-
-  /**
    * Polls the server for the specified VDB.  Polling will terminate if
    * (1) The VDB is active
    * (2) The VDB is in a failed state
@@ -163,15 +149,6 @@ export class MockVdbService extends VdbService {
       this.deploymentSubscription.unsubscribe();
     } );
 
-  }
-
-  /**
-   * Create and deploy a VDB for the provided table
-   * @param {Table[]} tables
-   * @returns {Observable<boolean>}
-   */
-  public deployVdbForTables(tables: Table[]): Observable<boolean> {
-    return Observable.of(true);
   }
 
   public getVirtualizations(): Observable< Virtualization[] > {

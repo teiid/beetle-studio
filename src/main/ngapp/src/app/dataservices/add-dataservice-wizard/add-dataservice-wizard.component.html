@@ -3,9 +3,9 @@
              (onCancel)="cancelClicked($event)"
              (onNext)="nextClicked($event)"
              (onStepChange)="stepChanged($event)">
-  <!-- ------------------------- -->
-  <!-- Step 1 : Table Selection -->
-  <!-- ------------------------- -->
+  <!-- ----------------------------------- -->
+  <!-- Step 1 : Connection Table Selection -->
+  <!-- ----------------------------------- -->
   <pfng-wizard-step [config]="step1Config">
     <div class="row">
       <div class="col-sm-12">
@@ -68,7 +68,7 @@
           <div class="col-sm-7 wiz-review-tables">
             <div [ngClass]="shouldCheck(table) ? 'wiz-review-table-checked' : 'wiz-review-table-unchecked'"
                  *ngFor="let table of dataserviceSourceTables">
-                {{ table.getName() }} ( {{ table.getConnection().getId() }} <span class="fa fa-plug"></span> )
+                {{ table.getId() }} ( {{ table.getConnection().getId() }} <span class="fa fa-plug"></span> )
             </div>
           </div>
         </div>

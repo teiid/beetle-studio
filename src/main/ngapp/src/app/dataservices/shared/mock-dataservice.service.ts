@@ -24,8 +24,8 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { QueryResults } from "@dataservices/shared/query-results.model";
-import { Table } from "@dataservices/shared/table.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { View } from "@dataservices/shared/view.model";
 import { TestDataService } from "@shared/test-data.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
@@ -91,12 +91,12 @@ export class MockDataserviceService extends DataserviceService {
 
   /**
    * Get the views for the selected Dataservice
-   * @returns {Table[]} the views
+   * @returns {View[]} the views
    */
-  public getSelectedDataserviceViews(): Table[] {
-    const table: Table = new Table();
+  public getSelectedDataserviceViews(): View[] {
+    const table: View = new View();
     table.setName("views.View1");
-    const tables: Table[] = [];
+    const tables: View[] = [];
     tables.push(table);
 
     return tables;

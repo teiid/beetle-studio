@@ -17,6 +17,7 @@
 
 import { Injectable } from "@angular/core";
 import { ConnectionStatus } from "@connections/shared/connection-status";
+import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
 import { SchemaInfo } from "@connections/shared/schema-info.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
@@ -406,30 +407,29 @@ export class TestDataService {
   ];
 
   // =================================================================
-  // SchemaInfos for the connections
+  // ConnectionTables for the connections
   // =================================================================
-
-  private static pgConnSchemaInfos = [
-    SchemaInfo.create( { name: "pgConnSchemaInfo1", type: "Schema" } ),
-    SchemaInfo.create( { name: "pgConnCatalogInfo", type: "Catalog", schemaNames: [ "pgConnCatalogSchema1", "pgConnCatalogSchema2" ] } )
+  private static pgConnConnectionTables = [
+    TestDataService.createConnectionTable("pgTable1", TestDataService.pgConn, false),
+    TestDataService.createConnectionTable("pgTable2", TestDataService.pgConn, false)
   ];
 
-  private static conn1SchemaInfos = [
-    SchemaInfo.create( { name: "conn1SchemaInfo1", type: "Schema" } ),
-    SchemaInfo.create( { name: "conn1CatalogInfo", type: "Catalog", schemaNames: [ "conn1CatalogSchema1", "conn1CatalogSchema2" ] } )
+  private static conn1ConnectionTables = [
+    TestDataService.createConnectionTable("conn1Table1", TestDataService.conn1, false),
+    TestDataService.createConnectionTable("conn1Table2", TestDataService.conn1, false)
   ];
 
-  private static conn2SchemaInfos = [
-    SchemaInfo.create( { name: "conn2CatalogInfo", type: "Catalog", schemaNames: [ "conn2CatalogSchema1", "conn2CatalogSchema2" ] } ),
-    SchemaInfo.create( { name: "conn2SchemaInfo1", type: "Schema" } ),
-    SchemaInfo.create( { name: "conn2SchemaInfo2", type: "Schema" } )
+  private static conn2ConnectionTables = [
+    TestDataService.createConnectionTable("conn2Table1", TestDataService.conn2, false),
+    TestDataService.createConnectionTable("conn2Table2", TestDataService.conn2, false),
+    TestDataService.createConnectionTable("conn2Table3", TestDataService.conn2, false),
   ];
 
-  private static conn3SchemaInfos = [
-    SchemaInfo.create( { name: "conn3CatalogInfo", type: "Catalog", schemaNames: [ "conn3CatalogSchema1", "conn3CatalogSchema2" ] } ),
-    SchemaInfo.create( { name: "conn3SchemaInfo1", type: "Schema" } ),
-    SchemaInfo.create( { name: "conn3SchemaInfo2", type: "Schema" } ),
-    SchemaInfo.create( { name: "conn3SchemaInfo3", type: "Schema" } )
+  private static conn3ConnectionTables = [
+    TestDataService.createConnectionTable("conn3Table1", TestDataService.conn3, false),
+    TestDataService.createConnectionTable("conn3Table2", TestDataService.conn3, false),
+    TestDataService.createConnectionTable("conn3Table3", TestDataService.conn3, false),
+    TestDataService.createConnectionTable("conn3Table4", TestDataService.conn3, false)
   ];
 
   // =================================================================
@@ -926,7 +926,7 @@ export class TestDataService {
     TestDataService.productsVdb
   ];
 
-  private jdbcTableMap = new Map<string, string[]>();
+  private connectionTableMap = new Map<string, ConnectionTable[]>();
   private vdbStatuses: VdbStatus[];
   private virtualizations: Virtualization[];
 
@@ -960,6 +960,21 @@ export class TestDataService {
     return connectionSummary;
   }
 
+  /**
+   * Create a ConnectionTable using the specified info
+   * @param {string} name the connection table name
+   * @param {Connection} connection the connection
+   * @param {boolean} selected 'true' if the table is selected
+   * @returns {ConnectionSummary}
+   */
+  private static createConnectionTable( name: string, connection: Connection, selected: boolean ): ConnectionTable {
+    const connectionTable = new ConnectionTable();
+    connectionTable.setId(name);
+    connectionTable.setConnection(connection);
+    connectionTable.selected = selected;
+    return connectionTable;
+  }
+
   constructor() {
     this.vdbStatuses = TestDataService.vdbStatuses.vdbs.map(( vdbStatus ) => VdbStatus.create( vdbStatus ) );
     this.virtualizations = [
@@ -967,105 +982,6 @@ export class TestDataService {
       TestDataService.employeesVirtualization,
       TestDataService.productsVirtualization
     ];
-
-    this.jdbcTableMap.set( "pgConnSchemaInfo1", [
-      "pgConnTable1",
-      "pgConnTable2",
-      "pgConnTable3",
-      "pgConnTable4",
-      "pgConnTable5",
-      "pgConnTable6"
-    ] );
-    this.jdbcTableMap.set( "pgConnCatalogSchema1", [
-      "pgConnTableA",
-      "pgConnTableB",
-      "pgConnTableC",
-      "pgConnTableD",
-      "pgConnTableE",
-      "pgConnTableF",
-      "pgConnTableG"
-    ] );
-    this.jdbcTableMap.set( "pgConnCatalogSchema2", [
-      "cat2TableRed",
-      "cat2TableWhite",
-      "cat2TableBlue"
-    ] );
-    this.jdbcTableMap.set( "conn1SchemaInfo1", [
-      "conn1Table1",
-      "conn1Table2",
-      "conn1Table3",
-      "conn1Table4",
-      "conn1Table5",
-      "conn1Table6"
-    ] );
-    this.jdbcTableMap.set( "conn1CatalogSchema1", [
-      "conn1TableA",
-      "conn1TableB",
-      "conn1TableC",
-      "conn1TableD",
-      "conn1TableE",
-      "conn1TableF",
-      "conn1TableG"
-    ] );
-    this.jdbcTableMap.set( "conn1CatalogSchema2", [
-      "conn1TableRed",
-      "conn1TableWhite",
-      "conn1TableBlue"
-    ] );
-    this.jdbcTableMap.set( "conn2CatalogSchema1", [
-      "conn2Table1",
-      "conn2Table2",
-      "conn2Table3",
-      "conn2Table4",
-      "conn2Table5",
-      "conn2Table6",
-      "conn2Table7"
-    ] );
-    this.jdbcTableMap.set( "conn2CatalogSchema2", [
-      "conn2Cat2TableA",
-      "conn2Cat2TableB",
-      "conn2Cat2TableC",
-      "conn2Cat2TableD",
-      "conn2Cat2TableE",
-      "conn2Cat2TableF",
-      "conn2Cat2TableG"
-    ] );
-    this.jdbcTableMap.set( "conn2SchemaInfo1", [
-      "conn2TableLarry",
-      "conn2TableCurly",
-      "conn2TableMoe"
-    ] );
-    this.jdbcTableMap.set( "conn2SchemaInfo2", [
-      "conn2TableRed",
-      "conn2TableWhite",
-      "conn2TableBlue"
-    ] );
-    this.jdbcTableMap.set( "conn3CatalogSchema1", [
-      "conn3Table1",
-      "conn3Table2",
-      "conn3Table3",
-      "conn2Table4"
-    ] );
-    this.jdbcTableMap.set( "conn3CatalogSchema2", [
-      "conn3Cat2TableA",
-      "conn3Cat2TableB",
-      "conn3Cat2TableC"
-    ] );
-    this.jdbcTableMap.set( "conn3SchemaInfo1", [
-      "conn3TableJohn",
-      "conn3TablePaul",
-      "conn3TableRingo"
-    ] );
-    this.jdbcTableMap.set( "conn3SchemaInfo2", [
-      "conn3TablePurple",
-      "conn3TableBlue",
-      "conn3TableGreen"
-    ] );
-    this.jdbcTableMap.set( "conn3SchemaInfo3", [
-      "conn3TableOrange",
-      "conn3TableYellow",
-      "conn3TableBrown"
-    ] );
   }
 
   /**
@@ -1092,18 +1008,6 @@ export class TestDataService {
   }
 
   /**
-   * @returns {Map<string, SchemaInfo[]>} the array of test Service Catalog datasources
-   */
-  public getConnectionSourceSchemaInfoMap( ): Map<string, SchemaInfo[]> {
-    const infoMap = new Map<string, SchemaInfo[]>();
-    infoMap.set( TestDataService.pgConn.getServiceCatalogSourceName(), TestDataService.pgConnSchemaInfos );
-    infoMap.set( TestDataService.conn1.getServiceCatalogSourceName(), TestDataService.conn1SchemaInfos );
-    infoMap.set( TestDataService.conn2.getServiceCatalogSourceName(), TestDataService.conn2SchemaInfos );
-    infoMap.set( TestDataService.conn3.getServiceCatalogSourceName(), TestDataService.conn3SchemaInfos );
-    return infoMap;
-  }
-
-  /**
    * @returns {Dataservice[]} the array of test dataservices
    */
   public getDataservices(): Dataservice[] {
@@ -1118,8 +1022,16 @@ export class TestDataService {
     return new QueryResults(TestDataService.employeeJson);
   }
 
-  public getJdbcConnectionTableMap(): Map<string, string[]> {
-    return this.jdbcTableMap;
+  /**
+   * @returns {Map<string, SchemaInfo[]>} the array of test Service Catalog datasources
+   */
+  public getConnectionTableMap(): Map<string, ConnectionTable[]> {
+    const tableMap = new Map<string, ConnectionTable[]>();
+    tableMap.set( TestDataService.pgConn.getId(), TestDataService.pgConnConnectionTables );
+    tableMap.set( TestDataService.conn1.getId(), TestDataService.conn1ConnectionTables );
+    tableMap.set( TestDataService.conn2.getId(), TestDataService.conn2ConnectionTables );
+    tableMap.set( TestDataService.conn3.getId(), TestDataService.conn3ConnectionTables );
+    return tableMap;
   }
 
   /**

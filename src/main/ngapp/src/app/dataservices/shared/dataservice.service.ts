@@ -17,6 +17,7 @@
 
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
+import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
@@ -28,10 +29,10 @@ import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { QueryResults } from "@dataservices/shared/query-results.model";
-import { Table } from "@dataservices/shared/table.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { environment } from "@environments/environment";
 import { saveAs } from "file-saver/FileSaver";
@@ -56,7 +57,7 @@ export class DataserviceService extends ApiService {
   private appSettingsService: AppSettingsService;
   private vdbService: VdbService;
   private selectedDataservice: Dataservice;
-  private dataserviceCurrentView: Table[] = [];
+  private dataserviceCurrentView: View[] = [];
   private cachedDataserviceDeployStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
   private cachedDataserviceVirtualizations: Map<string, Virtualization> = new Map<string, Virtualization>();
   private updatesSubscription: Subscription;
@@ -95,7 +96,7 @@ export class DataserviceService extends ApiService {
   public setSelectedDataservice(service: Dataservice): void {
     this.selectedDataservice = service;
     // When the dataservice is selected, init the selected view
-    const views: Table[] = this.getSelectedDataserviceViews();
+    const views: View[] = this.getSelectedDataserviceViews();
     this.dataserviceCurrentView = [];
     if (views && views.length > 0) {
       this.dataserviceCurrentView.push(views[0]);
@@ -111,11 +112,11 @@ export class DataserviceService extends ApiService {
   }
 
   /**
-   * Get the current Dataservice selection's views.  The table object is used for the view,
-   * with the Table name set to the full "modelName"."viewName" of the view.
-   * @returns {Table[]} the selected Dataservice views
+   * Get the current Dataservice selection's views.View
+   * The View name is currently set to the full "modelName"."viewName" of the view.
+   * @returns {View[]} the selected Dataservice views
    */
-  public getSelectedDataserviceViews( ): Table[] {
+  public getSelectedDataserviceViews( ): View[] {
     if (!this.selectedDataservice || this.selectedDataservice === null) {
       return [];
     }
@@ -124,9 +125,9 @@ export class DataserviceService extends ApiService {
     const serviceViews = this.selectedDataservice.getServiceViewNames();
 
     // build the views using the model and view names
-    const allViews: Table[] = [];
+    const allViews: View[] = [];
     for ( const serviceView of serviceViews ) {
-      const aView: Table = new Table();
+      const aView: View = new View();
       aView.setName(modelName + "." + serviceView);
 
       allViews.push(aView);
@@ -137,19 +138,19 @@ export class DataserviceService extends ApiService {
 
   /**
    * Get the current Dataservice current view.  The table object is used for the view,
-   * with the Table name set to the full "modelName"."viewName" of the view.
-   * @returns {Table[]} the Dataservice current view
+   * with the View name set to the full "modelName"."viewName" of the view.
+   * @returns {View[]} the Dataservice current view
    */
-  public getSelectedDataserviceCurrentView( ): Table[] {
+  public getSelectedDataserviceCurrentView( ): View[] {
     return this.dataserviceCurrentView;
   }
 
   /**
    * Set the current Dataservice current view.  The table object is used for the view,
-   * with the Table name set to the full "modelName"."viewName" of the view.
-   * @param {Table[]} view the current view
+   * with the View name set to the full "modelName"."viewName" of the view.
+   * @param {View[]} view the current view
    */
-  public setSelectedDataserviceCurrentView( view: Table[] ): void {
+  public setSelectedDataserviceCurrentView( view: View[] ): void {
     this.dataserviceCurrentView = view;
   }
 
@@ -332,43 +333,46 @@ export class DataserviceService extends ApiService {
   /**
    * Create a dataservice which is a straight passthru to the supplied tables
    * @param {NewDataservice} dataservice
-   * @param {Table[]} sourceTables
+   * @param {ConnectionTable[]} connectionTables
    * @returns {Observable<boolean>}
    */
-  public createDataserviceForSingleSourceTables(dataservice: NewDataservice, sourceTables: Table[]): Observable<boolean> {
+  public createDataserviceForSingleSourceTables(dataservice: NewDataservice, connectionTables: ConnectionTable[]): Observable<boolean> {
     // All tables from same connection
-    const connection: Connection = sourceTables[0].getConnection();
-    const sourceVdbName = this.vdbService.deriveSourceVdbName(connection);
-    const sourceModelName = this.vdbService.deriveVdbModelName(connection);
-    const sourceModelSourceName = this.vdbService.deriveVdbModelSourceName(connection);
-    const vdbPath = this.getKomodoUserWorkspacePath() + "/" + sourceVdbName;
+    const connection: Connection = connectionTables[0].getConnection();
+    const schemaVdbName = connection.schemaVdbName;
+    const schemaVdbModelName = connection.schemaVdbModelName;
+    const schemaVdbModelSourceName = connection.schemaVdbModelSourceName;
+
+    // The schema VDB is directly under the connection in the repo
+    const vdbPath = this.getKomodoUserWorkspacePath() + "/" + connection.getId() + "/" + schemaVdbName;
+
+    // Get table paths for the tables used in the service
     const tablePaths = [];
-    for ( const sourceTable of sourceTables ) {
-      const tablePath = vdbPath + "/" + sourceModelName + "/" + sourceTable.getName();
+    for ( const connectionTable of connectionTables ) {
+      const tablePath = vdbPath + "/" + schemaVdbModelName + "/" + connectionTable.getId();
       tablePaths.push(tablePath);
     }
-    const modelSourcePath = vdbPath + "/" + sourceModelName + "/vdb:sources/" + sourceModelSourceName;
 
+    // ModelSource path
+    const modelSourcePath = vdbPath + "/" + schemaVdbModelName + "/vdb:sources/" + schemaVdbModelSourceName;
+
+    // Name of the Dataservice VDB
     const dsVdbName = this.deriveServiceVdbName(dataservice);
 
     // Chain the individual calls together in series to build the DataService
     return this.createDataservice(dataservice)
-      .flatMap((res) => this.vdbService.updateVdbModelFromTeiid(sourceVdbName, sourceModelName,
-                                                                sourceVdbName, sourceModelName))
       .flatMap((res) => this.setServiceVdbForSingleSourceTables(dataservice.getId(), tablePaths, modelSourcePath))
-      .flatMap((res) => this.createReadonlyDataRole(dsVdbName, sourceModelName))
-      .flatMap((res) => this.vdbService.undeployVdb(sourceVdbName))
-      .flatMap((res) => this.vdbService.deleteVdb(sourceVdbName));
+      .flatMap((res) => this.createReadonlyDataRole(dsVdbName, schemaVdbModelName));
   }
 
   /**
    * Updates a dataservice with single table source.  This is simply a create, with the added step of
    * deleting the existing workspace dataservice first.
    * @param {NewDataservice} dataservice
-   * @param {Table[]} sourceTables
+   * @param {ConnectionTable[]} sourceTables
    * @returns {Observable<boolean>}
    */
-  public updateDataserviceForSingleSourceTables(dataservice: NewDataservice, sourceTables: Table[]): Observable<boolean> {
+  public updateDataserviceForSingleSourceTables(dataservice: NewDataservice, sourceTables: ConnectionTable[]): Observable<boolean> {
     return this.deleteDataservice(dataservice.getId())
       .flatMap((res) => this.createDataserviceForSingleSourceTables(dataservice, sourceTables));
   }
