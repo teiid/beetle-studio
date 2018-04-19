@@ -17,23 +17,23 @@ export class DataservicesConstants {
   public static readonly dataservicesExport = "export";
   public static readonly dataservicesPublish = "publish";
 
-  public static readonly dataserviceRootRoute = "dataservice";
-  public static readonly dataserviceRootPath = "/" + DataservicesConstants.dataserviceRootRoute;
-
-  public static readonly dataservicesRootRoute = "dataservices";
+  public static readonly dataservicesRootRoute = "virtualizations";
   public static readonly dataservicesRootPath = "/" + DataservicesConstants.dataservicesRootRoute;
 
-  public static readonly addDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/add-dataservice";
-  public static readonly addDataservicePath = DataservicesConstants.dataservicesRootPath + "/add-dataservice";
+  public static readonly dataserviceRestPath = "/dataservice";
+  public static readonly dataservicesRestPath = "/dataservices";
 
-  public static readonly testDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/test-dataservice";
-  public static readonly testDataservicePath = DataservicesConstants.dataservicesRootPath + "/test-dataservice";
+  public static readonly addDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/add-virtualization";
+  public static readonly addDataservicePath = DataservicesConstants.dataservicesRootPath + "/add-virtualization";
+
+  public static readonly testDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/test-virtualization";
+  public static readonly testDataservicePath = DataservicesConstants.dataservicesRootPath + "/test-virtualization";
 
   public static dataserviceNameLabel = "Name";
   public static descriptionLabel = "Description";
 
   public static readonly dataservicesNavItem: NavigationItemConfig = {
-    title: "Data Services",
+    title: "Virtualizations",
     iconStyleClass: "fa fa-fw fa-table",
     url: DataservicesConstants.dataservicesRootPath
   };

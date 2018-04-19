@@ -2,7 +2,7 @@
 
   <div id="dataservices-breadcrumb-bar">
     <app-breadcrumbs>
-      <li i18n="@@dataservices.dataservices" app-breadcrumb label="Dataservices" icon="table" class="active"></li>
+      <li i18n="@@dataservices.dataservices" app-breadcrumb label="Data Virtualizations" icon="table" class="active"></li>
     </app-breadcrumbs>
   </div>
 
@@ -10,7 +10,7 @@
 
   <div class="container-fluid dataservice-list-dataservices" *ngIf="!pageError">
     <div class="col-sm-12">
-      <h2 class="app-feature-title" i18n="@@dataservices.dataservices">Dataservices</h2>
+      <h2 class="app-feature-title" i18n="@@dataservices.dataservices">Data Virtualizations</h2>
     </div>
     <div class="row toolbar-pf">
       <div class="col-sm-12">
@@ -23,7 +23,7 @@
               <pfng-sort [config]="sortConfig" (onChange)="sortChange($event)"></pfng-sort>
           </div>
           <div class="form-group">
-            <a i18n="@@dataservices.addDataservice" class="btn btn-primary" (click)="onNew()">Add Dataservice</a>
+            <a i18n="@@dataservices.addDataservice" class="btn btn-primary" (click)="onNew()">Add Data Virtualization</a>
           </div>
           <div class="form-group toolbar-pf-view-selector">
             <ul class="list-inline">
@@ -61,7 +61,7 @@
             <div class="card-pf card-pf-accented">
               <div class="card-pf-heading">
                 <h1 class="card-pf-title">
-                  <span i18n="@@dataservices.loadingDataservices" class="spinner spinner-xs spinner-inline"></span> Loading Dataservices...
+                  <span i18n="@@dataservices.loadingDataservices" class="spinner spinner-xs spinner-inline"></span> Loading Data Virtualizations...
                 </h1>
               </div>
             </div>
@@ -101,7 +101,7 @@
         <div>
           <span class="pull-left fa fa-list-alt dataservice-results-action-icon" (click)="onTest(quickLookServiceName)"></span>
           <span class="pull-left fa fa-refresh dataservice-results-action-icon-refresh" (click)="onSubmitQuickLookQuery()"></span>
-          <span class="quicklook-title">Quick Look Results for Dataservice '{{ quickLookServiceName }}'</span>
+          <span class="quicklook-title">Quick Look Results for Data Virtualization '{{ quickLookServiceName }}'</span>
           <span class="pull-right fa fa-fw fa-close dataservice-results-action-icon-close" (click)="setQuickLookPanelOpenState(false)"></span>
         </div>
         <br>
@@ -114,5 +114,5 @@
 
 </div>
 <app-confirm-delete (deleteSelected)="onDeleteDataservice()">
-  <p i18n="@@dataservices.doYouReallyWantToDeleteSelectedDataservice" >Do you really want to delete the selected Dataservice?</p>
+  <p i18n="@@dataservices.doYouReallyWantToDeleteSelectedDataservice" >Do you really want to delete the selected Virtualization?</p>
 </app-confirm-delete>

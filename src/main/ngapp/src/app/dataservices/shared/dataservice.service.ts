@@ -45,7 +45,7 @@ import { Subscription } from "rxjs/Subscription";
 export class DataserviceService extends ApiService {
 
   private static readonly nameValidationUrl = environment.komodoWorkspaceUrl
-                                              + DataservicesConstants.dataservicesRootPath
+                                              + DataservicesConstants.dataservicesRestPath
                                               + "/nameValidation/";
 
   // Observable dataservice state changes
@@ -163,7 +163,7 @@ export class DataserviceService extends ApiService {
    */
   public isValidName( name: string ): Observable< string > {
     if ( !name || name.length === 0 ) {
-      return Observable.of( "Dataservice name cannot be empty" );
+      return Observable.of( "Data virtualization name cannot be empty" );
     }
 
     const url = DataserviceService.nameValidationUrl + encodeURIComponent( name );
@@ -186,7 +186,7 @@ export class DataserviceService extends ApiService {
    */
   public getAllDataservices(): Observable<Dataservice[]> {
     return this.http
-      .get(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRootPath, this.getAuthRequestOptions())
+      .get(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRestPath, this.getAuthRequestOptions())
       .map((response) => {
         const dataservices = response.json();
         return dataservices.map((dataservice) => Dataservice.create( dataservice ));
@@ -201,7 +201,7 @@ export class DataserviceService extends ApiService {
    */
   public createDataservice(dataservice: NewDataservice): Observable<boolean> {
     return this.http
-      .post(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRootPath + "/" + dataservice.getId(),
+      .post(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRestPath + "/" + dataservice.getId(),
         dataservice, this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
@@ -217,7 +217,7 @@ export class DataserviceService extends ApiService {
   public deployDataservice(dataserviceName: string): Observable<boolean> {
     const servicePath = this.getKomodoUserWorkspacePath() + "/" + dataserviceName;
     return this.http
-      .post(environment.komodoTeiidUrl + DataservicesConstants.dataserviceRootPath,
+      .post(environment.komodoTeiidUrl + DataservicesConstants.dataserviceRestPath,
         { path: servicePath}, this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
@@ -234,7 +234,7 @@ export class DataserviceService extends ApiService {
    */
   public setServiceVdbForSingleSourceTables(dataserviceName: string, tablePaths: string[], modelSourcePath: string): Observable<boolean> {
     return this.http
-      .post(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRootPath + "/ServiceVdbForSingleSourceTables",
+      .post(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRestPath + "/ServiceVdbForSingleSourceTables",
         { dataserviceName, tablePaths, modelSourcePath}, this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
@@ -311,7 +311,7 @@ export class DataserviceService extends ApiService {
    */
   public deleteDataservice(dataserviceId: string): Observable<boolean> {
     return this.http
-      .delete(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRootPath + "/" + dataserviceId,
+      .delete(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRestPath + "/" + dataserviceId,
                this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;

@@ -619,7 +619,7 @@ export class AddConnectionWizardComponent implements OnInit {
     }
     // Error visible if message has content
     if (this.errorDetailMessage.length === 0) {
-      this.errorDetailMessage = "Please check dataservice entries and retry";
+      this.errorDetailMessage = "Please check data virtualization entries and retry";
     }
   }
 }

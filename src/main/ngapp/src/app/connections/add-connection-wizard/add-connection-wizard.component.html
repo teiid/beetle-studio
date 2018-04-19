@@ -67,16 +67,16 @@
           <div [ngClass]="'form-group'">
             <label class="col-sm-2 control-label">Description</label>
             <div class="col-sm-5" *ngIf="hasServiceCatalogSources">
-              <textarea class="form-control" rows="2" maxlength="256" formControlName="description"></textarea>
+              <textarea class="form-control" rows="2" maxlength="256" formControlName="description" title="" ></textarea>
             </div>
             <div class="col-sm-5" *ngIf="!hasServiceCatalogSources">
-              <textarea class="form-control" rows="2" maxlength="256" formControlName="description" disabled="true"></textarea>
+              <textarea class="form-control" rows="2" maxlength="256" formControlName="description" title="" disabled="true"></textarea>
             </div>
           </div>
           <div [ngClass]="hasSelectedServiceCatalogSource ? 'form-group' : 'form-group has-error'">
             <label class="col-sm-2 control-label">ServiceCatalog Source</label>
             <div class="col-sm-5" *ngIf="hasServiceCatalogSources">
-              <select (change)="selectedServiceCatalogSourceChanged($event.target.value)">
+              <select (change)="selectedServiceCatalogSourceChanged($event.target.value)" title="" >
                 <option [ngValue]="emptyServiceCatalogSource">{{ emptyServiceCatalogSource.getId() }}</option>
                 <option *ngFor="let catalogSource of serviceCatalogSources"
                         [ngValue]="catalogSource"
