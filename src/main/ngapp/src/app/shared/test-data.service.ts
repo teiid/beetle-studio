@@ -40,6 +40,8 @@ export class TestDataService {
   private static readonly catalogSourceId1 = "postgresql-persistent-j9vqv";
   private static readonly catalogSourceId2 = "postgresql-persistent-a8xrt";
   private static readonly catalogSourceId3 = "mysql-persistent-t3irv";
+  private static readonly catalogSourceId4 = "mongodb-persistent-x9prt";
+  private static readonly catalogSourceId5 = "mongodb-persistent-z8amy";
 
   // =================================================================
   // VDBs
@@ -190,6 +192,16 @@ export class TestDataService {
     TestDataService.catalogSourceId3,
     TestDataService.catalogSourceId3,
     "mysql",
+    true );
+  private static catalogSourceMongo1 = TestDataService.createServiceCatalogSource(
+    TestDataService.catalogSourceId4,
+    TestDataService.catalogSourceId4,
+    "mongodb",
+    true );
+  private static catalogSourceMongo2 = TestDataService.createServiceCatalogSource(
+    TestDataService.catalogSourceId5,
+    TestDataService.catalogSourceId5,
+    "mongodb",
     true );
 
   // =================================================================
@@ -906,7 +918,9 @@ export class TestDataService {
     TestDataService.pgConnCatalogSource,
     TestDataService.catalogSource1,
     TestDataService.catalogSource2,
-    TestDataService.catalogSource3];
+    TestDataService.catalogSource3,
+    TestDataService.catalogSourceMongo1,
+    TestDataService.catalogSourceMongo2];
 
   private connections: Connection[] = [
     TestDataService.pgConn,

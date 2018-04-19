@@ -183,16 +183,16 @@ export class ConnectionService extends ApiService {
     const connType2: ConnectionType = new ConnectionType();
     connType2.setName(ConnectionsConstants.connectionType_mysql);
     connType2.setDescription(ConnectionsConstants.connectionTypeDescription_mysql);
-    // const connType3: ConnectionType = new ConnectionType();
-    // connType3.setName(ConnectionsConstants.connectionType_mongodb);
-    // connType3.setDescription(ConnectionsConstants.connectionTypeDescription_mongodb);
+    const connType3: ConnectionType = new ConnectionType();
+    connType3.setName(ConnectionsConstants.connectionType_mongodb);
+    connType3.setDescription(ConnectionsConstants.connectionTypeDescription_mongodb);
     // const connType4: ConnectionType = new ConnectionType();
     // connType4.setName(ConnectionsConstants.connectionType_mariadb);
     // connType4.setDescription(ConnectionsConstants.connectionTypeDescription_mariadb);
 
     connectionTypes.push(connType1);
     connectionTypes.push(connType2);
-    // connectionTypes.push(connType3);
+    connectionTypes.push(connType3);
     // connectionTypes.push(connType4);
 
     return connectionTypes;
