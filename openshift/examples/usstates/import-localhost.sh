@@ -27,13 +27,28 @@ do
 done
 
 if [ -z "${DB}" ]; then
-  echo "No Database specified. Assuming 'usstates'"
+  echo "WARNING: No Database specified. Assuming 'usstates'"
   DB="usstates"
 fi
 
 if [ -z "${DB_USER}" ]; then
-  echo "No Database User specified. Assuming 'komodo'"
+  echo "WARNING: No Database User specified. Assuming 'komodo'"
   DB_USER="komodo"
 fi
 
-psql -h localhost -d ${DB} -U ${DB_USER} -f us-states-postgresql.sql
+#
+# Check whether the DB has been created
+#
+if psql -h localhost -U ${DB_USER} -lqt | cut -d \| -f 1 | grep -qw ${DB}; then
+  #
+  # Found database so conduct the import
+  #
+  psql -h localhost -d ${DB} -U ${DB_USER} -f us-states-postgresql.sql
+else
+  #
+  # No usstates database found
+  #
+  echo "ERROR: The database '${DB}' has not yet been created. Create with the superuser and rerun."
+  exit 1
+fi
+
