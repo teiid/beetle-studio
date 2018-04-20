@@ -6,12 +6,16 @@ import { Dataservice } from "@dataservices/shared/dataservice.model";
 @Injectable()
 export class WizardService {
 
+  private static newlyAddedServiceWaitMillis = 5000;  // Wait of 5 sec
+
   private selectedConnectionTables: ConnectionTable[] = [];
   private edit = false;
   private currentConnections: Connection[] = [];
   private selectedDataservice: Dataservice;
   private selectedConnection: Connection;
   private connectionForSchemaRegen = "";
+  private newlyAddedDataservice = "";
+  private newlyAddedDataserviceCreateTime = 0;
 
   constructor() {
     // Nothing to do
@@ -170,6 +174,39 @@ export class WizardService {
    */
   public setConnectionIdForSchemaRegen(connectionName: string): void {
     this.connectionForSchemaRegen = connectionName !== null ? connectionName : "";
+  }
+
+  /**
+   * Get name of a newly added dataservice.  If the wait time after create has been exceeded,
+   * it is no longer considered a new service.
+   * @returns {string} the name of the newly added dataservice
+   */
+  public getNewlyAddedDataservice(): string {
+    // New service not set - just return
+    if (this.newlyAddedDataservice.length === 0) {
+      return this.newlyAddedDataservice;
+    }
+
+    // New service set - check wait time.  If wait time expired, reset name.
+    const waitSinceCreate = Date.now() - this.newlyAddedDataserviceCreateTime;
+    if (waitSinceCreate > WizardService.newlyAddedServiceWaitMillis) {
+      this.newlyAddedDataservice = "";
+    }
+    return this.newlyAddedDataservice;
+  }
+
+  /**
+   * Set the name of a newly added service.
+   * @param {string} dataserviceName the name of the newly added dataservice
+   */
+  public setNewlyAddedDataservice(dataserviceName: string): void {
+    // If non-empty name, set it the name and the creation time.
+    if (dataserviceName !== null && dataserviceName.length > 0) {
+      this.newlyAddedDataservice = dataserviceName;
+      this.newlyAddedDataserviceCreateTime = Date.now();
+    } else {
+      this.newlyAddedDataservice = "";
+    }
   }
 
   /**

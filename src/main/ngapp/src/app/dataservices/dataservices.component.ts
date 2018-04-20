@@ -64,7 +64,6 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   public readonly exportFailedHeader: string = "Publishing Failed:  ";
   public readonly connectionsLoadedTag = "connections";
 
-  public readonly downloadInProgressHeader: string = "Downloading:  ";
   public readonly downloadSuccessHeader: string = "Download Succeeded:  ";
   public readonly downloadFailedHeader: string = "Download Failed:  ";
 
@@ -702,6 +701,10 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
       // For displayed dataservices, update the Deployment State using supplied services
       for ( const dService of this.filteredDataservices ) {
         const serviceId = dService.getId();
+        // For newly added services, leave state alone until wait expires
+        if (serviceId === this.wizardService.getNewlyAddedDataservice()) {
+          continue;
+        }
         if (stateMap && stateMap.has(serviceId)) {
           dService.setServiceDeploymentState(stateMap.get(serviceId));
         }

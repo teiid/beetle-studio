@@ -432,6 +432,8 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     // Dataservice basic properties from step 1
     const dataservice: NewDataservice = this.dataserviceService.newDataserviceInstance(this.dataserviceName, this.dataserviceDescription);
 
+    // designate with wizard service that this dataservice is newly created.
+    this.wizardService.setNewlyAddedDataservice(this.dataserviceName);
     const self = this;
     this.dataserviceService
       .createDataserviceForSingleSourceTables(dataservice, this.tableSelector.getSelectedTables())
