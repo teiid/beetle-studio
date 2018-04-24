@@ -6,7 +6,7 @@ import { Dataservice } from "@dataservices/shared/dataservice.model";
 @Injectable()
 export class WizardService {
 
-  private static newlyAddedServiceWaitMillis = 5000;  // Wait of 5 sec
+  private static newlyAddedServiceWaitMillis = 10000;  // Wait of 10 sec
 
   private selectedConnectionTables: ConnectionTable[] = [];
   private edit = false;
