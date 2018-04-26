@@ -86,14 +86,16 @@
                                  (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
                                  (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
                                  (editDataservice)="onEdit($event)" (quickLookDataservice)="onQuickLook($event)"
-                                 (downloadDataservice)="onDownload($event)" (dataserviceSelected)="onSelected($event)"
-                                 (dataserviceDeselected)="onDeselected($event)"></app-dataservices-list>
+                                 (downloadDataservice)="onDownload($event)" (odataLookDataservice)="onOdataLook($event)"
+                                 (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)">
+          </app-dataservices-list>
           <app-dataservices-cards *ngIf="isCardLayout && hasDataservices" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
                                   (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
                                   (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
                                   (editDataservice)="onEdit($event)" (quickLookDataservice)="onQuickLook($event)"
-                                  (downloadDataservice)="onDownload($event)" (dataserviceSelected)="onSelected($event)"
-                                  (dataserviceDeselected)="onDeselected($event)"></app-dataservices-cards>
+                                  (downloadDataservice)="onDownload($event)" (odataLookDataservice)="onOdataLook($event)"
+                                  (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)">
+          </app-dataservices-cards>
         </div>
       </div>
       <div class="col-md-12 {{resultsAreaCss}}" *ngIf="showResults">
@@ -107,6 +109,17 @@
         <br>
         <app-sql-control [quicklook]="true" [selectedViews]="selectedViews" [serviceViews]="allServiceViews"
                                             [viewSql]="quickLookSql"></app-sql-control>
+      </div>
+      <div class="col-md-12 {{resultsAreaCss}}" *ngIf="showOdataEditor">
+        <hr class="dataservice-results-hr">
+        <div>
+          <div>
+            <span class="quicklook-title">Odata Results for Published Virtualization Service '{{ odataServiceName }}'</span>
+            <span class="pull-right fa fa-fw fa-close dataservice-results-action-icon-close" (click)="setOdataEditorPanelOpenState(false)"></span>
+          </div>
+          <br>
+          <app-odata-control [dataserviceName]="odataServiceName"></app-odata-control>
+        </div>
       </div>
     </div>
 

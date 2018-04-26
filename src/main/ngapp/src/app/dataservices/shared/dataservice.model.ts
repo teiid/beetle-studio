@@ -18,8 +18,10 @@
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
+import { VirtRoute } from "@dataservices/shared/virt-route.model";
 import { Identifiable } from "@shared/identifiable";
 import { SortDirection } from "@shared/sort-direction.enum";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 
 export class Dataservice implements Identifiable< string > {
 
@@ -230,6 +232,29 @@ export class Dataservice implements Identifiable< string > {
    */
   public get servicePublishFailed(): boolean {
     return this.getServicePublishState() === PublishState.FAILED;
+  }
+
+  /**
+   * Accessor to return the root of the odata url, ie.
+   * http://HOST/odata4/vdbName/
+   *
+   * @returns {string} the odata url for this dataaservice
+   */
+  public getOdataRootUrl(): string {
+    if (! this.servicePublished || ! this.virtualization) {
+      return null;
+    }
+
+    let route: VirtRoute = this.virtualization.getOdataRoute();
+    if (route == null) {
+      return null;
+    }
+
+    let proto = 'http';
+    if (route.isSecure())
+      proto = proto + 's';
+
+    return proto + '://' + route.getHost() + '/' + DataservicesConstants.ODATA_VERSION + '/' + this.getServiceVdbName();
   }
 
   /**

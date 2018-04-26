@@ -32,6 +32,7 @@ import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
+import { OdataControlComponent } from "@dataservices/odata-control/odata-control.component";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { LayoutType } from "@shared/layout-type.enum";
@@ -82,7 +83,9 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private cardListAreaCss = "dataservice-summary-top-area-no-results";
   private resultsAreaCss = "dataservice-summary-bottom-area-no-results";
   private resultsShowing = false;
+  private odataEditorShowing = false;
   private quickLookSvcName: string;
+  private odataSvcName: string;
   private quickLookQueryText: string;
 
   private allServices: Dataservice[] = [];
@@ -260,6 +263,23 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
       );
   }
 
+  public setOdataEditorPanelOpenState(openState: boolean): void {
+    if (openState) {
+      this.cardListAreaCss = "dataservice-summary-top-area-with-results";
+      this.resultsAreaCss = "dataservice-summary-bottom-area-with-results";
+
+      //
+      // Make the preview panel and odata panels mutually exclusive
+      //
+      this.resultsShowing = false;
+      this.odataEditorShowing = true;
+    } else {
+      this.cardListAreaCss = "dataservice-summary-top-area-no-results";
+      this.resultsAreaCss = "dataservice-summary-bottom-area-no-results";
+      this.odataEditorShowing = false;
+    }
+  }
+
   /**
    * Sets the open state of the quick look panel
    * @param {boolean} openState true if quick look panel is to be shown
@@ -268,6 +288,11 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     if (openState) {
       this.cardListAreaCss = "dataservice-summary-top-area-with-results";
       this.resultsAreaCss = "dataservice-summary-bottom-area-with-results";
+
+      //
+      // Make the preview panel and odata panels mutually exclusive
+      //
+      this.odataEditorShowing = false;
       this.resultsShowing = true;
     } else {
       this.cardListAreaCss = "dataservice-summary-top-area-no-results";
@@ -277,10 +302,26 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   /**
+   * Closes both the quick look and odate editor panels
+   * if either of them are open
+   */
+  public closeLookPanels(): void {
+    this.setQuickLookPanelOpenState(false);
+    this.setOdataEditorPanelOpenState(false);
+  }
+
+  /**
    * @returns {boolean} true if dataservice results panel is to be shown
    */
   public get showResults(): boolean {
     return this.resultsShowing;
+  }
+
+  /**
+   * @returns {boolean} true if dataservice odate editor panel is to be shown
+   */
+  public get showOdataEditor(): boolean {
+    return this.odataEditorShowing;
   }
 
   /**
@@ -361,6 +402,13 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   /**
+   * @returns {string} the odata service name
+   */
+  public get odataServiceName(): string {
+    return this.odataSvcName;
+  }
+
+  /**
    * @returns {string} the quick look service name
    */
   public get quickLookServiceName(): string {
@@ -394,7 +442,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
     selectedService.setServiceDeploymentState(DeploymentState.LOADING);
 
-    this.setQuickLookPanelOpenState(false);
+    this.closeLookPanels();
 
     const self = this;
     // Start the deployment and then redirect to the dataservice summary page
@@ -417,7 +465,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.selectedSvcViews = [];
     this.selectedSvcViews.push(this.allServiceViews[0]);
 
-    this.setQuickLookPanelOpenState(false);
+    this.closeLookPanels();
 
     const link: string[] = [ DataservicesConstants.testDataservicePath ];
     this.logger.debug("[DataservicesPageComponent] Navigating to: %o", link);
@@ -431,7 +479,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
    * @param {string} svcName
    */
   public onDownload(svcName: string): void {
-      this.setQuickLookPanelOpenState(false);
+      this.closeLookPanels();
 
       this.exportNotificationHeader = this.exportInProgressHeader;
       this.exportNotificationMessage = "Downloading " + svcName + "...";
@@ -461,7 +509,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
     const virtual: Virtualization = new Virtualization(selectedService.getServiceVdbName(), PublishState.PUBLISHING);
     selectedService.setServiceVirtualization(virtual);
-    this.setQuickLookPanelOpenState(false);
+    this.closeLookPanels();
 
     this.exportNotificationHeader = this.exportInProgressHeader;
     this.exportNotificationMessage = "Publishing " + svcName + "...";
@@ -492,7 +540,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
    * @param {string} svcName
    */
   public onDelete(svcName: string): void {
-    this.setQuickLookPanelOpenState(false);
+    this.closeLookPanels();
 
     this.dataserviceNameForDelete = svcName;
 
@@ -534,7 +582,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
     this.dataserviceService.setSelectedDataservice(selectedService);
 
-    this.setQuickLookPanelOpenState(false);
+    this.closeLookPanels();
 
     // Sets the selected dataservice and edit mode before transferring
     this.wizardService.setSelectedDataservice(selectedService);
@@ -563,15 +611,35 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
       this.setQuickLookPanelOpenState(true);
     }
     this.setQuickLookResults(svcName);
-    this.sqlControlComponent.queryText = this.quickLookQueryText;
-    this.sqlControlComponent.submitCurrentQuery();
+
+    //
+    // Not available until opened
+    //
+    if (this.sqlControlComponent) {
+      this.sqlControlComponent.queryText = this.quickLookQueryText;
+      this.sqlControlComponent.submitCurrentQuery();
+    }
+  }
+
+  /*
+   * Handle showing the Odata QuickLook panel for the specified Dataservice
+   */
+  public onOdataLook(svcName: string): void {
+    const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
+    this.dataserviceService.setSelectedDataservice(selectedService);
+
+    if (!this.odataEditorShowing) {
+      this.setOdataEditorPanelOpenState(true);
+    }
+
+    this.setOdataServiceName(svcName);
   }
 
   /**
    * Set the layout to list type
    */
   public setListLayout(): void {
-    this.setQuickLookPanelOpenState(false);
+    this.closeLookPanels();
     this.appSettingsService.dataservicesPageLayout = LayoutType.LIST;
   }
 
@@ -579,7 +647,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
    * Set the layout to card type
    */
   public setCardLayout(): void {
-    this.setQuickLookPanelOpenState(false);
+    this.closeLookPanels();
     this.appSettingsService.dataservicesPageLayout = LayoutType.CARD;
   }
 
@@ -748,5 +816,14 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private setQuickLookResults(svcName): void {
      this.quickLookSvcName = svcName;
   }
+
+  /*
+   * Update odata editor using the supplied dataservice
+   * @param {string} svcName the dataservice name
+   */
+  private setOdataServiceName(svcName): void {
+     this.odataSvcName = svcName;
+  }
+
 
 }

@@ -49,7 +49,11 @@ import { DataserviceCardComponent } from "./dataservices-cards/dataservice-card/
 import { SelectedNodeComponent } from "./selected-node/selected-node.component";
 import { SelectedNodesListComponent } from "./selected-nodes-list/selected-nodes-list.component";
 import { SqlControlComponent } from "./sql-control/sql-control.component";
+import { OdataControlComponent } from "./odata-control/odata-control.component";
 import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.component";
+import { BsDropdownModule } from 'ngx-bootstrap';
+import { AccordionModule } from 'ngx-bootstrap';
+import { TooltipModule } from 'ngx-bootstrap';
 
 @NgModule({
   imports: [
@@ -62,7 +66,10 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
     RouterModule,
     PatternFlyNgModule,
     CodemirrorModule,
-    TreeModule
+    TreeModule,
+    BsDropdownModule.forRoot(),
+    AccordionModule.forRoot(),
+    TooltipModule.forRoot()
   ],
   declarations: [
     DataservicesDetailsComponent,
@@ -75,6 +82,8 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
     TestDataserviceComponent,
     SqlControlComponent,
     SelectedNodeComponent,
+    SelectedTableComponent,
+    OdataControlComponent,
     DataserviceCardComponent,
     ConnectionSchemaTreeComponent,
     SelectedNodesListComponent,

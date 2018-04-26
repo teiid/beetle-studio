@@ -1,0 +1,186 @@
+.help-label {
+  color: #0088ce;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+.custom-tooltip {
+  width: 20em;
+}
+
+.custom-tooltip .tooltip-inner {
+  background: transparent linear-gradient(to top, #ececec 50%, #d1d1d1 100%) repeat scroll 0% 0%;
+  color: black;
+  font-style: oblique;
+}
+
+.custom-tooltip .tooltip-arrow {
+  background-color: #ececec;
+}
+
+.odata-editor {
+  font-weight: bold;
+  margin-top: 1em;
+}
+
+#odata-endpoint-url {
+  font-weight: bold;
+  padding-right: 0.25em;
+  margin-bottom: 1em;
+}
+
+#odata-endpoint-url label {
+  font-weight: bold;
+  padding-left: 0;
+  padding-right: 1em;
+  width: auto;
+}
+
+#odata-endpoint-url input {
+  background: #ededed;
+  background: -webkit-linear-gradient(white, #ededed);
+  background: -o-linear-gradient(white, #ededed);
+  background: -moz-linear-gradient(white, #ededed);
+  background: linear-gradient(white, #ededed);
+}
+
+#odata-query-button {
+  float: left;
+  width: 10%;
+  margin-left: 5em;
+}
+
+#odata-control-panel {
+  clear: both;
+}
+
+.odata-control-panel-title {
+  font-weight: bold;
+  display: inline-block;
+  margin-right: 0.5em;
+}
+
+.odata-control-panel-title-help {
+  margin-right: 1em;
+  margin-top: 0.15em;
+  font-size: 12px;
+}
+
+.odata-controls .panel-title {
+  font-weight: bold;
+  height: 1em;
+}
+
+.odata-exp-column-group {
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+.odata-exp-column-group-row {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.odata-exp-select-group,
+.odata-exp-column-group-row label,
+.odata-exp-where-group-row,
+.odata-exp-order-by-group-row,
+.odata-exp-order-by-group-row label,
+.odata-exp-order-by-group-row-label label {
+  font-weight: bold;
+}
+
+.odata-exp-where-group-row {
+  padding-top: 0.25em;
+  padding-left: 0.25em !important;
+  padding-right: 0.25em !important;
+}
+
+.odata-exp-where-group .ui-select-toggle,
+.odata-exp-select-group .ui-select-toggle {
+  background-color: white;
+  background-image: -webkit-linear-gradient(top, #ffffff 0%, #ffffff 100%);
+  background-image: -o-linear-gradient(top, #ffffff 0%, #ffffff 100%);
+  background-image: linear-gradient(to bottom, #ffffff 0%, #ffffff 100%);
+}
+
+#odata-exp-where-group-buttons button {
+  padding-left: 5%;
+  padding-right: 1%;
+}
+
+.odata-form-control {
+  color: #000000;
+  background-color: #FFFFFB;
+  border: 2px outset #FCFFFF;
+  font-weight: bold;
+  width: 100%;
+}
+
+.odata-exp-order-by-group-row-label {
+  padding-left: 0;
+  width: 30%;
+  word-wrap: break-word;
+}
+
+.odata-form-where-add-btn {
+  background-color: transparent;
+  border: none;
+  color: black;
+}
+
+.odata-form-where-remove-btn {
+  background-color: transparent;
+  border: none;
+  color: red;
+}
+
+.odata-exp-where-error-msg {
+  color: red;
+  font-style: italic;
+  font-weight: bold;
+}
+
+#odata-results-type {
+  float: right;
+  margin-bottom: 0.5em;
+}
+
+#odata-results-table {
+  clear: both;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 2em;
+  position: relative;
+}
+
+.odata-results-table-grid {
+  font-weight: lighter;
+}
+
+#odata-search-progress-spinner {
+  font-style: italic;
+  text-align: center;
+  margin-top: 10em;
+}
+
+.odata-results-msg-error {
+  color: red;
+  font-style: italic;
+  font-weight: bold;
+  padding-left: 7em;
+}
+
+.odata-results-msg-info {
+  color: green;
+  font-style: italic;
+  font-weight: bold;
+  padding-left: 7em;
+}
+
+#odata-metadata-fetch-failure {
+  color: red;
+  font-style: italic;
+  font-weight: bold;
+  padding-left: 7em;
+}

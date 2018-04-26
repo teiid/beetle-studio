@@ -83,7 +83,8 @@
                                                           activateActionTemplate,
                                                           publishActionTemplate,
                                                           downloadActionTemplate,
-                                                          deleteActionTemplate )"
+                                                          deleteActionTemplate,
+                                                          odataLookActionTemplate )"
                          (onActionSelect)="handleAction($event, item)">
               <ng-template #editActionTemplate let-action="action">
                 <span class="fa fa-edit">&nbsp;</span>{{ action.title }}
@@ -105,6 +106,9 @@
               </ng-template>
               <ng-template #deleteActionTemplate let-action="action">
                 <span class="fa fa-trash-o">&nbsp;</span>{{ action.title }}
+              </ng-template>
+              <ng-template #odataLookActionTemplate let-action="action">
+                <span class="odata-list-icon">&nbsp;</span>
               </ng-template>
             </pfng-action>
           </ng-template>

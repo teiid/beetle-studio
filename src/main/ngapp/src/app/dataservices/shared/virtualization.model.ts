@@ -16,6 +16,7 @@
  */
 
 import { PublishState } from "@dataservices/shared/publish-state.enum";
+import { VirtRoute } from "@dataservices/shared/virt-route.model";
 
 /**
  * Virtualization model
@@ -30,6 +31,7 @@ export class Virtualization {
   private namespace: string;
   private last_updated: string;
   private publishState: PublishState;
+  private virtRoutes: Array<VirtRoute>;
 
   /**
    * @param {Object} json the JSON representation of a Virtualization
@@ -104,12 +106,39 @@ export class Virtualization {
     return this.publishState;
   }
 
+  public getOdataRoute(): VirtRoute {
+    if (! this.virtRoutes) {
+      return null;
+    }
+
+    for ( const virtRoute of this.virtRoutes ) {
+      if (virtRoute.isOdata())
+        return virtRoute;
+    }
+
+    return null;
+  }
+
   /**
    * Set all object values using the supplied Virtualization json
    * @param {Object} values
    */
   public setValues(values: object = {}): void {
     Object.assign(this, values);
+
+    if (values['routes']) {
+      let routes = values['routes'];
+      for (let i = 0; i < routes.length; ++i) {
+        let route = routes[i];
+        let virtRoute = VirtRoute.create(route);
+        if (!this.virtRoutes) {
+          this.virtRoutes = [];
+        }
+
+        this.virtRoutes.push(virtRoute);
+      }
+    }
+
     if (this.build_status) {
       if (this.build_status === "BUILDING" || this.build_status === "DEPLOYING") {
         this.publishState = PublishState.PUBLISHING;

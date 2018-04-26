@@ -78,6 +78,13 @@
             data-placement="right"
             title="Edit">
       </span>
+      <span *ngIf="dataservice.servicePublished"
+            class="pull-right odata-card-icon card-action-icon"
+            (click)="onClick(odataLookEvent)"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Odata Preview">
+      </span>
 
       <span class="pull-left fa fa-cogs fa-2x card-action-icon"
             style="color:grey;"

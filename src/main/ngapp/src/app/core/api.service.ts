@@ -23,6 +23,7 @@ import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
 import { ErrorObservable } from "rxjs/observable/ErrorObservable";
+import * as X2JS from 'x2js';
 
 export abstract class ApiService {
 
@@ -59,6 +60,61 @@ export abstract class ApiService {
     return this.appSettings.getKomodoUserWorkspacePath();
   }
 
+  protected isXML(xml: string): boolean {
+    try {
+      const parser = new X2JS();
+      const xmlDoc = parser.xml2js(xml); //is valid XML
+      return xmlDoc != null;
+    } catch (err) {
+      // was not XML
+      return false;
+    }
+  }
+
+  protected tryXMLParse(xml: string): any {
+    try {
+      const parser = new X2JS();
+      const xmlDoc = parser.xml2js(xml); //is valid XML
+      return xmlDoc;
+    } catch (err) {}
+
+    return null;
+  }
+
+  protected tryNumberParse(jsonString: string): number {
+    try {
+      var n = parseInt(jsonString);
+      if (n && typeof n === "number") {
+        return n;
+      }
+    } catch (e) {}
+
+    return null;
+  }
+
+  /**
+   * Try to parse the given string and if parseable
+   * then return the object
+   */
+  protected tryJsonParse (jsonString: string): any {
+    try {
+      var o = JSON.parse(jsonString);
+
+      // Handle non-exception-throwing cases:
+      // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+      // but... JSON.parse(null) returns null, and typeof null === "object",
+      // so we must check for that, too. Thankfully, null is falsey, so this suffices:
+      if (o && typeof o === "object") {
+        return o;
+      }
+    } catch (e) {}
+
+    return null;
+  }
+
+  /**
+   * @returns true if the item is parseable
+   */
   protected isJSON(item: string): boolean {
     item = typeof item !== "string" ? JSON.stringify(item) : item;
 

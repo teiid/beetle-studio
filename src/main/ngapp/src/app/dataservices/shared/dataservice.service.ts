@@ -40,6 +40,7 @@ import { Observable } from "rxjs/Observable";
 import { ReplaySubject } from "rxjs/ReplaySubject";
 import { Subject } from "rxjs/Subject";
 import { Subscription } from "rxjs/Subscription";
+import * as _ from "lodash";
 
 @Injectable()
 export class DataserviceService extends ApiService {
@@ -481,6 +482,55 @@ export class DataserviceService extends ApiService {
         return new QueryResults(queryResults);
       })
       .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Query a Dataservice's published virtualization using odata protocol
+   * @param {string} url the odata url string
+   * @returns {Observable<any>}
+   */
+  public odataGet(url: string): Observable<any> {
+    return this.http
+      .get(url, this.getAuthRequestOptions())
+      .map((response) => {
+        const data = response.text();
+        let jobj = this.tryJsonParse(data);
+        if (_.isObject(jobj)) {
+          return jobj;
+        } else if (this.isXML(data)) {
+          // convert the data to JSON and provide
+          // it to the success function below
+          let json = this.tryXMLParse(data);
+          return json;
+        }
+
+        if (_.isEqual(data, "0")) {
+          //
+          // corner-case where $count is used
+          // and there are no results
+          //
+          return {
+            count: 0
+          };
+        }
+
+        let n = this.tryNumberParse(data);
+        if (n) {
+          return {
+            count: n
+          };
+        }
+
+        if (typeof response === 'string' || response instanceof String) {
+          return {
+            value: response
+          };
+        }
+
+        return {
+          error: 'Error: Request to ' + url + " produces an unexpected response: " + data
+        };
+      }).catch((error) => this.handleError(error));
   }
 
   /**

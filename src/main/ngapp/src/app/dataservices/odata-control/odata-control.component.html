@@ -1,0 +1,192 @@
+<div class="row">
+  <div class="col-sm-12 odata-editor" [hidden]="!hasOdataAttributes">
+    <div id="odata-endpoint-url" class="row col-sm-8">
+      <label class="control-label col-sm-1" for="test-page-url-path">{{i18n.urlPath}}</label>
+      <label class="help-label col-sm-1">
+        <span class="fa fa-info-circle"
+              tooltip="{{i18n.help_endpointSubmit}}"
+              containerClass="custom-tooltip" container="body"></span>
+      </label>
+      <input id="test-page-url-path" type="text" readonly="true" value="{{endPointUrl}}" class="col-sm-11">
+    </div>
+
+    <div id="odata-query-button">
+      <button class="btn btn-primary" type="button" title="Submit" (click)="submitQuery()" [disabled]="! canQuery">
+        {{i18n.runQueryAction}}
+	      <span class="fa fa-fw fa-search"></span>
+	    </button>
+    </div>
+  </div>
+
+  <div id="odata-control-panel" class="col-sm-4" [hidden]="!hasOdataAttributes">
+    <accordion [closeOthers]="false" class="odata-controls">
+      <!-- -->
+      <!-- -->
+      <!-- Select Group -->
+      <!-- -->
+      <!-- -->
+      <accordion-group [isOpen]="true">
+        <div accordion-heading>
+          <div class="pull-left odata-control-panel-title">{{i18n.Select}}</div>
+          <div class="pull-left odata-control-panel-title-help">
+            <label class="help-label">
+              <span class="fa fa-info-circle" tooltip="{{i18n.help_select}}"
+        	                                    containerClass="custom-tooltip" container="body"></span>
+            </label>
+          </div>
+        </div>
+        <form name="odata-exp-select" role="form">
+          <div class="odata-exp-select-group">
+            <div class="col-xs-7">
+              <select id="selectView" class="form-control" name="entity" [(ngModel)]="entity">
+                <option *ngFor="let e of entities" [value]="e">{{e.name}}</option>
+              </select>
+            </div>
+
+            <div class="col-xs-5">
+              <select id="selectLimit" class="form-control" name="limit" [(ngModel)]="limit">
+                <option *ngFor="let lim of limits" [value]="lim">{{lim}}</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </accordion-group>
+      <!-- -->
+      <!-- -->
+      <!-- Column Group -->
+      <!-- -->
+      <!-- -->
+      <accordion-group>
+        <div accordion-heading>
+          <div class="pull-left odata-control-panel-title">{{i18n.Columns}}</div>
+          <div class="pull-left odata-control-panel-title-help">
+            <label class="help-label">
+	             <span class="fa fa-info-circle" tooltip="{{i18n.help_columns}}"
+	                                             containerClass="custom-tooltip" container="body"></span>
+	          </label>
+          </div>
+        </div>
+        <form name="odata-exp-columns" role="form">
+          <div class="form-group odata-exp-column-group" *ngFor="let column of columns">
+            <div class="odata-exp-column-group-row checkbox">
+              <label>
+                <input type="checkbox" value=""
+	                [checked]="isColumnSelected(column.name)"
+	                (change)="updateColumnSelection($event.target.checked, column)">{{column.name}}
+	            </label>
+            </div>
+          </div>
+        </form>
+      </accordion-group>
+      <!-- -->
+      <!-- -->
+      <!-- Where Group -->
+      <!-- -->
+      <!-- -->
+      <accordion-group [isOpen]="odata.hasWhere">
+        <div accordion-heading>
+          <div class="pull-left odata-control-panel-title" >{{i18n.Where}}</div>
+          <div class="pull-left odata-control-panel-title-help">
+            <label class="help-label">
+	            <span class="fa fa-info-circle" tooltip="{{i18n.help_where}}"
+	                                            containerClass="custom-tooltip" container="body"></span>
+	          </label>
+          </div>
+        </div>
+        <form name="odata-exp-where" role="form">
+          <div class="form-group odata-exp-where-group" *ngFor="let where of wheres;let i = index">
+            <div class="col-xs-4 odata-exp-where-group-row">
+              <select class="form-control" name="where-column-{{i}}" [(ngModel)]="where.column" (change)="onWhereColumnSelected(where)">
+                <option *ngFor="let column of columns" [ngValue]="column">{{column.name}}</option>
+              </select>
+            </div>
+            <div class="col-xs-4 odata-exp-where-group-row" [hidden]="where.error">
+              <select class="form-control" name="where-condition-{{i}}" [(ngModel)]="where.condition">
+                <option *ngFor="let condition of whereConditions(where)" [value]="condition">{{condition}}</option>
+              </select>
+            </div>
+            <div class="col-xs-3 odata-exp-where-group-row" [hidden]="where.error">
+              <input type="text" class="odata-form-control" [(ngModel)]="where.value" name="where-value-{{i}}" placeholder="{{i18n.valuePlaceholder}}" />
+            </div>
+
+            <div id="odata-exp-where-group-buttons" class="col-xs-1 odata-exp-where-group-row">
+              <button type="button" class="odata-form-where-remove-btn" (click)="onRemoveWhereClicked(where)">
+	              <span class="glyphicon glyphicon-minus"></span>
+	            </button>
+              <button type="button" class="odata-form-where-add-btn" (click)="onAddWhereClicked()">
+                <span class="glyphicon glyphicon-plus"></span>
+              </button>
+            </div>
+
+            <div class="odata-exp-where-error-msg">
+              {{where.error}}
+            </div>
+          </div>
+        </form>
+      </accordion-group>
+      <!-- -->
+      <!-- -->
+      <!-- Order by Group -->
+      <!-- -->
+      <!-- -->
+      <accordion-group>
+        <div accordion-heading>
+          <div class="pull-left odata-control-panel-title">{{i18n.OrderBy}}</div>
+          <div class="pull-left odata-control-panel-title-help">
+            <label class="help-label">
+	            <span class="fa fa-info-circle" tooltip="{{i18n.help_orderBy}}"
+	                  containerClass="custom-tooltip" container="body"></span>
+	          </label>
+          </div>
+        </div>
+        <form name="odata-exp-order-by" role="form">
+          <div class="form-group odata-exp-order-by-group" *ngFor="let column of columns">
+            <div class="odata-exp-order-by-group-row form-group">
+              <div class='odata-exp-order-by-group-row-label radio-inline'>
+                <label>{{column.name}}</label>
+              </div>
+              <label class="radio-inline">
+	              <input type="radio" name="{{column.name}}-sort-option" value="" [(ngModel)]="column.sort">
+	              {{i18n.NoSortChoice}}
+	            </label>
+              <label class="radio-inline">
+	              <input type="radio" name="{{column.name}}-sort-option" value="asc" [(ngModel)]="column.sort">
+	              {{i18n.AscendingChoice}}
+	            </label>
+              <label class="radio-inline">
+	              <input type="radio" name="{{column.name}}-sort-option" value="desc" [(ngModel)]="column.sort">
+	              {{i18n.DescendingChoice}}
+	            </label>
+            </div>
+          </div>
+        </form>
+      </accordion-group>
+    </accordion>
+  </div>
+
+  <div class="col-sm-8" [hidden]="!hasOdataAttributes || !showResultsTable">
+    <div id="odata-results-table">
+      <pfng-table class="odata-results-table-grid"
+                  [columns]="resultColumns"
+                  [config]="resultTableConfig"
+                  [rows]="resultRows"
+                  (onPageNumberChange)="handlePageNumber($event)"
+                  (onPageSizeChange)="handlePageSize($event)">
+      </pfng-table>
+    </div>
+  </div>
+
+	<div id="odata-results-msg" class="col-sm-8" [hidden]="!hasOdataAttributes || searchMsg == null">
+	  <h3 [ngClass]="searchMsgClasses">{{searchMsg}}</h3>
+	</div>
+
+	<!-- Show spinner while searching -->
+	<div id="odata-search-progress-spinner" class="col-md-8" [hidden]="!searchInProgress">
+    <div class="spinner spinner-lg spinner-inline"></div>
+    {{i18n.runningOdataQuery}}
+	</div>
+
+	<div id="odata-metadata-fetch-failure" class="col-sm-12" [hidden]="hasOdataAttributes">
+	  <h3>{{i18n.metadataFetchFailure}}</h3>
+	</div>
+</div>
