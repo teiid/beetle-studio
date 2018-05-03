@@ -36,9 +36,9 @@ import { Observable } from "rxjs/Observable";
 @Injectable()
 export class MockVdbService extends VdbService {
 
-  private vdbs: Vdb[];
-  private statuses: VdbStatus[];
-  private virtualizations: Virtualization[];
+  private readonly vdbs: Vdb[];
+  private readonly statuses: VdbStatus[];
+  private readonly virtualizations: Virtualization[];
 
   constructor(http: Http, appSettings: AppSettingsService, notifierService: NotifierService, logger: LoggerService ) {
     super(http, appSettings, notifierService, logger);

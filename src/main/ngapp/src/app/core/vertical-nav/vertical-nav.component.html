@@ -1,6 +1,7 @@
 <div id="verticalNavLayout" class="layout-pf layout-pf-fixed vertical-navbar-layout" style="background-color: white;">
   <pfng-vertical-navigation
     [brandSrc]="'assets/vdb.png'"
+    [contentContainer]="contentContainer"
     [title]="'Beetle Studio'"
     [brandAlt]="'Beetle Studio'"
     [persistentSecondary]="false"
@@ -26,6 +27,13 @@
         </li>
       </ul>
     </div>
-    <div class=""></div>
+    <!--<div class=""></div>-->
   </pfng-vertical-navigation>
+  <div #contentContainer class="app-feature-content container-fluid container-pf-nav-pf-vertical">
+    <div class="row">
+      <div class="col-sm-12">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
 </div>

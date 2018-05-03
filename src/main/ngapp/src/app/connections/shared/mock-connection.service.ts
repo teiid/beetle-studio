@@ -38,7 +38,7 @@ import { Observable } from "rxjs/Observable";
 export class MockConnectionService extends ConnectionService {
 
   private connections: Connection[];
-  private serviceCatalogSources: ServiceCatalogSource[];
+  private readonly serviceCatalogSources: ServiceCatalogSource[];
   private connectionTableMap = new Map<string, ConnectionTable[]>();
   private testDataService: TestDataService;
 

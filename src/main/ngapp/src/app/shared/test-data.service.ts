@@ -941,8 +941,8 @@ export class TestDataService {
   ];
 
   private connectionTableMap = new Map<string, ConnectionTable[]>();
-  private vdbStatuses: VdbStatus[];
-  private virtualizations: Virtualization[];
+  private readonly vdbStatuses: VdbStatus[];
+  private readonly virtualizations: Virtualization[];
 
   /**
    * Create a ServiceCatalogSource using the specified info

@@ -22,7 +22,7 @@ import { PublishState } from "@dataservices/shared/publish-state.enum";
  */
 export class Virtualization {
 
-  private vdb_name: string;
+  private readonly vdb_name: string;
   private build_name: string;
   private deployment_name: string;
   private build_status: string; /* NOTFOUND, BUILDING, DEPLOYING, RUNNING, FAILED, CANCELLED */

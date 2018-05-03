@@ -29,7 +29,7 @@ export abstract class ApiService {
   protected appSettings: AppSettingsService;
   protected logger: LoggerService;
 
-  constructor( appSettings: AppSettingsService, logger: LoggerService) {
+  protected constructor( appSettings: AppSettingsService, logger: LoggerService) {
     this.appSettings = appSettings;
     this.logger = logger;
   }

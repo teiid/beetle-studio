@@ -34,7 +34,7 @@ export abstract class AbstractPageComponent implements OnInit {
    * @param {ActivatedRoute} route
    * @param {LoggerService} logger the logging service
    */
-  constructor(route: ActivatedRoute, logger: LoggerService) {
+  protected constructor(route: ActivatedRoute, logger: LoggerService) {
     this.route = route;
     this.logger = logger;
   }
