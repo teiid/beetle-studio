@@ -36,6 +36,8 @@ export class ConnectionsConstants {
   public static readonly connectionTypeDescription_mongodb = "MongoDB database";
   public static readonly connectionTypeDescription_mariadb = "MariaDB database";
 
+  public static readonly schemaNodeType_connection = "connection";
+
   public static readonly includeConnectionParameter = "include-connection";
   public static readonly includeSchemaStatusParameter = "include-schema-status";
 

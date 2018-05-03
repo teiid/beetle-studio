@@ -16,20 +16,20 @@
  */
 
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
-import { ConnectionTable } from "@connections/shared/connection-table.model";
-import { Column } from "@dataservices/selected-table/column";
+import { SchemaNode } from "@connections/shared/schema-node.model";
+import { Column } from "@dataservices/selected-node/column";
 import { CardAction, CardConfig, TableConfig, TableEvent } from "patternfly-ng";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
-  selector: "app-selected-table",
-  templateUrl: "./selected-table.component.html",
-  styleUrls: ["./selected-table.component.css"]
+  selector: "app-selected-node",
+  templateUrl: "./selected-node.component.html",
+  styleUrls: ["./selected-node.component.css"]
 })
-export class SelectedTableComponent implements OnInit {
+export class SelectedNodeComponent implements OnInit {
 
-  @Input() public table: ConnectionTable;
-  @Output() public selectionListTableRemoved: EventEmitter<ConnectionTable> = new EventEmitter<ConnectionTable>();
+  @Input() public node: SchemaNode;
+  @Output() public selectionNodeRemoved: EventEmitter<SchemaNode> = new EventEmitter<SchemaNode>();
 
   public config: CardConfig;
   public columnDefinitions: any[];
@@ -100,8 +100,8 @@ export class SelectedTableComponent implements OnInit {
   }
 
   public onRemove(): void {
-    this.table.selected = false;
-    this.selectionListTableRemoved.emit(this.table);
+    this.node.selected = false;
+    this.selectionNodeRemoved.emit(this.node);
   }
 
 }

@@ -25,10 +25,9 @@ import {
 import { FormControl, FormGroup } from "@angular/forms";
 import { AbstractControl } from "@angular/forms";
 import { Router } from "@angular/router";
-import { ConnectionTable } from "@connections/shared/connection-table.model";
-import { Connection } from "@connections/shared/connection.model";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { LoggerService } from "@core/logger.service";
-import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
+import { ConnectionNodeSelectorComponent } from "@dataservices/connection-node-selector/connection-node-selector.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
@@ -48,7 +47,7 @@ import { WizardConfig } from "patternfly-ng";
 })
 export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
 
-  public emptyConnection = new Connection(); // a bogus connection used in drop down to give instructions
+  public emptyConnectionName = " -- select a connection -- "; // a bogus connection used in drop down to give instructions
   public readonly selectConnectionErrorMsg = "A connection must be selected";
 
   // Wizard Config
@@ -73,9 +72,9 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   public step2bConfig: WizardStepConfig;
 
   @ViewChild("wizard") public wizard: WizardComponent;
-  @ViewChild(ConnectionTableSelectorComponent) public tableSelector: ConnectionTableSelectorComponent;
+  @ViewChild(ConnectionNodeSelectorComponent) public nodeSelector: ConnectionNodeSelectorComponent;
 
-  public selectedConnection: Connection;
+  public selectedConnectionName: string;
   public nameValidationError = "";
   private dataserviceService: DataserviceService;
   private notifierService: NotifierService;
@@ -95,8 +94,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     this.wizardService = wizardService;
     this.router = router;
     this.logger = logger;
-    this.emptyConnection.setId( " -- select a connection -- " );
-    this.selectedConnection = this.emptyConnection;
+    this.selectedConnectionName = this.emptyConnectionName;
 
     this.createBasicPropertyForm();
   }
@@ -217,10 +215,10 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
    * Step 1 instruction message
    */
   public get step1InstructionMessage(): string {
-    if (!this.tableSelector.valid) {
-      return "Please select tables for the Data virtualization";
+    if (!this.nodeSelector.valid) {
+      return "Please select sources for the Data virtualization";
     } else {
-      return "Select tables, then click Next to continue";
+      return "To select a source, select a tree node and click the arrow.  Then click Next to continue";
     }
   }
 
@@ -231,7 +229,7 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     if (this.wizardService.isEdit()) {
       return "Review selections.  Click Update to update the Virtualization";
     }
-    return "Enter a name, select a connection, and review the table selections. Click Create to create the Virtualization";
+    return "Enter a name, select a connection, and review the source selections. Click Create to create the Virtualization";
   }
 
   /*
@@ -331,54 +329,56 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * @returns {ConnectionTable[]} the selected connection tables
+   * @returns {SchemaNode[]} the selected connection nodes
    */
-  public get dataserviceSourceTables(): ConnectionTable[] {
-    return this.tableSelector.getSelectedTables();
+  public get dataserviceSourceNodes(): SchemaNode[] {
+    return this.nodeSelector.getSelectedNodes();
   }
 
   /**
    *
-   * @returns {Connection[]} the selected source table connections
+   * @returns {string[]} the selected source node connection names
    */
-  public get sourceTableConnections(): Connection[] {
-    const tables = this.tableSelector.getSelectedTables();
-    const connections: Connection[] = [];
+  public get sourceNodeConnectionNames(): string[] {
+    const schemaNodes = this.nodeSelector.getSelectedNodes();
+    const connectionNames: string[] = [];
 
-    for ( const table of tables ) {
-      const connection = table.getConnection();
+    for ( const node of schemaNodes ) {
+      const connectionName = node.getConnectionName();
 
-      if ( connections.indexOf( connection) === -1 ) {
-        connections.push( connection );
+      if ( connectionNames.indexOf( connectionName) === -1 ) {
+        connectionNames.push( connectionName );
       }
     }
 
-    return connections;
+    return connectionNames;
   }
 
   public selectedConnectionChanged( $event ): void {
     // since the dropdown has a dummy first element subtract 1
     const index = $event.target.selectedIndex - 1;
-    this.selectedConnection = this.sourceTableConnections[ index ];
+    this.selectedConnectionName = this.sourceNodeConnectionNames[ index ];
     this.updatePage2aValidStatus();
   }
 
-  public shouldCheck( table: ConnectionTable ): boolean {
-    return ( this.selectedConnection && ( table.getConnection() === this.selectedConnection ) );
+  public shouldCheck( node: SchemaNode ): boolean {
+    return ( this.selectedConnectionName
+          && this.selectedConnectionName !== null
+          && this.selectedConnectionName === node.getConnectionName() );
   }
 
   /**
    * @returns {boolean} `true` if a connection has been selected
    */
   public hasSelectedConnection(): boolean {
-    return ( this.selectedConnection != null ) && ( this.selectedConnection !== this.emptyConnection );
+    return ( this.selectedConnectionName != null ) && ( this.selectedConnectionName !== this.emptyConnectionName );
   }
 
   /**
    * Updates the page1 status
    */
   public updatePage1ValidStatus( ): void {
-    this.step1Config.nextEnabled = this.tableSelector.valid();
+    this.step1Config.nextEnabled = this.nodeSelector.valid();
   }
 
   /**
@@ -436,7 +436,9 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
     this.wizardService.setNewlyAddedDataservice(this.dataserviceName);
     const self = this;
     this.dataserviceService
-      .createDataserviceForSingleSourceTables(dataservice, this.tableSelector.getSelectedTables())
+      .createDataserviceForSingleSourceTables(dataservice,
+                                              this.nodeSelector.getSelectedNodes(),
+                                              this.nodeSelector.getConnectionsForSelectedNodes())
       .subscribe(
         (wasSuccess) => {
           self.setFinalPageComplete(wasSuccess);
@@ -459,7 +461,9 @@ export class AddDataserviceWizardComponent implements OnInit, OnDestroy {
 
     const self = this;
     this.dataserviceService
-      .updateDataserviceForSingleSourceTables(dataservice, this.tableSelector.getSelectedTables())
+      .updateDataserviceForSingleSourceTables(dataservice,
+                                              this.nodeSelector.getSelectedNodes(),
+                                              this.nodeSelector.getConnectionsForSelectedNodes())
       .subscribe(
         (wasSuccess) => {
           self.setFinalPageComplete(wasSuccess);

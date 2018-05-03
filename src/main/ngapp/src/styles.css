@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import "~angular-tree-component/dist/angular-tree-component.css";
 @import "~codemirror/lib/codemirror.css";
 @import "~codemirror/theme/mdn-like.css";
 @import "~patternfly/dist/css/patternfly.css";
@@ -319,4 +320,48 @@
 .wizard-pf-steps-indicator {
   height: 75px;
   padding: 0;
+}
+
+/**************************************************************/
+/*                    Schema Tree Types                       */
+/**************************************************************/
+.object-tree .node-content-wrapper, .tree-children {
+  position: relative;
+}
+
+.object-tree .node-content-wrapper::before, .tree-children::after {
+  content: "";
+  position: absolute;
+}
+
+.object-tree .node-content-wrapper::before {
+  border-bottom: 1px solid lightgrey;
+  border-left: 1px solid lightgrey;
+  height: 28px;
+  top: -17px;
+  width: 20px;
+  left: -28px;
+}
+
+.object-tree .tree-node-level-1 > tree-node-wrapper > .node-wrapper > .node-content-wrapper::before {
+  display: none;
+}
+
+.object-tree .tree-node-leaf > .node-wrapper > .node-content-wrapper::before {
+  width: 25px;
+}
+
+.object-tree .tree-children::after {
+  border-left: 1px solid lightgrey;
+  height: 100%;
+  top: -15px;
+  left: -15px;
+}
+
+.object-tree .tree-node:last-child > .tree-node > .tree-children::after {
+  border-left: none;
+}
+
+.object-tree .toggle-children {
+  z-index: 1;
 }

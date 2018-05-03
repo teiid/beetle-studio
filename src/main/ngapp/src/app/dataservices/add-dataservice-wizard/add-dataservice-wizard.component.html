@@ -22,7 +22,7 @@
 
     <h3><i>{{ step1InstructionMessage }}</i></h3>
     <br>
-    <app-connection-table-selector (selectedTableListUpdated)="updatePage1ValidStatus()"></app-connection-table-selector>
+    <app-connection-node-selector (selectedNodeListUpdated)="updatePage1ValidStatus()"></app-connection-node-selector>
   </pfng-wizard-step>
   <!-- -------------------------- -->
   <!-- Step 2 : Review and Create -->
@@ -54,10 +54,10 @@
             Connection
           </label>
           <div class="col-sm-7">
-            <select ([ngModel])="selectedConnection" (change)="selectedConnectionChanged($event)" title="">
-              <option disabled selected value [ngValue]="emptyConnection">{{ emptyConnection.getId() }}</option>
-              <option *ngFor="let connection of sourceTableConnections" [ngValue]="connection">
-                {{ connection.getId() }}
+            <select ([ngModel])="selectedConnectionName" (change)="selectedConnectionChanged($event)" title="">
+              <option disabled selected value [ngValue]="emptyConnectionName">{{ emptyConnectionName }}</option>
+              <option *ngFor="let connectionName of sourceNodeConnectionNames" [ngValue]="connectionName">
+                {{ connectionName }}
               </option>
             </select>
             <div class="help-block" *ngIf="!hasSelectedConnection()">{{ selectConnectionErrorMsg }}</div>
@@ -66,9 +66,9 @@
         <div class="form-group">
           <label class="col-sm-2 control-label">Included Tables</label>
           <div class="col-sm-7 wiz-review-tables">
-            <div [ngClass]="shouldCheck(table) ? 'wiz-review-table-checked' : 'wiz-review-table-unchecked'"
-                 *ngFor="let table of dataserviceSourceTables">
-                {{ table.getId() }} ( {{ table.getConnection().getId() }} <span class="fa fa-plug"></span> )
+            <div [ngClass]="shouldCheck(node) ? 'wiz-review-table-checked' : 'wiz-review-table-unchecked'"
+                 *ngFor="let node of dataserviceSourceNodes">
+              {{ node.getName() }} ( {{ node.getConnectionName() }} <span class="fa fa-plug"></span> )
             </div>
           </div>
         </div>

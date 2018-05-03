@@ -1,51 +1,44 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { MockConnectionService } from "@connections/shared/mock-connection.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
-import { RelationalTableSelectorComponent } from "@dataservices/relational-table-selector/relational-table-selector.component";
-import { SelectedTableComponent } from "@dataservices/selected-table/selected-table.component";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { WizardService } from "@dataservices/shared/wizard.service";
-import { PatternFlyNgModule } from "patternfly-ng";
-import { ConnectionTableSelectorComponent } from "./connection-table-selector.component";
+import { TreeModule } from "angular-tree-component";
+import { ConnectionSchemaTreeComponent } from "./connection-schema-tree.component";
 
-describe("ConnectionTableSelectorComponent", () => {
-  let component: ConnectionTableSelectorComponent;
-  let fixture: ComponentFixture<ConnectionTableSelectorComponent>;
+describe("ConnectionSchemaTreeComponent", () => {
+  let component: ConnectionSchemaTreeComponent;
+  let fixture: ComponentFixture<ConnectionSchemaTreeComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, HttpModule, PatternFlyNgModule ],
-      declarations: [ ConnectionTableSelectorComponent, RelationalTableSelectorComponent, SelectedTableComponent ],
-      providers: [
+      imports: [ HttpModule, TreeModule ],
+      declarations: [ ConnectionSchemaTreeComponent ],
+      providers: [ LoggerService, NotifierService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
-        LoggerService,
-        NotifierService,
-        WizardService,
         { provide: ConnectionService, useClass: MockConnectionService },
         { provide: VdbService, useClass: MockVdbService }
       ]
     })
-      .compileComponents().then(() => {
-      // nothing to do
-    });
+    .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConnectionTableSelectorComponent);
+    fixture = TestBed.createComponent(ConnectionSchemaTreeComponent);
     component = fixture.componentInstance;
+
+    component.nodes = [];
+    component.options = {};
     fixture.detectChanges();
   });
 
   it("should be created", () => {
-    console.log("========== [ConnectionTableSelectorComponent] should be created");
     expect(component).toBeTruthy();
   });
 });

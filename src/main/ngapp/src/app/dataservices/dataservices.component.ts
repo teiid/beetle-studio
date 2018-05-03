@@ -500,7 +500,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
    */
   public onNew(): void {
     this.wizardService.setEdit(false);
-    this.wizardService.clearSelectedConnectionTables();
+    this.wizardService.clearSelectedSchemaNodes();
 
     const link: string[] = [ DataservicesConstants.addDataservicePath ];
     this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);

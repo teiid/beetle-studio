@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 
 @Injectable()
@@ -8,7 +8,7 @@ export class WizardService {
 
   private static newlyAddedServiceWaitMillis = 10000;  // Wait of 10 sec
 
-  private selectedConnectionTables: ConnectionTable[] = [];
+  private selectedSchemaNodes: SchemaNode[] = [];
   private edit = false;
   private currentConnections: Connection[] = [];
   private selectedDataservice: Dataservice;
@@ -70,52 +70,53 @@ export class WizardService {
   }
 
   /**
-   * Get the wizard table selections
-   * @returns {ConnectionTable[]} the selections
+   * Get the wizard node selections
+   * @returns {SchemaNode[]} the selections
    */
-  public getSelectedConnectionTables( ): ConnectionTable[] {
-    return this.selectedConnectionTables.sort(
-      ( thisTable, thatTable ) => {
-        return thisTable.getId().localeCompare( thatTable.getId() );
+  public getSelectedSchemaNodes( ): SchemaNode[] {
+    const sel = this.selectedSchemaNodes.sort(
+      ( thisNode, thatNode ) => {
+        return thisNode.getName().localeCompare( thatNode.getName() );
       } );
+    return sel;
   }
 
   /**
-   * Clears the list of selected connection tables
+   * Clears the list of selected schema nodes
    */
-  public clearSelectedConnectionTables( ): void {
-    this.selectedConnectionTables = [];
+  public clearSelectedSchemaNodes( ): void {
+    this.selectedSchemaNodes = [];
   }
 
   /**
-   * Determine if the supplied table is one of the current selections
-   * @param {ConnectionTable} table the table
+   * Determine if the supplied node is one of the current selections
+   * @param {SchemaNode} node the node
    */
-  public isConnectionTableSelected(table: ConnectionTable): boolean {
-    return this.getConnectionTableIndex(table) > -1;
+  public isSchemaNodeSelected(node: SchemaNode): boolean {
+    return this.getSchemaNodeIndex(node) > -1;
   }
 
   /**
-   * Add a table to the currently selected connection tables
-   * @param {ConnectionTable} tableToAdd table to add
+   * Add a node to the currently selected connection node
+   * @param {SchemaNode} nodeToAdd node to add
    */
-  public addToSelectedConnectionTables(tableToAdd: ConnectionTable): void {
-    if (!this.isConnectionTableSelected(tableToAdd)) {
-      this.selectedConnectionTables.push(tableToAdd);
+  public addToSelectedSchemaNodes(nodeToAdd: SchemaNode): void {
+    if (!this.isSchemaNodeSelected(nodeToAdd)) {
+      this.selectedSchemaNodes.push(nodeToAdd);
     }
   }
 
   /**
-   * Remove a table from the currently selected connection tables
-   * @param {ConnectionTable} tableToRemove
-   * @returns {boolean}
+   * Remove a node from the currently selected schema nodes
+   * @param {SchemaNode} nodeToRemove the node to remove
+   * @returns {boolean} true if node was removed
    */
-  public removeFromSelectedConnectionTables(tableToRemove: ConnectionTable): boolean {
+  public removeFromSelectedSchemaNodes(nodeToRemove: SchemaNode): boolean {
     let wasRemoved = false;
 
-    const index = this.getConnectionTableIndex(tableToRemove);
+    const index = this.getSchemaNodeIndex(nodeToRemove);
     if (index > -1) {
-      this.selectedConnectionTables.splice(index, 1);
+      this.selectedSchemaNodes.splice(index, 1);
       wasRemoved = true;
     }
 
@@ -210,19 +211,20 @@ export class WizardService {
   }
 
   /**
-   * Find index of the connection table in the wizard selected tables list.  -1 if not found
-   * @param {ConnectionTable} table connection table
-   * @returns {number}
+   * Find index of the node in the selected nodes list.  -1 if not found
+   * @param {SchemaNode} node the node
+   * @returns {number} the node index
    */
-  private getConnectionTableIndex(table: ConnectionTable): number {
+  private getSchemaNodeIndex(node: SchemaNode): number {
     // supplied table and connection
-    const connName = table.getConnection().getId();
-    const tableName = table.getId();
+    const nodeName = node.getName();
+    // const nodePath = node.getPath();
     let i = 0;
-    for (const wizTable of this.selectedConnectionTables) {
-      const wizTableName = wizTable.getId();
-      const wizConnName = wizTable.getConnection().getId();
-      if (wizTableName === tableName && wizConnName === connName) {
+    for (const wizTable of this.selectedSchemaNodes) {
+      const wizNodeName = wizTable.getName();
+      // const wizNodePath = wizTable.getPath();
+      if (wizNodeName === nodeName) {
+//        if (wizNodeName === nodeName && wizNodePath === nodePath) {
         return i;
       }
       i++;

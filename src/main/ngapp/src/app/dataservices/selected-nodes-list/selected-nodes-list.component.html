@@ -1,0 +1,11 @@
+<div class="alert-padding" *ngIf="!hasNodes">
+  <div class="alert alert-info">
+    <span class="pficon pficon-info"></span>
+    <strong>No source nodes selected</strong>
+  </div>
+</div>
+<div class = "container-fluid container-cards-pf selected-tables-container" *ngIf="hasNodes">
+  <div class="row row-cards-pf" *ngFor="let node of getNodes()">
+    <app-selected-node [node]="node" (selectionNodeRemoved)="onNodeRemoved($event)"></app-selected-node>
+  </div>
+</div>

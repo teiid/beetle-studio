@@ -17,9 +17,8 @@
 
 import { Injectable } from "@angular/core";
 import { ConnectionStatus } from "@connections/shared/connection-status";
-import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
-import { SchemaInfo } from "@connections/shared/schema-info.model";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { ConnectionSummary } from "@dataservices/shared/connection-summary.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
@@ -126,7 +125,7 @@ export class TestDataService {
     }
   );
 
-  private static vdbStatuses =
+  private static readonly vdbStatuses =
     {
       "keng__baseUri": "http://das-beetle-studio.192.168.42.142.nip.io/vdb-builder/v1/",
       "vdbs": [
@@ -419,30 +418,99 @@ export class TestDataService {
   ];
 
   // =================================================================
-  // ConnectionTables for the connections
+  // Schemas for the connections
   // =================================================================
-  private static pgConnConnectionTables = [
-    TestDataService.createConnectionTable("pgTable1", TestDataService.pgConn, false),
-    TestDataService.createConnectionTable("pgTable2", TestDataService.pgConn, false)
-  ];
+  private static pgConnSchemaJson = {
+    "connectionName": "pgConn",
+    "name": "restaurants",
+    "type": "collection",
+    "queryable": true,
+    "children": [
+      {
+        "connectionName": "pgConn",
+        "name": "grades",
+        "type": "embedded",
+        "queryable": true,
+        "children": []
+      },
+      {
+        "connectionName": "pgConn",
+        "name": "location",
+        "type": "embedded",
+        "queryable": true,
+        "children": []
+      }
+    ]
+  };
 
-  private static conn1ConnectionTables = [
-    TestDataService.createConnectionTable("conn1Table1", TestDataService.conn1, false),
-    TestDataService.createConnectionTable("conn1Table2", TestDataService.conn1, false)
-  ];
+  private static conn1SchemaJson = {
+    "connectionName": "conn1",
+    "name": "public",
+    "type": "schema",
+    "queryable": false,
+    "children": [
+      {
+        "connectionName": "conn1",
+        "name": "customer",
+        "type": "table",
+        "queryable": true,
+        "children": []
+      },
+      {
+        "connectionName": "conn1",
+        "name": "stuff",
+        "type": "table",
+        "queryable": true,
+        "children": []
+      }
+    ]
+  };
 
-  private static conn2ConnectionTables = [
-    TestDataService.createConnectionTable("conn2Table1", TestDataService.conn2, false),
-    TestDataService.createConnectionTable("conn2Table2", TestDataService.conn2, false),
-    TestDataService.createConnectionTable("conn2Table3", TestDataService.conn2, false),
-  ];
+  private static conn2SchemaJson = {
+    "connectionName": "conn2",
+    "name": "restaurants",
+    "type": "collection",
+    "queryable": true,
+    "children": [
+      {
+        "connectionName": "conn2",
+        "name": "grades",
+        "type": "embedded",
+        "queryable": true,
+        "children": []
+      },
+      {
+        "connectionName": "conn2",
+        "name": "location",
+        "type": "embedded",
+        "queryable": true,
+        "children": []
+      }
+    ]
+  };
 
-  private static conn3ConnectionTables = [
-    TestDataService.createConnectionTable("conn3Table1", TestDataService.conn3, false),
-    TestDataService.createConnectionTable("conn3Table2", TestDataService.conn3, false),
-    TestDataService.createConnectionTable("conn3Table3", TestDataService.conn3, false),
-    TestDataService.createConnectionTable("conn3Table4", TestDataService.conn3, false)
-  ];
+  private static conn3SchemaJson = {
+    "connectionName": "conn3",
+    "name": "public",
+    "type": "schema",
+    "queryable": false,
+    "children": [
+      {
+        "connectionName": "conn3",
+        "name": "customer",
+        "type": "table",
+        "queryable": true,
+        "children": []
+      },
+      {
+        "connectionName": "conn3",
+        "name": "stuff",
+        "type": "table",
+        "queryable": true,
+        "children": []
+      }
+    ]
+  };
 
   // =================================================================
   // Result sets
@@ -710,14 +778,12 @@ export class TestDataService {
       "serviceVdbVersion": TestDataService.accountsVdb.getVersion(),
       "serviceViewModel": "views",
       "serviceViews": [
-        "AcctView1",
-        "AcctView2"
+        "tbl1View",
+        "tbl2View"
       ],
       "serviceViewTables": [
-        TestDataService.conn1.getId() + "BtlSource.AcctView1Table1",
-        TestDataService.conn1.getId() + "BtlSource.AcctView1Table2",
-        TestDataService.conn1.getId() + "BtlSource.AcctView1Table3",
-        TestDataService.conn1.getId() + "BtlSource.AcctView2Table1"
+        TestDataService.conn1.getId().toLowerCase() + "schemavdb.tbl1",
+        TestDataService.conn1.getId().toLowerCase() + "schemavdb.tbl1"
       ],
       "connections": 0,
       "drivers": 0,
@@ -758,22 +824,16 @@ export class TestDataService {
       "serviceVdbVersion": TestDataService.employeesVdb.getVersion(),
       "serviceViewModel": "views",
       "serviceViews": [
-        "EmpView1",
-        "EmpView2",
-        "EmpView3",
-        "EmpView4"
+        "tbl1View",
+        "tbl2View",
+        "tbl3View",
+        "tbl4View"
       ],
       "serviceViewTables": [
-        TestDataService.conn2.getId() + "BtlSource.EmpView1Table1",
-        TestDataService.conn2.getId() + "BtlSource.EmpView2Table1",
-        TestDataService.conn2.getId() + "BtlSource.EmpView2Table2",
-        TestDataService.conn2.getId() + "BtlSource.EmpView3Table1",
-        TestDataService.conn2.getId() + "BtlSource.EmpView3Table2",
-        TestDataService.conn2.getId() + "BtlSource.EmpView3Table3",
-        TestDataService.conn2.getId() + "BtlSource.EmpView4Table1",
-        TestDataService.conn2.getId() + "BtlSource.EmpView4Table2",
-        TestDataService.conn2.getId() + "BtlSource.EmpView4Table3",
-        TestDataService.conn2.getId() + "BtlSource.EmpView4Table4"
+        TestDataService.conn2.getId().toLowerCase() + "schemavdb.tbl1",
+        TestDataService.conn2.getId().toLowerCase() + "schemavdb.tbl2",
+        TestDataService.conn2.getId().toLowerCase() + "schemavdb.tbl3",
+        TestDataService.conn2.getId().toLowerCase() + "schemavdb.tbl4"
       ],
       "connections": 0,
       "drivers": 0,
@@ -814,35 +874,20 @@ export class TestDataService {
       "serviceVdbVersion": TestDataService.productsVdb.getVersion(),
       "serviceViewModel": "views",
       "serviceViews": [
-        "ProdView1",
-        "ProdView2",
-        "ProdView3",
-        "ProdView4",
-        "ProdView5",
-        "ProdView6"
+        "tbl1View",
+        "tbl2View",
+        "tbl3View",
+        "tbl4View",
+        "tbl5View",
+        "tbl6View"
       ],
       "serviceViewTables": [
-        TestDataService.conn3.getId() + "BtlSource.ProdView1Table1",
-        TestDataService.conn3.getId() + "BtlSource.ProdView2Table1",
-        TestDataService.conn3.getId() + "BtlSource.ProdView2Table2",
-        TestDataService.conn3.getId() + "BtlSource.ProdView3Table1",
-        TestDataService.conn3.getId() + "BtlSource.ProdView3Table2",
-        TestDataService.conn3.getId() + "BtlSource.ProdView3Table3",
-        TestDataService.conn3.getId() + "BtlSource.ProdView4Table1",
-        TestDataService.conn3.getId() + "BtlSource.ProdView4Table2",
-        TestDataService.conn3.getId() + "BtlSource.ProdView4Table3",
-        TestDataService.conn3.getId() + "BtlSource.ProdView4Table4",
-        TestDataService.conn3.getId() + "BtlSource.ProdView5Table1",
-        TestDataService.conn3.getId() + "BtlSource.ProdView5Table2",
-        TestDataService.conn3.getId() + "BtlSource.ProdView5Table3",
-        TestDataService.conn3.getId() + "BtlSource.ProdView5Table4",
-        TestDataService.conn3.getId() + "BtlSource.ProdView5Table5",
-        TestDataService.conn3.getId() + "BtlSource.ProdView6Table1",
-        TestDataService.conn3.getId() + "BtlSource.ProdView6Table2",
-        TestDataService.conn3.getId() + "BtlSource.ProdView6Table3",
-        TestDataService.conn3.getId() + "BtlSource.ProdView6Table4",
-        TestDataService.conn3.getId() + "BtlSource.ProdView6Table5",
-        TestDataService.conn3.getId() + "BtlSource.ProdView6Table6"
+        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl1",
+        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl2",
+        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl3",
+        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl4",
+        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl5",
+        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl6"
       ],
       "connections": 0,
       "drivers": 0,
@@ -940,7 +985,6 @@ export class TestDataService {
     TestDataService.productsVdb
   ];
 
-  private connectionTableMap = new Map<string, ConnectionTable[]>();
   private readonly vdbStatuses: VdbStatus[];
   private readonly virtualizations: Virtualization[];
 
@@ -972,21 +1016,6 @@ export class TestDataService {
     connectionSummary.setConnection(conn);
     connectionSummary.setStatus(status);
     return connectionSummary;
-  }
-
-  /**
-   * Create a ConnectionTable using the specified info
-   * @param {string} name the connection table name
-   * @param {Connection} connection the connection
-   * @param {boolean} selected 'true' if the table is selected
-   * @returns {ConnectionSummary}
-   */
-  private static createConnectionTable( name: string, connection: Connection, selected: boolean ): ConnectionTable {
-    const connectionTable = new ConnectionTable();
-    connectionTable.setId(name);
-    connectionTable.setConnection(connection);
-    connectionTable.selected = selected;
-    return connectionTable;
   }
 
   constructor() {
@@ -1037,15 +1066,32 @@ export class TestDataService {
   }
 
   /**
-   * @returns {Map<string, SchemaInfo[]>} the array of test Service Catalog datasources
+   * @returns {Map<string, SchemaNode[]>} the array of SchemaNodes for connection
    */
-  public getConnectionTableMap(): Map<string, ConnectionTable[]> {
-    const tableMap = new Map<string, ConnectionTable[]>();
-    tableMap.set( TestDataService.pgConn.getId(), TestDataService.pgConnConnectionTables );
-    tableMap.set( TestDataService.conn1.getId(), TestDataService.conn1ConnectionTables );
-    tableMap.set( TestDataService.conn2.getId(), TestDataService.conn2ConnectionTables );
-    tableMap.set( TestDataService.conn3.getId(), TestDataService.conn3ConnectionTables );
-    return tableMap;
+  public getConnectionSchemaMap(): Map<string, SchemaNode[]> {
+    const nodesMap = new Map<string, SchemaNode[]>();
+
+    const pgConnSchemaRoots: SchemaNode[] = [];
+    const sNode = SchemaNode.create(TestDataService.pgConnSchemaJson);
+    pgConnSchemaRoots.push(sNode);
+
+    const conn1SchemaRoots: SchemaNode[] = [];
+    const sNode1 = SchemaNode.create(TestDataService.conn1SchemaJson);
+    conn1SchemaRoots.push(sNode1);
+
+    const conn2SchemaRoots: SchemaNode[] = [];
+    const sNode2 = SchemaNode.create(TestDataService.conn2SchemaJson);
+    conn2SchemaRoots.push(sNode2);
+
+    const conn3SchemaRoots: SchemaNode[] = [];
+    const sNode3 = SchemaNode.create(TestDataService.conn3SchemaJson);
+    conn3SchemaRoots.push(sNode3);
+
+    nodesMap.set( TestDataService.pgConn.getId(), pgConnSchemaRoots );
+    nodesMap.set( TestDataService.conn1.getId(), conn1SchemaRoots );
+    nodesMap.set( TestDataService.conn2.getId(), conn2SchemaRoots );
+    nodesMap.set( TestDataService.conn3.getId(), conn3SchemaRoots );
+    return nodesMap;
   }
 
   /**
