@@ -37,8 +37,8 @@ import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 @Injectable()
 export class MockDataserviceService extends DataserviceService {
 
-  private services: Dataservice[];
-  private queryResults: QueryResults;
+  private readonly services: Dataservice[];
+  private readonly queryResults: QueryResults;
 
   constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
               notifierService: NotifierService, logger: LoggerService ) {

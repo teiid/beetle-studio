@@ -19,9 +19,9 @@ export class NewDataservice {
 
   private keng__id: string;
   private keng__dataPath: string;
-  private keng__kType: string;
+  private readonly keng__kType: string;
   private tko__description: string;
-  private workspacePath: string;
+  private readonly workspacePath: string;
 
   /**
    * Constructor

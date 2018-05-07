@@ -1,4 +1,4 @@
-<div class="app-feature-content">
+<div>
   <div id="dataservices-breadcrumb-bar">
     <app-breadcrumbs>
       <li i18n="@@testDataservice.dataservices" app-breadcrumb label="Data Virtualizations" icon="table" [route]="[ dataservicesLink ]"></li>
@@ -23,7 +23,7 @@
         <strong>There was an error deploying the Data Virtualization!</strong>
       </div>
     </div>
-    <div class="col-sm-10" *ngIf="pageLoadedValid">
+    <div class="col-sm-12" *ngIf="pageLoadedValid">
       <app-sql-control [quicklook]="false" [selectedViews]="selectedViews" [serviceViews]="allServiceViews"
                        [viewSql]="quickLookSql"></app-sql-control>
     </div>
