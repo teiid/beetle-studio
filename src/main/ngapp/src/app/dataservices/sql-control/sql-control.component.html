@@ -1,4 +1,4 @@
-<div class="row">
+<div [ngClass]="quicklook ? 'row quick-look-control': 'row preview-control'">
   <div class="col-sm-12">
     <div [ngClass]="quicklook ? 'col-sm-3 view-table-quicklook-div': 'col-sm-3 view-table-full-div'">
       <pfng-table

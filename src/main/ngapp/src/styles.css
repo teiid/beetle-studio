@@ -32,6 +32,7 @@
   --card-description-margin-bottom: 10px;
   --card-description-padding: 0 5px 5px 5px;
   --card-footer-background-color: #ececec;
+  --card-height: 300px;
   --card-hover-color: var(--hover-color);
   --card-title-font-size: 16px;
   --card-title-font-weight: bold;
@@ -50,6 +51,7 @@
   --card-toolbar-margin-bottom: 6px;
   --card-toolbar-margin-top: 0;
   --card-toolbar-padding: 0 0 0 4px;
+  --card-width: 300px;
   --inline-icon-color: var(--card-border-color);
   --inline-icon-display: inline-block;
   --page-background-color: #fafafa;
@@ -122,15 +124,18 @@
 .object-card .card-pf,
 .object-card-selected .card-pf {
   margin: 8px 0;
+  flex: 0 0 var(--card-width);
 }
 
 .object-card-container {
   display: grid;
-  grid-template-columns: repeat( auto-fill, minmax( 300px, 300px ) );
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+  grid-template-columns: repeat( auto-fill, var(--card-width) );
+  grid-template-rows: repeat( auto-fill, minmax( 225px, 225px) );
 }
 
 .object-card-container>* {
-  flex: 1 1 80px;
   margin: 5px;
 }
 
@@ -196,8 +201,6 @@
 
 .object-collection-page {
   background-color: var(--page-background-color);
-  height: 75vh;
-  overflow-y: auto;
 }
 
 .object-collection-page .empty-state {
@@ -288,6 +291,11 @@
   width: 100%;
 }
 
+.pfng-wizard-position-override {
+  height: 50vh;
+  overflow-y: auto;
+}
+
 /* Patternfly-NG kebab dropdown actions. */
 .secondary-action:before {
   color: var(--card-toolbar-dropdown-action-icon-color);
@@ -306,4 +314,9 @@
 
 .toolbar-pf-actions {
   margin-bottom: 0;
+}
+
+.wizard-pf-steps-indicator {
+  height: 75px;
+  padding: 0;
 }
