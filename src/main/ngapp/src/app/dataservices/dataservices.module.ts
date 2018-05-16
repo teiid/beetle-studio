@@ -37,14 +37,16 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { environment } from "@environments/environment";
 import { SharedModule } from "@shared/shared.module";
+import { TreeModule } from "angular-tree-component";
 import { CodemirrorModule } from "ng2-codemirror";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddDataserviceWizardComponent } from "./add-dataservice-wizard/add-dataservice-wizard.component";
 import { AddDataserviceComponent } from "./add-dataservice/add-dataservice.component";
-import { ConnectionTableSelectorComponent } from "./connection-table-selector/connection-table-selector.component";
+import { ConnectionNodeSelectorComponent } from "./connection-node-selector/connection-node-selector.component";
+import { ConnectionSchemaTreeComponent } from "./connection-schema-tree/connection-schema-tree.component";
 import { DataserviceCardComponent } from "./dataservices-cards/dataservice-card/dataservice-card.component";
-import { RelationalTableSelectorComponent } from "./relational-table-selector/relational-table-selector.component";
-import { SelectedTableComponent } from "./selected-table/selected-table.component";
+import { SelectedNodeComponent } from "./selected-node/selected-node.component";
+import { SelectedNodesListComponent } from "./selected-nodes-list/selected-nodes-list.component";
 import { SqlControlComponent } from "./sql-control/sql-control.component";
 import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.component";
 
@@ -58,7 +60,8 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
     ReactiveFormsModule,
     RouterModule,
     PatternFlyNgModule,
-    CodemirrorModule
+    CodemirrorModule,
+    TreeModule
   ],
   declarations: [
     DataservicesDetailsComponent,
@@ -68,12 +71,13 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
     DataservicesListComponent,
     AddDataserviceWizardComponent,
     AddDataserviceComponent,
-    ConnectionTableSelectorComponent,
     TestDataserviceComponent,
     SqlControlComponent,
-    SelectedTableComponent,
+    SelectedNodeComponent,
     DataserviceCardComponent,
-    RelationalTableSelectorComponent
+    ConnectionSchemaTreeComponent,
+    SelectedNodesListComponent,
+    ConnectionNodeSelectorComponent
   ],
   providers: [
     {

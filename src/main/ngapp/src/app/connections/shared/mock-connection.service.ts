@@ -17,10 +17,10 @@
 
 import { Injectable, ReflectiveInjector } from "@angular/core";
 import { Http } from "@angular/http";
-import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { NewConnection } from "@connections/shared/new-connection.model";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
@@ -39,7 +39,7 @@ export class MockConnectionService extends ConnectionService {
 
   private connections: Connection[];
   private readonly serviceCatalogSources: ServiceCatalogSource[];
-  private connectionTableMap = new Map<string, ConnectionTable[]>();
+  private connectionSchemaMap = new Map<string, SchemaNode[]>();
   private testDataService: TestDataService;
 
   constructor( http: Http, vdbService: VdbService, notifierService: NotifierService,
@@ -58,7 +58,7 @@ export class MockConnectionService extends ConnectionService {
     }
     this.connections = conns;
     this.serviceCatalogSources = this.testDataService.getServiceCatalogSources();
-    this.connectionTableMap = this.testDataService.getConnectionTableMap();
+    this.connectionSchemaMap = this.testDataService.getConnectionSchemaMap();
   }
 
   public isValidName( name: string ): Observable< string > {
@@ -120,12 +120,12 @@ export class MockConnectionService extends ConnectionService {
   }
 
   /**
-   * Get the tables for the specified Connection
+   * Get the root SchemaNodes for the specified Connection
    * @param {string} connectionName the connection name
-   * @returns {Observable<ConnectionTable[]>}
+   * @returns {Observable<SchemaNode[]>}
    */
-  public getConnectionTables( connectionName: string ): Observable< ConnectionTable[] > {
-    return Observable.of( this.connectionTableMap.get( connectionName ) );
+  public getConnectionSchema( connectionName: string ): Observable< SchemaNode[] > {
+    return Observable.of( this.connectionSchemaMap.get( connectionName ) );
   }
 
   /**

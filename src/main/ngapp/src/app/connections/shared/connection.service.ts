@@ -18,10 +18,10 @@
 import { Injectable } from "@angular/core";
 import { Http, RequestOptions } from "@angular/http";
 import { ConnectionStatus } from "@connections/shared/connection-status";
-import { ConnectionTable } from "@connections/shared/connection-table.model";
 import { ConnectionType } from "@connections/shared/connection-type.model";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { NewConnection } from "@connections/shared/new-connection.model";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
@@ -213,18 +213,18 @@ export class ConnectionService extends ApiService {
   }
 
   /**
-   * Get the tables for the specified connection.  The connection must be ACTIVE, otherwise the tables
+   * Get the schema for the specified connection.  The connection must be ACTIVE, otherwise the schema
    * will be empty.
    * @param {string} connectionId the connection id
-   * @returns {Observable<ConnectionTable[]>}
+   * @returns {Observable<SchemaNode[]>}
    */
-  public getConnectionTables(connectionId: string): Observable<ConnectionTable[]> {
+  public getConnectionSchema(connectionId: string): Observable<SchemaNode[]> {
     return this.http
       .get( environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath
-                                               + "/" + connectionId + "/tables", this.getAuthRequestOptions())
+                                               + "/" + connectionId + "/schema", this.getAuthRequestOptions())
       .map((response) => {
-        const connTables = response.json();
-        return connTables.map((connTable) => ConnectionTable.create( connTable ));
+        const schemaNodes = response.json();
+        return schemaNodes.map((schemaNode) => SchemaNode.create( schemaNode ));
       })
       .catch( ( error ) => this.handleError( error ) );
   }

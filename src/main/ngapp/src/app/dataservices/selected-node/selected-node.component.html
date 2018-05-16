@@ -6,11 +6,11 @@
     <div class="row card-pf-title text-left object-card-title">
       <div class="fa fa-table object-inline-icon"></div>
       <span class="fa fa-close pull-right clickable-icon" (click)="onRemove()"></span>
-      {{ table.getId() }}
+      {{ node.getName() }}
     </div>
     <div class="text-info text-left">
       <div class="fa fa-plug object-inline-icon"></div>
-      {{ table.getConnection().getId() }}
+      {{ node.getConnectionName() }}
     </div>
   </ng-template>
   <div class="object-card-body">

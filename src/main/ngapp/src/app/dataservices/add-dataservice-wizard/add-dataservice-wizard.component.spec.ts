@@ -7,9 +7,10 @@ import { MockConnectionService } from "@connections/shared/mock-connection.servi
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
-import { ConnectionTableSelectorComponent } from "@dataservices/connection-table-selector/connection-table-selector.component";
-import { RelationalTableSelectorComponent } from "@dataservices/relational-table-selector/relational-table-selector.component";
-import { SelectedTableComponent } from "@dataservices/selected-table/selected-table.component";
+import { ConnectionNodeSelectorComponent } from "@dataservices/connection-node-selector/connection-node-selector.component";
+import { ConnectionSchemaTreeComponent } from "@dataservices/connection-schema-tree/connection-schema-tree.component";
+import { SelectedNodeComponent } from "@dataservices/selected-node/selected-node.component";
+import { SelectedNodesListComponent } from "@dataservices/selected-nodes-list/selected-nodes-list.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
@@ -18,6 +19,7 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
+import { TreeModule } from "angular-tree-component";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { AddDataserviceWizardComponent } from "./add-dataservice-wizard.component";
 
@@ -27,9 +29,10 @@ describe("AddDataserviceWizardComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule ],
-      declarations: [ AddDataserviceWizardComponent, ConnectionTableSelectorComponent, RelationalTableSelectorComponent,
-                      PropertyFormComponent, PropertyFormPropertyComponent, SelectedTableComponent ],
+      imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule, TreeModule ],
+      declarations: [ AddDataserviceWizardComponent, ConnectionNodeSelectorComponent, ConnectionSchemaTreeComponent,
+                      PropertyFormComponent, PropertyFormPropertyComponent,
+                      SelectedNodesListComponent, SelectedNodeComponent ],
       providers: [
         NotifierService, WizardService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
