@@ -507,7 +507,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
 
   public onPublish(svcName: string): void {
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
-    const virtual: Virtualization = new Virtualization(selectedService.getServiceVdbName(), PublishState.PUBLISHING);
+    const virtual: Virtualization = new Virtualization(selectedService.getServiceVdbName(), PublishState.SUBMITTED);
     selectedService.setServiceVirtualization(virtual);
     this.closeLookPanels();
 

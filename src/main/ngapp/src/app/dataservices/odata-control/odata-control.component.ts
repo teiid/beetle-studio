@@ -431,7 +431,7 @@ export class OdataControlComponent implements OnChanges {
               const label = this.selectedColumns[j].name;
               const col = { canAutoResize: true,
                             draggable: false,
-                            name: label.toUpperCase(),
+                            name: this.tableTitle(label),
                             prop: label,
                             resizable: true,
                             sortable: true };

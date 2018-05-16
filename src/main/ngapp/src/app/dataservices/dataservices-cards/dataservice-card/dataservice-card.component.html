@@ -91,28 +91,49 @@
             *ngIf="dataservice.serviceNotPublished"
             data-toggle="tooltip"
             data-placement="right"
-            title="Not Published">
+            title="Virtualization Not Published">
       </span>
       <span class="pull-left fa fa-cogs fa-2x card-action-icon"
             style="color:red;"
             *ngIf="dataservice.servicePublishFailed"
             data-toggle="tooltip"
             data-placement="right"
-            title="Publishing Failed">
+            title="Virtualization Publishing Failed">
       </span>
-      <span class="pull-left fa fa-cog fa-spin fa-2x card-action-icon"
-            style="color:orange;"
-            *ngIf="dataservice.servicePublishing"
+      <span class="pull-left fa fa-cog fa-2x card-action-icon"
+            style="color:midnightblue;"
+            *ngIf="dataservice.serviceSubmitted"
             data-toggle="tooltip"
             data-placement="right"
-            title="Publishing">
+            title="Virtualization Submitted">
+      </span>
+      <span class="pull-left fa fa-cog fa-spin fa-2x card-action-icon"
+            style="color:purple;"
+            *ngIf="dataservice.serviceConfiguring"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Virtualization Configuring">
+      </span>
+      <span class="pull-left fa fa-cog fa-spin fa-2x card-action-icon"
+            style="color:blue;"
+            *ngIf="dataservice.serviceBuilding"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Virtualization Building">
+      </span>
+      <span class="pull-left fa fa-cog fa-spin fa-2x card-action-icon"
+            style="color:teal;"
+            *ngIf="dataservice.serviceDeploying"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Virtualization Deploying">
       </span>
       <span class="pull-left fa fa-cogs fa-2x card-action-icon"
             style="color:green;"
             *ngIf="dataservice.servicePublished"
             data-toggle="tooltip"
             data-placement="right"
-            title="Published">
+            title="Virtualization Published">
       </span>
     </div>
     <div class="row card-pf-title text-center object-card-title">

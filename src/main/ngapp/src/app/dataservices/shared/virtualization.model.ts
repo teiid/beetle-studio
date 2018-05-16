@@ -26,7 +26,7 @@ export class Virtualization {
   private readonly vdb_name: string;
   private build_name: string;
   private deployment_name: string;
-  private build_status: string; /* NOTFOUND, BUILDING, DEPLOYING, RUNNING, FAILED, CANCELLED */
+  private build_status: string; /* NOTFOUND, SUBMITTED, CONFIGURING, BUILDING, DEPLOYING, RUNNING, FAILED, CANCELLED */
   private build_status_message: string;
   private namespace: string;
   private last_updated: string;
@@ -140,8 +140,14 @@ export class Virtualization {
     }
 
     if (this.build_status) {
-      if (this.build_status === "BUILDING" || this.build_status === "DEPLOYING") {
-        this.publishState = PublishState.PUBLISHING;
+      if (this.build_status === "SUBMITTED") {
+        this.publishState = PublishState.SUBMITTED;
+      } else if (this.build_status === "CONFIGURING") {
+        this.publishState = PublishState.CONFIGURING;
+      } else if (this.build_status === "BUILDING") {
+        this.publishState = PublishState.BUILDING;
+      } else if (this.build_status === "DEPLOYING") {
+        this.publishState = PublishState.DEPLOYING;
       } else if (this.build_status === "RUNNING") {
         this.publishState = PublishState.PUBLISHED;
       } else if (this.build_status === "FAILED") {

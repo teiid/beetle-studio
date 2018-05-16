@@ -211,11 +211,35 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
-   * Accessor to determine if service publishing is active
-   * @returns {boolean} the dataservice service publishing active state
+   * Accessor to determine if service submission is active
+   * @returns {boolean} the dataservice service submitted active state
    */
-  public get servicePublishing(): boolean {
-    return this.getServicePublishState() === PublishState.PUBLISHING;
+  public get serviceSubmitted(): boolean {
+    return this.getServicePublishState() === PublishState.SUBMITTED;
+  }
+
+  /**
+   * Accessor to determine if service configuring is active
+   * @returns {boolean} the dataservice service configuring active state
+   */
+  public get serviceConfiguring(): boolean {
+    return this.getServicePublishState() === PublishState.CONFIGURING;
+  }
+
+  /**
+   * Accessor to determine if service building is active
+   * @returns {boolean} the dataservice service building active state
+   */
+  public get serviceBuilding(): boolean {
+    return this.getServicePublishState() === PublishState.BUILDING;
+  }
+
+  /**
+   * Accessor to determine if service deploying is active
+   * @returns {boolean} the dataservice service deploying active state
+   */
+  public get serviceDeploying(): boolean {
+    return this.getServicePublishState() === PublishState.DEPLOYING;
   }
 
   /**

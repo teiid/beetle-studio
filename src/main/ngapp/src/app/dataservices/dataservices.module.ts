@@ -82,7 +82,6 @@ import { TooltipModule } from 'ngx-bootstrap';
     TestDataserviceComponent,
     SqlControlComponent,
     SelectedNodeComponent,
-    SelectedTableComponent,
     OdataControlComponent,
     DataserviceCardComponent,
     ConnectionSchemaTreeComponent,

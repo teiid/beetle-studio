@@ -26,9 +26,24 @@ export enum PublishState {
   NOT_PUBLISHED,
 
   /**
-   * publishing
+   * submitted
    */
-  PUBLISHING,
+  SUBMITTED,
+
+  /**
+   * configuring
+   */
+  CONFIGURING,
+
+  /**
+   * building
+   */
+  BUILDING,
+
+  /**
+   * deploying
+   */
+  DEPLOYING,
 
   /**
    * published
