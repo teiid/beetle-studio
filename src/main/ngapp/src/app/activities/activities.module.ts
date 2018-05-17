@@ -31,6 +31,7 @@ import { RouterModule } from "@angular/router";
 import { ConnectionsModule } from "@connections/connections.module";
 import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
+import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 
@@ -58,6 +59,7 @@ import { PatternFlyNgModule } from "patternfly-ng";
   providers: [
     ActivityService,
     LoggerService
-  ]
+  ],
+  entryComponents: [ConfirmDialogComponent]
 })
 export class ActivitiesModule {}

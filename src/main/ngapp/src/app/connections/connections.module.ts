@@ -36,6 +36,7 @@ import { LoggerService } from "@core/logger.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { environment } from "@environments/environment";
+import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { SharedModule } from "@shared/shared.module";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { ConnectionTypeCardComponent } from "./connection-type-cards/connection-type-card/connection-type-card.component";
@@ -74,7 +75,8 @@ import { ConnectionTypeCardsComponent } from "./connection-type-cards/connection
     LoggerService
   ],
   exports: [
-  ]
+  ],
+  entryComponents: [ConfirmDialogComponent]
 })
 export class ConnectionsModule { }
 
