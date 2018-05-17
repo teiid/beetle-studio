@@ -19,10 +19,10 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 
-import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
 import { PageErrorComponent } from "@shared/page-error/page-error.component";
 import { TestDataService } from "@shared/test-data.service";
 import { ModalModule } from "ngx-bootstrap";
+import { ConfirmDialogComponent } from "./confirm-dialog/confirm-dialog.component";
 import { PageNotFoundComponent } from "./page-not-found/page-not-found.component";
 import { PropertyFormPropertyComponent } from "./property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "./property-form/property-form.component";
@@ -34,14 +34,14 @@ import { PropertyFormComponent } from "./property-form/property-form.component";
     ReactiveFormsModule
   ],
   declarations: [
-    ConfirmDeleteComponent,
+    ConfirmDialogComponent,
     PageErrorComponent,
     PageNotFoundComponent,
     PropertyFormComponent,
     PropertyFormPropertyComponent
   ],
   exports: [
-    ConfirmDeleteComponent,
+    ConfirmDialogComponent,
     PageErrorComponent,
     PageNotFoundComponent,
     PropertyFormComponent,

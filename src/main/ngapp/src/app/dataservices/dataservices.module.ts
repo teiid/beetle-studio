@@ -36,6 +36,7 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { environment } from "@environments/environment";
+import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { SharedModule } from "@shared/shared.module";
 import { TreeModule } from "angular-tree-component";
 import { CodemirrorModule } from "ng2-codemirror";
@@ -97,7 +98,8 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
     WizardService
   ],
   exports: [
-  ]
+  ],
+  entryComponents: [ConfirmDialogComponent]
 })
 export class DataservicesModule { }
 

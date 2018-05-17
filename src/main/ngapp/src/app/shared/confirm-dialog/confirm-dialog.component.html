@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{ title }}</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <span class="pficon pficon-close"></span>
+  </button>
+</div>
+<div class="modal-body">
+  {{ bodyContent }}
+</div>
+<div class="modal-footer">
+  <button i18n="@@confirmDialog.cancel" type="button" class="btn btn-default" (click)="onCancelSelected()">{{ cancelButtonText }}</button>
+  <button i18n="@@confirmDialog.delete" type="button" class="btn btn-danger" (click)="onConfirmSelected()">{{ confirmButtonText }}</button>
+</div>

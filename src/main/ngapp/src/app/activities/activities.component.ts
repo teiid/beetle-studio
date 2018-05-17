@@ -20,16 +20,16 @@ import { Activity } from "@activities/shared/activity.model";
 import { ActivityService } from "@activities/shared/activity.service";
 import { NewActivity } from "@activities/shared/new-activity.model";
 import { Component } from "@angular/core";
-import { ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
 import { LoggerService } from "@core/logger.service";
 import { ArrayUtils } from "@core/utils/array-utils";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
-import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
+import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { IdFilter } from "@shared/id-filter";
 import { LayoutType } from "@shared/layout-type.enum";
 import { SortDirection } from "@shared/sort-direction.enum";
+import { BsModalService } from "ngx-bootstrap";
 
 @Component({
   moduleId: module.id,
@@ -50,14 +50,15 @@ export class ActivitiesComponent extends AbstractPageComponent {
   private filter: IdFilter = new IdFilter();
   private layout: LayoutType = LayoutType.CARD;
   private sortDirection: SortDirection = SortDirection.ASC;
+  private modalService: BsModalService;
 
-  @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
-
-  constructor(router: Router, route: ActivatedRoute, activityService: ActivityService, logger: LoggerService ) {
+  constructor(router: Router, route: ActivatedRoute, activityService: ActivityService,
+              logger: LoggerService, modalService: BsModalService ) {
     super(route, logger);
     this.router = router;
     this.activityService = activityService;
     this.logger = logger;
+    this.modalService = modalService;
   }
 
   public loadAsyncPageData(): void {
@@ -98,7 +99,21 @@ export class ActivitiesComponent extends AbstractPageComponent {
 
   public onDelete(activityName: string): void {
     this.activityNameForDelete = activityName;
-    this.confirmDeleteDialog.open();
+
+    // Dialog Content
+    const message = "Do you really want to delete Activity '" + activityName + "'?";
+    const initialState = {
+      title: "Confirm Delete",
+      bodyContent: message,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Delete"
+    };
+
+    // Show Dialog, act upon confirmation click
+    const modalRef = this.modalService.show(ConfirmDialogComponent, {initialState});
+    modalRef.content.confirmAction.take(1).subscribe((value) => {
+      this.onDeleteActivity();
+    });
   }
 
   // noinspection JSMethodCanBeStatic

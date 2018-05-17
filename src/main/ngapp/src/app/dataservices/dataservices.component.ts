@@ -33,9 +33,10 @@ import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
-import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
+import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { LayoutType } from "@shared/layout-type.enum";
 import { SortDirection } from "@shared/sort-direction.enum";
+import { BsModalService } from "ngx-bootstrap";
 import {
   ActionConfig,
   EmptyStateConfig,
@@ -104,13 +105,14 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private wizardService: WizardService;
   private selectedSvcViews: View[] = [];
   private allSvcViews: View[] = [];
+  private modalService: BsModalService;
 
-  @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
   @ViewChild(SqlControlComponent) private sqlControlComponent: SqlControlComponent;
 
   constructor(router: Router, route: ActivatedRoute, dataserviceService: DataserviceService,
               logger: LoggerService, appSettingsService: AppSettingsService, wizardService: WizardService,
-              notifierService: NotifierService, vdbService: VdbService, connectionService: ConnectionService ) {
+              notifierService: NotifierService, vdbService: VdbService, connectionService: ConnectionService,
+              modalService: BsModalService) {
     super(route, logger);
     this.router = router;
     this.appSettingsService = appSettingsService;
@@ -118,6 +120,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.vdbService = vdbService;
     this.notifierService = notifierService;
     this.wizardService = wizardService;
+    this.modalService = modalService;
     // Register for dataservice deployment state changes
     this.dataserviceDeployStateSubscription = this.notifierService.getDataserviceDeployStateMap().subscribe((serviceStateMap) => {
       this.onDataserviceDeploymentStateChanged(serviceStateMap);
@@ -492,7 +495,21 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.setQuickLookPanelOpenState(false);
 
     this.dataserviceNameForDelete = svcName;
-    this.confirmDeleteDialog.open();
+
+    // Dialog Content
+    const message = "Do you really want to delete Virtualization '" + svcName + "'?";
+    const initialState = {
+      title: "Confirm Delete",
+      bodyContent: message,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Delete"
+    };
+
+    // Show Dialog, act upon confirmation click
+    const modalRef = this.modalService.show(ConfirmDialogComponent, {initialState});
+    modalRef.content.confirmAction.take(1).subscribe((value) => {
+      this.onDeleteDataservice();
+    });
   }
 
   /**

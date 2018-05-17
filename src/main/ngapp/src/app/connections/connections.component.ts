@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ConnectionStatus } from "@connections/shared/connection-status";
 import { Connection } from "@connections/shared/connection.model";
@@ -26,16 +26,17 @@ import { LoggerService } from "@core/logger.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
-import { ConfirmDeleteComponent } from "@shared/confirm-delete/confirm-delete.component";
+import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { LayoutType } from "@shared/layout-type.enum";
-import { FilterConfig } from "patternfly-ng";
-import { FilterField } from "patternfly-ng";
-import { FilterEvent } from "patternfly-ng";
+import { BsModalService } from "ngx-bootstrap";
 import { SortField } from "patternfly-ng";
 import { SortEvent } from "patternfly-ng";
 import { FilterType } from "patternfly-ng";
-import { ActionConfig, EmptyStateConfig, Filter } from "patternfly-ng";
+import { FilterEvent } from "patternfly-ng";
 import { SortConfig } from "patternfly-ng";
+import { FilterField } from "patternfly-ng";
+import { FilterConfig } from "patternfly-ng";
+import { ActionConfig, EmptyStateConfig, Filter } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 
 @Component({
@@ -65,18 +66,18 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   private wizardService: WizardService;
   private notifierService: NotifierService;
   private connectionStatusSubscription: Subscription;
-
-  @ViewChild(ConfirmDeleteComponent) private confirmDeleteDialog: ConfirmDeleteComponent;
+  private modalService: BsModalService;
 
   constructor(router: Router, route: ActivatedRoute, appSettingsService: AppSettingsService,
               wizardService: WizardService, connectionService: ConnectionService, logger: LoggerService,
-              notifierService: NotifierService, ) {
+              notifierService: NotifierService, modalService: BsModalService ) {
     super(route, logger);
     this.router = router;
     this.appSettingsService = appSettingsService;
     this.connectionService = connectionService;
     this.wizardService = wizardService;
     this.notifierService = notifierService;
+    this.modalService = modalService;
     // Register for connection status changes
     this.connectionStatusSubscription = this.notifierService.getConnectionStatusMap().subscribe((connectionStatusMap) => {
       this.onConnectionStatusChanged(connectionStatusMap);
@@ -227,7 +228,21 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
 
   public onDelete(connName: string): void {
     this.connectionNameForDelete = connName;
-    this.confirmDeleteDialog.open();
+
+    // Dialog Content
+    const message = "Do you really want to delete Connection '" + connName + "'?";
+    const initialState = {
+      title: "Confirm Delete",
+      bodyContent: message,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Delete"
+    };
+
+    // Show Dialog, act upon confirmation click
+    const modalRef = this.modalService.show(ConfirmDialogComponent, {initialState});
+    modalRef.content.confirmAction.take(1).subscribe((value) => {
+      this.onDeleteConnection();
+    });
   }
 
   public setListLayout(): void {
