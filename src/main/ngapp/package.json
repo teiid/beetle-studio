@@ -34,6 +34,7 @@
     "patternfly": "^3.41.0",
     "patternfly-ng": "3.1.5",
     "rxjs": "^5.5.6",
+    "vkbeautify": "^0.99.3",
     "x2js": "^3.2.1",
     "zone.js": "^0.8.20"
   },

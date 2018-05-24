@@ -41,6 +41,7 @@ import { ReplaySubject } from "rxjs/ReplaySubject";
 import { Subject } from "rxjs/Subject";
 import { Subscription } from "rxjs/Subscription";
 import * as _ from "lodash";
+import * as vkbeautify from 'vkbeautify';
 
 @Injectable()
 export class DataserviceService extends ApiService {
@@ -496,12 +497,17 @@ export class DataserviceService extends ApiService {
         const data = response.text();
         let jobj = this.tryJsonParse(data);
         if (_.isObject(jobj)) {
-          return jobj;
-        } else if (this.isXML(data)) {
-          // convert the data to JSON and provide
-          // it to the success function below
-          let json = this.tryXMLParse(data);
-          return json;
+          let json = JSON.stringify(jobj, null, 4);
+          return {
+            value: json
+          };
+        }
+
+        if (this.isXML(data)) {
+          const xml = vkbeautify.xml(data);
+          return {
+            value: xml
+          };
         }
 
         if (_.isEqual(data, "0")) {

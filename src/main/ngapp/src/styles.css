@@ -3,6 +3,7 @@
 @import "~angular-tree-component/dist/angular-tree-component.css";
 @import "~codemirror/lib/codemirror.css";
 @import "~codemirror/theme/mdn-like.css";
+@import "~codemirror/theme/neat.css";
 @import "~patternfly/dist/css/patternfly.css";
 @import "~patternfly/dist/css/patternfly-additions.css";
 @import "~patternfly-ng/dist/css/patternfly-ng.css";
@@ -266,14 +267,6 @@
   justify-content: left;
   padding: 0 4px;
   text-align: left;
-}
-
-/***************************************************************/
-/*                    CodeMirror Types                         */
-/***************************************************************/
-
-.CodeMirror {
-  height: 200px;
 }
 
 /**************************************************************/

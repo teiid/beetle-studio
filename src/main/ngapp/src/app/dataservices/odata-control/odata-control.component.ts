@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-import { Input, ViewEncapsulation } from "@angular/core";
+import { Input, ViewChild, ViewEncapsulation } from "@angular/core";
 import { Component, OnChanges, SimpleChanges } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
-import { TableConfig, PaginationConfig, PaginationEvent } from "patternfly-ng";
 import * as _ from "lodash";
+import "codemirror/mode/javascript/javascript.js";
+import "codemirror/mode/xml/xml.js";
 import { ColumnData } from "@dataservices/shared/column-data.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
@@ -39,6 +40,9 @@ export class OdataControlComponent implements OnChanges {
 
   @Input() dataserviceName: string;
 
+  @ViewChild('odataResultsEditor') resultsEditor: any;
+
+
   private dataserviceService: DataserviceService;
   private dataservice: Dataservice;
   private logger: LoggerService;
@@ -47,20 +51,47 @@ export class OdataControlComponent implements OnChanges {
   public searchMsg: string;
   public searchMsgClasses: string[];
   public searchInProgress: boolean;
-  public showResultsTable: boolean;
-  public rawResultRows: object;
 
-  private odata: Odata;
+  public metadataFetchInProgress: boolean;
+
+  public odata: Odata;
+
+  private jsonFormat = {
+    mode: {
+      name: "javascript",
+      json: true,
+      statementIndent: 2
+    }
+  };
+
+  private xmlFormat = {
+    mode: {
+      name: "xml",
+      htmlMode: "false",
+    }
+  };
+
+  public resultsConfig = {
+    mode: {},
+    lineNumbers: true,
+    lineWrapping: true,
+    readOnly: false,
+    placeholder: "No results",
+    styleActiveLine: true,
+    tabSize: 2,
+    showCursorWhenSelecting: true,
+    theme: "neat"
+  };
 
   //
-  // Raw data rows retrieved from the query
+  // Format of the results
   //
-  public rawRows: any[];
+  public resultsType: string = "JSON";
 
-  public resultTableConfig: TableConfig;
-  public paginationConfig: PaginationConfig;
-  public resultColumns: any[];
-  public resultRows: any[] ;
+  //
+  // Results to show from the odata query
+  //
+  public results: string = null;
 
   constructor( dataserviceService: DataserviceService, logger: LoggerService ) {
     this.dataserviceService = dataserviceService;
@@ -74,42 +105,34 @@ export class OdataControlComponent implements OnChanges {
   public ngOnChanges(changes: SimpleChanges): void {
     this.dataservice = this.dataserviceService.getSelectedDataservice();
 
+    this.metadataFetchInProgress = false;
+
     this.searchMsg = null;
     this.searchMsgClasses = [];
     this.searchInProgress = false;
-    this.showResultsTable = false;
-    this.rawResultRows = null;
     this.odata = new Odata();
 
-    this.paginationConfig = {
-      pageNumber: 1,
-      pageSize: 10,
-      pageSizeIncrements: [5, 10, 15, 20, 25, 50]
-    } as PaginationConfig;
-
-    this.resultTableConfig = {
-      paginationConfig: this.paginationConfig,
-    } as TableConfig;
-
-    this.rawRows = [];
-    this.resultColumns = [];
-    this.resultRows = [];
+    this.results = null;
 
     const url = this.rootUrl + '/$metadata';
 
+    this.metadataFetchInProgress = true;
     this.dataserviceService.odataGet(url)
       .subscribe(
         (response) => {
-          if (! _.isEmpty(response)) {
-            this.odata.metadata = response;
+          if (! _.isEmpty(response) && this.dataserviceService.isXML(response.value)) {
+            let xmlObject = this.dataserviceService.tryXMLParse(response.value);
+            this.odata.metadata = xmlObject;
             this.odata.metadataFailure = false;
           } else {
             this.odata.metadata = '';
             this.odata.metadataFailure = true;
           }
+          this.metadataFetchInProgress = false;
         },
         (error) => {
           this.odata.metadataFailure = true;
+          this.metadataFetchInProgress = false;
           console.error('Failed to get odata metadata ' + error);
         }
       );
@@ -120,19 +143,19 @@ export class OdataControlComponent implements OnChanges {
    */
   public get endPointUrl(): string {
     if (this.odata.metadataFailure)
-      return 'Not available';
+      return this.i18n.UrlNotAvailable;
 
     if (_.isEmpty(this.odata.metadata))
-      return 'Not available';
+      return this.i18n.UrlNotAvailable;
 
     const baseUrl = this.rootUrl;
 
     if (_.isEmpty(baseUrl))
-      return 'Not Available';
+      return this.i18n.UrlNotAvailable;
 
     const service = this.odata.entity;
       if (_.isEmpty(service) || _.isEmpty(service.name))
-        return 'Not Available';
+        return this.i18n.UrlNotAvailable;
 
     let odataUrl = baseUrl + '/' + service.name;
 
@@ -152,6 +175,14 @@ export class OdataControlComponent implements OnChanges {
     if (! _.isEmpty(orderBy))
       odataUrl = odataUrl + orderBy;
 
+    //
+    // Append the result format but only if the
+    // query has not specified count (which is incompatible)
+    //
+    if (! _.isEmpty(this.resultsType) && this.odata.limit !== Odata.COUNT_ONLY) {
+      odataUrl = odataUrl + "$format=" + this.resultsType.toLowerCase();
+    }
+
     if (odataUrl.endsWith('&') || odataUrl.endsWith('?'))
       odataUrl = odataUrl.substring(0, odataUrl.length - 1);
 
@@ -166,12 +197,19 @@ export class OdataControlComponent implements OnChanges {
     return ! _.isEmpty(this.odata.metadata);
   }
 
+  public get metadataFailure(): boolean {
+    return this.odata.metadataFailure;
+  }
+
   /**
    * Can the query be enacted
    * @returns {boolean} true if good to go, false otherwise
    */
   public get canQuery(): boolean {
-    return !_.isEmpty(this.odata.metadata) && !_.isEmpty(this.odata.entity);
+    return !_.isEmpty(this.odata.metadata) &&
+            !_.isEmpty(this.odata.entity) &&
+            this.endPointUrl !== this.i18n.UrlNotAvailable;
+
   }
 
   /**
@@ -346,11 +384,8 @@ export class OdataControlComponent implements OnChanges {
       return [];
   }
 
-  private tableTitle(value: string): string {
-    if (_.isEmpty(value))
-      return value;
-
-    return _.startCase(value);
+  public get showResults(): boolean {
+    return ! _.isEmpty(this.results);
   }
 
   /**
@@ -359,33 +394,14 @@ export class OdataControlComponent implements OnChanges {
   public submitQuery(): void {
     let url = this.endPointUrl;
 
-    if (this.odata.limit !== Odata.COUNT_ONLY) {
-      //
-      // Json format cannot be used with $count
-      //
-      if (url.indexOf('?') > -1)
-        // Already have parameters
-        url = url + '&';
-      else
-        url = url + '?';
-
-      url = url + "$format=json";
-    }
-
-    this.rawResultRows = null;
-    this.resultColumns = [];
-    this.resultRows = [];
-    this.rawRows = [];
     this.searchMsg = null;
     this.searchMsgClasses = [];
     this.searchInProgress = true;
-    this.showResultsTable = false;
 
     this.dataserviceService.odataGet(url)
       .subscribe(
         (response) => {
-          this.showResultsTable = false;
-          this.rawResultRows = null;
+          this.results = null;
 
           // Remove the search progress spinner
           this.searchInProgress = false;
@@ -411,66 +427,21 @@ export class OdataControlComponent implements OnChanges {
             return;
           }
 
-          if (this.selectedColumns.length === 0) {
-            //
-            // No columns selected so choose all available
-            //
-            let resultCols = this.columns;
-            for (let i = 0; i < this.columns.length; ++i) {
-              const label = this.columns[i].name;
-              const col = { canAutoResize: true,
-                            draggable: false,
-                            name: this.tableTitle(label),
-                            prop: label,
-                            resizable: true,
-                            sortable: true };
-              this.resultColumns.push(col);
-            }
+          const instance = this.resultsEditor.instance;
+          if (this.resultsType === "XML") {
+            instance.setOption('mode', this.xmlFormat.mode);
           } else {
-            for (var j = 0; j < this.selectedColumns.length; ++j) {
-              const label = this.selectedColumns[j].name;
-              const col = { canAutoResize: true,
-                            draggable: false,
-                            name: this.tableTitle(label),
-                            prop: label,
-                            resizable: true,
-                            sortable: true };
-              this.resultColumns.push(col);
-            }
+            instance.setOption('mode', this.jsonFormat.mode);
           }
 
-          for (let rowIndex = 0; rowIndex < response.value.length; rowIndex++) {
-            const row = response.value[rowIndex];
-            this.rawRows.push(row);
-          }
-
-          this.updateRows();
-          this.showResultsTable = true;
+          this.results = response.value;
       },
       (error) => {
-        this.showResultsTable = false;
+        this.results = null;
         this.searchInProgress = false;
         this.searchMsgClasses = ['odata-results-msg-error'];
         this.searchMsg = 'Failed to get odata results ' + error;
       }
     );
-  }
-
-  // Pagination
-  handlePageSize($event: PaginationEvent): void {
-    this.updateRows();
-  }
-
-  handlePageNumber($event: PaginationEvent): void {
-    this.updateRows();
-  }
-
-  updateRows(): void {
-    this.paginationConfig.totalItems = this.rawRows.length;
-
-    this.resultRows = this.rawRows
-                        .slice(
-                          (this.paginationConfig.pageNumber - 1) * this.paginationConfig.pageSize, this.paginationConfig.totalItems)
-                            .slice(0, this.paginationConfig.pageSize);
   }
 }

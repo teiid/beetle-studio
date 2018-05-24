@@ -60,7 +60,7 @@ export abstract class ApiService {
     return this.appSettings.getKomodoUserWorkspacePath();
   }
 
-  protected isXML(xml: string): boolean {
+  public isXML(xml: string): boolean {
     try {
       const parser = new X2JS();
       const xmlDoc = parser.xml2js(xml); //is valid XML
@@ -71,7 +71,7 @@ export abstract class ApiService {
     }
   }
 
-  protected tryXMLParse(xml: string): any {
+  public tryXMLParse(xml: string): any {
     try {
       const parser = new X2JS();
       const xmlDoc = parser.xml2js(xml); //is valid XML
@@ -81,7 +81,7 @@ export abstract class ApiService {
     return null;
   }
 
-  protected tryNumberParse(jsonString: string): number {
+  public tryNumberParse(jsonString: string): number {
     try {
       var n = parseInt(jsonString);
       if (n && typeof n === "number") {
@@ -96,7 +96,7 @@ export abstract class ApiService {
    * Try to parse the given string and if parseable
    * then return the object
    */
-  protected tryJsonParse (jsonString: string): any {
+  public tryJsonParse (jsonString: string): any {
     try {
       var o = JSON.parse(jsonString);
 
@@ -115,7 +115,7 @@ export abstract class ApiService {
   /**
    * @returns true if the item is parseable
    */
-  protected isJSON(item: string): boolean {
+  public isJSON(item: string): boolean {
     item = typeof item !== "string" ? JSON.stringify(item) : item;
 
     try {

@@ -17,6 +17,8 @@
 
 export class OdataConstants {
 
+  public readonly UrlNotAvailable = 'URL Not Available';
+
   public readonly AscendingChoice = "Asc";
   public readonly columnPlaceholder = "column";
   public readonly Columns = "Columns";
@@ -33,6 +35,7 @@ export class OdataConstants {
   public readonly resultLimitPlaceholder = "Select result limit...";
   public readonly resultsTabular = "Tabular";
   public readonly resultsRaw = "Raw";
+  public readonly runningOdataMetadataFetch = "Fetching OData metadata ...";
   public readonly runningOdataQuery = "Running OData query...";
   public readonly runQueryAction = "Submit";
   public readonly Select = "Select";
@@ -46,6 +49,7 @@ export class OdataConstants {
   public readonly valuePlaceholder = "value";
   public readonly Where = "Where";
   public readonly OrderBy = "Order By";
+  public readonly ResultFormat = "Format";
 
   public readonly noResultsColumnName = "Err: No Data!";
   public readonly noResultsMsg = "No data was returned from the query";
@@ -61,6 +65,7 @@ export class OdataConstants {
   public readonly help_columns = "Select the columns to be included in the results.";
   public readonly help_where = "Create where clauses for filtering the results based on the values in each tuple. Use the + button to add new where clauses (clauses are and-ed together) and remove them with the - buttons.";
   public readonly help_orderBy = "Sort the results by column in ascending or descending order.";
+  public readonly help_format = "Choose the format of the query results.";
   public readonly help_resultsTable = "Use the column headers to sort the results or filter them by entering values. Results are paginated in blocks of 25 and can be scrolled through with the controls at the foot of the table.";
   public readonly help_resultsRaw = "The raw data as returned from the odata teiid service in json format.";
  	public readonly help_sqlSearch = "Use the Teiid dialect of SQL to construct a query that interrogates the data service for data results. Use the record limit to limit the number of results returned. Set the starting record index to fetch a subset of results starting at the given row index.";

@@ -54,6 +54,34 @@
   clear: both;
 }
 
+.odata-controls {
+  max-height: 27em;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(187,187,187);
+  overflow-y: auto;
+}
+
+/*
+ * Add icon for accordion group being open
+ */
+.odata-controls .panel-title .accordion-toggle[aria-expanded="true"]::after {
+  float: right;
+  content: "\f106";
+  color: #424242;
+  font-family: "FontAwesome";
+}
+
+/*
+ * Add icon for accordion group being closed
+ */
+.odata-controls .panel-title .accordion-toggle[aria-expanded="false"]::after {
+  float: right;
+  content: "\f107";
+  color: #424242;
+  font-family: "FontAwesome";
+}
+
 .odata-control-panel-title {
   font-weight: bold;
   display: inline-block;
@@ -71,7 +99,19 @@
   height: 1em;
 }
 
+.odata-exp-select-group-entity {
+    float: left;
+    width: 40%;
+    margin-right: 5em;
+}
+
+.odata-exp-select-group-limit {
+  float: left;
+  width: 40%;
+}
+
 .odata-exp-column-group {
+  float: left;
   margin-bottom: 0;
   padding-left: 0;
 }
@@ -79,6 +119,8 @@
 .odata-exp-column-group-row {
   margin-top: 0;
   margin-bottom: 0;
+  margin-right: 5em;
+  margin-left: 0.25em;
 }
 
 .odata-exp-select-group,
@@ -87,6 +129,11 @@
 .odata-exp-order-by-group-row,
 .odata-exp-order-by-group-row label,
 .odata-exp-order-by-group-row-label label {
+  font-weight: bold;
+}
+
+.odata-format-row label {
+  margin-right: 5em;
   font-weight: bold;
 }
 
@@ -109,18 +156,32 @@
   padding-right: 1%;
 }
 
-.odata-form-control {
+.odata-form-text-control {
   color: #000000;
   background-color: #FFFFFB;
-  border: 2px outset #FCFFFF;
   font-weight: bold;
   width: 100%;
+  border-top-color: rgb(187, 187, 187);
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-left-color: rgb(187, 187, 187);
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-right-color: rgb(252, 255, 255);
+  border-right-style: outset;
+  border-right-width: 2px;
+  border-bottom-color: rgb(252, 255, 255);
+  border-bottom-style: outset;
+  border-bottom-width: 2px;
+  padding-left: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 .odata-exp-order-by-group-row-label {
   padding-left: 0;
   width: 30%;
   word-wrap: break-word;
+  margin-bottom: 0.5em;
 }
 
 .odata-form-where-add-btn {
@@ -146,17 +207,24 @@
   margin-bottom: 0.5em;
 }
 
-#odata-results-table {
+#odata-results {
   clear: both;
   padding-left: 0;
   padding-right: 0;
   padding-bottom: 2em;
   position: relative;
+  border-color: rgb(187,187,187);
+  border-style: solid;
+  border-width: 1px;
 }
 
-.odata-results-table-grid {
-  font-weight: lighter;
-}
+/*
+ * Limit CodeMirror class changes to
+ * the odata-results.
+ */
+/*#odata-results .CodeMirror {
+  height: 25em;
+}*/
 
 #odata-search-progress-spinner {
   font-style: italic;
