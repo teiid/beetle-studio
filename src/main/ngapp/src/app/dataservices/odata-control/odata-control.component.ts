@@ -38,10 +38,9 @@ import { OdataWhere } from "@dataservices/odata-control/odata-where.model";
 })
 export class OdataControlComponent implements OnChanges {
 
-  @Input() dataserviceName: string;
+  @Input() private dataserviceName: string;
 
-  @ViewChild('odataResultsEditor') resultsEditor: any;
-
+  @ViewChild('odataResultsEditor') private resultsEditor: any;
 
   private dataserviceService: DataserviceService;
   private dataservice: Dataservice;
@@ -86,7 +85,7 @@ export class OdataControlComponent implements OnChanges {
   //
   // Format of the results
   //
-  public resultsType: string = "JSON";
+  public resultsType = "JSON";
 
   //
   // Results to show from the odata query
@@ -121,7 +120,7 @@ export class OdataControlComponent implements OnChanges {
       .subscribe(
         (response) => {
           if (! _.isEmpty(response) && this.dataserviceService.isXML(response.value)) {
-            let xmlObject = this.dataserviceService.tryXMLParse(response.value);
+            const xmlObject = this.dataserviceService.tryXMLParse(response.value);
             this.odata.metadata = xmlObject;
             this.odata.metadataFailure = false;
           } else {
@@ -154,8 +153,8 @@ export class OdataControlComponent implements OnChanges {
       return this.i18n.UrlNotAvailable;
 
     const service = this.odata.entity;
-      if (_.isEmpty(service) || _.isEmpty(service.name))
-        return this.i18n.UrlNotAvailable;
+    if (_.isEmpty(service) || _.isEmpty(service.name))
+      return this.i18n.UrlNotAvailable;
 
     let odataUrl = baseUrl + '/' + service.name;
 
@@ -313,12 +312,12 @@ export class OdataControlComponent implements OnChanges {
    * * Remove the where condition since it may be invalid
    * * Check the column is queryable and if not display an error
    */
-  public onWhereColumnSelected(where: OdataWhere) {
+  public onWhereColumnSelected(where: OdataWhere): void {
     if (! _.isEmpty(where) && ! _.isEmpty(where.condition))
       delete where.condition;
 
     if (! _.isEmpty(where.column)) {
-      let index = _.indexOf(Odata.QUERYABLE_TYPES, where.column.type);
+      const index = _.indexOf(Odata.QUERYABLE_TYPES, where.column.type);
       if (index < 0)
         where.error = this.i18n.whereErrorMsg;
       else
@@ -365,7 +364,7 @@ export class OdataControlComponent implements OnChanges {
    * Provides the choices to select for a where clause
    * depending on the type of column already selected
    */
-  public whereConditions(where: OdataWhere) {
+  public whereConditions(where: OdataWhere): Array<string> {
     if (_.isEmpty(where) || _.isEmpty(where.column))
       return [];
 
@@ -392,13 +391,11 @@ export class OdataControlComponent implements OnChanges {
    * Submit the query for evaluation
    */
   public submitQuery(): void {
-    let url = this.endPointUrl;
-
     this.searchMsg = null;
     this.searchMsgClasses = [];
     this.searchInProgress = true;
 
-    this.dataserviceService.odataGet(url)
+    this.dataserviceService.odataGet(this.endPointUrl)
       .subscribe(
         (response) => {
           this.results = null;

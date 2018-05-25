@@ -108,6 +108,6 @@ export class VirtRoute {
    * Is this an odata route
    */
   public isOdata(): boolean {
-    return this.getProtocol() == VirtRoute.ODATA_PROTOCOL;
+    return this.getProtocol() === VirtRoute.ODATA_PROTOCOL;
   }
 }

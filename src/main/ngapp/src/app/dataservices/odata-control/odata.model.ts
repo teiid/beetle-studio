@@ -67,7 +67,7 @@ export class Odata {
 
   private _metadata: any = null;
 
-  private _metadataFailure: boolean = false;
+  private _metadataFailure = false;
 
   private _entities: Array<OdataEntity> = [];
 
@@ -92,7 +92,7 @@ export class Odata {
    * @returns collection of conditions for int types
    */
   public intConditions(): string[] {
-    const conditions:Array<string> = [ Odata.EQUALS, Odata.NOT_EQUALS, Odata.GREATER_THAN,
+    const conditions: Array<string> = [ Odata.EQUALS, Odata.NOT_EQUALS, Odata.GREATER_THAN,
                                        Odata.GREATER_THAN_EQ_TO, Odata.LESS_THAN, Odata.LESS_THAN_EQ_TO,
                                        Odata.IN ];
     return conditions;
@@ -102,7 +102,7 @@ export class Odata {
    * @returns collection of conditions for string types
    */
   public stringConditions(): string[] {
-    const conditions:Array<string> = [ Odata.EQUALS, Odata.NOT_EQUALS, Odata.IN, Odata.EQUALS_CINS, Odata.NOT_EQUALS_CINS,
+    const conditions: Array<string> = [ Odata.EQUALS, Odata.NOT_EQUALS, Odata.IN, Odata.EQUALS_CINS, Odata.NOT_EQUALS_CINS,
                                        Odata.STARTS_WITH, Odata.NO_STARTS_WITH, Odata.ENDS_WITH, Odata.NO_ENDS_WITH,
                                        Odata.CONTAINS, Odata.LENGTH_EQ ];
     return conditions;
@@ -112,7 +112,7 @@ export class Odata {
    * @returns collection of conditions for date types
    */
   public dateConditions(): string[] {
-    const conditions:Array<string> = [ Odata.EQUALS, Odata.BEFORE_DATE, Odata.AFTER_DATE, Odata.BEFORE_EQ, Odata.AFTER_EQ ];
+    const conditions: Array<string> = [ Odata.EQUALS, Odata.BEFORE_DATE, Odata.AFTER_DATE, Odata.BEFORE_EQ, Odata.AFTER_EQ ];
     return conditions;
   }
 
@@ -120,7 +120,7 @@ export class Odata {
    * @returns collection of conditions for boolean types
    */
   public booleanConditions(): string[] {
-    const conditions:Array<string> = [ Odata.EQUALS, Odata.NOT_EQUALS ];
+    const conditions: Array<string> = [ Odata.EQUALS, Odata.NOT_EQUALS ];
     return conditions;
   }
 
@@ -142,14 +142,14 @@ export class Odata {
 
     const columns = entity.Property;
     if (_.isArray(columns)) {
-      for (let column of columns) {
-        let odataColumn = new OdataColumn();
+      for (const column of columns) {
+        const odataColumn = new OdataColumn();
         odataColumn.name = column._Name;
         odataColumn.type = column._Type.replace('Edm.', '');
         odataColumns.push(odataColumn);
       }
     } else if (_.isObject(columns)) {
-      let singleColumn = new OdataColumn();
+      const singleColumn = new OdataColumn();
       singleColumn.name = columns._Name;
       singleColumn.type = columns._Type.replace('Edm.', '');
       odataColumns = [singleColumn];
@@ -181,14 +181,14 @@ export class Odata {
 
     const entityTypes = metadata.Edmx.DataServices.Schema.EntityType;
     if (_.isArray(entityTypes)) {
-      for (let entityType of entityTypes) {
-        let entity = new OdataEntity();
+      for (const entityType of entityTypes) {
+        const entity = new OdataEntity();
         entity.name = entityType._Name;
         entity.columns = this.extractColumns(entityType);
         this._entities.push(entity);
       }
     } else if (_.isObject(entityTypes)) {
-        let singleEntity = new OdataEntity();
+        const singleEntity = new OdataEntity();
         singleEntity.name = entityTypes._Name;
         singleEntity.columns = this.extractColumns(entityTypes);
         this._entities = [singleEntity];
@@ -262,7 +262,7 @@ export class Odata {
    * Is this column with name selected
    */
   public hasColumn(columnName: string): boolean {
-    for (let column of this.columns) {
+    for (const column of this.columns) {
       if (_.isEqual(columnName, column.name))
         return true;
     }
@@ -347,7 +347,7 @@ export class Odata {
    * Converts the where clauses into odata where clauses
    */
   public convertWhere(): string {
-    if (this._wheres.length == 0)
+    if (this._wheres.length === 0)
       return '';
 
     const SPACE = ' ';
@@ -356,10 +356,10 @@ export class Odata {
     const QUOTE = "'";
     const COMMA = ',';
 
-    let prefix = '$filter=';
+    const prefix = '$filter=';
     let clauses = '';
 
-    for (var i = 0; i < this._wheres.length; ++i) {
+    for (let i = 0; i < this._wheres.length; ++i) {
       const where = this._wheres[i];
       const column: OdataColumn = where.column;
       const condition: string = where.condition;
@@ -391,13 +391,15 @@ export class Odata {
         clause = 'tolower' + OBKT + column + CBKT +
                  SPACE + 'eq' + SPACE +
                  'tolower' + OBKT + QUOTE + value + QUOTE + CBKT;
-      } else if (condition === Odata.NOT_EQUALS_CINS) {
+      }
+      else if (condition === Odata.NOT_EQUALS_CINS) {
         //
         // tolower(Description) ne tolower('value')
         //
         clause = 'tolower' + OBKT + column + CBKT + SPACE + 'ne' + SPACE +
                  'tolower' + OBKT + QUOTE + value + QUOTE + CBKT;
-      } else if (condition === Odata.STARTS_WITH) {
+      }
+      else if (condition === Odata.STARTS_WITH) {
         //
         // startswith(Description, 'value')
         //
@@ -432,7 +434,8 @@ export class Odata {
         // length(Description) eq 5
         //
         clause = 'length' + OBKT + column.name + CBKT + SPACE + 'eq' + SPACE + value;
-      } else if (condition === Odata.IN) {
+      }
+      else if (condition === Odata.IN) {
         //
         // in separated by ;, eg. 1;2
         // becomes
@@ -462,7 +465,7 @@ export class Odata {
    * Converts the column array into odata select clause
    */
   public convertColumns(): string {
-    if (this._columns.length == 0)
+    if (this._columns.length === 0)
       return '';
 
     //
@@ -483,10 +486,10 @@ export class Odata {
   }
 
   /**
-    * Converts the order by values into odata orderby clause
-    */
+   * Converts the order by values into odata orderby clause
+   */
   public convertOrderBy(): string {
-    if (this._entity.columns.length == 0)
+    if (this._entity.columns.length === 0)
       return '';
 
     //

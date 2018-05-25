@@ -26,8 +26,8 @@ import { OdataColumn } from "@dataservices/odata-control/odata-column.model";
 export class OdataWhere {
 
   private _column: OdataColumn;
-  private _condition: string = '';
-  private _value: string = '';
+  private _condition = '';
+  private _value = '';
 
   public error: string = null;
 

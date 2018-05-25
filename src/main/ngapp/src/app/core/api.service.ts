@@ -63,7 +63,7 @@ export abstract class ApiService {
   public isXML(xml: string): boolean {
     try {
       const parser = new X2JS();
-      const xmlDoc = parser.xml2js(xml); //is valid XML
+      const xmlDoc = parser.xml2js(xml); // is valid XML
       return xmlDoc != null;
     } catch (err) {
       // was not XML
@@ -74,20 +74,24 @@ export abstract class ApiService {
   public tryXMLParse(xml: string): any {
     try {
       const parser = new X2JS();
-      const xmlDoc = parser.xml2js(xml); //is valid XML
+      const xmlDoc = parser.xml2js(xml); // is valid XML
       return xmlDoc;
-    } catch (err) {}
+    } catch (err) {
+      // Do nothing
+    }
 
     return null;
   }
 
   public tryNumberParse(jsonString: string): number {
     try {
-      var n = parseInt(jsonString);
+      const n = parseInt(jsonString, 10);
       if (n && typeof n === "number") {
         return n;
       }
-    } catch (e) {}
+    } catch (e) {
+      // Do nothing
+    }
 
     return null;
   }
@@ -96,9 +100,9 @@ export abstract class ApiService {
    * Try to parse the given string and if parseable
    * then return the object
    */
-  public tryJsonParse (jsonString: string): any {
+  public tryJsonParse(jsonString: string): any {
     try {
-      var o = JSON.parse(jsonString);
+      const o = JSON.parse(jsonString);
 
       // Handle non-exception-throwing cases:
       // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
@@ -107,7 +111,9 @@ export abstract class ApiService {
       if (o && typeof o === "object") {
         return o;
       }
-    } catch (e) {}
+    } catch (e) {
+      // Do nothing
+    }
 
     return null;
   }

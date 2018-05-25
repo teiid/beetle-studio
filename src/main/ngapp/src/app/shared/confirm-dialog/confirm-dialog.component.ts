@@ -28,7 +28,7 @@ export class ConfirmDialogComponent implements OnInit {
 
   @Output() public confirmAction = new EventEmitter();
 
-  public title = "Title"
+  public title = "Title";
   public bodyContent = "Confirmation Message";
   public cancelButtonText = "Cancel";
   public confirmButtonText = "Confirm";

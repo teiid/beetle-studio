@@ -824,6 +824,4 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private setOdataServiceName(svcName): void {
      this.odataSvcName = svcName;
   }
-
-
 }

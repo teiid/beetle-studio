@@ -1,3 +1,10 @@
+/* tslint:disable:max-line-length */
+
+/*
+ * TODO
+ * This file should be ported to a proper i18n translation module
+ */
+
 /**
  * @license
  * Copyright 2017 JBoss Inc
@@ -58,7 +65,7 @@ export class OdataConstants {
   public readonly searchErrorConsoleMsg = "Error: Failed to get value at link: ";
   public readonly searchErrorMsg = "Error: failed to get any results: ";
   public readonly whereErrorMsg = "The chosen column has a type which cannot be used in a where condition";
-  public readonly metadataFetchFailure = "Failed to get the odata metadata for the published artifact."
+  public readonly metadataFetchFailure = "Failed to get the odata metadata for the published artifact.";
 
   public readonly help_endpointSubmit = "This URL is formed using the OData specification. It can be copied into a new browser window to return the results in xml format or append ?format=json to the URL for JSON.  Click the Submit button to display the results in a formatted table.";
   public readonly help_select = "Choose the view from which results should be sought. Select a limit to curtail the number of results returned ";
@@ -68,5 +75,5 @@ export class OdataConstants {
   public readonly help_format = "Choose the format of the query results.";
   public readonly help_resultsTable = "Use the column headers to sort the results or filter them by entering values. Results are paginated in blocks of 25 and can be scrolled through with the controls at the foot of the table.";
   public readonly help_resultsRaw = "The raw data as returned from the odata teiid service in json format.";
- 	public readonly help_sqlSearch = "Use the Teiid dialect of SQL to construct a query that interrogates the data service for data results. Use the record limit to limit the number of results returned. Set the starting record index to fetch a subset of results starting at the given row index.";
+  public readonly help_sqlSearch = "Use the Teiid dialect of SQL to construct a query that interrogates the data service for data results. Use the record limit to limit the number of results returned. Set the starting record index to fetch a subset of results starting at the given row index.";
 }

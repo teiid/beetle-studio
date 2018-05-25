@@ -127,10 +127,9 @@ export class Virtualization {
     Object.assign(this, values);
 
     if (values['routes']) {
-      let routes = values['routes'];
-      for (let i = 0; i < routes.length; ++i) {
-        let route = routes[i];
-        let virtRoute = VirtRoute.create(route);
+      const routes = values['routes'];
+      for (const route of routes) {
+        const virtRoute = VirtRoute.create(route);
         if (!this.virtRoutes) {
           this.virtRoutes = [];
         }

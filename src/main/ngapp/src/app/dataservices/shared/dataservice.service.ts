@@ -495,9 +495,9 @@ export class DataserviceService extends ApiService {
       .get(url, this.getAuthRequestOptions())
       .map((response) => {
         const data = response.text();
-        let jobj = this.tryJsonParse(data);
+        const jobj = this.tryJsonParse(data);
         if (_.isObject(jobj)) {
-          let json = JSON.stringify(jobj, null, 4);
+          const json = JSON.stringify(jobj, null, 4);
           return {
             value: json
           };
@@ -520,7 +520,7 @@ export class DataserviceService extends ApiService {
           };
         }
 
-        let n = this.tryNumberParse(data);
+        const n = this.tryNumberParse(data);
         if (n) {
           return {
             count: n

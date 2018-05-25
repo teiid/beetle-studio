@@ -269,7 +269,7 @@ export class Dataservice implements Identifiable< string > {
       return null;
     }
 
-    let route: VirtRoute = this.virtualization.getOdataRoute();
+    const route: VirtRoute = this.virtualization.getOdataRoute();
     if (route == null) {
       return null;
     }
