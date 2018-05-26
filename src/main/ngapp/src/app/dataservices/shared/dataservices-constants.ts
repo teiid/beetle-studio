@@ -29,6 +29,8 @@ export class DataservicesConstants {
   public static readonly testDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/test-virtualization";
   public static readonly testDataservicePath = DataservicesConstants.dataservicesRootPath + "/test-virtualization";
 
+  public static readonly ODATA_VERSION = 'odata4';
+
   public static dataserviceNameLabel = "Name";
   public static descriptionLabel = "Description";
 

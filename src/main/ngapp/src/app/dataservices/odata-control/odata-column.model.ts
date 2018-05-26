@@ -15,43 +15,53 @@
  * limitations under the License.
  */
 
-/**
- * An enumeration of Publishing state
- */
-export enum PublishState {
+export class OdataColumn {
+
+  private _name: string;
+
+  private _type: string;
+
+  private _sort: string;
 
   /**
-   * not published
+   * @returns name
    */
-  NOT_PUBLISHED,
+  public get name(): string {
+    return this._name;
+  }
 
   /**
-   * submitted
+   * Sets the name
    */
-  SUBMITTED,
+  public set name(name: string) {
+    this._name = name;
+  }
 
   /**
-   * configuring
+   * @returns type
    */
-  CONFIGURING,
+  public get type(): string {
+    return this._type;
+  }
 
   /**
-   * building
+   * Sets the type
    */
-  BUILDING,
+  public set type(type: string) {
+    this._type = type;
+  }
 
   /**
-   * deploying
+   * @returns sort
    */
-  DEPLOYING,
+  public get sort(): string {
+    return this._sort;
+  }
 
   /**
-   * published
+   * Sets the sort type
    */
-  PUBLISHED,
-
-  /**
-   * failed
-   */
-  FAILED
+  public set sort(sort: string) {
+    this._sort = sort;
+  }
 }

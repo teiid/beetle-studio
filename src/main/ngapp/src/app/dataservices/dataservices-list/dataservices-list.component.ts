@@ -43,6 +43,7 @@ export class DataservicesListComponent implements OnInit {
   private static readonly publishActionId = "publish";
   private static readonly downloadActionId = "download";
   private static readonly testActionId = "test";
+  private static readonly odataLookActionId = "odata-test";
 
   public items: Dataservice[];
   public listConfig: ListConfig;
@@ -60,6 +61,7 @@ export class DataservicesListComponent implements OnInit {
   @Output() public deleteDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public editDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public odataLookDataservice: EventEmitter<string> = new EventEmitter<string>();
 
   public logger: LoggerService;
 
@@ -82,6 +84,7 @@ export class DataservicesListComponent implements OnInit {
    * @param publishActionTemplate {TemplateRef} the publish action template
    * @param downloadActionTemplate {TemplateRef} the download action template
    * @param deleteActionTemplate {TemplateRef} the delete action template
+   * @param odataLookActionTemplate {TemplateRef} the odata preview action template
    * @returns {ActionConfig} the actions configuration
    */
   public getActionConfig( ds: Dataservice,
@@ -91,9 +94,17 @@ export class DataservicesListComponent implements OnInit {
                           activateActionTemplate: TemplateRef< any >,
                           publishActionTemplate: TemplateRef< any >,
                           downloadActionTemplate: TemplateRef< any >,
-                          deleteActionTemplate: TemplateRef< any > ): ActionConfig {
+                          deleteActionTemplate: TemplateRef< any >,
+                          odataLookActionTemplate: TemplateRef< any > ): ActionConfig {
     const actionConfig = {
       primaryActions: [
+        {
+          visible: ds.servicePublished,
+          id: DataservicesListComponent.odataLookActionId,
+          template: odataLookActionTemplate,
+          title: "Odata Test",
+          tooltip: "Test the published virtualization"
+        },
         {
           disabled: ds.serviceDeploymentLoading,
           id: DataservicesListComponent.editActionId,
@@ -144,7 +155,8 @@ export class DataservicesListComponent implements OnInit {
           template: deleteActionTemplate,
           title: "Delete",
           tooltip: "Delete this data service"
-        } ],
+        }
+       ],
     } as ActionConfig;
 
     return actionConfig;
@@ -219,6 +231,10 @@ export class DataservicesListComponent implements OnInit {
     this.quickLookDataservice.emit(dataserviceName);
   }
 
+  public onOdataLookDataservice( dataserviceName: string): void {
+    this.odataLookDataservice.emit(dataserviceName);
+  }
+
   public handleAction($event: Action, item: any): void {
     switch ( $event.id ) {
       case DataservicesListComponent.activateActionId:
@@ -241,6 +257,9 @@ export class DataservicesListComponent implements OnInit {
         break;
       case DataservicesListComponent.testActionId:
         this.onTestDataservice( item.getId() );
+        break;
+      case DataservicesListComponent.odataLookActionId:
+        this.onOdataLookDataservice( item.getId() );
         break;
       default:
         this.logger.error( "Unhandled event type of '" + $event.title + "'" );

@@ -18,8 +18,10 @@
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
+import { VirtRoute } from "@dataservices/shared/virt-route.model";
 import { Identifiable } from "@shared/identifiable";
 import { SortDirection } from "@shared/sort-direction.enum";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 
 export class Dataservice implements Identifiable< string > {
 
@@ -209,11 +211,35 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
-   * Accessor to determine if service publishing is active
-   * @returns {boolean} the dataservice service publishing active state
+   * Accessor to determine if service submission is active
+   * @returns {boolean} the dataservice service submitted active state
    */
-  public get servicePublishing(): boolean {
-    return this.getServicePublishState() === PublishState.PUBLISHING;
+  public get serviceSubmitted(): boolean {
+    return this.getServicePublishState() === PublishState.SUBMITTED;
+  }
+
+  /**
+   * Accessor to determine if service configuring is active
+   * @returns {boolean} the dataservice service configuring active state
+   */
+  public get serviceConfiguring(): boolean {
+    return this.getServicePublishState() === PublishState.CONFIGURING;
+  }
+
+  /**
+   * Accessor to determine if service building is active
+   * @returns {boolean} the dataservice service building active state
+   */
+  public get serviceBuilding(): boolean {
+    return this.getServicePublishState() === PublishState.BUILDING;
+  }
+
+  /**
+   * Accessor to determine if service deploying is active
+   * @returns {boolean} the dataservice service deploying active state
+   */
+  public get serviceDeploying(): boolean {
+    return this.getServicePublishState() === PublishState.DEPLOYING;
   }
 
   /**
@@ -230,6 +256,29 @@ export class Dataservice implements Identifiable< string > {
    */
   public get servicePublishFailed(): boolean {
     return this.getServicePublishState() === PublishState.FAILED;
+  }
+
+  /**
+   * Accessor to return the root of the odata url, ie.
+   * http://HOST/odata4/vdbName/
+   *
+   * @returns {string} the odata url for this dataaservice
+   */
+  public getOdataRootUrl(): string {
+    if (! this.servicePublished || ! this.virtualization) {
+      return null;
+    }
+
+    const route: VirtRoute = this.virtualization.getOdataRoute();
+    if (route == null) {
+      return null;
+    }
+
+    let proto = 'http';
+    if (route.isSecure())
+      proto = proto + 's';
+
+    return proto + '://' + route.getHost() + '/' + DataservicesConstants.ODATA_VERSION + '/' + this.getServiceVdbName();
   }
 
   /**

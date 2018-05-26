@@ -40,6 +40,8 @@ import { Observable } from "rxjs/Observable";
 import { ReplaySubject } from "rxjs/ReplaySubject";
 import { Subject } from "rxjs/Subject";
 import { Subscription } from "rxjs/Subscription";
+import * as _ from "lodash";
+import * as vkbeautify from 'vkbeautify';
 
 @Injectable()
 export class DataserviceService extends ApiService {
@@ -481,6 +483,60 @@ export class DataserviceService extends ApiService {
         return new QueryResults(queryResults);
       })
       .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Query a Dataservice's published virtualization using odata protocol
+   * @param {string} url the odata url string
+   * @returns {Observable<any>}
+   */
+  public odataGet(url: string): Observable<any> {
+    return this.http
+      .get(url, this.getAuthRequestOptions())
+      .map((response) => {
+        const data = response.text();
+        const jobj = this.tryJsonParse(data);
+        if (_.isObject(jobj)) {
+          const json = JSON.stringify(jobj, null, 4);
+          return {
+            value: json
+          };
+        }
+
+        if (this.isXML(data)) {
+          const xml = vkbeautify.xml(data);
+          return {
+            value: xml
+          };
+        }
+
+        if (_.isEqual(data, "0")) {
+          //
+          // corner-case where $count is used
+          // and there are no results
+          //
+          return {
+            count: 0
+          };
+        }
+
+        const n = this.tryNumberParse(data);
+        if (n) {
+          return {
+            count: n
+          };
+        }
+
+        if (typeof response === 'string' || response instanceof String) {
+          return {
+            value: response
+          };
+        }
+
+        return {
+          error: 'Error: Request to ' + url + " produces an unexpected response: " + data
+        };
+      }).catch((error) => this.handleError(error));
   }
 
   /**

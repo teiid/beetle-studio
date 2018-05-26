@@ -16,6 +16,7 @@
  */
 
 import { PublishState } from "@dataservices/shared/publish-state.enum";
+import { VirtRoute } from "@dataservices/shared/virt-route.model";
 
 /**
  * Virtualization model
@@ -25,11 +26,12 @@ export class Virtualization {
   private readonly vdb_name: string;
   private build_name: string;
   private deployment_name: string;
-  private build_status: string; /* NOTFOUND, BUILDING, DEPLOYING, RUNNING, FAILED, CANCELLED */
+  private build_status: string; /* NOTFOUND, SUBMITTED, CONFIGURING, BUILDING, DEPLOYING, RUNNING, FAILED, CANCELLED */
   private build_status_message: string;
   private namespace: string;
   private last_updated: string;
   private publishState: PublishState;
+  private virtRoutes: Array<VirtRoute>;
 
   /**
    * @param {Object} json the JSON representation of a Virtualization
@@ -104,15 +106,47 @@ export class Virtualization {
     return this.publishState;
   }
 
+  public getOdataRoute(): VirtRoute {
+    if (! this.virtRoutes) {
+      return null;
+    }
+
+    for ( const virtRoute of this.virtRoutes ) {
+      if (virtRoute.isOdata())
+        return virtRoute;
+    }
+
+    return null;
+  }
+
   /**
    * Set all object values using the supplied Virtualization json
    * @param {Object} values
    */
   public setValues(values: object = {}): void {
     Object.assign(this, values);
+
+    if (values['routes']) {
+      const routes = values['routes'];
+      for (const route of routes) {
+        const virtRoute = VirtRoute.create(route);
+        if (!this.virtRoutes) {
+          this.virtRoutes = [];
+        }
+
+        this.virtRoutes.push(virtRoute);
+      }
+    }
+
     if (this.build_status) {
-      if (this.build_status === "BUILDING" || this.build_status === "DEPLOYING") {
-        this.publishState = PublishState.PUBLISHING;
+      if (this.build_status === "SUBMITTED") {
+        this.publishState = PublishState.SUBMITTED;
+      } else if (this.build_status === "CONFIGURING") {
+        this.publishState = PublishState.CONFIGURING;
+      } else if (this.build_status === "BUILDING") {
+        this.publishState = PublishState.BUILDING;
+      } else if (this.build_status === "DEPLOYING") {
+        this.publishState = PublishState.DEPLOYING;
       } else if (this.build_status === "RUNNING") {
         this.publishState = PublishState.PUBLISHED;
       } else if (this.build_status === "FAILED") {

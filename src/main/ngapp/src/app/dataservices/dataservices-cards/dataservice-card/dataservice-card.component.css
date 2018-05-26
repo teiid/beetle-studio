@@ -57,3 +57,13 @@ a.list-pf-title.view-name {
   display: flex;
   padding: 3px;
 }
+
+.odata-card-icon {
+  width: 16px;
+  height: 16px;
+  padding-left: 4px;
+  padding-right: 4px;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALlJREFUeNpi/N/D4MDAwLCfgQLAAmc5TmBgEDPAVHFlAYTWScCUe3UBaH0BkiEgA2TsMRU+PgChsclBAeOod4aUd0CGsQtAbPn5gUTvgIAH0Ona8RD2z48MDDuAXrizgYHBqoGBwbIeU/eTgwwMKx3QvAMzAATY+SHhBDLk4wOIBmxhguISkBfQAZ88hL66AIJxACY4C2QbNucSARCGfAIasiMREhZg/kNw9BEDqJbYQKHjSIkhAAEGAHmtTMAm);
+}

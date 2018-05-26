@@ -38,11 +38,13 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
   public static readonly quickLookDataserviceEvent = "quickLook";
   public static readonly testDataserviceEvent = "test";
   public static readonly downloadDataserviceEvent = "download";
+  public static readonly odataLookDataserviceEvent = "odataLook";
 
   public readonly editEvent = DataserviceCardComponent.editDataserviceEvent;
   public readonly quickLookEvent = DataserviceCardComponent.quickLookDataserviceEvent;
   public readonly testEvent = DataserviceCardComponent.testDataserviceEvent;
   public readonly downloadEvent = DataserviceCardComponent.downloadDataserviceEvent;
+  public readonly odataLookEvent = DataserviceCardComponent.odataLookDataserviceEvent;
 
   @Input() public dataservice: Dataservice;
   @Input() public selectedDataservices: Dataservice[];

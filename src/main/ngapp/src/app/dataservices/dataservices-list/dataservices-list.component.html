@@ -48,12 +48,33 @@
                       data-placement="right"
                       title="Publishing Failed">
                 </span>
-                <span class="pull-left fa fa-cog fa-spin fa-2x"
-                      style="color:orange;"
-                      *ngIf="item.servicePublishing"
+                <span class="pull-left fa fa-clipboard fa-2x"
+                      style="color:midnightblue;"
+                      *ngIf="item.serviceSubmitted"
                       data-toggle="tooltip"
                       data-placement="right"
-                      title="Publishing">
+                      title="Virtualization Submitted">
+                </span>
+                <span class="pull-left fa fa-wrench fa-spin fa-2x"
+                      style="color:purple;"
+                      *ngIf="item.serviceConfiguring"
+                      data-toggle="tooltip"
+                      data-placement="right"
+                      title="Virtualization Configuring">
+                </span>
+                <span class="pull-left fa fa-cog fa-spin fa-2x"
+                      style="color:blue;"
+                      *ngIf="item.serviceBuilding"
+                      data-toggle="tooltip"
+                      data-placement="right"
+                      title="Virtualization Building">
+                </span>
+                <span class="pull-left fa fa-refresh fa-spin fa-2x"
+                      style="color:teal;"
+                      *ngIf="item.serviceDeploying"
+                      data-toggle="tooltip"
+                      data-placement="right"
+                      title="Virtualization Deploying">
                 </span>
                 <span class="pull-left fa fa-cogs fa-2x"
                       style="color:green;"
@@ -83,7 +104,8 @@
                                                           activateActionTemplate,
                                                           publishActionTemplate,
                                                           downloadActionTemplate,
-                                                          deleteActionTemplate )"
+                                                          deleteActionTemplate,
+                                                          odataLookActionTemplate )"
                          (onActionSelect)="handleAction($event, item)">
               <ng-template #editActionTemplate let-action="action">
                 <span class="fa fa-edit">&nbsp;</span>{{ action.title }}
@@ -105,6 +127,9 @@
               </ng-template>
               <ng-template #deleteActionTemplate let-action="action">
                 <span class="fa fa-trash-o">&nbsp;</span>{{ action.title }}
+              </ng-template>
+              <ng-template #odataLookActionTemplate let-action="action">
+                <span class="odata-list-icon">&nbsp;</span>
               </ng-template>
             </pfng-action>
           </ng-template>

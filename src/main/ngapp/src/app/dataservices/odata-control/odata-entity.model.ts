@@ -15,43 +15,40 @@
  * limitations under the License.
  */
 
-/**
- * An enumeration of Publishing state
- */
-export enum PublishState {
+import { OdataColumn } from "@dataservices/odata-control/odata-column.model";
+
+export class OdataEntity {
+
+  private _name: string;
+
+  /* The available columns for the entity */
+  private _columns: Array<OdataColumn> = [];
 
   /**
-   * not published
+   * @returns name
    */
-  NOT_PUBLISHED,
+  public get name(): string {
+    return this._name;
+  }
 
   /**
-   * submitted
+   * Sets the name
    */
-  SUBMITTED,
+  public set name(name: string) {
+    this._name = name;
+  }
 
   /**
-   * configuring
+   * @returns columns
    */
-  CONFIGURING,
+  public get columns(): OdataColumn[] {
+    return this._columns;
+  }
 
   /**
-   * building
+   * Sets the columns
    */
-  BUILDING,
-
-  /**
-   * deploying
-   */
-  DEPLOYING,
-
-  /**
-   * published
-   */
-  PUBLISHED,
-
-  /**
-   * failed
-   */
-  FAILED
+  public set columns(columns: OdataColumn[]) {
+    this._columns = columns;
+  }
 }

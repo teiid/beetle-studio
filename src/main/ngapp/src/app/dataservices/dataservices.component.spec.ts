@@ -21,10 +21,13 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
+import { OdataControlComponent } from "@dataservices/odata-control/odata-control.component";
 import { SharedModule } from "@shared/shared.module";
 import { CodemirrorModule } from "ng2-codemirror";
 import { ModalModule } from "ngx-bootstrap";
 import { PatternFlyNgModule } from "patternfly-ng";
+import { AccordionModule } from 'ngx-bootstrap';
+import { TooltipModule } from 'ngx-bootstrap';
 
 describe("DataservicesComponent", () => {
   let component: DataservicesComponent;
@@ -33,13 +36,15 @@ describe("DataservicesComponent", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), PatternFlyNgModule,
-                 RouterTestingModule, SharedModule, CodemirrorModule ],
+                 RouterTestingModule, SharedModule, CodemirrorModule, AccordionModule.forRoot(),
+                 TooltipModule.forRoot() ],
       declarations: [ DataservicesDetailsComponent,
                       DataservicesComponent,
                       DataservicesListComponent,
                       DataservicesCardsComponent,
                       DataserviceCardComponent,
                       SqlControlComponent,
+                      OdataControlComponent,
                       ViewsContentComponent ],
       providers: [
         AppSettingsService,

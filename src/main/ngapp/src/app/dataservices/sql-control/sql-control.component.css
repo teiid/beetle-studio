@@ -42,6 +42,14 @@
   padding-left: 0;
 }
 
+/*
+ * Limit CodeMirror class changes to
+ * the sql-control-editor.
+ */
+.sql-control-editor .CodeMirror {
+  height: 200px;
+}
+
 .sql-results-panel {
   padding-left: 0;
   padding-right: 0;
