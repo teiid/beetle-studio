@@ -1,0 +1,48 @@
+.slide-in {
+  height: 100%;
+  position: fixed;
+  z-index: 5000;
+  top: 0;
+  margin-top: 60px; /* match height of header */
+  padding-top: 5em;
+  overflow-x: hidden;
+  background-color: #fffffc;
+  transition: 0.5s;
+}
+
+.slide-in-left {
+  left: 0;
+  margin-left: 200px /* match the width of the .nav-pf-vertical */
+}
+
+.slide-in-right {
+  right: 0;
+}
+
+.slide-in .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+  text-shadow: -1px -1px 1px #fff, 1px 1px 1px #000;
+	color: #9c8468;
+	opacity: 0.3;
+}
+
+.slide-in .closebtn:hover {
+  text-decoration: none;
+  color: #e4dada;
+}
+
+#slide-in-body {
+  -webkit-box-shadow: inset 0px 10px 15px 0px rgba(180, 180, 180, 0.5);
+  -moz-box-shadow: inset 0px 10px 15px 0px rgba(180, 180, 180, 0.5);
+  box-shadow: inset 0px 10px 15px 0px rgba(180, 180, 180, 0.5);
+}
+
+#slide-in-body div {
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-bottom: 0.5em;
+}

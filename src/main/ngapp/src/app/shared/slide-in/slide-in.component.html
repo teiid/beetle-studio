@@ -1,0 +1,10 @@
+<div class="sidenav-button" (click)="showHide()">
+  <ng-content select="[slide-in-button]"></ng-content>
+</div>
+
+<div id="slide-in-body" [ngStyle]="{'width': slideInWidth()}" [ngClass]="slideInClasses()">
+  <a href="javascript:void(0)" class="closebtn" (click)="close()">&times;</a>
+  <div id=”slide-in-body-content”>
+    <ng-content select="[slide-in-content]"></ng-content>
+  </div>
+</div>

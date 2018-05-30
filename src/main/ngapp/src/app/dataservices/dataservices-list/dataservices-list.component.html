@@ -34,55 +34,64 @@
                 <span class="pull-left fa fa-spinner fa-pulse"
                       *ngIf="item.serviceDeploymentLoading">
                 </span>
-                <span class="pull-left fa fa-cogs fa-2x"
-                      style="color:grey;"
-                      *ngIf="item.serviceNotPublished"
-                      data-toggle="tooltip"
-                      data-placement="right"
-                      title="Not Published">
-                </span>
-                <span class="pull-left fa fa-cogs fa-2x"
-                      style="color:red;"
-                      *ngIf="item.servicePublishFailed"
-                      data-toggle="tooltip"
-                      data-placement="right"
-                      title="Publishing Failed">
-                </span>
-                <span class="pull-left fa fa-clipboard fa-2x"
-                      style="color:midnightblue;"
-                      *ngIf="item.serviceSubmitted"
-                      data-toggle="tooltip"
-                      data-placement="right"
-                      title="Virtualization Submitted">
-                </span>
-                <span class="pull-left fa fa-wrench fa-spin fa-2x"
-                      style="color:purple;"
-                      *ngIf="item.serviceConfiguring"
-                      data-toggle="tooltip"
-                      data-placement="right"
-                      title="Virtualization Configuring">
-                </span>
-                <span class="pull-left fa fa-cog fa-spin fa-2x"
-                      style="color:blue;"
-                      *ngIf="item.serviceBuilding"
-                      data-toggle="tooltip"
-                      data-placement="right"
-                      title="Virtualization Building">
-                </span>
-                <span class="pull-left fa fa-refresh fa-spin fa-2x"
-                      style="color:teal;"
-                      *ngIf="item.serviceDeploying"
-                      data-toggle="tooltip"
-                      data-placement="right"
-                      title="Virtualization Deploying">
-                </span>
-                <span class="pull-left fa fa-cogs fa-2x"
-                      style="color:green;"
-                      *ngIf="item.servicePublished"
-                      data-toggle="tooltip"
-                      data-placement="left"
-                      title="Published">
-                </span>
+
+                <div id="publishing-list-icons">
+                  <slide-in openedWidth='45%'
+                            (onBeforeOpen)="initPublishLogs(item)"
+                            (onAfterOpen)="refreshEditor()"
+                            (onAfterClose)="disposePublishLogs()">
+                    <div slide-in-button>
+                      <span class="pull-left fa fa-cogs fa-2x"
+                            style="color:grey;"
+                            *ngIf="item.serviceNotPublished"
+                            placement="right"
+                            [tooltip]="virtNotPubTooltip">
+                      </span>
+                      <span class="pull-left fa fa-cogs fa-2x"
+                            style="color:red;"
+                            *ngIf="item.servicePublishFailed"
+                            placement="right"
+                            [tooltip]="virtPubFailTooltip">
+                      </span>
+                      <span class="pull-left fa fa-clipboard fa-2x"
+                            style="color:midnightblue;"
+                            *ngIf="item.serviceSubmitted"
+                            placement="right"
+                            [tooltip]="virtSubTooltip">
+                      </span>
+                      <span class="pull-left fa fa-wrench fa-spin fa-2x"
+                            style="color:purple;"
+                            *ngIf="item.serviceConfiguring"
+                            placement="right"
+                            [tooltip]="virtConfTooltip">
+                      </span>
+                      <span class="pull-left fa fa-cog fa-spin fa-2x"
+                            style="color:blue;"
+                            *ngIf="item.serviceBuilding"
+                            placement="right"
+                            [tooltip]="virtBuildTooltip">
+                      </span>
+                      <span class="pull-left fa fa-refresh fa-spin fa-2x"
+                            style="color:teal;"
+                            *ngIf="item.serviceDeploying"
+                            placement="right"
+                            [tooltip]="virtDepTooltip">
+                      </span>
+                      <span class="pull-left fa fa-cogs fa-2x"
+                            style="color:green;"
+                            *ngIf="item.servicePublished"
+                            placement="right"
+                            [tooltip]="virtPubTooltip">
+                      </span>
+                    </div>
+                    <div slide-in-content>
+                      <div>
+                        <h3>Publishing Logs for '{{item.getId()}}'</h3>
+                        <codemirror #publishLogsEditor [(ngModel)]="publishLogs" [config]="publishLogsEditorConfig"></codemirror>
+                      </div>
+                    </div>
+                  </slide-in>
+                </div>
                 <a class="object-name-link" [routerLink]="[item.getId()]" (click)="onEditDataservice(item.getId())">{{ item.getId() }}</a>
                 <div class="list-pf-description">{{ getDescription( item ) }}</div>
               </div>
@@ -96,6 +105,29 @@
               </div>
             </div>
           </ng-template>
+
+          <ng-template #virtNotPubTooltip>
+            Virtualization Not Published <br/> <i>(Click to view log)</i>
+          </ng-template>
+          <ng-template #virtPubFailTooltip>
+            Virtualization Publishing Failed <br/> <i>(Click to view log)</i>
+          </ng-template>
+          <ng-template #virtSubTooltip>
+            Virtualization Submitted <br/> <i>(Click to view log)</i>
+          </ng-template>
+          <ng-template #virtConfTooltip>
+            Virtualization Configuring <br/> <i>(Click to view log)</i>
+          </ng-template>
+          <ng-template #virtBuildTooltip>
+            Virtualization Building <br/> <i>(Click to view log)</i>
+          </ng-template>
+          <ng-template #virtDepTooltip>
+            Virtualization Deploying <br/> <i>(Click to view log)</i>
+          </ng-template>
+          <ng-template #virtPubTooltip>
+            Virtualization Published <br/> <i>(Click to view log)</i>
+          </ng-template>
+
           <ng-template #actionTemplate let-item="item" let-index="index">
             <pfng-action class="list-pf-actions"
                          [config]="getActionConfig( item, editActionTemplate,
