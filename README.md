@@ -1,3 +1,5 @@
+[![Build Status](https://api.travis-ci.org/teiid/beetle-studio.svg?branch=master)](https://travis-ci.org/teiid/beetle-studio)
+
 # Beetle Studio (Web-based tooling for the Teiid project)
 
 ## Summary
