@@ -16,6 +16,7 @@ export class DataservicesConstants {
 
   public static readonly dataservicesExport = "export";
   public static readonly dataservicesPublish = "publish";
+  public static readonly dataservicesPublishLogs = "publishLogs";
 
   public static readonly dataservicesRootRoute = "virtualizations";
   public static readonly dataservicesRootPath = "/" + DataservicesConstants.dataservicesRootRoute;

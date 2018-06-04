@@ -458,6 +458,24 @@ export class DataserviceService extends ApiService {
   }
 
   /**
+   * Retrieve the publishing logs for the given dataservice
+   * @param {Dataservice} dataservice the dataservice
+   * @returns {Observable<any>}
+   */
+  public publishLogsGet(dataservice: Dataservice): Observable<any> {
+    const url = environment.komodoTeiidUrl + "/" +
+                  DataservicesConstants.dataservicesPublishLogs + "/" +
+                  dataservice.getServiceVdbName();
+
+    return this.http
+      .get(url, this.getAuthRequestOptions())
+      .map((response) => {
+        const data = response.json();
+        return data;
+      }).catch((error) => this.handleError(error));
+  }
+
+  /**
    * Query a Dataservice via the komodo rest interface
    * @param {string} query the SQL query
    * @param {string} dataserviceName the dataservice name

@@ -86,55 +86,63 @@
             title="Odata Preview">
       </span>
 
-      <span class="pull-left fa fa-cogs fa-2x card-action-icon"
-            style="color:grey;"
-            *ngIf="dataservice.serviceNotPublished"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Virtualization Not Published">
-      </span>
-      <span class="pull-left fa fa-cogs fa-2x card-action-icon"
-            style="color:red;"
-            *ngIf="dataservice.servicePublishFailed"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Virtualization Publishing Failed">
-      </span>
-      <span class="pull-left fa fa-clipboard fa-2x card-action-icon"
-            style="color:midnightblue;"
-            *ngIf="dataservice.serviceSubmitted"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Virtualization Submitted">
-      </span>
-      <span class="pull-left fa fa-wrench fa-spin fa-2x card-action-icon"
-            style="color:purple;"
-            *ngIf="dataservice.serviceConfiguring"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Virtualization Configuring">
-      </span>
-      <span class="pull-left fa fa-cog fa-spin fa-2x card-action-icon"
-            style="color:blue;"
-            *ngIf="dataservice.serviceBuilding"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Virtualization Building">
-      </span>
-      <span class="pull-left fa fa-refresh fa-spin fa-2x card-action-icon"
-            style="color:teal;"
-            *ngIf="dataservice.serviceDeploying"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Virtualization Deploying">
-      </span>
-      <span class="pull-left fa fa-cogs fa-2x card-action-icon"
-            style="color:green;"
-            *ngIf="dataservice.servicePublished"
-            data-toggle="tooltip"
-            data-placement="right"
-            title="Virtualization Published">
-      </span>
+      <div id="publishing-card-icons">
+        <slide-in openedWidth='45%'
+                  (onBeforeOpen)="initPublishLogs()"
+                  (onAfterOpen)="refreshEditor()"
+                  (onAfterClose)="disposePublishLogs()">
+          <div slide-in-button>
+            <span class="pull-left fa fa-cogs fa-2x card-action-icon"
+              style="color:grey;"
+              *ngIf="dataservice.serviceNotPublished"
+              placement="right"
+              [tooltip]="virtNotPubTooltip">
+            </span>
+            <span class="pull-left fa fa-cogs fa-2x card-action-icon"
+              style="color:red;"
+              *ngIf="dataservice.servicePublishFailed"
+              placement="right"
+              [tooltip]="virtPubFailTooltip">
+            </span>
+            <span class="pull-left fa fa-clipboard fa-2x card-action-icon"
+              style="color:midnightblue;"
+              *ngIf="dataservice.serviceSubmitted"
+              placement="right"
+              [tooltip]="virtSubTooltip">
+            </span>
+            <span class="pull-left fa fa-wrench fa-spin fa-2x card-action-icon"
+              style="color:purple;"
+              *ngIf="dataservice.serviceConfiguring"
+              placement="right"
+              [tooltip]="virtConfTooltip">
+            </span>
+            <span class="pull-left fa fa-cog fa-spin fa-2x card-action-icon"
+              style="color:blue;"
+              *ngIf="dataservice.serviceBuilding"
+              placement="right"
+              [tooltip]="virtBuildTooltip">
+            </span>
+            <span class="pull-left fa fa-refresh fa-spin fa-2x card-action-icon"
+              style="color:teal;"
+              *ngIf="dataservice.serviceDeploying"
+              placement="right"
+              [tooltip]="virtDepTooltip">
+            </span>
+            <span class="pull-left fa fa-cogs fa-2x card-action-icon"
+              style="color:green;"
+              *ngIf="dataservice.servicePublished"
+              placement="right"
+              [tooltip]="virtPubTooltip">
+            </span>
+          </div>
+          <div slide-in-content>
+            <div>
+              <h3>Publishing Logs for '{{dataservice.getId()}}'</h3>
+              <codemirror #publishLogsEditor [(ngModel)]="publishLogs" [config]="publishLogsEditorConfig"></codemirror>
+            </div>
+          </div>
+        </slide-in>
+      </div>
     </div>
     <div class="row card-pf-title text-center object-card-title">
       <span class="fa fa-table object-inline-icon"></span>
@@ -144,6 +152,29 @@
       <div class="object-card-description">{{ description }}</div>
     </div>
   </ng-template>
+
+  <ng-template #virtNotPubTooltip>
+    Virtualization Not Published <br/> <i>(Click to view log)</i>
+  </ng-template>
+  <ng-template #virtPubFailTooltip>
+    Virtualization Publishing Failed <br/> <i>(Click to view log)</i>
+  </ng-template>
+  <ng-template #virtSubTooltip>
+    Virtualization Submitted <br/> <i>(Click to view log)</i>
+  </ng-template>
+  <ng-template #virtConfTooltip>
+    Virtualization Configuring <br/> <i>(Click to view log)</i>
+  </ng-template>
+  <ng-template #virtBuildTooltip>
+    Virtualization Building <br/> <i>(Click to view log)</i>
+  </ng-template>
+  <ng-template #virtDepTooltip>
+    Virtualization Deploying <br/> <i>(Click to view log)</i>
+  </ng-template>
+  <ng-template #virtPubTooltip>
+    Virtualization Published <br/> <i>(Click to view log)</i>
+  </ng-template>
+
   <div class="object-card-body">
     <div *ngIf="showDetails">
       <div [class]="isSelected() ? 'object-card-body-title-selected' : 'object-card-body-title'">Views</div>

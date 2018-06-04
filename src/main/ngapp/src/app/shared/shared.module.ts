@@ -26,6 +26,7 @@ import { ConfirmDialogComponent } from "./confirm-dialog/confirm-dialog.componen
 import { PageNotFoundComponent } from "./page-not-found/page-not-found.component";
 import { PropertyFormPropertyComponent } from "./property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "./property-form/property-form.component";
+import { SlideInComponent } from "./slide-in/slide-in.component";
 
 @NgModule({
   imports: [
@@ -38,14 +39,16 @@ import { PropertyFormComponent } from "./property-form/property-form.component";
     PageErrorComponent,
     PageNotFoundComponent,
     PropertyFormComponent,
-    PropertyFormPropertyComponent
+    PropertyFormPropertyComponent,
+    SlideInComponent
   ],
   exports: [
     ConfirmDialogComponent,
     PageErrorComponent,
     PageNotFoundComponent,
     PropertyFormComponent,
-    PropertyFormPropertyComponent
+    PropertyFormPropertyComponent,
+    SlideInComponent
   ],
   providers: [
     TestDataService

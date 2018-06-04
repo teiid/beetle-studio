@@ -21,11 +21,16 @@ import {
   Input,
   OnInit,
   Output, TemplateRef,
-  ViewEncapsulation
+  ViewEncapsulation,
+  ViewChild
 } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
-import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { Action, ActionConfig, ListConfig } from "patternfly-ng";
+import { Observable } from "rxjs/Observable";
+import { Subscription } from "rxjs/Subscription";
+import * as _ from "lodash";
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { Dataservice } from "@dataservices/shared/dataservice.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -63,13 +68,31 @@ export class DataservicesListComponent implements OnInit {
   @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public odataLookDataservice: EventEmitter<string> = new EventEmitter<string>();
 
+  @ViewChild('publishLogsEditor') private logEditor: any;
+
   public logger: LoggerService;
+  private dataserviceService: DataserviceService;
+
+  public publishLogsEditorConfig = {
+    lineNumbers: true,
+    lineWrapping: true,
+    readOnly: true,
+    styleActiveLine: true,
+    placeholder: 'Awaiting Logs ...',
+    tabSize: 2,
+    showCursorWhenSelecting: true,
+    theme: "neat"
+  };
+
+  public publishLogs = 'No log available';
+  private logMonitor: Subscription = null;
 
   /**
    * @param {LoggerService} logger the logging service
    */
-  constructor( logger: LoggerService ) {
+  constructor( logger: LoggerService, dataserviceService: DataserviceService ) {
     this.logger = logger;
+    this.dataserviceService = dataserviceService;
   }
 
   /**
@@ -265,9 +288,76 @@ export class DataservicesListComponent implements OnInit {
         this.logger.error( "Unhandled event type of '" + $event.title + "'" );
         break;
     }
+  }
 
-  //  handleClick($event: ListEvent): void {
-    //  this.actionsText = $event.item.name + ' clicked\r\n' + this.actionsText;
-  //  }
+  /**
+   * Fetches the logs accrued by the publishing operation
+   * for the current dataservice
+   */
+  private fetchPublishLogs(dataservice: Dataservice): void {
+    this.dataserviceService.publishLogsGet(dataservice)
+      .subscribe(
+        (response) => {
+          if (_.isEmpty(response) || _.isEmpty(response.Information) || _.isEmpty(response.Information.log)) {
+            this.publishLogs = "No log available";
+            return;
+          }
+
+          this.publishLogs = response.Information.log;
+          this.refreshEditor();
+        },
+        (error) => {
+          this.publishLogs = error;
+        }
+      );
+  }
+
+  /**
+   * Fetch the publishing logs initially then
+   * at intervals thereafter in order to
+   * update the logs.
+   */
+  public initPublishLogs(dataservice: Dataservice): void {
+    //
+    // Initial fetch of the publish logs
+    //
+    this.fetchPublishLogs(dataservice);
+
+    //
+    // Refresh them every 10 seconds
+    //
+    this.logMonitor = Observable.interval(10000).subscribe(
+      (val) => {
+        this.fetchPublishLogs(dataservice);
+      }
+    );
+  }
+
+  /**
+   * Fixes the CodeMirror editor not displaying
+   * any content after intially being unhidden on
+   * opening of the slide-in.
+   */
+  public refreshEditor(): void {
+    if (_.isEmpty(this.logEditor))
+      return;
+
+    if (_.isEmpty(this.logEditor.instance))
+      return;
+
+    const instance = this.logEditor.instance;
+    setTimeout(() => {
+      instance.refresh();
+    }, 1000);
+  }
+
+  /**
+   * Tidy up the Observable subscription
+   * when the slide-in is closed.
+   */
+  public disposePublishLogs(): void {
+    if (this.logMonitor) {
+      this.logMonitor.unsubscribe();
+    }
   }
 }

@@ -67,3 +67,11 @@ a.list-pf-title.view-name {
   background-repeat: no-repeat;
   background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALlJREFUeNpi/N/D4MDAwLCfgQLAAmc5TmBgEDPAVHFlAYTWScCUe3UBaH0BkiEgA2TsMRU+PgChsclBAeOod4aUd0CGsQtAbPn5gUTvgIAH0Ona8RD2z48MDDuAXrizgYHBqoGBwbIeU/eTgwwMKx3QvAMzAATY+SHhBDLk4wOIBmxhguISkBfQAZ88hL66AIJxACY4C2QbNucSARCGfAIasiMREhZg/kNw9BEDqJbYQKHjSIkhAAEGAHmtTMAm);
 }
+
+#publishing-card-icons div[slide-in-content] h3 {
+  color: #3f88ce;
+}
+
+#publishing-card-icons .CodeMirror {
+  height: 80vh;
+}

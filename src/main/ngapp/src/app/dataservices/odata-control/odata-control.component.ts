@@ -74,7 +74,7 @@ export class OdataControlComponent implements OnChanges {
     mode: {},
     lineNumbers: true,
     lineWrapping: true,
-    readOnly: false,
+    readOnly: true,
     placeholder: "No results",
     styleActiveLine: true,
     tabSize: 2,
