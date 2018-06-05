@@ -186,6 +186,10 @@ export class ConnectionService extends ApiService {
     const connType3: ConnectionType = new ConnectionType();
     connType3.setName(ConnectionsConstants.connectionType_mongodb);
     connType3.setDescription(ConnectionsConstants.connectionTypeDescription_mongodb);
+    const connType4: ConnectionType = new ConnectionType();
+    connType4.setName(ConnectionsConstants.connectionType_salesforce);
+    connType4.setDescription(ConnectionsConstants.connectionTypeDescription_salesforce);
+
     // const connType4: ConnectionType = new ConnectionType();
     // connType4.setName(ConnectionsConstants.connectionType_mariadb);
     // connType4.setDescription(ConnectionsConstants.connectionTypeDescription_mariadb);
@@ -193,7 +197,7 @@ export class ConnectionService extends ApiService {
     connectionTypes.push(connType1);
     connectionTypes.push(connType2);
     connectionTypes.push(connType3);
-    // connectionTypes.push(connType4);
+    connectionTypes.push(connType4);
 
     return connectionTypes;
   }
