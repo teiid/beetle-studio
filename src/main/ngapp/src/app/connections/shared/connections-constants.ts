@@ -30,11 +30,13 @@ export class ConnectionsConstants {
   public static readonly connectionType_mysql = "mysql";
   public static readonly connectionType_mongodb = "mongodb";
   public static readonly connectionType_mariadb = "mariadb";
+  public static readonly connectionType_salesforce = "salesforce";
 
   public static readonly connectionTypeDescription_postgresql = "PostgreSQL database";
   public static readonly connectionTypeDescription_mysql = "MySQL database";
   public static readonly connectionTypeDescription_mongodb = "MongoDB database";
   public static readonly connectionTypeDescription_mariadb = "MariaDB database";
+  public static readonly connectionTypeDescription_salesforce = "SalesForce";
 
   public static readonly schemaNodeType_connection = "connection";
 

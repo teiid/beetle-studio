@@ -51,6 +51,8 @@ export class ConnectionType {
       return "MongoDB database img";
     } else if (name === ConnectionsConstants.connectionType_mariadb) {
       return "MariaDB database img";
+    } else if (name === ConnectionsConstants.connectionType_salesforce) {
+      return "SalesForce img";
     }
     return "unknown image";
   }
@@ -68,6 +70,8 @@ export class ConnectionType {
       return "assets/MongoDB_70x40.png";
     } else if (name === ConnectionsConstants.connectionType_mariadb) {
       return "assets/MongoDB_70x40.png";
+    } else if (name === ConnectionsConstants.connectionType_salesforce) {
+      return "assets/salesforce_40x40.png";
     }
     return "";
   }
