@@ -2,7 +2,15 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { RouterTestingModule } from "@angular/router/testing";
 import { ConnectionType } from "@connections/shared/connection-type.model";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  WizardModule } from "patternfly-ng";
 import { ConnectionTypeCardComponent } from "./connection-type-card.component";
 
 describe("ConnectionTypeCardComponent", () => {
@@ -11,10 +19,22 @@ describe("ConnectionTypeCardComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule, PatternFlyNgModule ],
+      imports: [
+        RouterTestingModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        WizardModule
+      ],
       declarations: [ ConnectionTypeCardComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

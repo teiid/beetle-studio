@@ -1,0 +1,33 @@
+/*
+ * The container of the canvas and properties editors.
+ */
+#view-editor-canvas-editor {
+  display: grid;
+  grid-template-areas:
+    "canvas-editor properties-editor";
+  grid-template-columns: 8fr 2fr;
+  height: 100%;
+}
+
+/*
+ * View editor canvas section in the middle-left of editor.
+ */
+#view-editor-canvas-container {
+  background-color: white;
+  grid-area: canvas-editor;
+}
+
+/*
+ * Configures the alert when view has no sources.
+ */
+#view-editor-canvas-container .alert-padding {
+  padding: 80px 20px;
+  width: 300px;
+}
+
+/*
+ * View editor middle-right section containing property editors based on selection in the canvas.
+ */
+#view-editor-properties-container {
+  grid-area: properties-editor;
+}

@@ -14,7 +14,7 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
-import { PatternFlyNgModule } from "patternfly-ng";
+import { WizardModule } from "patternfly-ng";
 import { AddActivityWizardComponent } from "./add-activity-wizard.component";
 
 describe("AddActivityWizardComponent", () => {
@@ -23,7 +23,7 @@ describe("AddActivityWizardComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule ],
+      imports: [ CoreModule, FormsModule, WizardModule, ReactiveFormsModule, RouterTestingModule ],
       declarations: [ AddActivityWizardComponent, PropertyFormComponent, PropertyFormPropertyComponent ],
       providers: [
         NotifierService,

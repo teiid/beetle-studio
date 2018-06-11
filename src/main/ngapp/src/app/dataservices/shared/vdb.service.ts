@@ -30,6 +30,9 @@ import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Rx";
 import { Subscription } from "rxjs/Subscription";
+import { SchemaNode } from "@connections/shared/schema-node.model";
+import { Connection } from "@connections/shared/connection.model";
+import { View } from "@dataservices/shared/view.model";
 
 @Injectable()
 /**
@@ -111,6 +114,73 @@ export class VdbService extends ApiService {
   }
 
   /**
+   * Validates the specified view name within the specified vdb model. If the name contains valid characters
+   * and the name is unique, the service returns 'null'. Otherwise, a 'string' containing an error message is returned.
+   *
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @param {string} viewName the view name
+   * @returns {Observable<String>}
+   */
+  public isValidViewName( vdbName: string, modelName: string, viewName: string ): Observable< string > {
+    // Check that valid names were supplied
+    if ( !vdbName || vdbName.length === 0 ) {
+      return Observable.of( "VDB name cannot be empty" );
+    }
+    if ( !modelName || modelName.length === 0 ) {
+      return Observable.of( "Model name cannot be empty" );
+    }
+    if ( !viewName || viewName.length === 0 ) {
+      return Observable.of( "View name cannot be empty" );
+    }
+
+    const url = environment.komodoWorkspaceUrl + "/vdbs/" + vdbName + "/Models/" + modelName + "Views/nameValidation/" + encodeURIComponent( name );
+
+    return this.http.get( url, this.getAuthRequestOptions() )
+      .map( ( response ) => {
+        if ( response.ok ) {
+          if ( response.text() ) {
+            return response.text();
+          }
+
+          return "";
+        } } )
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Get a valid view name, first attempting to use the supplied viewName
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @param {string} viewName the view name
+   * @param {string} validationMsg the validation msg.  Initially is not supplied.
+   * @returns {string} the valid viewName
+   */
+  public getValidViewName( vdbName: string, modelName: string, viewName: string, validationMsg?: string ): string {
+    if (validationMsg && validationMsg.length === 0) {
+      return viewName;
+    }
+
+    // Invokes isValidViewName until a valid view name is found
+    this.isValidViewName(vdbName, modelName, viewName)
+      .subscribe(
+        (data) => {
+          if (data && data.length > 0) {
+            viewName = viewName + 1;
+            this.isValidViewName(vdbName, modelName, viewName);
+          } else {
+            this.getValidViewName(vdbName, modelName, viewName, "");
+          }
+        },
+        (error) => {
+          // Empty
+        },
+        () => {
+          // Empty
+        });
+  }
+
+  /**
    * Create a vdb via the komodo rest interface
    * @param {Vdb} vdb
    * @returns {Observable<boolean>}
@@ -153,9 +223,80 @@ export class VdbService extends ApiService {
   public createVdbModelSource(vdbName: string, modelName: string, vdbModelSource: VdbModelSource): Observable<boolean> {
     return this.http
       .post(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName
-                                               + VdbsConstants.vdbModelsRootPath + "/" + modelName
-                                               + VdbsConstants.vdbModelSourcesRootPath + "/" + vdbModelSource.getId(),
+        + VdbsConstants.vdbModelsRootPath + "/" + modelName
+        + VdbsConstants.vdbModelSourcesRootPath + "/" + vdbModelSource.getId(),
         vdbModelSource, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Get the views from the specified Vdb model from the komodo rest interface
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @returns {Observable<View[]>}
+   */
+  public getVdbModelViews(vdbName: string, modelName: string): Observable<View[]> {
+    return this.http
+      .get(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName
+                                              + VdbsConstants.vdbModelsRootPath + "/"
+                                              + modelName + "/Views", this.getAuthRequestOptions())
+      .map((response) => {
+        const views = response.json();
+        return views.map((view) => View.create( view ));
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Creates the Vdb Model Views via the komodo rest interface.  This is currently limited - will need to be improved
+   * in subsequent development.
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @param {string[]} viewNames the view names (1:1 correspondence with schemaNodes)
+   * @param {SchemaNode[]} schemaNodes the source node for each view
+   * @param {Connection[]} connections the array of active connections
+   * @returns {Observable<boolean>}
+   */
+  public setVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
+                          schemaNodes: SchemaNode[], connections: Connection[]): Observable<boolean> {
+
+    // construct source table paths and modelSource paths needed for all views
+    const modelSourcePaths = [];
+    const tablePaths = [];
+    for ( const schemaNode of schemaNodes ) {
+      // Get the connection for the source node
+      const connName = schemaNode.getConnectionName();
+      let nodeConn: Connection = null;
+      for ( const conn of connections ) {
+        if ( conn.getId().toLowerCase() === connName.toLowerCase() ) {
+          nodeConn = conn;
+          break;
+        }
+      }
+      // derive schema vdb names from connection
+      const schemaVdbName = nodeConn.schemaVdbName;
+      const schemaVdbModelName = nodeConn.schemaVdbModelName;
+      const schemaVdbModelSourceName = nodeConn.schemaVdbModelSourceName;
+
+      // Construct source table and modelSource paths for current node
+      const vdbPath = this.getKomodoUserWorkspacePath() + "/" + nodeConn.getId() + "/" + schemaVdbName;
+      const tablePath = vdbPath + "/" + schemaVdbModelName + "/" + schemaNode.getName();
+      const modelSourcePath = vdbPath + "/" + schemaVdbModelName + "/vdb:sources/" + schemaVdbModelSourceName;
+
+      tablePaths.push(tablePath);
+      // The array of modelSource paths should be unique
+      if (modelSourcePaths.indexOf(modelSourcePath) === -1) {
+        modelSourcePaths.push(modelSourcePath);
+      }
+    }
+
+    return this.http
+      .post(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName
+                                               + VdbsConstants.vdbModelsRootPath + "/" + modelName + "/defineViews",
+        { viewNames, tablePaths, modelSourcePaths}, this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
       })
@@ -295,6 +436,39 @@ export class VdbService extends ApiService {
           return Observable.of(true);
         }
       });
+  }
+
+  /**
+   * Delete a view within a vdb model via the komodo rest interface
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @param {string} viewName the view name
+   * @returns {Observable<boolean>} 'true' if successful
+   */
+  public deleteView(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
+    return this.http
+      .delete(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName
+                                                 + "/Models/" + modelName + "/Views/" + viewName,
+        this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Composite service which 1) undeploys current service VDB and 2) sets the Vdb Model Views.
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @param {string[]} viewNames the view names (1:1 correspondence with schemaNodes)
+   * @param {SchemaNode[]} schemaNodes the source node for each view
+   * @param {Connection[]} connections the array of active connections
+   * @returns {Observable<boolean>}
+   */
+  public compositeSetVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
+                                   schemaNodes: SchemaNode[], connections: Connection[]): Observable<boolean> {
+    return this.undeployVdb(vdbName)
+      .flatMap((res) => this.setVdbModelViews(vdbName, modelName, viewNames, schemaNodes, connections));
   }
 
 }

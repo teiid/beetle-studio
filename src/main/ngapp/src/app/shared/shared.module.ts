@@ -27,6 +27,7 @@ import { PageNotFoundComponent } from "./page-not-found/page-not-found.component
 import { PropertyFormPropertyComponent } from "./property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "./property-form/property-form.component";
 import { SlideInComponent } from "./slide-in/slide-in.component";
+import { ProgressDialogComponent } from './progress-dialog/progress-dialog.component';
 
 @NgModule({
   imports: [
@@ -40,12 +41,14 @@ import { SlideInComponent } from "./slide-in/slide-in.component";
     PageNotFoundComponent,
     PropertyFormComponent,
     PropertyFormPropertyComponent,
-    SlideInComponent
+    SlideInComponent,
+    ProgressDialogComponent
   ],
   exports: [
     ConfirmDialogComponent,
     PageErrorComponent,
     PageNotFoundComponent,
+    ProgressDialogComponent,
     PropertyFormComponent,
     PropertyFormPropertyComponent,
     SlideInComponent

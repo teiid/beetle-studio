@@ -1,6 +1,15 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { SchemaNode } from "@connections/shared/schema-node.model";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
 import { SelectedNodeComponent } from "./selected-node.component";
 
 describe("SelectedNodeComponent", () => {
@@ -13,7 +22,17 @@ describe("SelectedNodeComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ PatternFlyNgModule ],
+      imports: [
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule
+      ],
       declarations: [ SelectedNodeComponent ]
     })
     .compileComponents().then(() => {

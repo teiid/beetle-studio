@@ -1,0 +1,188 @@
+/*
+ * The outermost container of the view editor.
+ */
+#view-editor {
+  align-content: stretch;
+  background-color: var(--page-background-color);
+  display: grid;
+  grid-column-gap: 0;
+  grid-row-gap: 0;
+  height: 90vh;
+  justify-content: stretch;
+  overflow-y: auto;
+  width: 100%;
+}
+
+/*
+ * A view editor area (i.e., heading, canvas, properties, editor views).
+ */
+.view-editor-area {
+  background-color: #ededed;
+  border: 1px solid #bbbbbb;
+  padding: 0;
+}
+
+/*
+ * The editor's breadcrumb bar.
+ */
+#view-editor-breadcrumbs {
+  background-color: white;
+}
+
+/*
+ * A view editor showing only header, toolbar, canvas, and properties areas (missing editor views).
+ */
+.view-editor-canvas-only {
+  grid-template-areas:
+    "dataservices-breadcrumb-bar"
+    "header"
+    "toolbar"
+    "canvas";
+  grid-template-columns: 1fr;
+  grid-template-rows: 5fr 10fr 5fr 80fr;
+}
+
+/*
+ * View editor bottom section containing live sample results, message log, and maybe others.
+ */
+#view-editor-edit-container {
+  grid-area: canvas;
+  overflow-y: auto;
+}
+
+/*
+ * A view editor showing all areas (header, toolbar, canvas, properties, and editor views).
+ */
+.view-editor-full {
+  grid-template-areas:
+    "dataservices-breadcrumb-bar"
+    "header"
+    "toolbar"
+    "canvas"
+    "editor-views";
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 10fr 3fr 60fr 26fr;
+}
+
+/*
+ * View editor header section at top of editor containing virtualization name, description, etc.
+ */
+#view-editor-header-container {
+  grid-area: header;
+}
+
+/*
+ * Removes some whitespace in the header form.
+ */
+#view-editor-header-container .form-group {
+  margin: 0;
+}
+
+/*
+ * A view editor showing only header, toolbar, and editor views areas (missing canvas and properties).
+ */
+.view-editor-views-only {
+  grid-template-areas:
+    "dataservices-breadcrumb-bar"
+    "header"
+    "toolbar"
+    "editor-views";
+  grid-template-columns: 1fr;
+  grid-template-rows: 5fr 10fr 5fr 80fr;
+}
+
+/*
+ * The view editor toolbar which is below the heading section.
+ */
+#view-editor-toolbar {
+  grid-area: toolbar;
+}
+
+/*
+ * Changes margin to be smaller than default.
+ */
+#view-editor-toolbar .form-group {
+  margin: 2px;
+}
+
+/*
+ * Remove default styling from the patternfly toolbar.
+ */
+#view-editor-toolbar .toolbar-pf {
+  background-color: inherit;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+/*
+ * Colors the delete button icon.
+ */
+#view-editor-toolbar-delete-button {
+  color: var(--alert-color);
+}
+
+/*
+ * Gives the delete toolbar button icon a disabled look.
+ */
+[disabled] > #view-editor-toolbar-delete-button {
+  color: var(--disabled-color);
+}
+
+/*
+ * Adds a margin to the right. Used in toolbar actions to end a group of actions.
+ */
+.view-editor-toolbar-end-group {
+  margin-right: 1em;
+}
+
+/*
+ * Make the toolbar buttons smaller.
+ */
+.view-editor-toolbar-icon {
+  color: var(--card-action-icon-color);
+  font-size: larger;
+}
+
+/*
+ * Gives the toolbar button icons a disabled look.
+ */
+[disabled] > .view-editor-toolbar-icon {
+  color: var(--disabled-color);
+}
+
+/*
+ * Colors the redo button icon.
+ */
+#view-editor-toolbar-redo-button {
+  color: gold;
+}
+
+/*
+ * Gives the redo toolbar button icon a disabled look.
+ */
+[disabled] > #view-editor-toolbar-redo-button {
+  color: var(--disabled-color);
+}
+
+/*
+ * Colors the undo button icon.
+ */
+#view-editor-toolbar-undo-button {
+  color: gold;
+}
+
+/*
+ * Gives the undo toolbar button icon a disabled look.
+ */
+[disabled] > #view-editor-toolbar-undo-button {
+  color: var(--disabled-color);
+}
+
+/*
+ * View editor bottom section containing live sample results, message log, and maybe others.
+ */
+#view-editor-views-container {
+  grid-area: editor-views;
+  overflow-y: auto;
+}

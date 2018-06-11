@@ -15,7 +15,15 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SharedModule } from "@shared/shared.module";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  WizardModule } from "patternfly-ng";
 import { AddConnectionComponent } from "./add-connection.component";
 
 describe("AddConnectionComponent", () => {
@@ -24,7 +32,21 @@ describe("AddConnectionComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, PatternFlyNgModule, FormsModule, ReactiveFormsModule, RouterTestingModule, SharedModule ],
+      imports: [
+        CoreModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterTestingModule,
+        SharedModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        WizardModule
+      ],
       declarations: [ AddConnectionComponent, AddConnectionWizardComponent,
                       ConnectionTypeCardComponent, ConnectionTypeCardsComponent ],
       providers: [

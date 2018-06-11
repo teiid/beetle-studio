@@ -17,6 +17,7 @@
 
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { PublishState } from "@dataservices/shared/publish-state.enum";
+import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { VirtRoute } from "@dataservices/shared/virt-route.model";
 import { Identifiable } from "@shared/identifiable";
@@ -34,6 +35,7 @@ export class Dataservice implements Identifiable< string > {
   private serviceViewTables: string[];
   private deploymentState: DeploymentState = DeploymentState.LOADING;
   private virtualization: Virtualization = null;
+  private views: View[] = [];
 
   /**
    * @param {Object} json the JSON representation of a Dataservice
@@ -139,6 +141,13 @@ export class Dataservice implements Identifiable< string > {
    */
   public getServiceViewTables(): string[] {
     return this.serviceViewTables;
+  }
+
+  /**
+   * @returns {View[]} the dataservice views array (never null, but can be empty)
+   */
+  public getViews(): View[] {
+    return this.views;
   }
 
   /**
@@ -307,6 +316,13 @@ export class Dataservice implements Identifiable< string > {
    */
   public setServiceVdbVersion( version: string ): void {
     this.serviceVdbVersion = version;
+  }
+
+  /**
+   * @param {View[]} views the dataservice views
+   */
+  public setViews( views: View[] ): void {
+    this.views = views;
   }
 
   /**

@@ -1,0 +1,21 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{ title }}</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <span class="pficon pficon-close"></span>
+  </button>
+</div>
+<div class="modal-body">
+  <strong>Expand connection and select a source for your view</strong>
+  <app-connection-tree-selector
+    (nodeSelected)="onTreeNodeSelected($event)"
+    (nodeDeselected)="onTreeNodeDeselected($event)"></app-connection-tree-selector>
+  <div>
+    <h4>Current Selection:</h4>
+    <strong>{{ selectionText }}</strong>
+  </div>
+</div>
+<div class="modal-footer">
+  <button i18n="@@connectionTableDialog.cancel" type="button" class="btn btn-default" (click)="onCancelSelected()">{{ cancelButtonText }}</button>
+  <button i18n="@@connectionTableDialog.delete" type="button" class="btn btn-primary" (click)="onOkSelected()" [disabled]="!okButtonEnabled">{{ okButtonText }}</button>
+</div>
+

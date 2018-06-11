@@ -1,0 +1,20 @@
+<tabset id="editor-views-tabs">
+  <tab [active]="tabs[0].active"
+       (select)="tabSelected(tabs[0], true)"
+       (deselect)="tabSelected(tabs[0], false)">
+    <ng-template tabHeading>
+      <span class="fa fa-list-alt editor-views-tab-icon"></span>
+      <span class="editor-views-tab-heading">Preview</span>
+    </ng-template>
+    <app-view-preview></app-view-preview>
+  </tab>
+  <tab [active]="tabs[1].active"
+       (select)="tabSelected(tabs[1], true)"
+       (deselect)="tabSelected(tabs[1], false)">
+    <ng-template tabHeading>
+      <span class="pficon pficon-info editor-views-tab-icon"></span>
+      <span class="editor-views-tab-heading">Messages</span>
+    </ng-template>
+    <app-message-log></app-message-log>
+  </tab>
+</tabset>

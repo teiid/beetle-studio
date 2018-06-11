@@ -1,7 +1,16 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-
+import { RouterTestingModule } from "@angular/router/testing";
 import { SelectedNodeComponent } from "@dataservices/selected-node/selected-node.component";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
 import { SelectedNodesListComponent } from "./selected-nodes-list.component";
 
 describe("SelectedNodesListComponent", () => {
@@ -10,10 +19,23 @@ describe("SelectedNodesListComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ PatternFlyNgModule ],
+      imports: [
+        RouterTestingModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule
+      ],
       declarations: [ SelectedNodesListComponent, SelectedNodeComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

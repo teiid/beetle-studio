@@ -12,7 +12,16 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
 import { TooltipModule } from 'ngx-bootstrap';
 import { CodemirrorModule } from "ng2-codemirror";
 import { HttpModule } from "@angular/http";
@@ -24,9 +33,21 @@ describe("DataservicesListComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        PatternFlyNgModule, RouterTestingModule,
-        TooltipModule, CodemirrorModule, FormsModule,
-        HttpModule, SharedModule
+        RouterTestingModule,
+        TooltipModule,
+        CodemirrorModule,
+        FormsModule,
+        HttpModule,
+        SharedModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule
       ],
       declarations: [ DataservicesDetailsComponent, DataservicesListComponent, ViewsContentComponent ],
       providers: [

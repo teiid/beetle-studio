@@ -33,7 +33,7 @@ import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { SharedModule } from "@shared/shared.module";
-import { PatternFlyNgModule } from "patternfly-ng";
+import { WizardModule } from "patternfly-ng";
 
 @NgModule({
   imports: [
@@ -46,7 +46,7 @@ import { PatternFlyNgModule } from "patternfly-ng";
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    PatternFlyNgModule
+    WizardModule
   ],
   declarations: [
     ActivitiesCardsComponent,

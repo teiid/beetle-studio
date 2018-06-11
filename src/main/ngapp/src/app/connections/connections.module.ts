@@ -38,7 +38,15 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { environment } from "@environments/environment";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { SharedModule } from "@shared/shared.module";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  WizardModule } from "patternfly-ng";
 import { ConnectionTypeCardComponent } from "./connection-type-cards/connection-type-card/connection-type-card.component";
 import { ConnectionTypeCardsComponent } from "./connection-type-cards/connection-type-cards.component";
 
@@ -51,7 +59,16 @@ import { ConnectionTypeCardsComponent } from "./connection-type-cards/connection
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    PatternFlyNgModule
+
+    // PatternFlyNg
+    ActionModule,
+    CardModule,
+    EmptyStateModule,
+    FilterModule,
+    ListModule,
+    NotificationModule,
+    SortModule,
+    WizardModule
   ],
   declarations: [
     ConnectionDetailsComponent,

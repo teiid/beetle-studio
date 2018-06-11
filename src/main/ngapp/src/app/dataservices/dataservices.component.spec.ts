@@ -25,9 +25,19 @@ import { OdataControlComponent } from "@dataservices/odata-control/odata-control
 import { SharedModule } from "@shared/shared.module";
 import { CodemirrorModule } from "ng2-codemirror";
 import { ModalModule } from "ngx-bootstrap";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
 import { AccordionModule } from 'ngx-bootstrap';
 import { TooltipModule } from 'ngx-bootstrap';
+import { SelectionService } from "@core/selection.service";
 
 describe("DataservicesComponent", () => {
   let component: DataservicesComponent;
@@ -35,9 +45,26 @@ describe("DataservicesComponent", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, HttpModule, ModalModule.forRoot(), PatternFlyNgModule,
-                 RouterTestingModule, SharedModule, CodemirrorModule, AccordionModule.forRoot(),
-                 TooltipModule.forRoot() ],
+      imports: [
+        CoreModule,
+        FormsModule,
+        HttpModule,
+        ModalModule.forRoot(),
+        RouterTestingModule,
+        SharedModule,
+        CodemirrorModule,
+        AccordionModule.forRoot(),
+        TooltipModule.forRoot(),
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule
+      ],
       declarations: [ DataservicesDetailsComponent,
                       DataservicesComponent,
                       DataservicesListComponent,
@@ -47,8 +74,8 @@ describe("DataservicesComponent", () => {
                       OdataControlComponent,
                       ViewsContentComponent ],
       providers: [
-        AppSettingsService,
         NotifierService,
+        SelectionService,
         WizardService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ConnectionService, useClass: MockConnectionService },

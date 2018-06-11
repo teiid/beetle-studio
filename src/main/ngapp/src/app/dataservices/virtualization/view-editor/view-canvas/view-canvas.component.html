@@ -1,0 +1,26 @@
+<div id="view-editor-canvas-editor">
+
+  <!-- ============================ -->
+  <!-- ========== Canvas ========== -->
+  <!-- ============================ -->
+  <div class="view-editor-area"
+       id="view-editor-canvas-container">
+      <div class="alert-padding" *ngIf="!hasViewSources">
+        <div class="alert alert-info text-center">
+          <span class="pficon pficon-info"></span>
+          <strong>Select a source for the view</strong>
+        </div>
+      </div>
+      <div class="object-card-container" *ngIf="hasViewSources">
+        <app-selected-node [node]="viewSources[0]" (selectionNodeRemoved)="onViewSourceRemoved($event)"></app-selected-node>
+      </div>
+  </div>
+
+  <!-- ================================ -->
+  <!-- ========== Properties ========== -->
+  <!-- ================================ -->
+  <div class="view-editor-area"
+       id="view-editor-properties-container">Properties
+  </div>
+
+</div>

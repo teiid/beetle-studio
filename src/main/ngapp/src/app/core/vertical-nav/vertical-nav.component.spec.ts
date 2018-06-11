@@ -8,7 +8,7 @@ import { LoggerService } from "@core/logger.service";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { VerticalNavComponent } from "@core/vertical-nav/vertical-nav.component";
 import { BsModalService, ModalModule } from "ngx-bootstrap";
-import { PatternFlyNgModule } from "patternfly-ng";
+import { ModalModule as PfngModalModule, NavigationModule as PfngNavigationModule } from "patternfly-ng";
 
 describe("VerticalNavComponent", () => {
   let component: VerticalNavComponent;
@@ -16,7 +16,13 @@ describe("VerticalNavComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ HttpModule, ModalModule.forRoot(), PatternFlyNgModule, RouterTestingModule ],
+      imports: [
+        HttpModule,
+        ModalModule.forRoot(),
+        RouterTestingModule,
+        PfngModalModule,
+        PfngNavigationModule
+      ],
       declarations: [ VerticalNavComponent, AboutDialogComponent ],
       providers: [
         AboutService,

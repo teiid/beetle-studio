@@ -269,6 +269,15 @@
   text-align: left;
 }
 
+/*
+ * Puts a red asterisk to the left of the component. Use with form labels of required inputs.
+ */
+.required-field:before {
+  color: #cc0000;
+  content: "*";
+  margin-right: 2px;
+}
+
 /**************************************************************/
 /*                    PatternFly Types                        */
 /**************************************************************/
