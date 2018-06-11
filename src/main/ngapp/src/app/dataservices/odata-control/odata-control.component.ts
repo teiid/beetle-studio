@@ -101,6 +101,10 @@ export class OdataControlComponent implements OnChanges {
     return this.dataservice.getOdataRootUrl() + '/' + this.dataservice.getServiceViewModel();
   }
 
+  public get metadataUrl(): string {
+    return this.rootUrl + '/$metadata';
+  }
+
   public ngOnChanges(changes: SimpleChanges): void {
     this.dataservice = this.dataserviceService.getSelectedDataservice();
 
@@ -113,7 +117,7 @@ export class OdataControlComponent implements OnChanges {
 
     this.results = null;
 
-    const url = this.rootUrl + '/$metadata';
+    const url = this.metadataUrl;
 
     this.metadataFetchInProgress = true;
     this.dataserviceService.odataGet(url)
@@ -132,7 +136,7 @@ export class OdataControlComponent implements OnChanges {
         (error) => {
           this.odata.metadataFailure = true;
           this.metadataFetchInProgress = false;
-          console.error('Failed to get odata metadata ' + error);
+          console.error('Failed to get odata metadata from\n' + url + "\n" + error);
         }
       );
   }
@@ -198,6 +202,19 @@ export class OdataControlComponent implements OnChanges {
 
   public get metadataFailure(): boolean {
     return this.odata.metadataFailure;
+  }
+
+  public get metadataFailureMsg(): string {
+    let msg = this.i18n.metadataFetchFailure + '<br/>';
+    if (_.isEmpty(this.dataservice.getOdataRootUrl()))
+      return msg + this.i18n.metadataFetchFailureNoOdataRoot;
+
+    if (_.isEmpty(this.dataservice.getServiceViewModel()))
+      return msg + this.i18n.metadataFetchFailureNoViewModel;
+
+
+    return msg + this.i18n.metadataFetchFailureUrl + '<br/>' +
+      '<a href="' + this.metadataUrl + '">' + this.metadataUrl + '</a>';
   }
 
   /**

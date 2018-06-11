@@ -215,6 +215,6 @@
 	</div>
 
 	<div id="odata-metadata-fetch-failure" class="col-sm-12" [hidden]="!metadataFailure">
-	  <h3>{{i18n.metadataFetchFailure}}</h3>
+	  <h3 [innerHTML]="metadataFailureMsg"></h3>
 	</div>
 </div>
