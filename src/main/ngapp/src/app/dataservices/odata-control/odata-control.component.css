@@ -252,3 +252,7 @@
   font-weight: bold;
   padding-left: 7em;
 }
+
+#odata-metadata-fetch-failure h3 {
+  line-height: 150%;
+}

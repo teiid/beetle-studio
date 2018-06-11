@@ -66,6 +66,9 @@ export class OdataConstants {
   public readonly searchErrorMsg = "Error: failed to get any results: ";
   public readonly whereErrorMsg = "The chosen column has a type which cannot be used in a where condition";
   public readonly metadataFetchFailure = "Failed to get the odata metadata for the published artifact.";
+  public readonly metadataFetchFailureNoOdataRoot = "No route url could be detected. Please check your Openshift installation.";
+  public readonly metadataFetchFailureNoViewModel = "No view model is available within the selected dataservice.";
+  public readonly metadataFetchFailureUrl = "Try to navigate to the following url to check for a problem:";
 
   public readonly help_endpointSubmit = "This URL is formed using the OData specification. It can be copied into a new browser window to return the results in xml format or append ?format=json to the URL for JSON.  Click the Submit button to display the results in a formatted table.";
   public readonly help_select = "Choose the view from which results should be sought. Select a limit to curtail the number of results returned ";
