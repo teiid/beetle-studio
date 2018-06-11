@@ -19,7 +19,16 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SharedModule } from "@shared/shared.module";
 import { ModalModule } from "ngx-bootstrap";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  WizardModule
+} from "patternfly-ng";
 
 describe("ConnectionsComponent", () => {
   let component: ConnectionsComponent;
@@ -32,9 +41,16 @@ describe("ConnectionsComponent", () => {
         FormsModule,
         HttpModule,
         ModalModule.forRoot(),
-        PatternFlyNgModule,
         RouterTestingModule,
-        SharedModule
+        SharedModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        WizardModule
       ],
       declarations: [
         ConnectionsComponent,

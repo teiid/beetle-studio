@@ -13,7 +13,17 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { View } from "@dataservices/shared/view.model";
 import { CodemirrorModule } from "ng2-codemirror";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule
+} from "patternfly-ng";
 import { SqlControlComponent } from "./sql-control.component";
 
 describe("SqlControlComponent", () => {
@@ -22,7 +32,20 @@ describe("SqlControlComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, HttpModule, CodemirrorModule, PatternFlyNgModule  ],
+      imports: [
+        FormsModule,
+        HttpModule,
+        CodemirrorModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule
+      ],
       declarations: [ SqlControlComponent ],
       providers: [
         AppSettingsService,

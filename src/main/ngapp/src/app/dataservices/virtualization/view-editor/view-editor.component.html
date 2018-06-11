@@ -1,0 +1,97 @@
+<div id="view-editor"
+     [ngClass]="editorCssType">
+
+  <!-- ================================= -->
+  <!-- ========== Breadcrumbs ========== -->
+  <!-- ================================= -->
+  <div id="view-editor-breadcrumbs">
+    <app-breadcrumbs>
+      <li app-breadcrumb label="Data Virtualizations" icon="table" [route]="[ virtualizationsLink ]"></li>
+      <li app-breadcrumb label="Virtualization" icon="sitemap" [route]="[ virtualizationLink ]"></li>
+      <li app-breadcrumb label="View" icon="bitbucket" class="active"></li>
+    </app-breadcrumbs>
+  </div>
+
+  <!-- ============================ -->
+  <!-- ========== Header ========== -->
+  <!-- ============================ -->
+  <div class="view-editor-area"
+       id="view-editor-header-container">
+    <app-view-editor-header></app-view-editor-header>
+  </div>
+
+  <!-- ============================= -->
+  <!-- ========== Toolbar ========== -->
+  <!-- ============================= -->
+  <div class="view-editor-area"
+       id="view-editor-toolbar">
+    <div class="form-group">
+      <pfng-toolbar [config]="toolbarConfig"
+                    [actionTemplate]="actionTemplate"
+                    (onViewSelect)="editorConfigChange($event)">
+        <ng-template #actionTemplate>
+          <pfng-action class="toolbar-pf-actions"
+               [config]="getActionConfig(addSourceTemplate,
+                                         addCompositionTemplate,
+                                         undoTemplate,
+                                         redoTemplate,
+                                         saveTemplate,
+                                         deleteTemplate,
+                                         errorsTemplate,
+                                         warningsTemplate,
+                                         infosTemplate)"
+               (onActionSelect)="handleAction($event)">
+            <ng-template #addSourceTemplate let-action="action">
+              <span class="fa fa-database view-editor-toolbar-icon"></span>
+              <span class="fa fa-plus view-editor-toolbar-icon"></span>
+            </ng-template>
+            <ng-template #addCompositionTemplate let-action="action">
+              <span class="fa fa-angle-left view-editor-toolbar-icon"></span>
+              <span class="fa fa-angle-right view-editor-toolbar-icon"></span>
+              <span class="fa fa-plus view-editor-toolbar-icon"></span>
+            </ng-template>
+            <ng-template #undoTemplate let-action="action">
+              <span id="view-editor-toolbar-undo-button" class="fa fa-rotate-left view-editor-toolbar-icon"></span>
+            </ng-template>
+            <ng-template #redoTemplate let-action="action">
+              <span id="view-editor-toolbar-redo-button" class="fa fa-rotate-right view-editor-toolbar-icon"></span>
+            </ng-template>
+            <ng-template #saveTemplate let-action="action">
+              <span class="fa fa-save view-editor-toolbar-icon"></span>
+            </ng-template>
+            <ng-template #deleteTemplate let-action="action">
+              <span id="view-editor-toolbar-delete-button" class="pficon pficon-delete view-editor-toolbar-icon"></span>
+            </ng-template>
+            <ng-template #errorsTemplate let-action="action">
+              <span class="pficon pficon-error-circle-o badge-pf-bordered view-editor-toolbar-icon">{{errorMsgCount}}</span>
+            </ng-template>
+            <ng-template #warningsTemplate let-action="action">
+              <span class="pficon pficon-warning-triangle-o badge-pf-bordered view-editor-toolbar-icon">{{warningMsgCount}}</span>
+            </ng-template>
+            <ng-template #infosTemplate let-action="action">
+              <span class="pficon pficon-info badge-pf-bordered view-editor-toolbar-icon">{{infoMsgCount}}</span>
+            </ng-template>
+          </pfng-action>
+        </ng-template>
+      </pfng-toolbar>
+    </div>
+  </div>
+
+  <!-- =========================================== -->
+  <!-- ========== Canvas and Properties ========== -->
+  <!-- =========================================== -->
+  <div id="view-editor-edit-container"
+       *ngIf="isShowingCanvas">
+    <app-view-canvas></app-view-canvas>
+  </div>
+
+  <!-- ============================= -->
+  <!-- ========== Results ========== -->
+  <!-- ============================= -->
+  <div class="view-editor-area"
+       id="view-editor-views-container"
+       *ngIf="isShowingAdditionalViews">
+    <app-editor-views></app-editor-views>
+  </div>
+
+</div>

@@ -15,7 +15,15 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  WizardModule } from "patternfly-ng";
 import { AddConnectionWizardComponent } from "./add-connection-wizard.component";
 
 describe("AddConnectionWizardComponent", () => {
@@ -24,7 +32,20 @@ describe("AddConnectionWizardComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule ],
+      imports: [
+        CoreModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterTestingModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        WizardModule
+      ],
       declarations: [ AddConnectionWizardComponent, PropertyFormComponent, PropertyFormPropertyComponent,
                       ConnectionTypeCardComponent, ConnectionTypeCardsComponent ],
       providers: [

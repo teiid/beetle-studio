@@ -25,7 +25,9 @@ describe("SlideInComponent", () => {
     TestBed.configureTestingModule({
       declarations: [ SlideInComponent ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

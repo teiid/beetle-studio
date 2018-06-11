@@ -21,6 +21,7 @@ import { ConnectionService } from "@connections/shared/connection.service";
 import { ConnectionsConstants } from "@connections/shared/connections-constants";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
+import { SelectionService } from "@core/selection.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
@@ -109,13 +110,14 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private selectedSvcViews: View[] = [];
   private allSvcViews: View[] = [];
   private modalService: BsModalService;
+  private selectionService: SelectionService;
 
   @ViewChild(SqlControlComponent) private sqlControlComponent: SqlControlComponent;
 
   constructor(router: Router, route: ActivatedRoute, dataserviceService: DataserviceService,
               logger: LoggerService, appSettingsService: AppSettingsService, wizardService: WizardService,
               notifierService: NotifierService, vdbService: VdbService, connectionService: ConnectionService,
-              modalService: BsModalService) {
+              selectionService: SelectionService, modalService: BsModalService) {
     super(route, logger);
     this.router = router;
     this.appSettingsService = appSettingsService;
@@ -124,6 +126,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.notifierService = notifierService;
     this.wizardService = wizardService;
     this.modalService = modalService;
+    this.selectionService = selectionService;
     // Register for dataservice deployment state changes
     this.dataserviceDeployStateSubscription = this.notifierService.getDataserviceDeployStateMap().subscribe((serviceStateMap) => {
       this.onDataserviceDeploymentStateChanged(serviceStateMap);
@@ -567,7 +570,9 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.wizardService.setEdit(false);
     this.wizardService.clearSelectedSchemaNodes();
 
-    const link: string[] = [ DataservicesConstants.addDataservicePath ];
+    this.selectionService.setSelectedVirtualization(null);
+
+    const link: string[] = [ DataservicesConstants.virtualizationPath ];
     this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do
@@ -585,10 +590,9 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.closeLookPanels();
 
     // Sets the selected dataservice and edit mode before transferring
-    this.wizardService.setSelectedDataservice(selectedService);
-    this.wizardService.setEdit(true);
+    this.selectionService.setSelectedVirtualization(selectedService);
 
-    const link: string[] = [ DataservicesConstants.addDataservicePath ];
+    const link: string[] = [ DataservicesConstants.virtualizationPath ];
     this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do

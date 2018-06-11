@@ -1,0 +1,25 @@
+/*
+ * The container for the mesage log table.
+ */
+#view-editor-message-log {
+  align-items: center;
+  display: flex;
+  height: 100%;
+}
+
+/*
+ * Style the empty state component so that it is centered and extends the entire width.
+ */
+#view-editor-message-log .blank-slate-pf {
+  background-color: inherit;
+  border: none;
+  padding: 0;
+}
+
+/*
+ * Style the message log table so that it extends the entire width.
+ */
+#message-log-table {
+  margin: 0 20px;
+  width: 100%;
+}

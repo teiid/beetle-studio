@@ -1,0 +1,31 @@
+/*
+ * The editor views tabset.
+ */
+#editor-views-tabs .tab-content {
+  border: 1px solid lightgray;
+  height: 75%;
+}
+
+/*
+ * Customs settings for the tab.
+ */
+#editor-views-tabs .nav-link {
+  border: 1px solid #bbbbbb;
+  border-radius: 8px 8px 0 0;
+  margin: 0;
+  padding: 4px 10px;
+}
+
+/*
+ * Custom settings for the tab heading.
+ */
+.editor-views-tab-heading {
+  font-size: smaller;
+}
+
+/*
+ * Adds a space to the right of the icon and before the tab heading.
+ */
+.editor-views-tab-icon:after {
+  margin-right: 2px;
+}

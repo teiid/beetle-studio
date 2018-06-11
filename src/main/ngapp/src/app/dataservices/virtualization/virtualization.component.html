@@ -1,0 +1,125 @@
+<div>
+  <div id="dataservices-breadcrumb-bar">
+    <app-breadcrumbs>
+      <li i18n="@@dataservicesCards.dataservices" app-breadcrumb label="Data Virtualizations" icon="table" [route]="[ virtualizationsLink ]"></li>
+      <li i18n="@@dataservicesCards.addDataservice" app-breadcrumb label="Virtualization" icon="plus" class="active"></li>
+    </app-breadcrumbs>
+  </div>
+  <div class="container-fluid">
+    <div class="col-sm-12">
+      <h2 class="app-feature-title" i18n="@@add-dataservice.addDataservice">Virtualization</h2>
+    </div>
+    <!-- Form for Name and Description -->
+    <form [formGroup]="viewPropertyForm" class="form-horizontal">
+      <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
+        <label class="col-sm-1 control-label required-pf">Name</label>
+        <div class="col-sm-6">
+          <input class="form-control" formControlName="name" title="">
+          <div class="help-block" *ngIf="!nameValid">{{ nameValidationError }}</div>
+        </div>
+        <span *ngIf="!nameValid"
+              class="col-sm-1 fa fa-2x fa-exclamation-circle"
+              style="color:darkred"
+              data-toggle="tooltip"
+              data-placement="right"
+              title="The name is invalid">
+        </span>
+        <span *ngIf="hasPendingNameChange && nameValid"
+              class="col-sm-1 fa fa-2x fa-save clickable-icon"
+              style="color:black"
+              (click)="onSaveName( )"
+              data-toggle="tooltip"
+              data-placement="right"
+              title="Save the name">
+        </span>
+        <span *ngIf="!hasPendingNameChange && nameValid"
+              class="col-sm-1 fa fa-2x fa-check"
+              style="color:darkgreen"
+              data-toggle="tooltip"
+              data-placement="right"
+              title="The name is valid">
+        </span>
+        <label class="col-sm-2 description-label"
+               id="show-description-label"
+               for="show-description">
+          <input type="checkbox"
+                 id="show-description"
+                 (change)="showDescription = $event.target.checked">&nbsp;Show Description
+        </label>
+      </div>
+      <div *ngIf="showDescription" [ngClass]="'form-group'">
+        <label class="col-sm-1 control-label">Description</label>
+        <div class="col-sm-6">
+          <textarea class="form-control" rows="2" maxlength="256" formControlName="description" title=""></textarea>
+        </div>
+      </div>
+    </form>
+
+    <div class="row" *ngIf="!viewCreateInProgress && !isNew && views.length > 0">
+      <div class="col-sm-3">
+        <a i18n="@@virtualization.addView" class="btn btn-primary" (click)="onNew()">Add View</a>
+      </div>
+    </div>
+
+    <!-- Blank State or Card View -->
+    <div class="row object-collection-page">
+
+      <!-- Create Virtualization in progress -->
+      <div class="row" *ngIf="viewCreateInProgress || viewsLoading">
+        <div class="spinner spinner-lg blank-slate-pf-icon"></div>
+      </div>
+
+      <!-- Blank State prompts for name entry -->
+      <div class="row" *ngIf="!viewCreateInProgress && !viewsLoading && isNew && !hasPendingNameChange" >
+        <div class="col-sm-12">
+          <div class="form-group">
+            <pfng-empty-state
+              [config]="enterVirtualizationNameConfig">
+            </pfng-empty-state>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blank State prompts for name save -->
+      <div class="row" *ngIf="!viewCreateInProgress && !viewsLoading && isNew && hasPendingNameChange" >
+        <div class="col-sm-12">
+          <div class="form-group">
+            <pfng-empty-state
+              [config]="saveVirtualizationNameConfig">
+            </pfng-empty-state>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blank State if no views -->
+      <div class="row" *ngIf="!viewCreateInProgress && viewsLoadedSuccess && !isNew && views.length === 0" >
+        <div class="col-sm-12">
+          <div class="form-group">
+            <pfng-empty-state
+              [config]="viewsEmptyConfig"
+              (onActionSelect)="onNew()"></pfng-empty-state>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error message for view loading failure -->
+      <div class="row" *ngIf="!viewCreateInProgress && viewsLoadedFailed" >
+        <div class="alert-padding">
+          <div class="alert alert-danger">
+            <span class="pficon pficon-error-circle-o"></span>
+            <strong>The virtualization views failed to load!</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card View if one or more views -->
+      <div class="col-md-12" *ngIf="viewsLoadedSuccess && views.length > 0">
+        <app-view-cards [views]="views" [selectedViews]="selectedViews"
+                        (deleteView)="onDelete($event)" (editView)="onEdit($event)"
+                        (viewSelected)="onSelected($event)" (viewDeselected)="onDeselected($event)">
+        </app-view-cards>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -15,17 +15,28 @@
  * limitations under the License.
  */
 
-import { Connection } from "@connections/shared/connection.model";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 
 /**
  * View model
  */
 export class View {
-  private name: string;
-  private connection: Connection;
-  private catalogName: string;
-  private schemaName: string;
+  private keng__id: string;
+  private description: string;
   private isSelected = false;
+  private isValid = false;
+  private isEditable = false;
+  private sources: SchemaNode[] = [];
+
+  /**
+   * @param {Object} json the JSON representation of a View
+   * @returns {View} the new View (never null)
+   */
+  public static create( json: object = {} ): View {
+    const view = new View();
+    view.setValues( json );
+    return view;
+  }
 
   constructor() {
     // nothing to do
@@ -35,56 +46,50 @@ export class View {
    * @returns {string} the table name
    */
   public getName(): string {
-    return this.name;
+    return this.keng__id;
   }
 
   /**
    * @param {string} name the table name
    */
   public setName( name?: string ): void {
-    this.name = name ? name : null;
+    this.keng__id = name ? name : null;
   }
 
   /**
-   * @returns {Connection} the connection for the table
+   * @returns {string} the view description
    */
-  public getConnection(): Connection {
-    return this.connection;
+  public getDescription(): string {
+    return this.description;
   }
 
   /**
-   * @param {string} connection the connection for the table
+   * @param {string} name the view description
    */
-  public setConnection( connection?: Connection ): void {
-    this.connection = connection ? connection : null;
+  public setDescription( description?: string ): void {
+    this.description = description ? description : null;
   }
 
   /**
-   * @returns {string} the catalog name for the table
+   * @returns {SchemaNode[]} the view sources
    */
-  public getCatalogName(): string {
-    return this.catalogName;
+  public getSources(): SchemaNode[] {
+    return this.sources;
   }
 
   /**
-   * @param {string} catalogName the connection name for the table
+   * @param {SchemaNode[]} sources the view sources
    */
-  public setCatalogName( catalogName?: string ): void {
-    this.catalogName = catalogName ? catalogName : null;
+  public setSources( sources: SchemaNode[] ): void {
+    this.sources = sources;
   }
 
   /**
-   * @returns {string} the schema name for the table
+   * Determine whether the view is in a valid state
+   * @returns {boolean} true if valid
    */
-  public getSchemaName(): string {
-    return this.schemaName;
-  }
-
-  /**
-   * @param {string} schemaName the schema name for the table
-   */
-  public setSchemaName( schemaName?: string ): void {
-    this.schemaName = schemaName ? schemaName : null;
+  public get valid(): boolean {
+    return this.keng__id != null && this.sources.length > 0;
   }
 
   /**
@@ -99,6 +104,28 @@ export class View {
    */
   public set selected( selected: boolean ) {
     this.isSelected = selected;
+  }
+
+  /**
+   * @returns {boolean} true if editable
+   */
+  public get editable(): boolean {
+    return this.isEditable;
+  }
+
+  /**
+   * @param {boolean} editable 'true' if editable
+   */
+  public set editable( editable: boolean ) {
+    this.isEditable = editable;
+  }
+
+  /**
+   * Set all object values using the supplied View json
+   * @param {Object} values
+   */
+  public setValues(values: object = {}): void {
+    Object.assign(this, values);
   }
 
 }

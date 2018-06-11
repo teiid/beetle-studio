@@ -11,7 +11,7 @@ before_install:
     - tar zxf s2i.tar.gz
 
 install: true
-script: ./s2i build . centos/nodejs-6-centos7 ${DOCKER_USERNAME:-teiid}/beetle-studio -e "MAVEN_ARGS='clean install -DskipTests'" --context-dir="src/main/ngapp"
+script: ./s2i build . centos/nodejs-6-centos7 ${DOCKER_USERNAME:-teiid}/beetle-studio -e "MAVEN_ARGS='clean install'" --context-dir="src/main/ngapp"
 
 after_success:
   - if [[ ( "$TRAVIS_BRANCH" == "master" ) && ( "$TRAVIS_PULL_REQUEST" == "false" ) ]]; then

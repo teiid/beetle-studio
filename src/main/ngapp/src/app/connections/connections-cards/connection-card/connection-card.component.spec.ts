@@ -3,7 +3,15 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { ConnectionStatus } from "@connections/shared/connection-status";
 import { Connection } from "@connections/shared/connection.model";
 import { LoggerService } from "@core/logger.service";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  WizardModule } from "patternfly-ng";
 import { ConnectionCardComponent } from "./connection-card.component";
 
 describe("ConnectionCardComponent", () => {
@@ -12,11 +20,23 @@ describe("ConnectionCardComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ PatternFlyNgModule, RouterTestingModule ],
+      imports: [
+        RouterTestingModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        WizardModule
+      ],
       declarations: [ ConnectionCardComponent ],
       providers: [ LoggerService ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

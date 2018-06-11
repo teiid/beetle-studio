@@ -1,0 +1,47 @@
+/*
+ * The view description textarea.
+ */
+#view-editor-header-description-input {
+  max-width: max-content;
+  min-height: 25px;
+  min-width: 600px;
+  vertical-align: top;
+}
+
+/*
+ * A div containing an input field in the header.
+ */
+.view-editor-header-input-div {
+  margin: 1px;
+  padding: 1px;
+}
+
+/*
+ * A type for vertically aligned labels in the header.
+ */
+.view-editor-header-label {
+  margin: 2px;
+  padding: 2px;
+}
+
+/*
+ * The checkbox that shows/hides the virtualization description.
+ */
+#view-editor-header-show-description {
+  margin-right: 4px;
+}
+
+/*
+ * The label for the checkbox that shows/hides the view description.
+ */
+#view-editor-header-show-description-label {
+  margin-top: 2px;
+  text-align: left;
+}
+
+/*
+ * The label where the virtualization name is the content.
+ */
+#view-editor-header-virtualization-name {
+  text-align: left;
+}

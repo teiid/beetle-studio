@@ -14,7 +14,7 @@ import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { SharedModule } from "@shared/shared.module";
-import { PatternFlyNgModule } from "patternfly-ng";
+import { WizardModule } from "patternfly-ng";
 import { AddActivityComponent } from "./add-activity.component";
 
 describe("AddActivityComponent", () => {
@@ -23,7 +23,7 @@ describe("AddActivityComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, PatternFlyNgModule, FormsModule, ReactiveFormsModule, RouterTestingModule, SharedModule ],
+      imports: [ CoreModule, WizardModule, FormsModule, ReactiveFormsModule, RouterTestingModule, SharedModule ],
       declarations: [ AddActivityComponent, AddActivityWizardComponent ],
       providers: [
         NotifierService,

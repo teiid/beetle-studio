@@ -32,13 +32,14 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
+import { SchemaNode } from "@connections/shared/schema-node.model";
+import { Connection } from "@connections/shared/connection.model";
+import { View } from "@dataservices/shared/view.model";
 
 @Injectable()
 export class MockVdbService extends VdbService {
 
-  private readonly vdbs: Vdb[];
-  private readonly statuses: VdbStatus[];
-  private readonly virtualizations: Virtualization[];
+  private testDataService: TestDataService;
 
   constructor(http: Http, appSettings: AppSettingsService, notifierService: NotifierService, logger: LoggerService ) {
     super(http, appSettings, notifierService, logger);
@@ -47,10 +48,7 @@ export class MockVdbService extends VdbService {
     const injector = ReflectiveInjector.resolveAndCreate([TestDataService]);
     const testDataService = injector.get(TestDataService);
 
-    // Get test data
-    this.statuses = testDataService.getVdbStatuses();
-    this.vdbs = testDataService.getVdbs();
-    this.virtualizations = testDataService.getVirtualizations();
+    this.testDataService = testDataService;
   }
 
   /**
@@ -58,7 +56,7 @@ export class MockVdbService extends VdbService {
    * @returns {Observable<Vdb[]>}
    */
   public getVdbs(): Observable<Vdb[]> {
-    return Observable.of(this.vdbs);
+    return Observable.of(this.testDataService.getVdbs());
   }
 
   /**
@@ -66,7 +64,7 @@ export class MockVdbService extends VdbService {
    * @returns {Observable<Vdb[]>}
    */
   public getTeiidVdbStatuses(): Observable<VdbStatus[]> {
-    return Observable.of(this.statuses);
+    return Observable.of(this.testDataService.getVdbStatuses());
   }
 
   /**
@@ -96,6 +94,30 @@ export class MockVdbService extends VdbService {
    * @returns {Observable<boolean>}
    */
   public createVdbModelSource(vdbName: string, modelName: string, vdbModelSource: VdbModelSource): Observable<boolean> {
+    return Observable.of(true);
+  }
+
+  /**
+   * Get the views from the specified Vdb model from the komodo rest interface
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @returns {Observable<View[]>}
+   */
+  public getVdbModelViews(vdbName: string, modelName: string): Observable<View[]> {
+    return Observable.of(this.testDataService.getViews(vdbName, modelName));
+  }
+
+  /**
+   * Creates the Vdb Model Views via the komodo rest interface
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @param {string[]} viewNames the view names
+   * @param {SchemaNode[]} sourceNodes the source node for each view
+   * @param {Connection[]} connections the array of available active connections
+   * @returns {Observable<boolean>}
+   */
+  public setVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
+                          sourceNodes: SchemaNode[], connections: Connection[]): Observable<boolean> {
     return Observable.of(true);
   }
 
@@ -152,7 +174,11 @@ export class MockVdbService extends VdbService {
   }
 
   public getVirtualizations(): Observable< Virtualization[] > {
-    return Observable.of( this.virtualizations );
+    return Observable.of( this.testDataService.getVirtualizations() );
+  }
+
+  public deleteView(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
+    return Observable.of(true);
   }
 
 }

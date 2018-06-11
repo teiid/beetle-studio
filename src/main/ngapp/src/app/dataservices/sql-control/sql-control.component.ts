@@ -84,7 +84,7 @@ export class SqlControlComponent implements OnInit {
       {
         draggable: false,
         name: "Views",
-        prop: "name",
+        prop: "keng__id",
         resizeable: true,
         sortable: true,
         width: "100"
@@ -107,7 +107,7 @@ export class SqlControlComponent implements OnInit {
       reorderable: false,
       selected: this.selectedViews,
       selectionType: "'single'",
-      sorts: [ { prop: "name", dir: "asc" } ],
+      sorts: [ { prop: "keng__id", dir: "asc" } ],
     } as NgxDataTableConfig;
 
     this.viewTableConfig = {

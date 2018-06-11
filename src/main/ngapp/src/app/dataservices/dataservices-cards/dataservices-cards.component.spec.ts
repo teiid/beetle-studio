@@ -5,7 +5,16 @@ import { LoggerService } from "@core/logger.service";
 import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
 import { SharedModule } from "@shared/shared.module";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
 import { TooltipModule } from 'ngx-bootstrap';
 import { CodemirrorModule } from "ng2-codemirror";
 
@@ -16,9 +25,20 @@ describe("DataservicesCardsComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule, PatternFlyNgModule,
-        TooltipModule, CodemirrorModule, FormsModule,
-        SharedModule
+        RouterTestingModule,
+        TooltipModule,
+        CodemirrorModule,
+        FormsModule,
+        SharedModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule
       ],
       declarations: [ DataservicesCardsComponent, DataserviceCardComponent ],
       providers: [ LoggerService ]
