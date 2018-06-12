@@ -98,7 +98,7 @@ export class ConnectionTableDialogComponent implements OnInit {
           self.connectionLoadingState = LoadingState.LOADED_VALID;
         },
         (error) => {
-          // self.logger.error("[ConnectionSchemaTreeComponent] Error getting connections: %o", error);
+          self.loggerService.error("[ConnectionTableDialogComponent] Error getting connections: %o", error);
           self.connectionLoadingState = LoadingState.LOADED_INVALID;
         }
       );

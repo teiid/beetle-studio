@@ -227,7 +227,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.wizardService.setEdit(false);
 
     const link: string[] = [ ConnectionsConstants.addConnectionPath ];
-    this.logger.log( "[DataservicesPageComponent] Navigating to: %o", link );
+    this.logger.debug( "[DataservicesPageComponent] Navigating to: %o", link );
     this.router.navigate( link ).then(() => {
       // nothing to do
     } );
@@ -488,7 +488,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
       this.exportNotificationMessage = "Downloading " + svcName + "...";
       this.exportNotificationType = NotificationType.INFO;
       this.exportNotificationVisible = true;
-      this.logger.log("[DataservicesPageComponent] Downloading Dataservice: " + svcName);
+      this.logger.debug("[DataservicesPageComponent] Downloading Dataservice: " + svcName);
       const self = this;
       this.dataserviceService
         .downloadDataservice(svcName)
@@ -497,7 +497,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
             self.exportNotificationHeader = this.downloadSuccessHeader;
             self.exportNotificationMessage = "   " + svcName + " was downloaded successfully!";
             self.exportNotificationType = NotificationType.SUCCESS;
-            this.logger.log("[DataservicesPageComponent] Download Dataservice was successful");
+            this.logger.debug("[DataservicesPageComponent] Download Dataservice was successful");
           },
           (error) => {
             self.exportNotificationHeader = this.downloadFailedHeader;
@@ -518,7 +518,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.exportNotificationMessage = "Publishing " + svcName + "...";
     this.exportNotificationType = NotificationType.INFO;
     this.exportNotificationVisible = true;
-    this.logger.log("[DataservicesPageComponent] Publishing Dataservice: " + svcName);
+    this.logger.debug("[DataservicesPageComponent] Publishing Dataservice: " + svcName);
     const self = this;
     this.dataserviceService
       .publishDataservice(svcName)
@@ -527,13 +527,13 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
           self.exportNotificationHeader = this.exportSuccessHeader;
           self.exportNotificationMessage = "   " + svcName + " publishing successfully initiated.";
           self.exportNotificationType = NotificationType.INFO;
-          this.logger.log("[DataservicesPageComponent] Initiated publishing of dataservice");
+          this.logger.debug("[DataservicesPageComponent] Initiated publishing of dataservice");
         },
         (error) => {
           self.exportNotificationHeader = this.exportFailedHeader;
           self.exportNotificationMessage = "   Failed to publish dataservice " + svcName + ".";
           self.exportNotificationType = NotificationType.DANGER;
-          this.logger.log("[DataservicesPageComponent] Publish dataservice " + svcName + " failed.");
+          this.logger.error("[DataservicesPageComponent] Publish dataservice " + svcName + " failed.");
         }
       );
   }
@@ -573,7 +573,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.selectionService.setSelectedVirtualization(null);
 
     const link: string[] = [ DataservicesConstants.virtualizationPath ];
-    this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
+    this.logger.debug("[DataservicesPageComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do
     });
@@ -593,7 +593,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.selectionService.setSelectedVirtualization(selectedService);
 
     const link: string[] = [ DataservicesConstants.virtualizationPath ];
-    this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
+    this.logger.debug("[DataservicesPageComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do
     });
@@ -665,7 +665,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     // const selectedService = itemsToDelete[0];
 
     // Note: we can only doDelete selected items that we can see in the UI.
-    this.logger.log("[DataservicesPageComponent] Deleting selected Dataservice.");
+    this.logger.debug("[DataservicesPageComponent] Deleting selected Dataservice.");
     const self = this;
     this.dataserviceService
       .deleteDataservice(selectedService.getId())
