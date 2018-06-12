@@ -11,7 +11,7 @@ The goal of having style guidelines and conventions is to increase maintainabili
 _Beetle Studio_ has tried to use the file structure recommended by _angular.io_, with minor
 modifications due to facilitating a maven build process.
 
-So _Beetle Studio_ has feature modules (connections, activities), a _CoreModule_ (for singletons and
+So _Beetle Studio_ has feature modules (connections, dataservices), a _CoreModule_ (for singletons and
 single use objects), and a _SharedModule_ (for reusable objects). Within each feature
 module there may be a _shared_ folder for services and other shared objects). See the 
 _Overall structural guidelines_ section of the [angular.io style guide](https://angular.io/guide/styleguide)
@@ -24,11 +24,11 @@ multiple words, separate words by dashes. Uppercase letters should not be used._
 
 Here are some examples:
 
-- activity.service.ts - a service name `ActivityService`.
-- activity.service.spec.ts - a test for the `ActivityService`.
-- activities.module.ts - a feature module called `ActivitiesModule`.
-- add-activity.component.ts - a component called `AddActivityComponent`.
-- activity.model.ts - a class called `Activity`.
+- connection.service.ts - a service name `ConnectionService`.
+- connection.service.spec.ts - a test for the `ConnectionService`.
+- connections.module.ts - a feature module called `ConnectionsModule`.
+- add-connection.component.ts - a component called `AddConnectionComponent`.
+- connection.model.ts - a class called `Connection`.
 
 See the _Naming_ section of the [angular.io style guide](https://angular.io/guide/styleguide)
 for more details.
