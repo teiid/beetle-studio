@@ -12,7 +12,6 @@ import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { WizardService } from "@dataservices/shared/wizard.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
 import {
@@ -25,6 +24,7 @@ import {
   SortModule,
   WizardModule } from "patternfly-ng";
 import { AddConnectionWizardComponent } from "./add-connection-wizard.component";
+import { SelectionService } from "@core/selection.service";
 
 describe("AddConnectionWizardComponent", () => {
   let component: AddConnectionWizardComponent;
@@ -49,7 +49,7 @@ describe("AddConnectionWizardComponent", () => {
       declarations: [ AddConnectionWizardComponent, PropertyFormComponent, PropertyFormPropertyComponent,
                       ConnectionTypeCardComponent, ConnectionTypeCardsComponent ],
       providers: [
-        WizardService,
+        SelectionService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ConnectionService, useClass: MockConnectionService },
         NotifierService,

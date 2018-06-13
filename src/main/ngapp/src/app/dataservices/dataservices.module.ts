@@ -38,7 +38,6 @@ import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.se
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { TestDataserviceComponent } from "@dataservices/test-dataservice/test-dataservice.component";
 import { ViewCanvasComponent } from "@dataservices/virtualization/view-editor/view-canvas/view-canvas.component";
@@ -137,8 +136,7 @@ import { ProgressDialogComponent } from "@shared/progress-dialog/progress-dialog
     },
     LoggerService,
     NotifierService,
-    SelectionService,
-    WizardService
+    SelectionService
   ],
   exports: [
   ],

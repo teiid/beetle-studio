@@ -24,7 +24,6 @@ import { ConnectionsConstants } from "@connections/shared/connections-constants"
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
-import { WizardService } from "@dataservices/shared/wizard.service";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { LayoutType } from "@shared/layout-type.enum";
@@ -38,6 +37,7 @@ import { FilterField } from "patternfly-ng";
 import { FilterConfig } from "patternfly-ng";
 import { ActionConfig, EmptyStateConfig, Filter } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
+import { SelectionService } from "@core/selection.service";
 
 @Component({
   moduleId: module.id,
@@ -63,19 +63,19 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
   private noConnectionsConfig: EmptyStateConfig;
   private appSettingsService: AppSettingsService;
   private connectionService: ConnectionService;
-  private wizardService: WizardService;
   private notifierService: NotifierService;
+  private selectionService: SelectionService;
   private connectionStatusSubscription: Subscription;
   private modalService: BsModalService;
 
   constructor(router: Router, route: ActivatedRoute, appSettingsService: AppSettingsService,
-              wizardService: WizardService, connectionService: ConnectionService, logger: LoggerService,
-              notifierService: NotifierService, modalService: BsModalService ) {
+              connectionService: ConnectionService, logger: LoggerService,
+              notifierService: NotifierService, modalService: BsModalService, selectionService: SelectionService ) {
     super(route, logger);
     this.router = router;
     this.appSettingsService = appSettingsService;
     this.connectionService = connectionService;
-    this.wizardService = wizardService;
+    this.selectionService = selectionService;
     this.notifierService = notifierService;
     this.modalService = modalService;
     // Register for connection status changes
@@ -150,7 +150,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
         (connectionSummaries) => {
           const conns = [];
           // If there is a newly added connection, it has been flagged for schema regen
-          const newlyAddedConnName = self.wizardService.getConnectionIdForSchemaRegen();
+          const newlyAddedConnName = self.selectionService.getConnectionIdForSchemaRegen();
           for ( const connSummary of connectionSummaries ) {
             const conn = connSummary.getConnection();
             let status = connSummary.getStatus();
@@ -257,7 +257,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
    * Handle request for new Connection
    */
   public onNew(): void {
-    this.wizardService.setEdit(false);
+    this.selectionService.setSelectedConnection(null);
 
     const link: string[] = [ ConnectionsConstants.addConnectionPath ];
     this.logger.debug("[ConnectionsComponent] Navigating to: %o", link);
@@ -274,8 +274,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     const selectedConnection =  this.filteredConnections.find((x) => x.getId() === connName);
 
     // Sets the selected dataservice and edit mode before transferring
-    this.wizardService.setSelectedConnection(selectedConnection);
-    this.wizardService.setEdit(true);
+    this.selectionService.setSelectedConnection(selectedConnection);
 
     const link: string[] = [ ConnectionsConstants.addConnectionPath ];
     this.logger.debug("[ConnectionsComponent] Navigating to: %o", link);
@@ -296,7 +295,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     const deployVdb = selectedConnection.serverVdbMissing || selectedConnection.serverVdbFailed;
     // If vdb deployment is required, flag the need to regen the schema
     if (deployVdb) {
-      this.wizardService.setConnectionIdForSchemaRegen(connName);
+      this.selectionService.setConnectionIdForSchemaRegen(connName);
     }
 
     // Will trigger schema reload unless it is currently loading
@@ -448,7 +447,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
    */
   private onConnectionStatusChanged(stateMap: Map<string, ConnectionStatus>): void {
     // Get name of connection for schema regen (empty if none)
-    const connForSchemaRegen = this.wizardService.getConnectionIdForSchemaRegen();
+    const connForSchemaRegen = this.selectionService.getConnectionIdForSchemaRegen();
 
     // For displayed dataservices, update the State using supplied services
     for ( const conn of this.filteredConns ) {
@@ -462,7 +461,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     }
 
     // If there is a newly added connection, initiate schema generation
-    if (this.wizardService.hasConnectionForSchemaRegen) {
+    if (this.selectionService.hasConnectionForSchemaRegen) {
       this.initiateSchemaGeneration(connForSchemaRegen);
     }
   }
@@ -478,11 +477,11 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
         .refreshConnectionSchema(connName, false, true)
         .subscribe(
           (wasSuccess) => {
-            self.wizardService.setConnectionIdForSchemaRegen("");   // reset connection for regen when done
+            self.selectionService.setConnectionIdForSchemaRegen("");   // reset connection for regen when done
             self.connectionService.updateConnectionSchemaStates();  // triggers refresh to get latest connection states
           },
           (error) => {
-            self.wizardService.setConnectionIdForSchemaRegen("");   // reset connection for regen when done
+            self.selectionService.setConnectionIdForSchemaRegen("");   // reset connection for regen when done
             self.connectionService.updateConnectionSchemaStates();  // triggers refresh to get latest connection states
           }
         );

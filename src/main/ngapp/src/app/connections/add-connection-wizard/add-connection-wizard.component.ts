@@ -31,11 +31,11 @@ import { ConnectionsConstants } from "@connections/shared/connections-constants"
 import { NewConnection } from "@connections/shared/new-connection.model";
 import { ServiceCatalogSource } from "@connections/shared/service-catalog-source.model";
 import { LoggerService } from "@core/logger.service";
-import { WizardService } from "@dataservices/shared/wizard.service";
 import { NotificationType, WizardEvent } from "patternfly-ng";
 import { WizardStepConfig } from "patternfly-ng";
 import { WizardConfig } from "patternfly-ng";
 import { WizardComponent } from "patternfly-ng";
+import { SelectionService } from "@core/selection.service";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -76,7 +76,7 @@ export class AddConnectionWizardComponent implements OnInit {
   @ViewChild("wizard") public wizard: WizardComponent;
 
   private connectionService: ConnectionService;
-  private wizardService: WizardService;
+  private selectionService: SelectionService;
   private selectedConnTypes: ConnectionType[] = [];
   private connTypes: ConnectionType[] = [];
   private serviceCatSources: ServiceCatalogSource[] = [];
@@ -87,9 +87,9 @@ export class AddConnectionWizardComponent implements OnInit {
   private theFinalPageMessage = "";
 
   constructor( router: Router, connectionService: ConnectionService,
-               wizardService: WizardService, logger: LoggerService ) {
+               selectionService: SelectionService, logger: LoggerService ) {
     this.connectionService = connectionService;
-    this.wizardService = wizardService;
+    this.selectionService = selectionService;
     this.router = router;
     this.logger = logger;
     this.emptyServiceCatalogSource.setId( " -- select catalog source -- " );
@@ -144,8 +144,8 @@ export class AddConnectionWizardComponent implements OnInit {
     this.connectionTypesLoading = false;
 
     // Select connection type if editing
-    if (this.wizardService.isEdit()) {
-      const selectedConnection = this.wizardService.getSelectedConnection();
+    if ( this.selectionService.hasSelectedConnection ) {
+      const selectedConnection = this.selectionService.getSelectedConnection();
       const connType = selectedConnection.getDriverName();
       for (const cType of this.connectionTypes) {
         if (connType === cType.getName()) {
@@ -184,7 +184,7 @@ export class AddConnectionWizardComponent implements OnInit {
    * Return the name valid state
    */
   public get nameValid(): boolean {
-    if (this.wizardService.isEdit()) {
+    if ( this.selectionService.hasSelectedConnection ) {
       return true;
     }
     return this.nameValidationError == null || this.nameValidationError.length === 0;
@@ -271,7 +271,7 @@ export class AddConnectionWizardComponent implements OnInit {
     } else if (!this.hasSelectedServiceCatalogSource) {
       return "Please select a catalog source for the Connection";
     } else {
-      if (this.wizardService.isEdit()) {
+      if (this.selectionService.hasSelectedConnection) {
         return "Review selections.  Click Update to update the Connection";
       } else {
         return "When finished, click Create to create the Connection";
@@ -368,7 +368,7 @@ export class AddConnectionWizardComponent implements OnInit {
     connection.setServiceCatalogSource(this.selectedServiceCatalogSource.getId());
 
     const self = this;
-    if (this.wizardService.isEdit()) {
+    if (this.selectionService.hasSelectedConnection) {
       this.updateDeployConnection(connection);
     } else {
       this.createDeployConnection(connection);
@@ -380,7 +380,7 @@ export class AddConnectionWizardComponent implements OnInit {
       this.wizardConfig.nextTitle = "Next >";
       this.updatePage1ValidStatus();
     } else if ($event.step.config.id === "step2a") {
-      if (this.wizardService.isEdit()) {
+      if (this.selectionService.hasSelectedConnection) {
         this.wizardConfig.nextTitle = "Update";
       } else {
         this.wizardConfig.nextTitle = "Create";
@@ -421,11 +421,11 @@ export class AddConnectionWizardComponent implements OnInit {
     });
 
     // Initialize form values
-    if (!this.wizardService.isEdit()) {
+    if (!this.selectionService.hasSelectedConnection) {
       this.connectionBasicPropertyForm.controls["name"].setValue(null);
       this.connectionBasicPropertyForm.controls["description"].setValue(null);
     } else {
-      const selectedConnection = this.wizardService.getSelectedConnection();
+      const selectedConnection = this.selectionService.getSelectedConnection();
       this.connectionBasicPropertyForm.controls["name"].setValue(selectedConnection.name);
       this.connectionBasicPropertyForm.controls["description"].setValue(selectedConnection.getDescription());
       this.connectionBasicPropertyForm.get("name").disable();
@@ -460,13 +460,13 @@ export class AddConnectionWizardComponent implements OnInit {
           }
 
           // Create mode - if only one service catalog source available, pre-select it
-          if (!self.wizardService.isEdit() && self.serviceCatSources.length === 1) {
+          if (!self.selectionService.hasSelectedConnection && self.serviceCatSources.length === 1) {
             self.selectedServiceCatalogSource = self.serviceCatSources[0];
           }
 
           // Edit mode select the service catalog source
-          if (self.wizardService.isEdit() && (!self.hasSelectedServiceCatalogSource || self.serviceCatalogSelectedWrongType)) {
-            const selectedConnection = self.wizardService.getSelectedConnection();
+          if (self.selectionService.hasSelectedConnection && (!self.hasSelectedServiceCatalogSource || self.serviceCatalogSelectedWrongType)) {
+            const selectedConnection = self.selectionService.getSelectedConnection();
             const connSvcSourceName = selectedConnection.getServiceCatalogSourceName();
             self.selectedServiceCatalogSource = this.emptyServiceCatalogSource;
             for (const svcSource of self.serviceCatSources) {
@@ -507,7 +507,7 @@ export class AddConnectionWizardComponent implements OnInit {
     if (!this.step2aConfig) {
       return;
     }
-    if (this.wizardService.isEdit()) {
+    if (this.selectionService.hasSelectedConnection) {
       this.step2aConfig.nextEnabled = this.connectionBasicPropertyForm.valid;
     } else {
       this.step2aConfig.nextEnabled = this.nameValid && this.hasSelectedServiceCatalogSource;
@@ -521,8 +521,8 @@ export class AddConnectionWizardComponent implements OnInit {
    */
   private createDeployConnection(connection: NewConnection): void {
     const self = this;
-    // flag with wizard service that this connection will need schema generated
-    this.wizardService.setConnectionIdForSchemaRegen(connection.getName());
+    // flag with selection service that this connection will need schema generated
+    this.selectionService.setConnectionIdForSchemaRegen(connection.getName());
     this.connectionService
       .createDeployConnection(connection)
       .subscribe(
@@ -564,7 +564,7 @@ export class AddConnectionWizardComponent implements OnInit {
   private setFinalPageInProgress(): void {
     this.createComplete = false;
     this.createSuccessful = false;
-    if (this.wizardService.isEdit()) {
+    if (this.selectionService.hasSelectedConnection) {
       this.theFinalPageTitle = "Update in progress";
       this.theFinalPageMessage = "The connection is being updated.";
     } else {
@@ -585,7 +585,7 @@ export class AddConnectionWizardComponent implements OnInit {
     this.step2bConfig.nextEnabled = false;
     this.step2bConfig.previousEnabled = true;
     if (wasSuccessful) {
-      if (this.wizardService.isEdit()) {
+      if (this.selectionService.hasSelectedConnection) {
         this.theFinalPageTitle = "Update was successful";
         this.theFinalPageMessage = "The connection was updated successfully. Click on the button to see all connections.";
       } else {
@@ -593,7 +593,7 @@ export class AddConnectionWizardComponent implements OnInit {
         this.theFinalPageMessage = "The connection was created successfully. Click on the button to see all connections.";
       }
     } else {
-      if (this.wizardService.isEdit()) {
+      if (this.selectionService.hasSelectedConnection) {
         this.theFinalPageTitle = "Update failed";
         this.theFinalPageMessage = "The connection update failed!";
       } else {
