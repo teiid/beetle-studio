@@ -3,7 +3,6 @@
   "compilerOptions": {
     "baseUrl": "src",
     "paths": {
-      "@activities/*": ["app/activities/*"],
       "@app/*": ["app/*"],
       "@connections/*": ["app/connections/*"],
       "@core/*": ["app/core/*"],
