@@ -260,7 +260,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     this.wizardService.setEdit(false);
 
     const link: string[] = [ ConnectionsConstants.addConnectionPath ];
-    this.logger.log("[ConnectionsComponent] Navigating to: %o", link);
+    this.logger.debug("[ConnectionsComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do
     });
@@ -278,7 +278,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     this.wizardService.setEdit(true);
 
     const link: string[] = [ ConnectionsConstants.addConnectionPath ];
-    this.logger.log("[ConnectionsComponent] Navigating to: %o", link);
+    this.logger.debug("[ConnectionsComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do
     });
@@ -327,7 +327,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
     const selectedConn =  this.filteredConnections.find((x) => x.getId() === this.connectionNameForDelete);
 
     // Note: we can only doDelete selected items that we can see in the UI.
-    this.logger.log("[ConnectionsPageComponent] Deleting selected Connection.");
+    this.logger.debug("[ConnectionsPageComponent] Deleting selected Connection.");
     const self = this;
     this.connectionService
       .deleteConnection(selectedConn.getId())
@@ -336,7 +336,7 @@ export class ConnectionsComponent extends AbstractPageComponent implements OnIni
           self.deleteUndeployConnectionVdb(selectedConn.getId());
           self.removeConnectionFromList(selectedConn);
           const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
-          self.logger.log("[CreateApiPageComponent] Navigating to: %o", link);
+          self.logger.debug("[CreateApiPageComponent] Navigating to: %o", link);
           self.router.navigate(link).then(() => {
             // nothing to do
           });

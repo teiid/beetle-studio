@@ -281,7 +281,7 @@ export class VirtualizationComponent implements OnInit {
     this.selectionService.setSelectedView( this.currentVirtualization, null );
 
     const link: string[] = [ DataservicesConstants.viewPath ];
-    this.logger.log("[VirtualizationComponent] Navigating to: %o", link);
+    this.logger.debug("[VirtualizationComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do
     });
@@ -297,7 +297,7 @@ export class VirtualizationComponent implements OnInit {
     this.selectionService.setSelectedView( this.currentVirtualization, selectedView );
 
     const link: string[] = [ DataservicesConstants.viewPath ];
-    this.logger.log("[VirtualizationComponent] Navigating to: %o", link);
+    this.logger.debug("[VirtualizationComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do
     });
@@ -320,7 +320,7 @@ export class VirtualizationComponent implements OnInit {
     const vdbName = this.currentVirtualization.getServiceVdbName();
     const modelName = this.currentVirtualization.getServiceViewModel();
     // Note: we can only doDelete selected items that we can see in the UI.
-    this.logger.log("[VirtualizationComponent] Deleting selected Virtualization View.");
+    this.logger.debug("[VirtualizationComponent] Deleting selected Virtualization View.");
     const self = this;
     this.vdbService
       .deleteView(vdbName, modelName, selectedView.getName())
