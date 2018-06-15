@@ -149,38 +149,6 @@ export class VdbService extends ApiService {
   }
 
   /**
-   * Get a valid view name, first attempting to use the supplied viewName
-   * @param {string} vdbName the vdb name
-   * @param {string} modelName the model name
-   * @param {string} viewName the view name
-   * @param {string} validationMsg the validation msg.  Initially is not supplied.
-   * @returns {string} the valid viewName
-   */
-  public getValidViewName( vdbName: string, modelName: string, viewName: string, validationMsg?: string ): string {
-    if (validationMsg && validationMsg.length === 0) {
-      return viewName;
-    }
-
-    // Invokes isValidViewName until a valid view name is found
-    this.isValidViewName(vdbName, modelName, viewName)
-      .subscribe(
-        (data) => {
-          if (data && data.length > 0) {
-            viewName = viewName + 1;
-            this.isValidViewName(vdbName, modelName, viewName);
-          } else {
-            this.getValidViewName(vdbName, modelName, viewName, "");
-          }
-        },
-        (error) => {
-          // Empty
-        },
-        () => {
-          // Empty
-        });
-  }
-
-  /**
    * Create a vdb via the komodo rest interface
    * @param {Vdb} vdb
    * @returns {Observable<boolean>}

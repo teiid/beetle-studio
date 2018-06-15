@@ -18,12 +18,15 @@
 import { Injectable } from "@angular/core";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { View } from "@dataservices/shared/view.model";
+import { Connection } from "@connections/shared/connection.model";
 
 @Injectable()
 export class SelectionService {
 
+  private selectedConnection: Connection;
   private selectedVirtualization: Dataservice;
   private selectedView: View;
+  private connectionForSchemaRegen = "";
 
   constructor() {
     // nothing to do
@@ -54,6 +57,30 @@ export class SelectionService {
   }
 
   /**
+   * Gets the selected connection
+   * @returns {Connection} the selected connection
+   */
+  public getSelectedConnection(): Connection {
+    return this.selectedConnection;
+  }
+
+  /**
+   * Sets the selected connection
+   * @param {Connection} connection the selected connection
+   */
+  public setSelectedConnection(connection: Connection): void {
+    this.selectedConnection = connection;
+  }
+
+  /**
+   * Determine if there is a selected connection
+   * @returns {boolean} 'true' if a connection is selected
+   */
+  public get hasSelectedConnection(): boolean {
+    return this.selectedConnection && this.selectedConnection !== null;
+  }
+
+  /**
    * Gets the selected view
    * @returns {View} the selected view
    */
@@ -76,6 +103,30 @@ export class SelectionService {
    */
   public get hasSelectedView(): boolean {
     return this.selectedView && this.selectedView !== null;
+  }
+
+  /**
+   * Determine if has a connection which needs its schema regenerated
+   * @returns {boolean} 'true' if there is a connection needing schema regen
+   */
+  public get hasConnectionForSchemaRegen(): boolean {
+    return this.connectionForSchemaRegen && this.connectionForSchemaRegen.length > 0;
+  }
+
+  /**
+   * Gets the connection id which needs its schema regenerated
+   * @returns {string} the connection id needing schema regen
+   */
+  public getConnectionIdForSchemaRegen(): string {
+    return this.connectionForSchemaRegen;
+  }
+
+  /**
+   * Sets the connection id which needs its schema regenerated
+   * @param {string} connectionName the connection id which needs its schema regenerated
+   */
+  public setConnectionIdForSchemaRegen(connectionName: string): void {
+    this.connectionForSchemaRegen = connectionName !== null ? connectionName : "";
   }
 
 }

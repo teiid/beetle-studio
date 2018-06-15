@@ -31,9 +31,7 @@ import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
-import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
-import { OdataControlComponent } from "@dataservices/odata-control/odata-control.component";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { LayoutType } from "@shared/layout-type.enum";
@@ -106,7 +104,6 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private dataserviceDeployStateSubscription: Subscription;
   private dataservicePublishStateSubscription: Subscription;
   private notifierService: NotifierService;
-  private wizardService: WizardService;
   private selectedSvcViews: View[] = [];
   private allSvcViews: View[] = [];
   private modalService: BsModalService;
@@ -115,7 +112,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   @ViewChild(SqlControlComponent) private sqlControlComponent: SqlControlComponent;
 
   constructor(router: Router, route: ActivatedRoute, dataserviceService: DataserviceService,
-              logger: LoggerService, appSettingsService: AppSettingsService, wizardService: WizardService,
+              logger: LoggerService, appSettingsService: AppSettingsService,
               notifierService: NotifierService, vdbService: VdbService, connectionService: ConnectionService,
               selectionService: SelectionService, modalService: BsModalService) {
     super(route, logger);
@@ -124,7 +121,6 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     this.dataserviceService = dataserviceService;
     this.vdbService = vdbService;
     this.notifierService = notifierService;
-    this.wizardService = wizardService;
     this.modalService = modalService;
     this.selectionService = selectionService;
     // Register for dataservice deployment state changes
@@ -223,8 +219,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   public onNewConnection(): void {
-    // TODO ask Mark if this will work
-    this.wizardService.setEdit(false);
+    this.selectionService.setSelectedConnection(null);
 
     const link: string[] = [ ConnectionsConstants.addConnectionPath ];
     this.logger.debug( "[DataservicesPageComponent] Navigating to: %o", link );
@@ -567,9 +562,6 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
    * Handle request for new Dataservice
    */
   public onNew(): void {
-    this.wizardService.setEdit(false);
-    this.wizardService.clearSelectedSchemaNodes();
-
     this.selectionService.setSelectedVirtualization(null);
 
     const link: string[] = [ DataservicesConstants.virtualizationPath ];
@@ -790,10 +782,6 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
       // For displayed dataservices, update the Deployment State using supplied services
       for ( const dService of this.filteredDataservices ) {
         const serviceId = dService.getId();
-        // For newly added services, leave state alone until wait expires
-        if (serviceId === this.wizardService.getNewlyAddedDataservice()) {
-          continue;
-        }
         if (stateMap && stateMap.has(serviceId)) {
           dService.setServiceDeploymentState(stateMap.get(serviceId));
         }

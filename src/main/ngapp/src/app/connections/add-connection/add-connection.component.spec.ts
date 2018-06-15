@@ -13,7 +13,6 @@ import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { WizardService } from "@dataservices/shared/wizard.service";
 import { SharedModule } from "@shared/shared.module";
 import {
   ActionModule,
@@ -25,6 +24,7 @@ import {
   SortModule,
   WizardModule } from "patternfly-ng";
 import { AddConnectionComponent } from "./add-connection.component";
+import { SelectionService } from "@core/selection.service";
 
 describe("AddConnectionComponent", () => {
   let component: AddConnectionComponent;
@@ -51,7 +51,7 @@ describe("AddConnectionComponent", () => {
                       ConnectionTypeCardComponent, ConnectionTypeCardsComponent ],
       providers: [
         NotifierService,
-        WizardService,
+        SelectionService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ConnectionService, useClass: MockConnectionService },
         { provide: VdbService, useClass: MockVdbService }

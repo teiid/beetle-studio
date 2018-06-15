@@ -19,7 +19,6 @@ import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.se
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { WizardService } from "@dataservices/shared/wizard.service";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { OdataControlComponent } from "@dataservices/odata-control/odata-control.component";
 import { SharedModule } from "@shared/shared.module";
@@ -76,7 +75,7 @@ describe("DataservicesComponent", () => {
       providers: [
         NotifierService,
         SelectionService,
-        WizardService,
+        SelectionService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ConnectionService, useClass: MockConnectionService },
         { provide: DataserviceService, useClass: MockDataserviceService },
