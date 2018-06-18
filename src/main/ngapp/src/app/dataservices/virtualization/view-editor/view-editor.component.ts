@@ -31,11 +31,10 @@ import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/ev
 import { ConnectionTableDialogComponent } from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
 import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 import { ViewValidator } from "@dataservices/virtualization/view-editor/view-validator";
-import { BsModalRef, BsModalService } from "ngx-bootstrap";
+import { BsModalService } from "ngx-bootstrap";
 import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
-import { ProgressDialogComponent } from "@shared/progress-dialog/progress-dialog.component";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 @Component({
@@ -55,8 +54,8 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   private isNewView = false;
   private readonly logger: LoggerService;
   private modalService: BsModalService;
-  private progressModalRef: BsModalRef;
   private subscription: Subscription;
+  private saveInProgress = false;
 
   public toolbarConfig: ToolbarConfig;
   public readonly virtualizationsLink = DataservicesConstants.dataservicesRootPath;
@@ -133,7 +132,8 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     return !this.fatalErrorOccurred
            && !this.editorService.isReadOnly()
            && this.editorService.getErrorMessageCount() === 0
-           && this.editorService.hasChanges();
+           && this.editorService.hasChanges()
+           && !this.saveInProgress;
   }
 
   private canUndo(): boolean {
@@ -387,19 +387,14 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
       }
     } else if ( event.typeIsEditorViewSaveProgressChanged() ) {
       if ( event.args.length !== 0 ) {
-        // When save in progress, open the progress modal dialog.  On completion, hide it
+        // Detect changes in view editor save progress
         if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.IN_PROGRESS ) {
-          // Dialog Content
-          const initialState = {
-            title: ViewEditorI18n.saveProgressDialogTitle,
-            bodyContent: ViewEditorI18n.saveProgressDialogMessage,
-          };
-
-          this.progressModalRef = this.modalService.show(ProgressDialogComponent, {initialState});
+          this.saveInProgress = true;
         } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_SUCCESS ) {
-          setTimeout(() => this.progressModalRef.hide(), 2000);
+          this.editorService.updatePreviewResults();
+          this.saveInProgress = false;
         } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_FAILED ) {
-          setTimeout(() => { this.progressModalRef.hide(); alert("Save view failed!"); } , 2000);
+          this.saveInProgress = false;
         }
       }
     } else if ( event.typeIsViewStateChanged() ) {
@@ -501,6 +496,8 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
       if ( !this.editorService.getEditorView() ) {
         this.isNewView = true;
         this.editorService.setEditorView( new View(), ViewEditorPart.EDITOR );
+      } else {
+        this.editorService.updatePreviewResults();
       }
 
       // validate view

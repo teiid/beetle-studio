@@ -5,6 +5,13 @@
   <!-- ============================ -->
   <div class="view-editor-area"
        id="view-editor-canvas-container">
+      <div class="view-save-toast">
+        <!-- Notification for Saving View -->
+        <pfng-toast-notification *ngIf="showSaveViewNotification" [header]="saveViewNotificationHeader"
+                                 [message]="saveViewNotificationMessage"
+                                 [type]="saveViewNotificationType">
+        </pfng-toast-notification>
+      </div>
       <div class="alert-padding" *ngIf="!hasViewSources">
         <div class="alert alert-info text-center">
           <span class="pficon pficon-info"></span>

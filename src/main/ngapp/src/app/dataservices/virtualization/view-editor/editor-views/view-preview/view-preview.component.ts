@@ -25,6 +25,8 @@ import { RowData } from "@dataservices/shared/row-data.model";
 import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
+import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
+import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -39,6 +41,7 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
   public ngxConfig: NgxDataTableConfig;
   public tableConfig: TableConfig;
   public rows: any[] = [];
+  public saveInProgress = false;
 
   private readonly editorService: ViewEditorService;
   private readonly logger: LoggerService;
@@ -72,13 +75,29 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
     if ( event.typeIsPreviewResultsChanged() ) {
       const results = this.editorService.getPreviewResults();
 
-      if ( results ) {
+      if ( results && results !== null ) {
         this.reload( results );
       } else {
         this.clearResults();
       }
+    } else if (event.typeIsViewStateChanged()) {
+      // Clear results if sources were changed
+      if ( event.args.length !== 0 && event.args[ 0 ] === ViewStateChangeId.SOURCES_CHANGED ) {
+        this.clearResults();
+      }
     } else if ( event.typeIsViewValidChanged() && !this.editorService.viewIsValid() ) {
       this.clearResults();
+    } else if ( event.typeIsEditorViewSaveProgressChanged() ) {
+      if ( event.args.length !== 0 ) {
+        // Detect changes in view editor save progress
+        if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.IN_PROGRESS ) {
+          this.saveInProgress = true;
+        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_SUCCESS ) {
+          this.saveInProgress = false;
+        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_FAILED ) {
+          this.saveInProgress = false;
+        }
+      }
     }
   }
 

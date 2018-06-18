@@ -1,11 +1,15 @@
 <div class="row" id="view-preview-container">
 
-  <pfng-table
-    id="view-preview-table"
+  <pfng-table *ngIf="!this.saveInProgress" id="view-preview-table"
     [columns]="columns"
     [config]="tableConfig"
     [dataTableConfig]="ngxConfig"
     [rows]="rows">
   </pfng-table>
 
+  <div *ngIf="this.saveInProgress" class="col-sm-2 col-sm-offset-1">
+    <span id="view-preview-in-progress" class="spinner spinner-lg spinner-inline"></span>
+  </div>
+
 </div>
+

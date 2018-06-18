@@ -31,3 +31,8 @@
 #view-editor-properties-container {
   grid-area: properties-editor;
 }
+
+.view-save-toast {
+  margin-left: 0.5em;
+  margin-top: 0.5em;
+}

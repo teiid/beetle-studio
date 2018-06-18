@@ -24,6 +24,8 @@ import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
+import { NotificationType } from "patternfly-ng";
+import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -35,10 +37,17 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
 
   // used by html
   public readonly noSourcesAlert = ViewEditorI18n.noSourcesAlert;
+  public readonly viewSaveInProgressHeader: string = "Save In Progress:  ";
+  public readonly viewSaveSuccessHeader: string = "Save Succeeded:  ";
+  public readonly viewSaveFailedHeader: string = "Save Failed:  ";
 
   private readonly logger: LoggerService;
   private readonly editorService: ViewEditorService;
   private subscription: Subscription;
+  private saveViewNotificationHeader: string;
+  private saveViewNotificationMessage: string;
+  private saveViewNotificationType = NotificationType.SUCCESS;
+  private saveViewNotificationVisible = false;
 
   constructor( editorService: ViewEditorService,
                logger: LoggerService ) {
@@ -50,8 +59,33 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    * @param {ViewEditorEvent} event the event being processed
    */
   public handleEditorEvent( event: ViewEditorEvent ): void {
-    // TODO implement
     this.logger.debug( "ViewCanvasComponent received event: " + event.toString() );
+
+    if ( event.typeIsEditorViewSaveProgressChanged() ) {
+      if ( event.args.length !== 0 ) {
+        const viewName = this.editorService.getEditorView().getName();
+
+        // Detect changes in view editor save progress
+        if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.IN_PROGRESS ) {
+          this.saveViewNotificationHeader = this.viewSaveInProgressHeader;
+          this.saveViewNotificationMessage = "Saving View '" + viewName + "'...";
+          this.saveViewNotificationType = NotificationType.INFO;
+          this.saveViewNotificationVisible = true;
+        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_SUCCESS ) {
+          this.saveViewNotificationHeader = this.viewSaveSuccessHeader;
+          this.saveViewNotificationMessage = "View '" + viewName + "' save successful";
+          this.saveViewNotificationType = NotificationType.SUCCESS;
+          // After 8 seconds, the notification is dismissed
+          setTimeout(() => this.saveViewNotificationVisible = false, 8000);
+        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_FAILED ) {
+          this.saveViewNotificationHeader = this.viewSaveFailedHeader;
+          this.saveViewNotificationMessage = "View '" + viewName + "' save failed";
+          this.saveViewNotificationType = NotificationType.DANGER;
+          // After 8 seconds, the notification is dismissed
+          setTimeout(() => this.saveViewNotificationVisible = false, 8000);
+        }
+      }
+    }
   }
 
   /**
@@ -106,6 +140,13 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
   public onViewSourceRemoved( source: SchemaNode ): void {
     this.editorService.getEditorView().setSources([]);
     this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, ViewStateChangeId.SOURCES_CHANGED, [] );
+  }
+
+  /**
+   * @returns {boolean} true if save view notification is to be shown
+   */
+  public get showSaveViewNotification(): boolean {
+    return this.saveViewNotificationVisible;
   }
 
 }

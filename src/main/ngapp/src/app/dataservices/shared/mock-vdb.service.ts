@@ -35,6 +35,8 @@ import { Observable } from "rxjs/Observable";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { Connection } from "@connections/shared/connection.model";
 import { View } from "@dataservices/shared/view.model";
+import { environment } from "@environments/environment";
+import { QueryResults } from "@dataservices/shared/query-results.model";
 
 @Injectable()
 export class MockVdbService extends VdbService {
@@ -179,6 +181,18 @@ export class MockVdbService extends VdbService {
 
   public deleteView(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
     return Observable.of(true);
+  }
+
+  /**
+   * Query the vdb via the komodo rest interface
+   * @param {string} query the SQL query
+   * @param {string} vdbName the vdb name
+   * @param {number} limit the limit for the number of result rows
+   * @param {number} offset the offset for the result rows
+   * @returns {Observable<boolean>}
+   */
+  public queryVdb(query: string, vdbName: string, limit: number, offset: number): Observable<any> {
+    return Observable.of(this.testDataService.getQueryResults());
   }
 
 }

@@ -422,7 +422,12 @@ export class VirtualizationComponent implements OnInit {
     }
 
     this.currentVirtualization.setViews(virtViews);
-    this.views = this.currentVirtualization.getViews();
+    this.views = this.currentVirtualization.getViews().sort( (left, right): number => {
+      if (left.getName() < right.getName()) return -1;
+      if (left.getName() > right.getName()) return 1;
+      return 0;
+    });
+
     this.setViewsEditableState(true);
     this.viewsLoadingState = LoadingState.LOADED_VALID;
     // const self = this;

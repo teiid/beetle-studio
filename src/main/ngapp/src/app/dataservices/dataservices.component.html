@@ -75,9 +75,7 @@
           <!-- Notification for Dataservice Export -->
           <pfng-toast-notification *ngIf="showExportNotification" [header]="exportNotificationHeader"
                                  [message]="exportNotificationMessage"
-                                 [type]="exportNotificationType"
-                                 [showClose]="true"
-                                 (onCloseSelect)="onCloseExportNotification()">
+                                 [type]="exportNotificationType">
           </pfng-toast-notification>
         </div>
 

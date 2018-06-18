@@ -32,6 +32,7 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
+import {VdbsConstants} from "@dataservices/shared/vdbs-constants";
 
 @Injectable()
 export class ConnectionService extends ApiService {
@@ -271,7 +272,8 @@ export class ConnectionService extends ApiService {
    */
   public createDeployConnection(connection: NewConnection): Observable<boolean> {
     return this.createAndBindConnection(connection)
-      .flatMap((res) => this.refreshConnectionSchema(connection.getName()));
+      .flatMap((res) => this.refreshConnectionSchema(connection.getName()))
+      .flatMap((res) => this.refreshPreviewVdb(VdbsConstants.PREVIEW_VDB_NAME));
   }
 
   /**
@@ -282,7 +284,8 @@ export class ConnectionService extends ApiService {
    */
   public updateDeployConnection(connection: NewConnection): Observable<boolean> {
     return this.updateAndBindConnection(connection)
-      .flatMap((res) => this.refreshConnectionSchema(connection.getName()));
+      .flatMap((res) => this.refreshConnectionSchema(connection.getName()))
+      .flatMap((res) => this.refreshPreviewVdb(VdbsConstants.PREVIEW_VDB_NAME));
   }
 
   /**
@@ -294,7 +297,23 @@ export class ConnectionService extends ApiService {
   public deleteUndeployConnectionVdb(connectionId: string): Observable<boolean> {
     const vdbName = connectionId + "BtlConn";
     return this.vdbService.deleteVdbIfFound(vdbName)
-      .flatMap((res) => this.vdbService.undeployVdb(vdbName));
+      .flatMap((res) => this.vdbService.undeployVdb(vdbName))
+      .flatMap((res) => this.refreshPreviewVdb(VdbsConstants.PREVIEW_VDB_NAME));
+  }
+
+  /**
+   * Update the preview VDB and re-deploy it if needed.
+   * @param {string} vdbName
+   * @returns {Observable<boolean>}
+   */
+  public refreshPreviewVdb(vdbName: string): Observable<boolean> {
+    const url = environment.komodoTeiidUrl + "/refreshPreviewVdb/" + vdbName;
+    return this.http
+      .post(url, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
   }
 
   /**
