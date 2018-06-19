@@ -184,10 +184,10 @@ export class CommandFactory {
 
         for ( const entry of json[ Command.argsPropJson ] ) {
           if ( entry[ Command.argNameJson ] === UpdateViewNameCommand.newName ) {
-            newViewName = entry[ "value" ];
+            newViewName = entry[ Command.argValueJson ];
           }
           else if ( entry[ Command.argNameJson ] === UpdateViewNameCommand.oldName ) {
-            replacedViewName = entry[ "value" ];
+            replacedViewName = entry[ Command.argValueJson ];
           }
 
           if ( newViewName && replacedViewName ) {

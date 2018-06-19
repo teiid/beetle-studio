@@ -42,11 +42,4 @@ export class ViewValidator {
     return messages;
   }
 
-  /**
-   * Don't allow construction outside of this class.
-   */
-  private constructor() {
-    // nothing to do
-  }
-
 }

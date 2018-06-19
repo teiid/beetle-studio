@@ -19,6 +19,8 @@ import {
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { ViewPropertyEditorsComponent } from "@dataservices/virtualization/view-editor/view-property-editors/view-property-editors.component";
+import { TabsModule } from "ngx-bootstrap";
 
 describe('ViewCanvasComponent', () => {
   let component: ViewCanvasComponent;
@@ -36,9 +38,14 @@ describe('ViewCanvasComponent', () => {
         SortModule,
         TableModule,
         WizardModule,
-        HttpModule
+        HttpModule,
+        TabsModule.forRoot()
       ],
-      declarations: [ ViewCanvasComponent, SelectedNodeComponent ],
+      declarations: [
+        SelectedNodeComponent,
+        ViewCanvasComponent,
+        ViewPropertyEditorsComponent
+      ],
       providers: [
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         LoggerService,

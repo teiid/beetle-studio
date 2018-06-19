@@ -205,13 +205,12 @@ export class OdataControlComponent implements OnChanges {
   }
 
   public get metadataFailureMsg(): string {
-    let msg = this.i18n.metadataFetchFailure + '<br/>';
+    const msg = this.i18n.metadataFetchFailure + '<br/>';
     if (_.isEmpty(this.dataservice.getOdataRootUrl()))
       return msg + this.i18n.metadataFetchFailureNoOdataRoot;
 
     if (_.isEmpty(this.dataservice.getServiceViewModel()))
       return msg + this.i18n.metadataFetchFailureNoViewModel;
-
 
     return msg + this.i18n.metadataFetchFailureUrl + '<br/>' +
       '<a href="' + this.metadataUrl + '">' + this.metadataUrl + '</a>';

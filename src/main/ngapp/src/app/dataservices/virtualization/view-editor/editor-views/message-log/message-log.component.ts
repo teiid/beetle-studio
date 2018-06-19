@@ -20,6 +20,7 @@ import { LoggerService } from "@core/logger.service";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -49,19 +50,19 @@ export class MessageLogComponent implements OnInit {
   public ngOnInit(): void {
     this.columns = [
       {
-        name: "ID",
+        name: ViewEditorI18n.idColumnName,
         prop: Message.ID_PROP_NAME
       },
       {
-        name: "Type",
+        name: ViewEditorI18n.typeColumnName,
         prop: Message.TYPE_PROP_NAME
       },
       {
-        name: "Description",
+        name: ViewEditorI18n.descriptionColumnName,
         prop: Message.DESCRIPTION_PROP_NAME
       },
       {
-        name: "Context",
+        name: ViewEditorI18n.contextColumnName,
         prop: Message.CONTEXT_PROP_NAME
       },
     ];
@@ -74,7 +75,7 @@ export class MessageLogComponent implements OnInit {
     } as NgxDataTableConfig;
 
     this.emptyStateConfig = {
-      title: "No messages found"
+      title: ViewEditorI18n.noMessagesFound
     } as EmptyStateConfig;
 
     this.tableConfig = {

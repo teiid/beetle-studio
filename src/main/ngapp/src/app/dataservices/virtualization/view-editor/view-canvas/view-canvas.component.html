@@ -8,7 +8,7 @@
       <div class="alert-padding" *ngIf="!hasViewSources">
         <div class="alert alert-info text-center">
           <span class="pficon pficon-info"></span>
-          <strong>Select a source for the view</strong>
+          <strong>{{noSourcesAlert}}</strong>
         </div>
       </div>
       <div class="object-card-container" *ngIf="hasViewSources">
@@ -20,7 +20,8 @@
   <!-- ========== Properties ========== -->
   <!-- ================================ -->
   <div class="view-editor-area"
-       id="view-editor-properties-container">Properties
+       id="view-editor-properties-container">
+    <app-view-property-editors></app-view-property-editors>
   </div>
 
 </div>

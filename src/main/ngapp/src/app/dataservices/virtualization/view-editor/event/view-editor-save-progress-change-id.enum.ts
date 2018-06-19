@@ -20,7 +20,7 @@ export enum ViewEditorSaveProgressChangeId {
   /**
    * Indicates the view save is in progress.
    */
-  IN_PROGESS = "IN_PROGRESS",
+  IN_PROGRESS = "IN_PROGRESS",
 
   /**
    * Indicates the view save has completed successfully.

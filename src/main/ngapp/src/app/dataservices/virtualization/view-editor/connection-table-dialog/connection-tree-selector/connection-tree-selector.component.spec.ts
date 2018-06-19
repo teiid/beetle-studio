@@ -10,7 +10,7 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
-import { SchemaNode } from "@connections/shared/schema-node.model";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
 
 describe("ConnectionTreeSelectorComponent", () => {
   let component: ConnectionTreeSelectorComponent;
@@ -20,7 +20,10 @@ describe("ConnectionTreeSelectorComponent", () => {
     TestBed.configureTestingModule({
       imports: [ HttpModule, TreeModule ],
       declarations: [ ConnectionTreeSelectorComponent ],
-      providers: [ AppSettingsService, LoggerService, NotifierService,
+      providers: [
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
+        LoggerService,
+        NotifierService,
         { provide: ConnectionService, useClass: MockConnectionService },
         { provide: VdbService, useClass: MockVdbService },
       ]
