@@ -19,13 +19,13 @@
   <div class="form-group">
     <label class="col-sm-2 control-label view-editor-header-label required-field"
            id="view-editor-header-name"
-           for="view-name-input">View Name:
+           for="view-name-input">{{viewNameLabel}}
     </label>
     <div class="col-sm-5 view-editor-header-input-div">
       <input type="text"
              id="view-name-input"
              name="view-name-input"
-             placeholder="Enter a view name"
+             placeholder={{viewNamePlaceholder}}
              autofocus
              [(ngModel)]="viewName"
              [readonly]="readOnly"
@@ -41,7 +41,7 @@
            for="view-editor-header-show-description">
       <input type="checkbox"
              id="view-editor-header-show-description"
-             (change)="showDescription = $event.target.checked">Show Description
+             (change)="showDescription = $event.target.checked">{{showDescriptionCheckbox}}
     </label>
   </div>
 
@@ -52,13 +52,13 @@
        *ngIf="showDescription">
     <label class="col-sm-2 control-label view-editor-header-label"
            id="view-editor-header-description"
-           for="view-editor-header-description-input">Description:
+           for="view-editor-header-description-input">{{descriptionLabel}}
     </label>
     <div class="col-sm-7 view-editor-header-input-div">
         <textarea class="form-control"
                   id="view-editor-header-description-input"
                   name="view-editor-header-description-input"
-                  placeholder="Enter a view description"
+                  placeholder={{descriptionPlaceholder}}
                   [(ngModel)]="viewDescription"
                   [readonly]="readOnly"
                   (input)="viewDescriptionChanged($event.target.value)"

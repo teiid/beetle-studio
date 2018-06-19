@@ -22,6 +22,7 @@ import { ViewEditorService } from "@dataservices/virtualization/view-editor/view
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 import { Subscription } from "rxjs/Subscription";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -30,6 +31,13 @@ import { Subscription } from "rxjs/Subscription";
   styleUrls: ["./view-editor-header.component.css"]
 })
 export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
+
+  // used by html
+  public readonly descriptionLabel = ViewEditorI18n.descriptionLabel;
+  public readonly descriptionPlaceholder = ViewEditorI18n.descriptionPlaceholder;
+  public readonly showDescriptionCheckbox = ViewEditorI18n.showDescriptionCheckbox;
+  public readonly viewNameLabel = ViewEditorI18n.viewNameLabel;
+  public readonly viewNamePlaceholder = ViewEditorI18n.viewNamePlaceholder;
 
   private readonly logger: LoggerService;
   private readonly editorService: ViewEditorService;

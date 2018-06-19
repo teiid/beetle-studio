@@ -70,6 +70,7 @@ import { VirtualizationComponent } from "./virtualization/virtualization.compone
 import { ConnectionTreeSelectorComponent } from './virtualization/view-editor/connection-table-dialog/connection-tree-selector/connection-tree-selector.component';
 import { ConnectionTableDialogComponent } from './virtualization/view-editor/connection-table-dialog/connection-table-dialog.component';
 import { ProgressDialogComponent } from "@shared/progress-dialog/progress-dialog.component";
+import { ViewPropertyEditorsComponent } from './virtualization/view-editor/view-property-editors/view-property-editors.component';
 
 @NgModule({
   imports: [
@@ -119,7 +120,8 @@ import { ProgressDialogComponent } from "@shared/progress-dialog/progress-dialog
     MessageLogComponent,
     EditorViewsComponent,
     ConnectionTreeSelectorComponent,
-    ConnectionTableDialogComponent
+    ConnectionTableDialogComponent,
+    ViewPropertyEditorsComponent
   ],
   providers: [
     {

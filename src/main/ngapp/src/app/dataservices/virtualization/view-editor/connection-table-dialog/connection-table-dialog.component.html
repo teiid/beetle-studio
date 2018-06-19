@@ -5,12 +5,12 @@
   </button>
 </div>
 <div class="modal-body">
-  <strong>Expand connection and select a source for your view</strong>
+  <strong>{{message}}</strong>
   <app-connection-tree-selector
     (nodeSelected)="onTreeNodeSelected($event)"
     (nodeDeselected)="onTreeNodeDeselected($event)"></app-connection-tree-selector>
   <div>
-    <h4>Current Selection:</h4>
+    <h4>{{currentSelectionMsg}}</h4>
     <strong>{{ selectionText }}</strong>
   </div>
 </div>

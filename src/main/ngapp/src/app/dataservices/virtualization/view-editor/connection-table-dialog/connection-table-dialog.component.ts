@@ -25,6 +25,7 @@ import { ConnectionsConstants } from "@connections/shared/connections-constants"
 import { LoadingState } from "@shared/loading-state.enum";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { LoggerService } from "@core/logger.service";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 @Component({
   selector: "app-connection-table-dialog",
@@ -52,12 +53,14 @@ export class ConnectionTableDialogComponent implements OnInit {
 
   @Output() public okAction = new EventEmitter();
 
-  public title = "Select Source for View";
-  public cancelButtonText = "Cancel";
-  public okButtonText = "OK";
+  public readonly title = ViewEditorI18n.connectionTableSelectionDialogTitle;
+  public readonly message = ViewEditorI18n.connectionTableSelectionDialogMessage;
+  public readonly cancelButtonText = ViewEditorI18n.cancelButtonText;
+  public readonly okButtonText = ViewEditorI18n.okButtonText;
   public okButtonEnabled = false;
   public bsModalRef: BsModalRef;
-  public selectionText = "Nothing selected";
+  public selectionText = ViewEditorI18n.noSelection;
+  public readonly currentSelectionMsg = ViewEditorI18n.currentSelection;
 
   private connectionService: ConnectionService;
   private selectedTreeNodes: SchemaNode[] = [];

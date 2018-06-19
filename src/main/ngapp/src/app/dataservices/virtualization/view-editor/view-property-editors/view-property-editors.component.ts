@@ -17,41 +17,41 @@
 
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { LoggerService } from "@core/logger.service";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
-import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { Subscription } from "rxjs/Subscription";
-import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
-  selector: 'app-editor-views',
-  templateUrl: './editor-views.component.html',
-  styleUrls: ['./editor-views.component.css']
+  selector: 'app-view-property-editors',
+  templateUrl: './view-property-editors.component.html',
+  styleUrls: ['./view-property-editors.component.css']
 })
-export class EditorViewsComponent implements OnInit, OnDestroy {
+export class ViewPropertyEditorsComponent implements OnInit, OnDestroy {
 
-  // text used by html
-  public readonly messagesTabName = ViewEditorI18n.messagesTabName;
-  public readonly previewTabName = ViewEditorI18n.previewTabName;
-
-  private readonly previewIndex = 0;
-  private readonly messagesIndex = 1;
-
+  private columnEditorIsEnabled = true;
   private readonly editorService: ViewEditorService;
   private readonly logger: LoggerService;
   private subscription: Subscription;
+  private viewEditorIsEnabled = true;
 
-  /**
-   * The tabs component configuration.
-   */
-  public tabs = [
+  public readonly tabs: any[] = [
     {
-      "active": true // preview
+      active: true,
+      content: "View properties",
+      customClass: "property-editors-tab-heading",
+      disabled: !this.viewEditorIsEnabled,
+      removable: false,
+      title: ViewEditorI18n.viewPropsTabName
     },
     {
-      "active": false // message log
-    },
+      content: "Column editor",
+      customClass: "property-editors-tab-heading",
+      disabled: !this.columnEditorIsEnabled,
+      removable: false,
+      title: ViewEditorI18n.columnPropsTabName
+    }
   ];
 
   constructor( editorService: ViewEditorService,
@@ -64,18 +64,11 @@ export class EditorViewsComponent implements OnInit, OnDestroy {
    * @param {ViewEditorEvent} event the event being processed
    */
   public handleEditorEvent( event: ViewEditorEvent ): void {
-    this.logger.debug( "EditorViewsComponent received event: " + event.toString() );
+    this.logger.debug( "ViewPropertyEditorsComponent received event: " + event.toString() );
 
-    if ( event.typeIsShowEditorPart() ) {
-      if ( event.args.length !== 0 ) {
-        if ( event.args[ 0 ] === ViewEditorPart.PREVIEW ) {
-          this.tabs[ this.messagesIndex ].active = false;
-          this.tabs[ this.previewIndex ].active = true;
-        } else if ( event.args[ 0 ] === ViewEditorPart.MESSAGE_LOG ) {
-          this.tabs[ this.previewIndex ].active = false;
-          this.tabs[ this.messagesIndex ].active = true;
-        }
-      }
+    if ( event.typeIsCanvasSelectionChanged() ) {
+      // TODO set this.viewEditorIsEnabled to true if all canvas selections are views
+      // TODO set this.columnEditorIsEnabled to true if all canvas selections are columns
     }
   }
 
@@ -94,13 +87,10 @@ export class EditorViewsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Callback for when a tab is clicked.
-   *
-   * @param tab the tab being select or deselected
-   * @param selected `true` is selected
+   * @param tab the editor tab being removed
    */
-  public tabSelected( tab, selected ): void {
-    tab.active = selected;
+  public removeTab( tab: any ): void {
+    this.tabs.splice( this.tabs.indexOf( tab ), 1);
   }
 
 }

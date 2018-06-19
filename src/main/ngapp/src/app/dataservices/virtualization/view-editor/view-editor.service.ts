@@ -339,7 +339,7 @@ export class ViewEditorService {
   public saveView(connections: Connection[]): void {
     // Fire save in progress event
     this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
-                                                         [ ViewEditorSaveProgressChangeId.IN_PROGESS ] ) );
+                                                         [ ViewEditorSaveProgressChangeId.IN_PROGRESS ] ) );
 
     const serviceVdbName = this._editorVirtualization.getServiceVdbName();
     const serviceVdbModelName = this._editorVirtualization.getServiceViewModel();

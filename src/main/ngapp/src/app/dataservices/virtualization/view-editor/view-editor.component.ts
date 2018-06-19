@@ -36,6 +36,7 @@ import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng"
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { ProgressDialogComponent } from "@shared/progress-dialog/progress-dialog.component";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -65,7 +66,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   //
   private readonly canvasOnlyCssType = "view-editor-canvas-only";
   private readonly fullEditorCssType = "view-editor-full";
-  private readonly resultsOnlyCssType = "view-editor-views-only";
+  private readonly viewsOnlyCssType = "view-editor-views-only";
 
   //
   // Toolbar action IDs
@@ -148,9 +149,9 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   private doAddSource(): void {
     // Open Source selection dialog
     const initialState = {
-      title: "Select View Source",
-      cancelButtonText: "Cancel",
-      okButtonText: "OK"
+      title: ViewEditorI18n.addSourceDialogTitle,
+      cancelButtonText: ViewEditorI18n.cancelButtonText,
+      okButtonText: ViewEditorI18n.okButtonText
     };
 
     // Show Dialog, act upon confirmation click
@@ -261,67 +262,67 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
             disabled: !this.canAddSource(),
             id: this.addSourceActionId,
             template: addSourceTemplate,
-            title: "Add Source",
-            tooltip: "Add Source"
+            title: ViewEditorI18n.addSourceActionTitle,
+            tooltip: ViewEditorI18n.addSourceActionTooltip
           },
           {
             disabled: !this.canAddComposition(),
             id: this.addCompositionActionId,
             template: addCompositionTemplate,
-            title: "Add Composition",
-            tooltip: "Add Composition"
+            title: ViewEditorI18n.addCompositionActionTitle,
+            tooltip: ViewEditorI18n.addCompositionActionTooltip
           },
           {
             disabled: !this.canSave(),
             id: this.saveActionId,
             styleClass: "view-editor-toolbar-end-group",
             template: saveTemplate,
-            title: "Save",
-            tooltip: "Save"
+            title: ViewEditorI18n.saveActionTitle,
+            tooltip: ViewEditorI18n.saveActionTooltip
           },
           {
             disabled: !this.canUndo(),
             id: this.undoActionId,
             template: undoTemplate,
-            title: "Undo",
-            tooltip: "Undo"
+            title: ViewEditorI18n.undoActionTitle,
+            tooltip: ViewEditorI18n.undoActionTooltip
           },
           {
             disabled: !this.canRedo(),
             id: this.redoActionId,
             styleClass: "view-editor-toolbar-end-group",
             template: redoTemplate,
-            title: "Redo",
-            tooltip: "Redo"
+            title: ViewEditorI18n.redoActionTitle,
+            tooltip: ViewEditorI18n.redoActionTooltip
           },
           {
             disabled: !this.canDelete(),
             id: this.deleteActionId,
             styleClass: "view-editor-toolbar-end-group",
             template: deleteTemplate,
-            title: "Delete",
-            tooltip: "Delete the selection"
+            title: ViewEditorI18n.deleteActionTitle,
+            tooltip: ViewEditorI18n.deleteActionTooltip
           },
           {
             disabled: !this.hasErrors(),
             id: this.errorsActionId,
             template: errorsTemplate,
-            title: "Errors",
-            tooltip: "Error messages"
+            title: ViewEditorI18n.errorsActionTitle,
+            tooltip: ViewEditorI18n.errorsActionTooltip
           },
           {
             disabled: !this.hasWarnings(),
             id: this.warningsActionId,
             template: warningsTemplate,
-            title: "Warnings",
-            tooltip: "Warning messages"
+            title: ViewEditorI18n.warningsActionTitle,
+            tooltip: ViewEditorI18n.warningsActionTooltip
           },
           {
             disabled: !this.hasInfos(),
             id: this.infosActionId,
             template: infosTemplate,
-            title: "Infos",
-            tooltip: "Info messages"
+            title: ViewEditorI18n.infosActionTitle,
+            tooltip: ViewEditorI18n.infosActionTooltip
           }
         ],
         moreActions: [],
@@ -387,12 +388,11 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     } else if ( event.typeIsEditorViewSaveProgressChanged() ) {
       if ( event.args.length !== 0 ) {
         // When save in progress, open the progress modal dialog.  On completion, hide it
-        if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.IN_PROGESS ) {
+        if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.IN_PROGRESS ) {
           // Dialog Content
-          const message = "Saving View in Progress...";
           const initialState = {
-            title: "Saving View",
-            bodyContent: message,
+            title: ViewEditorI18n.saveProgressDialogTitle,
+            bodyContent: ViewEditorI18n.saveProgressDialogMessage,
           };
 
           this.progressModalRef = this.modalService.show(ProgressDialogComponent, {initialState});
@@ -432,7 +432,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
    * @returns {boolean} `true` if area should be shown
    */
   public get isShowingAdditionalViews(): boolean {
-    return this.editorCssType === this.resultsOnlyCssType || this.editorCssType === this.fullEditorCssType;
+    return this.editorCssType === this.viewsOnlyCssType || this.editorCssType === this.fullEditorCssType;
   }
 
   /**
@@ -480,17 +480,17 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
         {
           id: this.fullEditorCssType,
           iconStyleClass: "fa fa-file-text-o",
-          tooltip: "Show editor and results"
+          tooltip: ViewEditorI18n.showEditorCanvasAndViewsActionTooltip
         },
         {
           id: this.canvasOnlyCssType,
           iconStyleClass: "fa fa-file-image-o",
-          tooltip: "Show editor only"
+          tooltip: ViewEditorI18n.showEditorCanvasOnlyActionTooltip
         },
         {
-          id: this.resultsOnlyCssType,
+          id: this.viewsOnlyCssType,
           iconStyleClass: "fa fa-table",
-          tooltip: "Show results only"
+          tooltip: ViewEditorI18n.showEditorViewsOnlyActionTooltip
         }
       ]
     } as ToolbarConfig;
@@ -518,7 +518,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
       .subscribe(
         (connectionSummaries) => {
           const conns = [];
-          const treeNodes = [];
           for ( const connectionSummary of connectionSummaries ) {
             const connStatus = connectionSummary.getStatus();
             const conn = connectionSummary.getConnection();

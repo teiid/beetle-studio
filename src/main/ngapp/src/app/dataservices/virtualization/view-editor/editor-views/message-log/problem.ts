@@ -15,18 +15,13 @@
  * limitations under the License.
  */
 import { MessageType } from "@dataservices/virtualization/view-editor/editor-views/message-log/message-type.enum";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 export class Problem {
 
-  public static readonly ERR0100 = new Problem( "ERR0100",
-                                                MessageType.ERROR,
-                                                "There must be a virtualization selected in order to use this editor." );
-  public static readonly ERR0110 = new Problem( "ERR0110",
-                                                MessageType.ERROR,
-                                                "A view must have a name." );
-  public static readonly ERR0120 = new Problem( "ERR0120",
-                                                 MessageType.ERROR,
-                                                 "A view must have at least one source." );
+  public static readonly ERR0100 = new Problem( "ERR0100", MessageType.ERROR, ViewEditorI18n.error0100 );
+  public static readonly ERR0110 = new Problem( "ERR0110", MessageType.ERROR, ViewEditorI18n.error0110 );
+  public static readonly ERR0120 = new Problem( "ERR0120", MessageType.ERROR, ViewEditorI18n.error0120 );
 
   private readonly _id: string;
   private readonly _description: string;

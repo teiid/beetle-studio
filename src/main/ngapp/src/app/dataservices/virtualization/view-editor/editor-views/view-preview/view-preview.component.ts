@@ -24,6 +24,7 @@ import { ColumnData } from "@dataservices/shared/column-data.model";
 import { RowData } from "@dataservices/shared/row-data.model";
 import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -102,7 +103,7 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
     } as NgxDataTableConfig;
 
     this.emptyStateConfig = {
-      title: "Preview data unavailable"
+      title: ViewEditorI18n.previewDataUnavailable
     } as EmptyStateConfig;
 
     this.tableConfig = {
@@ -129,7 +130,7 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
 
     // Define the row data
     let firstTime = true;
-    const rowNumHeader = "ROW #";
+    const rowNumHeader = ViewEditorI18n.rowNumberColumnName;
 
     for ( let rowIndex = 0; rowIndex < rowData.length; rowIndex++ ) {
       const row = rowData[ rowIndex ];

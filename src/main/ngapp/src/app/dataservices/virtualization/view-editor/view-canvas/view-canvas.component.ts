@@ -23,6 +23,7 @@ import { Subscription } from "rxjs/Subscription";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -31,6 +32,9 @@ import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/even
   styleUrls: ["./view-canvas.component.css"]
 })
 export class ViewCanvasComponent implements OnInit, OnDestroy {
+
+  // used by html
+  public readonly noSourcesAlert = ViewEditorI18n.noSourcesAlert;
 
   private readonly logger: LoggerService;
   private readonly editorService: ViewEditorService;
