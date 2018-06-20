@@ -29,13 +29,13 @@ import { Message } from "@dataservices/virtualization/view-editor/editor-views/m
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { ConnectionTableDialogComponent } from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
-import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 import { ViewValidator } from "@dataservices/virtualization/view-editor/view-validator";
 import { BsModalService } from "ngx-bootstrap";
 import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
+import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -157,10 +157,8 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     // Show Dialog, act upon confirmation click
     const modalRef = this.modalService.show(ConnectionTableDialogComponent, {initialState});
     modalRef.content.okAction.take(1).subscribe((selectedNodes) => {
-      this.editorService.getEditorView().setSources( selectedNodes );
-      this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR,
-                                                  ViewStateChangeId.SOURCES_CHANGED,
-                                                  [ selectedNodes ] );
+      const cmd = CommandFactory.createAddSourcesCommand( selectedNodes, true );
+      this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR, cmd );
     });
   }
 

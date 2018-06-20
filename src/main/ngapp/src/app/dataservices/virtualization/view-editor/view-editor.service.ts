@@ -28,9 +28,15 @@ import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-ed
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
-import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { Command } from "@dataservices/virtualization/view-editor/command/command";
+import { RemoveSourceCommand } from "@dataservices/virtualization/view-editor/command/remove-source-command";
+import { UpdateViewDescriptionCommand } from "@dataservices/virtualization/view-editor/command/update-view-description-command";
+import { UpdateViewNameCommand } from "@dataservices/virtualization/view-editor/command/update-view-name-command";
+import { AddSourceCommand } from "@dataservices/virtualization/view-editor/command/add-source-command";
+import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
+import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
 
 @Injectable()
 export class ViewEditorService {
@@ -47,15 +53,16 @@ export class ViewEditorService {
   private _editorVirtualization: Dataservice;
   private _errorMsgCount = 0;
   private _infoMsgCount = 0;
-  private _logger: LoggerService;
+  private readonly _logger: LoggerService;
   private _messages: Message[] = [];
   private _previewResults: QueryResults;
   private _readOnly = false;
-  private _vdbService: VdbService;
+  private readonly _vdbService: VdbService;
   private _viewIsValid = false;
   private _warningMsgCount = 0;
 
-  constructor( logger: LoggerService, vdbService: VdbService ) {
+  constructor( logger: LoggerService,
+               vdbService: VdbService ) {
     this._logger = logger;
     this._vdbService = vdbService;
   }
@@ -138,21 +145,45 @@ export class ViewEditorService {
    * Fires a `ViewEditorEventType.VIEW_STATE_CHANGED`.
    *
    * @param {ViewEditorPart} source the source of the event
-   * @param {ViewStateChangeId} changeId the ID of the type of view state change that occurred
-   * @param {object[]} args the optional args
+   * @param {Command} command the command that was executed on the view being edited
    */
   public fireViewStateHasChanged( source: ViewEditorPart,
-                                  changeId: ViewStateChangeId,
-                                  args?: any[] ): void {
-    const data = [ changeId ];
-
-    if ( args && args.length !== 0 ) {
-      for ( const arg of args ) {
-        data.push( arg );
+                                  command: Command ): void {
+    switch ( command.id ) {
+      case AddSourceCommand.id: {
+        const sourceId = command.getArg( AddSourceCommand.addedSourceId );
+        // TODO need to get the schema node here
+        // this.getEditorView().addSource( schemaNode );
+        break;
+      }
+      case AddSourcesCommand.id: {
+        const sourcesIds = command.getArg( AddSourcesCommand.addedSourcesIds );
+        // TODO need to get the schema nodes here
+        // this.getEditorView().addSources( schemaNodes );
+        break;
+      }
+      case RemoveSourceCommand.id: {
+        this.getEditorView().removeSource( command.getArg( RemoveSourceCommand.removedSourceId ) );
+        break;
+      }
+      case RemoveSourcesCommand.id: {
+        this.getEditorView().removeSource( command.getArg( RemoveSourcesCommand.removedSourcesIds) );
+        break;
+      }
+      case UpdateViewDescriptionCommand.id: {
+        this.getEditorView().setDescription( command.getArg( UpdateViewDescriptionCommand.newDescription ) );
+        break;
+      }
+      case UpdateViewNameCommand.id: {
+        this.getEditorView().setName( command.getArg( UpdateViewNameCommand.newName ) );
+        break;
+      }
+      default: {
+        break;
       }
     }
 
-    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_STATE_CHANGED, data ) );
+    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_STATE_CHANGED, [ command ] ) );
   }
 
   /**

@@ -16,16 +16,16 @@
  */
 
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
-import { Subscription } from "rxjs/Subscription";
-import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
-import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
-import { NotificationType } from "patternfly-ng";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
+import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
+import { NotificationType } from "patternfly-ng";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -138,8 +138,8 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    * @param {SchemaNode} source the view source to be removed
    */
   public onViewSourceRemoved( source: SchemaNode ): void {
-    this.editorService.getEditorView().setSources([]);
-    this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, ViewStateChangeId.SOURCES_CHANGED, [] );
+    const cmd = CommandFactory.createRemoveSourceCommand( source.getName(), true );
+    this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, cmd );
   }
 
   /**
