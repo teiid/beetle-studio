@@ -16,8 +16,7 @@ describe( "Command Factory Tests", () => {
     expect( cmd.args.size ).toBe( 1 );
     expect( cmd.getArg( AddSourceCommand.addedSourceId ) ).toEqual( "theNewSource" );
     expect( cmd.toString() ).toBe( "AddSourceCommand, addedSourceId=theNewSource" );
-    expect( cmd.canUndo() ).toBe( false );
-    expect( cmd.undoCommand ).toBeNull();
+    expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
     const roundtrip = CommandFactory.decode( json );
@@ -27,12 +26,12 @@ describe( "Command Factory Tests", () => {
   });
 
   it("AddSourceCommand Undo Test", () => {
-    const cmd = CommandFactory.createAddSourceCommand( "theNewSource", true );
-    expect( cmd.canUndo() ).toBe( true );
-    expect( cmd.undoCommand ).not.toBeNull();
-    expect( cmd.undoCommand.id ).toBe( RemoveSourceCommand.id );
-    expect( cmd.undoCommand.args.size ).toBe( 1 );
-    expect( cmd.undoCommand.getArg( RemoveSourceCommand.removedSourceId ) ).toEqual( cmd.getArg( AddSourceCommand.addedSourceId ) );
+    const cmd = CommandFactory.createAddSourceCommand( "theNewSource" );
+    const undoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( undoCmd ).not.toBeNull();
+    expect( undoCmd.id ).toBe( RemoveSourceCommand.id );
+    expect( undoCmd.args.size ).toBe( 1 );
+    expect( undoCmd.getArg( RemoveSourceCommand.removedSourceId ) ).toEqual( cmd.getArg( AddSourceCommand.addedSourceId ) );
   });
 
   it("AddSourcesCommand Test", () => {
@@ -43,8 +42,7 @@ describe( "Command Factory Tests", () => {
     expect( cmd.args.size ).toBe( 1 );
     expect( cmd.getArg( AddSourcesCommand.addedSourcesIds ) ).toEqual( "a,b,c,d" );
     expect( cmd.toString() ).toBe( "AddSourcesCommand, addedSourcesIds=a,b,c,d" );
-    expect( cmd.canUndo() ).toBe( false );
-    expect( cmd.undoCommand ).toBeNull();
+    expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
     const roundtrip = CommandFactory.decode( json );
@@ -55,12 +53,12 @@ describe( "Command Factory Tests", () => {
 
   it("AddSourcesCommand Undo Test", () => {
     const sourcesIds: string[] = [ "a", "b", "c", "d" ];
-    const cmd = CommandFactory.createAddSourcesCommand( sourcesIds, true );
-    expect( cmd.canUndo() ).toBe( true );
-    expect( cmd.undoCommand ).not.toBeNull();
-    expect( cmd.undoCommand.id ).toBe( RemoveSourcesCommand.id );
-    expect( cmd.undoCommand.args.size ).toBe( 1 );
-    expect( cmd.undoCommand.getArg( RemoveSourcesCommand.removedSourcesIds ) ).toEqual( cmd.getArg( AddSourcesCommand.addedSourcesIds ) );
+    const cmd = CommandFactory.createAddSourcesCommand( sourcesIds );
+    const undoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( undoCmd ).not.toBeNull();
+    expect( undoCmd.id ).toBe( RemoveSourcesCommand.id );
+    expect( undoCmd.args.size ).toBe( 1 );
+    expect( undoCmd.getArg( RemoveSourcesCommand.removedSourcesIds ) ).toEqual( cmd.getArg( AddSourcesCommand.addedSourcesIds ) );
   });
 
   it("NoOpCommand Test", () => {
@@ -69,8 +67,14 @@ describe( "Command Factory Tests", () => {
     expect( cmd.args ).not.toBeNull();
     expect( cmd.args.size ).toBe( 0 );
     expect( cmd.toString() ).toEqual( "NoOpCommand, []" );
-    expect( cmd.canUndo() ).toBe( false );
-    expect( cmd.undoCommand ).toBeNull();
+    expect( cmd.isUndoable() ).toBe( false );
+  });
+
+  it("NoOpCommand Undo Test", () => {
+    const cmd = CommandFactory.createNoOpCommand();
+    expect( () => {
+      CommandFactory.createUndoCommand( cmd );
+    }).toThrow();
   });
 
   it("RemoveSourceCommand Test", () => {
@@ -80,8 +84,7 @@ describe( "Command Factory Tests", () => {
     expect( cmd.args.size ).toBe( 1 );
     expect( cmd.getArg( RemoveSourceCommand.removedSourceId ) ).toEqual( "theRemovedSource" );
     expect( cmd.toString() ).toEqual( "RemoveSourceCommand, removedSourceId=theRemovedSource" );
-    expect( cmd.canUndo() ).toBe( false );
-    expect( cmd.undoCommand ).toBeNull();
+    expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
     const roundtrip = CommandFactory.decode( json );
@@ -91,12 +94,12 @@ describe( "Command Factory Tests", () => {
   });
 
   it("RemoveSourceCommand Undo Test", () => {
-    const cmd = CommandFactory.createRemoveSourceCommand( "theRemovedSource", true );
-    expect( cmd.canUndo() ).toBe( true );
-    expect( cmd.undoCommand ).not.toBeNull();
-    expect( cmd.undoCommand.id ).toBe( AddSourceCommand.id );
-    expect( cmd.undoCommand.args.size ).toBe( 1 );
-    expect( cmd.undoCommand.getArg( AddSourceCommand.addedSourceId ) ).toEqual( cmd.getArg( RemoveSourceCommand.removedSourceId ) );
+    const cmd = CommandFactory.createRemoveSourceCommand( "theRemovedSource" );
+    const undoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( undoCmd ).not.toBeNull();
+    expect( undoCmd.id ).toBe( AddSourceCommand.id );
+    expect( undoCmd.args.size ).toBe( 1 );
+    expect( undoCmd.getArg( AddSourceCommand.addedSourceId ) ).toEqual( cmd.getArg( RemoveSourceCommand.removedSourceId ) );
   });
 
   it("RemoveSourcesCommand Test", () => {
@@ -107,8 +110,7 @@ describe( "Command Factory Tests", () => {
     expect( cmd.args.size ).toBe( 1 );
     expect( cmd.getArg( RemoveSourcesCommand.removedSourcesIds ) ).toEqual( "a,b,c,d" );
     expect( cmd.toString() ).toEqual( "RemoveSourcesCommand, removedSourcesIds=a,b,c,d" );
-    expect( cmd.canUndo() ).toBe( false );
-    expect( cmd.undoCommand ).toBeNull();
+    expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
     const roundtrip = CommandFactory.decode( json );
@@ -119,12 +121,12 @@ describe( "Command Factory Tests", () => {
 
   it("RemoveSourcesCommand Undo Test", () => {
     const sourcesIds: string[] = [ "a", "b", "c", "d" ];
-    const cmd = CommandFactory.createRemoveSourcesCommand( sourcesIds, true );
-    expect( cmd.canUndo() ).toBe( true );
-    expect( cmd.undoCommand ).not.toBeNull();
-    expect( cmd.undoCommand.id ).toBe( AddSourcesCommand.id );
-    expect( cmd.undoCommand.args.size ).toBe( 1 );
-    expect( cmd.undoCommand.getArg( AddSourcesCommand.addedSourcesIds ) ).toEqual( cmd.getArg( RemoveSourcesCommand.removedSourcesIds ) );
+    const cmd = CommandFactory.createRemoveSourcesCommand( sourcesIds );
+    const undoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( undoCmd ).not.toBeNull();
+    expect( undoCmd.id ).toBe( AddSourcesCommand.id );
+    expect( undoCmd.args.size ).toBe( 1 );
+    expect( undoCmd.getArg( AddSourcesCommand.addedSourcesIds ) ).toEqual( cmd.getArg( RemoveSourcesCommand.removedSourcesIds ) );
   });
 
   it("UpdateViewDescriptionCommand Test", () => {
@@ -136,8 +138,7 @@ describe( "Command Factory Tests", () => {
     expect( cmd.getArg( UpdateViewDescriptionCommand.newDescription ) ).toEqual( "theNewDescription" );
     expect( cmd.getArg( UpdateViewDescriptionCommand.oldDescription ) ).toEqual( "theOldDescription" );
     expect( cmd.toString() ).toEqual( "UpdateViewDescriptionCommand, newDescription=theNewDescription, oldDescription=theOldDescription" );
-    expect( cmd.canUndo() ).toBe( false );
-    expect( cmd.undoCommand ).toBeNull();
+    expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
     const roundtrip = CommandFactory.decode( json );
@@ -151,16 +152,15 @@ describe( "Command Factory Tests", () => {
 
   it("UpdateViewDescriptionCommand Undo Test", () => {
     const cmd = CommandFactory.createUpdateViewDescriptionCommand( "theNewDescription",
-                                                                   "theOldDescription",
-                                                                   true );
-    expect( cmd.canUndo() ).toBe( true );
-    expect( cmd.undoCommand ).not.toBeNull();
-    expect( cmd.undoCommand.id ).toBe( UpdateViewDescriptionCommand.id );
-    expect( cmd.undoCommand.args.size ).toBe( 2 );
-    expect( cmd.undoCommand.getArg( UpdateViewDescriptionCommand.newDescription ) )
-                           .toBe( cmd.getArg( UpdateViewDescriptionCommand.oldDescription ) );
-    expect( cmd.undoCommand.getArg( UpdateViewDescriptionCommand.oldDescription ) )
-                           .toBe( cmd.getArg( UpdateViewDescriptionCommand.newDescription ) );
+                                                                   "theOldDescription" );
+    const undoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( undoCmd ).not.toBeNull();
+    expect( undoCmd.id ).toBe( UpdateViewDescriptionCommand.id );
+    expect( undoCmd.args.size ).toBe( 2 );
+    expect( undoCmd.getArg( UpdateViewDescriptionCommand.newDescription ) )
+                   .toBe( cmd.getArg( UpdateViewDescriptionCommand.oldDescription ) );
+    expect( undoCmd.getArg( UpdateViewDescriptionCommand.oldDescription ) )
+                   .toBe( cmd.getArg( UpdateViewDescriptionCommand.newDescription ) );
   });
 
   it("UpdateViewNameCommand Test", () => {
@@ -171,8 +171,7 @@ describe( "Command Factory Tests", () => {
     expect( cmd.getArg( UpdateViewNameCommand.newName ) ).toEqual( "theNewName" );
     expect( cmd.getArg( UpdateViewNameCommand.oldName ) ).toEqual( "theOldName" );
     expect( cmd.toString() ).toEqual( "UpdateViewNameCommand, newName=theNewName, oldName=theOldName" );
-    expect( cmd.canUndo() ).toBe( false );
-    expect( cmd.undoCommand ).toBeNull();
+    expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
     const roundtrip = CommandFactory.decode( json );
@@ -184,16 +183,15 @@ describe( "Command Factory Tests", () => {
 
   it("UpdateViewNameCommand Undo Test", () => {
     const cmd = CommandFactory.createUpdateViewNameCommand( "theNewName",
-                                                            "theOldName",
-                                                            true );
-    expect( cmd.canUndo() ).toBe( true );
-    expect( cmd.undoCommand ).not.toBeNull();
-    expect( cmd.undoCommand.id ).toBe( UpdateViewNameCommand.id );
-    expect( cmd.undoCommand.args.size ).toBe( 2 );
-    expect( cmd.undoCommand.getArg( UpdateViewNameCommand.newName ) )
-                           .toBe( cmd.getArg( UpdateViewNameCommand.oldName ) );
-    expect( cmd.undoCommand.getArg( UpdateViewNameCommand.oldName ) )
-                           .toBe( cmd.getArg( UpdateViewNameCommand.newName ) );
+                                                            "theOldName" );
+    const undoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( undoCmd ).not.toBeNull();
+    expect( undoCmd.id ).toBe( UpdateViewNameCommand.id );
+    expect( undoCmd.args.size ).toBe( 2 );
+    expect( undoCmd.getArg( UpdateViewNameCommand.newName ) )
+                   .toBe( cmd.getArg( UpdateViewNameCommand.oldName ) );
+    expect( undoCmd.getArg( UpdateViewNameCommand.oldName ) )
+                   .toBe( cmd.getArg( UpdateViewNameCommand.newName ) );
   });
 
 });

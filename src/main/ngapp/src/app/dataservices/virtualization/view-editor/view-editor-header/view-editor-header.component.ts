@@ -20,9 +20,9 @@ import { LoggerService } from "@core/logger.service";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
-import { Subscription } from "rxjs/Subscription";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -133,7 +133,7 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
     if ( this.editorService.getEditorView() ) {
       if ( newName !== this.editorService.getEditorView().getName() ) {
         const oldName = this.editorService.getEditorView().getName();
-        const cmd = CommandFactory.createUpdateViewNameCommand( newName, oldName, true );
+        const cmd = CommandFactory.createUpdateViewNameCommand( newName, oldName );
         this.editorService.fireViewStateHasChanged( ViewEditorPart.HEADER, cmd );
       }
     } else {

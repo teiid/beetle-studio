@@ -23,32 +23,23 @@ import { UpdateViewNameCommand } from "@dataservices/virtualization/view-editor/
 import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { NoOpCommand } from "@dataservices/virtualization/view-editor/command/no-op-command";
+import { Undoable } from "@dataservices/virtualization/view-editor/command/undo-redo/undoable";
 
 export class CommandFactory {
 
   /**
    * @param {string} addedSourceId the ID of the source being added (cannot be `null` or empty)
-   * @param {boolean} createUndoCommand `true` if an undo command should be created
    * @returns {Command} the add source command (never `null`)
    */
-  public static createAddSourceCommand( addedSourceId: string,
-                                        createUndoCommand: boolean = false ): Command {
-    const cmd = new AddSourceCommand( addedSourceId );
-
-    if ( createUndoCommand ) {
-      cmd.undoCommand = CommandFactory.createUndoCommand( cmd );
-    }
-
-    return cmd;
+  public static createAddSourceCommand( addedSourceId: string ): Command {
+    return new AddSourceCommand( addedSourceId );
   }
 
   /**
    * @param {string[] | SchemaNode[]} addedSources the IDs of the sources or the source schema nodes being added
-   * @param {boolean} createUndoCommand `true` if an undo command should be created
    * @returns {Command} the add sources command or a no op command if sources are `undefined` or `null`
    */
-  public static createAddSourcesCommand( addedSources: string[] | SchemaNode[],
-                                         createUndoCommand: boolean = false ): Command {
+  public static createAddSourcesCommand( addedSources: string[] | SchemaNode[] ): Command {
     if ( !addedSources || addedSources.length === 0 ) {
       return NoOpCommand.NO_OP;
     }
@@ -67,13 +58,7 @@ export class CommandFactory {
       } );
     }
 
-    const cmd = new AddSourcesCommand( addedSourcesIds );
-
-    if ( createUndoCommand ) {
-      cmd.undoCommand = CommandFactory.createUndoCommand( cmd );
-    }
-
-    return cmd;
+    return new AddSourcesCommand( addedSourcesIds );
   }
 
   /**
@@ -85,27 +70,17 @@ export class CommandFactory {
 
   /**
    * @param {string} removedSourceId the ID of the source being removed (cannot be `null` or empty)
-   * @param {boolean} createUndoCommand `true` if an undo command should be created
    * @returns {Command} the remove source command (never `null`)
    */
-  public static createRemoveSourceCommand( removedSourceId: string,
-                                           createUndoCommand: boolean = false ): Command {
-    const cmd = new RemoveSourceCommand( removedSourceId );
-
-    if ( createUndoCommand ) {
-      cmd.undoCommand = CommandFactory.createUndoCommand( cmd );
-    }
-
-    return cmd;
+  public static createRemoveSourceCommand( removedSourceId: string ): Command {
+    return new RemoveSourceCommand( removedSourceId );
   }
 
   /**
    * @param {string[] | SchemaNode[]} removedSources the IDs of the sources or the source schema nodes being removed
-   * @param {boolean} createUndoCommand `true` if an undo command should be created
    * @returns {Command} the remove sources command or a no op command if sources are `undefined` or `null`
    */
-  public static createRemoveSourcesCommand( removedSources: string[] | SchemaNode[],
-                                            createUndoCommand: boolean = false ): Command {
+  public static createRemoveSourcesCommand( removedSources: string[] | SchemaNode[] ): Command {
     if ( !removedSources || removedSources.length === 0 ) {
       return NoOpCommand.NO_OP;
     }
@@ -124,20 +99,29 @@ export class CommandFactory {
       } );
     }
 
-    const cmd = new RemoveSourcesCommand( removedSourcesIds );
+    return new RemoveSourcesCommand( removedSourcesIds );
+  }
 
-    if ( createUndoCommand ) {
-      cmd.undoCommand = CommandFactory.createUndoCommand( cmd );
+  /**
+   *
+   * @param {Command} cmd the command whose undoable is being requested
+   * @returns {Undoable} the undoable (never `null`)
+   * @throws {TypeError} if the command does not have an undo command
+   */
+  public static createUndoable( cmd: Command ): Undoable {
+    if ( cmd.isUndoable() ) {
+      return new Undoable( CommandFactory.createUndoCommand( cmd ), cmd );
     }
 
-    return cmd;
+    throw new TypeError( "The '" + cmd.id + "' command does not have an undo command" );
   }
 
   /**
    * @param {Command} cmd the command whose undo command is being requested
-   * @returns {Command | null} the undo command or `null` if one cannot be created
+   * @returns {Command} the undo command (never `null`)
+   * @throws {TypeError} if the command does not have an undo command
    */
-  public static createUndoCommand( cmd: Command ): Command | null {
+  public static createUndoCommand( cmd: Command ): Command {
     let undoCmd: Command = null;
 
     switch ( cmd.id ) {
@@ -172,7 +156,7 @@ export class CommandFactory {
         break;
       }
       default: {
-        break;
+        throw new TypeError( "The '" + cmd.id + "' command does not have an undo command" );
       }
     }
 
@@ -182,37 +166,21 @@ export class CommandFactory {
   /**
    * @param {string} newViewDescription the new view description (can be `null` or empty)
    * @param {string} replacedViewDescription the view description being replaced (can be `null` or empty)
-   * @param {boolean} createUndoCommand `true` if an undo command should be created
    * @returns {Command} the update view description command (never `null`)
    */
   public static createUpdateViewDescriptionCommand( newViewDescription: string,
-                                                    replacedViewDescription: string,
-                                                    createUndoCommand: boolean = false ): Command {
-    const cmd = new UpdateViewDescriptionCommand( newViewDescription, replacedViewDescription );
-
-    if ( createUndoCommand ) {
-      cmd.undoCommand = CommandFactory.createUndoCommand( cmd );
-    }
-
-    return cmd;
+                                                    replacedViewDescription: string ): Command {
+    return new UpdateViewDescriptionCommand( newViewDescription, replacedViewDescription );
   }
 
   /**
    * @param {string} newViewName the new view name (can be `null` or empty)
    * @param {string} replacedViewName the view name being replaced (can be `null` or empty)
-   * @param {boolean} createUndoCommand `true` if an undo command should be created
    * @returns {Command} the update view name command (never `null`)
    */
   public static createUpdateViewNameCommand( newViewName: string,
-                                             replacedViewName: string,
-                                             createUndoCommand: boolean = false ): Command {
-    const cmd = new UpdateViewNameCommand( newViewName, replacedViewName );
-
-    if ( createUndoCommand ) {
-      cmd.undoCommand = CommandFactory.createUndoCommand( cmd );
-    }
-
-    return cmd;
+                                             replacedViewName: string ): Command {
+    return new UpdateViewNameCommand( newViewName, replacedViewName );
   }
 
   /**

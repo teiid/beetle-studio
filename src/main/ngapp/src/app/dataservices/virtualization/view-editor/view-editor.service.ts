@@ -24,6 +24,7 @@ import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { View } from "@dataservices/shared/view.model";
+import { ViewValidator } from "@dataservices/virtualization/view-editor/view-validator";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
@@ -37,6 +38,8 @@ import { UpdateViewNameCommand } from "@dataservices/virtualization/view-editor/
 import { AddSourceCommand } from "@dataservices/virtualization/view-editor/command/add-source-command";
 import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
 import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
+import { UndoManager } from "@dataservices/virtualization/view-editor/command/undo-redo/undo-manager";
+import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 
 @Injectable()
 export class ViewEditorService {
@@ -57,14 +60,15 @@ export class ViewEditorService {
   private _messages: Message[] = [];
   private _previewResults: QueryResults;
   private _readOnly = false;
+  private readonly _undoMgr: UndoManager;
   private readonly _vdbService: VdbService;
-  private _viewIsValid = false;
   private _warningMsgCount = 0;
 
   constructor( logger: LoggerService,
                vdbService: VdbService ) {
     this._logger = logger;
     this._vdbService = vdbService;
+    this._undoMgr = new UndoManager();
   }
 
   /**
@@ -86,6 +90,20 @@ export class ViewEditorService {
     }
 
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGE_ADDED, [ msg ] ) );
+  }
+
+  /**
+   * @returns {boolean} `true` if there is an available undo action
+   */
+  public canRedo(): boolean {
+    return !this.isReadOnly() && this._undoMgr.canRedo();
+  }
+
+  /**
+   * @returns {boolean} `true` if there is an available redo action
+   */
+  public canUndo(): boolean {
+    return !this.isReadOnly() && this._undoMgr.canUndo();
   }
 
   /**
@@ -139,6 +157,11 @@ export class ViewEditorService {
   public fire( event: ViewEditorEvent ): void {
     this._logger.debug( "firing event: " + event );
     this.editorEvent.emit( event );
+
+    // validate view when first set or when its state changes
+    if ( event.typeIsViewStateChanged() || event.typeIsEditedViewSet() ) {
+      this.validateView( event.type );
+    }
   }
 
   /**
@@ -149,40 +172,13 @@ export class ViewEditorService {
    */
   public fireViewStateHasChanged( source: ViewEditorPart,
                                   command: Command ): void {
-    switch ( command.id ) {
-      case AddSourceCommand.id: {
-        const sourceId = command.getArg( AddSourceCommand.addedSourceId );
-        // TODO need to get the schema node here
-        // this.getEditorView().addSource( schemaNode );
-        break;
-      }
-      case AddSourcesCommand.id: {
-        const sourcesIds = command.getArg( AddSourcesCommand.addedSourcesIds );
-        // TODO need to get the schema nodes here
-        // this.getEditorView().addSources( schemaNodes );
-        break;
-      }
-      case RemoveSourceCommand.id: {
-        this.getEditorView().removeSource( command.getArg( RemoveSourceCommand.removedSourceId ) );
-        break;
-      }
-      case RemoveSourcesCommand.id: {
-        this.getEditorView().removeSource( command.getArg( RemoveSourcesCommand.removedSourcesIds) );
-        break;
-      }
-      case UpdateViewDescriptionCommand.id: {
-        this.getEditorView().setDescription( command.getArg( UpdateViewDescriptionCommand.newDescription ) );
-        break;
-      }
-      case UpdateViewNameCommand.id: {
-        this.getEditorView().setName( command.getArg( UpdateViewNameCommand.newName ) );
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+    // update view model
+    this.updateViewState( command );
 
+    // add to undo manager
+    this._undoMgr.add( CommandFactory.createUndoable( command ) );
+
+    // broadcast view change
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_STATE_CHANGED, [ command ] ) );
   }
 
@@ -236,6 +232,13 @@ export class ViewEditorService {
   }
 
   /**
+   * @returns {number} the message count (includes error, warning, and info messages)
+   */
+  public getMessageCount(): number {
+    return this.getMessages().length;
+  }
+
+  /**
    * @returns {Message[]} the log messages (error, warning, and info)
    */
   public getMessages(): Message[] {
@@ -247,6 +250,24 @@ export class ViewEditorService {
    */
   public getPreviewResults(): QueryResults {
     return this._previewResults;
+  }
+
+  /**
+   * A label that changes dynamically based on the next available redo command.
+   *
+   * @returns {string} a short description suitable for use in a redo action
+   */
+  public getRedoActionTooltip(): string {
+    return this._undoMgr.redoLabel();
+  }
+
+  /**
+   * A label that changes dynamically based on the next available undo command.
+   *
+   * @returns {string} a short description suitable for use in an undo action
+   */
+  public getUndoActionTooltip(): string {
+    return this._undoMgr.undoLabel();
   }
 
   /**
@@ -283,6 +304,20 @@ export class ViewEditorService {
    */
   public isReadOnly(): boolean {
     return this._readOnly;
+  }
+
+  /**
+   * Executes the current redo command.
+   */
+  public redo(): void {
+    if ( this.canRedo() ) {
+      const redoCmd = this._undoMgr.popRedoCommand();
+      console.error( "redo cmd=" + redoCmd.toString() );
+      this.updateViewState( redoCmd );
+      this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.VIEW_STATE_CHANGED, [ redoCmd ] ) );
+    } else {
+      this._logger.error( "Redo called when there is not a redo command available" );
+    }
   }
 
   /**
@@ -381,10 +416,69 @@ export class ViewEditorService {
   }
 
   /**
-   * @returns {boolean} `true` if the view is valid
+   * Executes the current undo command.
    */
-  public viewIsValid(): boolean {
-    return this._viewIsValid;
+  public undo(): void {
+    if ( this.canUndo() ) {
+      const undoCmd = this._undoMgr.popUndoCommand();
+      this.updateViewState( undoCmd );
+      this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.VIEW_STATE_CHANGED, [ undoCmd ] ) );
+    } else {
+      this._logger.error( "Undo called when there is not an undo command available" );
+    }
+  }
+
+  private updateViewState( cmd: Command ): void {
+    switch ( cmd.id ) {
+      case AddSourceCommand.id: {
+        const sourceId = cmd.getArg( AddSourceCommand.addedSourceId );
+        // TODO need to get the schema node here
+        // this.getEditorView().addSource( schemaNode );
+        break;
+      }
+      case AddSourcesCommand.id: {
+        const sourcesIds = cmd.getArg( AddSourcesCommand.addedSourcesIds );
+        // TODO need to get the schema nodes here
+        // this.getEditorView().addSources( schemaNodes );
+        break;
+      }
+      case RemoveSourceCommand.id: {
+        this.getEditorView().removeSource( cmd.getArg( RemoveSourceCommand.removedSourceId ) );
+        break;
+      }
+      case RemoveSourcesCommand.id: {
+        this.getEditorView().removeSource( cmd.getArg( RemoveSourcesCommand.removedSourcesIds) );
+        break;
+      }
+      case UpdateViewDescriptionCommand.id: {
+        this.getEditorView().setDescription( cmd.getArg( UpdateViewDescriptionCommand.newDescription ) );
+        break;
+      }
+      case UpdateViewNameCommand.id: {
+        this.getEditorView().setName( cmd.getArg( UpdateViewNameCommand.newName ) );
+        break;
+      }
+      default: {
+        this._logger.error( "The '" + cmd.id + "' was not handled by updateViewState");
+        break;
+      }
+    }
+  }
+
+  private validateView( context?: string ): void {
+    const messages = ViewValidator.validate( this.getEditorView() );
+
+    // clear message log
+    if ( this.getMessageCount() !== 0 && messages.length !== 0 ) {
+      this.clearMessages( ViewEditorPart.EDITOR, context );
+    }
+
+    // add new messages
+    if ( messages.length !== 0 ) {
+      for ( const msg of messages ) {
+        this.addMessage( msg, ViewEditorPart.EDITOR );
+      }
+    }
   }
 
   /**
@@ -423,12 +517,12 @@ export class ViewEditorService {
                                                sourceNodes,
                                                connections)
       .subscribe(
-        (wasSuccess) => {
+        () => {
           // Fire save completed success event
           this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
                                                                [ ViewEditorSaveProgressChangeId.COMPLETED_SUCCESS ] ) );
         },
-        (error) => {
+        () => {
           // Fire save completed failed event
           this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
                                                                [ ViewEditorSaveProgressChangeId.COMPLETED_FAILED ] ) );

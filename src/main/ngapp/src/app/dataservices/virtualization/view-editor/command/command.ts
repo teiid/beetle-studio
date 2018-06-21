@@ -52,7 +52,6 @@ export abstract class Command {
   protected readonly _args = new Map< string, any >();
   protected readonly _id: string;
   protected readonly _name: string;
-  protected _undoCommand: Command = null;
 
   protected constructor( id: string,
                          name: string ) {
@@ -86,10 +85,11 @@ export abstract class Command {
   }
 
   /**
-   * @returns {boolean} `true` if an undo command exists
+   * @param {string} argName the name of the arg whose value is being requested
+   * @returns {any} the arg value or `undefined` if not found
    */
-  public canUndo(): boolean {
-    return this.undoCommand != null;
+  public getArg( argName: string ): any {
+    return this._args.get( argName );
   }
 
   /**
@@ -108,11 +108,12 @@ export abstract class Command {
   }
 
   /**
-   * @param {string} argName the name of the arg whose value is being requested
-   * @returns {any} the arg value or `undefined` if not found
+   * Subclasses need to override if they do not have an associated undo command.
+   *
+   * @returns {boolean} `true` if the command is undoable
    */
-  public getArg( argName: string ): any {
-    return this._args.get( argName );
+  public isUndoable(): boolean {
+    return true;
   }
 
   /**
@@ -156,20 +157,6 @@ export abstract class Command {
     }
 
     return text;
-  }
-
-  /**
-   * @returns {Command} the command to run that will undo this command (can be `null`)
-   */
-  public get undoCommand(): Command {
-    return this._undoCommand;
-  }
-
-  /**
-   * @param {Command} cmd the undo command or `null` if removing an existing one
-   */
-  public set undoCommand( cmd: Command ) {
-    this._undoCommand = cmd;
   }
 
 }

@@ -57,21 +57,10 @@ export class NoOpCommand extends Command {
   }
 
   /**
-   * Overridden to ensure `null` is returned. Must be overridden if the setter is overridden.
-   *
-   * @returns {Command} `null` always
+   * @returns {boolean} `false`
    */
-  public get undoCommand(): Command {
-    return null;
-  }
-
-  /**
-   * Overridden to ensure undo command cannot be set.
-   *
-   * @param {Command} cmd the new undo command (not used)
-   */
-  public set undoCommand( cmd: Command ) {
-    // do nothing
+  public isUndoable(): boolean {
+    return false;
   }
 
 }

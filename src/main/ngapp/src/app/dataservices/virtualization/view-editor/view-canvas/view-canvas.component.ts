@@ -138,7 +138,7 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    * @param {SchemaNode} source the view source to be removed
    */
   public onViewSourceRemoved( source: SchemaNode ): void {
-    const cmd = CommandFactory.createRemoveSourceCommand( source.getName(), true );
+    const cmd = CommandFactory.createRemoveSourceCommand( source.getName() );
     this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, cmd );
   }
 

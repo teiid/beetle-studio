@@ -29,13 +29,12 @@ import { Message } from "@dataservices/virtualization/view-editor/editor-views/m
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { ConnectionTableDialogComponent } from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
-import { ViewValidator } from "@dataservices/virtualization/view-editor/view-validator";
-import { BsModalService } from "ngx-bootstrap";
-import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng";
-import { Subscription } from "rxjs/Subscription";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
+import { BsModalService } from "ngx-bootstrap";
+import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -86,8 +85,8 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   private readonly addSourceActionIndex = 0;
   private readonly addCompositionActionIndex = 1;
   private readonly saveActionIndex = 2;
-  private readonly redoActionIndex = 3;
-  private readonly undoActionIndex = 4;
+  private readonly undoActionIndex = 3;
+  private readonly redoActionIndex = 4;
   private readonly deleteActionIndex = 5;
   private readonly errorsActionIndex = 6;
   private readonly infosActionIndex = 7;
@@ -124,8 +123,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   }
 
   private canRedo(): boolean {
-    // TODO implement canRedo
-    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
+    return !this.fatalErrorOccurred && this.editorService.canRedo();
   }
 
   private canSave(): boolean {
@@ -137,8 +135,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   }
 
   private canUndo(): boolean {
-    // TODO implement canUndo
-    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
+    return !this.fatalErrorOccurred && this.editorService.canUndo();
   }
 
   private doAddComposition(): void {
@@ -157,7 +154,8 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     // Show Dialog, act upon confirmation click
     const modalRef = this.modalService.show(ConnectionTableDialogComponent, {initialState});
     modalRef.content.okAction.take(1).subscribe((selectedNodes) => {
-      const cmd = CommandFactory.createAddSourcesCommand( selectedNodes, true );
+      this.editorService.getEditorView().setSources( selectedNodes ); // TODO remove this line when service.updateViewState works for sources
+      const cmd = CommandFactory.createAddSourcesCommand( selectedNodes );
       this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR, cmd );
     });
   }
@@ -181,10 +179,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     // });
   }
 
-  private deleteView( ): void {
-    alert("Delete the view!");
-  }
-
   private doDisplayLogMessages( actionId: string ): void {
     this.editorService.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
                                                      ViewEditorEventType.SHOW_EDITOR_PART,
@@ -192,8 +186,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   }
 
   private doRedo(): void {
-    // TODO implement doRedo
-    this.logger.debug( "doRedo() here" );
+    this.editorService.redo();
   }
 
   private doSave(): void {
@@ -201,8 +194,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   }
 
   private doUndo(): void {
-    // TODO implement doUndo
-    this.logger.debug( "doUndo() here" );
+    this.editorService.undo();
   }
 
   /**
@@ -395,8 +387,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
           this.saveInProgress = false;
         }
       }
-    } else if ( event.typeIsViewStateChanged() ) {
-      this.validateView( "ViewEditorEvent.VIEW_STATE_CHANGED" );
     }
   }
 
@@ -448,8 +438,10 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
       this.actionConfig.primaryActions[ this.errorsActionIndex ].disabled = !this.hasErrors();
       this.actionConfig.primaryActions[ this.infosActionIndex ].disabled = !this.hasInfos();
       this.actionConfig.primaryActions[ this.redoActionIndex ].disabled = !this.canRedo();
+      this.actionConfig.primaryActions[ this.redoActionIndex ].tooltip = this.editorService.getRedoActionTooltip();
       this.actionConfig.primaryActions[ this.saveActionIndex ].disabled = !this.canSave();
       this.actionConfig.primaryActions[ this.undoActionIndex ].disabled = !this.canUndo();
+      this.actionConfig.primaryActions[ this.undoActionIndex ].tooltip = this.editorService.getUndoActionTooltip();
       this.actionConfig.primaryActions[ this.warningsActionIndex ].disabled = !this.hasWarnings();
     }
   }
@@ -497,9 +489,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
       } else {
         this.editorService.updatePreviewResults();
       }
-
-      // validate view
-      this.validateView( "ngOnInit" );
     } else {
       // must have a virtualization selected
       this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorPart.EDITOR );
@@ -527,18 +516,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
         }
       );
 
-  }
-
-  private validateView( context?: string ): void {
-    this.editorService.clearMessages( ViewEditorPart.EDITOR, context );
-
-    const messages = ViewValidator.validate( this.editorService.getEditorView() );
-
-    if ( messages.length !== 0 ) {
-      for ( const msg of messages ) {
-        this.editorService.addMessage( msg, ViewEditorPart.EDITOR );
-      }
-    }
   }
 
   /**
