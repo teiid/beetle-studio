@@ -36,3 +36,10 @@
   margin-left: 0.5em;
   margin-top: 0.5em;
 }
+
+.canvas-node-selected {
+  stroke: red !important;
+  stroke-width: 2 !important;
+  stroke-dasharray: 5,5;
+  fill: transparent !important;
+}

@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnDestroy, OnInit, AfterViewInit, ViewEncapsulation } from "@angular/core";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
+import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
@@ -27,6 +28,10 @@ import { CommandFactory } from "@dataservices/virtualization/view-editor/command
 import { PathUtils } from "@dataservices/shared/path-utils";
 import { NotificationType } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
+import { CanvasNode, CanvasLink } from '@dataservices/virtualization/view-editor/view-canvas/models';
+import { CanvasConstants } from '@dataservices/virtualization/view-editor/view-canvas/canvas-constants';
+import { CanvasService } from '@dataservices/virtualization/view-editor/view-canvas/canvas.service';
+import * as _ from "lodash";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -34,7 +39,7 @@ import { Subscription } from "rxjs/Subscription";
   templateUrl: "./view-canvas.component.html",
   styleUrls: ["./view-canvas.component.css"]
 })
-export class ViewCanvasComponent implements OnInit, OnDestroy {
+export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // used by html
   public readonly noSourcesAlert = ViewEditorI18n.noSourcesAlert;
@@ -44,6 +49,7 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
 
   private readonly logger: LoggerService;
   private readonly editorService: ViewEditorService;
+  private readonly canvasService: CanvasService;
   private subscription: Subscription;
   private saveViewNotificationHeader: string;
   private saveViewNotificationMessage: string;
@@ -51,9 +57,24 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
   private saveViewNotificationVisible = false;
 
   constructor( editorService: ViewEditorService,
-               logger: LoggerService ) {
+               logger: LoggerService,
+               canvasService: CanvasService) {
     this.editorService = editorService;
     this.logger = logger;
+    this.canvasService = canvasService;
+  }
+
+  private viewStateChanged(source: ViewEditorPart, args: any[]): void {
+    if (args.length > 0 && args[0] === ViewStateChangeId.SOURCES_CHANGED) {
+      if (args[1] instanceof Array) {
+        const schemaNodes: Array<SchemaNode> = <Array<SchemaNode>> args[1];
+        for (let i = 0; i < schemaNodes.length; ++i) {
+          const schemaNode = schemaNodes[i];
+          const label = schemaNode.getName() + " : " + schemaNode.getConnectionName();
+          const id = this.canvasService.createNode(CanvasConstants.SOURCE_TYPE, label, i == (schemaNodes.length - 1));
+        }
+      }
+    }
   }
 
   /**
@@ -86,6 +107,11 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
           setTimeout(() => this.saveViewNotificationVisible = false, 8000);
         }
       }
+    } else if (event.typeIsViewStateChanged()) {
+      this.viewStateChanged(event.source, event.args);
+    }
+    else {
+      this.logger.debug( "ViewCanvasComponent not handling received event: " + event.toString() );
     }
   }
 
@@ -101,6 +127,40 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    */
   public ngOnInit(): void {
     this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
+  }
+
+  public ngAfterViewInit() {
+    // const labels:string[] = ['Employee', 'Admin', 'Payroll', 'EmployeeAdmin', 'EmployeePayDay'];
+    // const type:string[] = [
+    //   CanvasConstants.SOURCE_TYPE,
+    //   CanvasConstants.SOURCE_TYPE,
+    //   CanvasConstants.SOURCE_TYPE,
+    //   CanvasConstants.COMPONENT_TYPE,
+    //   CanvasConstants.COMPONENT_TYPE
+    // ];
+    //
+    // /** constructing the nodes array */
+    // const nodeIds: string[] = [];
+    // for (let i = 0; i < 5; i++) {
+    //   const id = this.canvasService.createNode(type[i], labels[i]);
+    //   nodeIds.push(id);
+    // }
+    //
+    // this.canvasService.createLink(nodeIds[0], nodeIds[3]);
+    // this.canvasService.createLink(nodeIds[1], nodeIds[3]);
+    // this.canvasService.createLink(nodeIds[2], nodeIds[4]);
+    // this.canvasService.createLink(nodeIds[3], nodeIds[4], true);
+
+    this.canvasService.canvasNodesSelected.subscribe((nodes) => {
+      if (_.isEmpty(nodes)) {
+        console.log("No nodes selected");
+        return;
+      }
+
+      for (let node of nodes) {
+        console.log("Node " + node.label + " selected");
+      }
+    });
   }
 
   /**

@@ -46,6 +46,9 @@ import { ViewEditorComponent } from "@dataservices/virtualization/view-editor/vi
 import { ViewPreviewComponent } from "@dataservices/virtualization/view-editor/editor-views/view-preview/view-preview.component";
 import { EditorViewsComponent } from '@dataservices/virtualization/view-editor/editor-views/editor-views.component';
 import { MessageLogComponent } from '@dataservices/virtualization/view-editor/editor-views/message-log/message-log.component';
+import { CanvasService } from '@dataservices/virtualization/view-editor/view-canvas/canvas.service';
+import { GraphVisualComponent, NodeVisualComponent, LinkVisualComponent } from '@dataservices/virtualization/view-editor/view-canvas/visuals';
+
 import { environment } from "@environments/environment";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { SharedModule } from "@shared/shared.module";
@@ -121,7 +124,10 @@ import { ViewPropertyEditorsComponent } from './virtualization/view-editor/view-
     EditorViewsComponent,
     ConnectionTreeSelectorComponent,
     ConnectionTableDialogComponent,
-    ViewPropertyEditorsComponent
+    ViewPropertyEditorsComponent,
+    GraphVisualComponent,
+    NodeVisualComponent,
+    LinkVisualComponent
   ],
   providers: [
     {
@@ -138,7 +144,8 @@ import { ViewPropertyEditorsComponent } from './virtualization/view-editor/view-
     },
     LoggerService,
     NotifierService,
-    SelectionService
+    SelectionService,
+    CanvasService
   ],
   exports: [
   ],
