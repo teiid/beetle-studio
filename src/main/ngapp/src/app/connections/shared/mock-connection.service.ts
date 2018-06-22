@@ -147,6 +147,15 @@ export class MockConnectionService extends ConnectionService {
   }
 
   /**
+   * Update the preview VDB and re-deploy it if needed.
+   * @param {string} vdbName
+   * @returns {Observable<boolean>}
+   */
+  public refreshPreviewVdb(vdbName: string): Observable<boolean> {
+    return Observable.of(true);
+  }
+
+  /**
    * Initiates a refresh of the connection schema via the komodo rest interface
    * @param {string} connectionName
    * @returns {Observable<boolean>}

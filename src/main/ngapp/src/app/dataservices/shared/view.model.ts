@@ -16,6 +16,7 @@
  */
 
 import { SchemaNode } from "@connections/shared/schema-node.model";
+import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 
 /**
  * View model
@@ -82,6 +83,26 @@ export class View {
    */
   public setSources( sources: SchemaNode[] ): void {
     this.sources = sources;
+  }
+
+  /**
+   * Get the SQL for the view, given the current selections
+   * @returns {string} the view SQL
+   */
+  public getSql(): string {
+    // The view currently supports single source only
+    let sourceNodeName = "unknownSource";
+    let connectionName = "unknownConnection";
+    const source = this.getSources()[0];
+    if (source !== null) {
+      sourceNodeName = source.getName();
+      if (source.getConnectionName() !== null) {
+        connectionName = source.getConnectionName();
+      }
+    }
+
+    // Return SQL for this view
+    return "SELECT * FROM " + connectionName.toLowerCase() + VdbsConstants.SCHEMA_MODEL_SUFFIX + "." + sourceNodeName + ";";
   }
 
   /**

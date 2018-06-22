@@ -23,3 +23,10 @@
   margin: 0 20px;
   width: 100%;
 }
+
+/*
+ * Style the in progress spinner
+ */
+#view-preview-in-progress {
+  margin-top: 25px;
+}

@@ -33,6 +33,7 @@ import { Subscription } from "rxjs/Subscription";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { Connection } from "@connections/shared/connection.model";
 import { View } from "@dataservices/shared/view.model";
+import { QueryResults } from "@dataservices/shared/query-results.model";
 
 @Injectable()
 /**
@@ -149,6 +150,34 @@ export class VdbService extends ApiService {
   }
 
   /**
+   * Query the vdb via the komodo rest interface
+   * @param {string} query the SQL query
+   * @param {string} vdbName the vdb name
+   * @param {number} limit the limit for the number of result rows
+   * @param {number} offset the offset for the result rows
+   * @returns {Observable<boolean>}
+   */
+  public queryVdb(query: string, vdbName: string, limit: number, offset: number): Observable<any> {
+    // The payload for the rest call
+    const payload = {
+      "query": query,
+      "target": vdbName,
+      "limit": limit,
+      "offset": offset
+    };
+
+    const url = environment.komodoTeiidUrl + "/query";
+
+    return this.http
+      .post(url, payload, this.getAuthRequestOptions())
+      .map((response) => {
+        const queryResults = response.json();
+        return new QueryResults(queryResults);
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
    * Create a vdb via the komodo rest interface
    * @param {Vdb} vdb
    * @returns {Observable<boolean>}
@@ -255,10 +284,7 @@ export class VdbService extends ApiService {
       const modelSourcePath = vdbPath + "/" + schemaVdbModelName + "/vdb:sources/" + schemaVdbModelSourceName;
 
       tablePaths.push(tablePath);
-      // The array of modelSource paths should be unique
-      if (modelSourcePaths.indexOf(modelSourcePath) === -1) {
-        modelSourcePaths.push(modelSourcePath);
-      }
+      modelSourcePaths.push(modelSourcePath);
     }
 
     return this.http

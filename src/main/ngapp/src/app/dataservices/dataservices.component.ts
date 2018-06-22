@@ -432,10 +432,6 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     // this.selectedServices.splice(this.selectedServices.indexOf(dataservice), 1);
   }
 
-  public onCloseExportNotification(): void {
-    this.exportNotificationVisible = false;
-  }
-
   public onActivate(svcName: string): void {
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
     selectedService.setServiceDeploymentState(DeploymentState.LOADING);
@@ -492,12 +488,16 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
             self.exportNotificationHeader = this.downloadSuccessHeader;
             self.exportNotificationMessage = "   " + svcName + " was downloaded successfully!";
             self.exportNotificationType = NotificationType.SUCCESS;
+            // Dismiss toast notification after 8 sec
+            setTimeout(() => self.exportNotificationVisible = false, 8000);
             this.logger.debug("[DataservicesPageComponent] Download Dataservice was successful");
           },
           (error) => {
             self.exportNotificationHeader = this.downloadFailedHeader;
             self.exportNotificationMessage = "   Failed to download dataservice " + svcName;
             self.exportNotificationType = NotificationType.DANGER;
+            // Dismiss toast notification after 8 sec
+            setTimeout(() => self.exportNotificationVisible = false, 8000);
             this.logger.error("[DataservicesPageComponent] Download dataservice " + svcName + " failed.");
           }
         );
@@ -522,12 +522,16 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
           self.exportNotificationHeader = this.exportSuccessHeader;
           self.exportNotificationMessage = "   " + svcName + " publishing successfully initiated.";
           self.exportNotificationType = NotificationType.INFO;
+          // Dismiss toast notification after 8 sec
+          setTimeout(() => self.exportNotificationVisible = false, 8000);
           this.logger.debug("[DataservicesPageComponent] Initiated publishing of dataservice");
         },
         (error) => {
           self.exportNotificationHeader = this.exportFailedHeader;
           self.exportNotificationMessage = "   Failed to publish dataservice " + svcName + ".";
           self.exportNotificationType = NotificationType.DANGER;
+          // Dismiss toast notification after 8 sec
+          setTimeout(() => self.exportNotificationVisible = false, 8000);
           this.logger.error("[DataservicesPageComponent] Publish dataservice " + svcName + " failed.");
         }
       );

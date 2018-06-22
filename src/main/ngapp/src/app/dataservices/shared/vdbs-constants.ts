@@ -17,6 +17,7 @@ export class VdbsConstants {
   public static readonly SCHEMA_MODEL_SUFFIX = "schemamodel";
   public static readonly DATASERVICE_VDB_SUFFIX = "vdb";
   public static readonly DEFAULT_READONLY_DATA_ROLE = "DefaultReadOnlyDataRole";
+  public static readonly PREVIEW_VDB_NAME = "PreviewVdb";
 
   public static readonly statusPath = "/status";
 

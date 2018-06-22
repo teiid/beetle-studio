@@ -30,6 +30,7 @@ import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
+import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 
 @Injectable()
 export class ViewEditorService {
@@ -295,6 +296,29 @@ export class ViewEditorService {
     } else {
       this._logger.debug( "setEditorVirtualization called more than once" );
     }
+  }
+
+  /**
+   * Update the preview results for the current view.  This issues a query against the preview VDB and sets
+   * the previewResults
+   */
+  public updatePreviewResults( ): void {
+    // Clear preview results
+    this.setPreviewResults(null, ViewEditorPart.EDITOR);
+
+    // Fetch new results
+    const viewSql = this._editorView.getSql();
+    const self = this;
+    // Resets all of the views in the service VDB
+    this._vdbService.queryVdb(viewSql, VdbsConstants.PREVIEW_VDB_NAME, 15, 0)
+      .subscribe(
+        (queryResult) => {
+          self.setPreviewResults(queryResult, ViewEditorPart.EDITOR);
+        },
+        (error) => {
+          alert("error getting results");
+        }
+      );
   }
 
   /**
