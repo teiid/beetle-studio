@@ -23,7 +23,10 @@ export class ViewEditorI18n {
 
   // commands
   public static readonly addSourceCommandName = "Add Source";
+  public static readonly addSourcesCommandName = "Add Sources";
+  public static readonly noOpCommandName = "No operation";
   public static readonly removeSourceCommandName = "Remove Source";
+  public static readonly removeSourcesCommandName = "Remove Sources";
   public static readonly updateViewNameCommandName = "Update View Name";
   public static readonly updateViewDescriptionCommandName = "Update View Description";
 

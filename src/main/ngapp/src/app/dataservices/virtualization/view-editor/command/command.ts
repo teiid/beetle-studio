@@ -37,14 +37,21 @@ export abstract class Command {
 
   /**
    * The name of the JSON key used to store the command identifier.
+   *
    * @type {string}
    */
   public static readonly idPropJson = "id";
 
-  protected _args = new Map< string, string >();
-  protected readonly  _id: string;
+  /**
+   * The delimiter used to separate source IDs in a command argument.
+   *
+   * @type {string}
+   */
+  public static readonly idsDelimiter = ",";
+
+  protected readonly _args = new Map< string, any >();
+  protected readonly _id: string;
   protected readonly _name: string;
-  protected _undoCommand: Command = null;
 
   protected constructor( id: string,
                          name: string ) {
@@ -53,27 +60,36 @@ export abstract class Command {
   }
 
   /**
-   * @returns {Map<string, string>} the arguments to the command (never `null` but can be empty)
+   * @returns {Map<string, any>} a copy of the arguments to the command (never `null` but can be empty)
    */
-  public get args(): Map< string, string > {
-    return this._args;
+  public get args(): Map< string, any > {
+    const copy = new Map< string, any >();
+
+    this._args.forEach( ( value, key ) => {
+      copy.set( key, value );
+    } );
+
+    return copy;
   }
 
   private argsToArray(): object[] {
     const result = [];
 
     this.args.forEach( ( value, key ) => {
-      result.push( { [ Command.argNameJson ]: key, [ Command.argValueJson ]: value } );
+      if ( !this.isTransient( key ) ) {
+        result.push( { [ Command.argNameJson ]: key, [ Command.argValueJson ]: value } );
+      }
     } );
 
     return result;
   }
 
   /**
-   * @returns {boolean} `true` if an undo command exists
+   * @param {string} argName the name of the arg whose value is being requested
+   * @returns {any} the arg value or `undefined` if not found
    */
-  public canUndo(): boolean {
-    return this.undoCommand != null;
+  public getArg( argName: string ): any {
+    return this._args.get( argName );
   }
 
   /**
@@ -84,11 +100,20 @@ export abstract class Command {
   }
 
   /**
-   * @param {string} argName the name of the arg whose value is being requested
-   * @returns {string} the arg value or `undefined` if not found
+   * @param {string} argName the name of the argument being checked
+   * @returns {boolean} `true` if the argument should not be serialized
    */
-  public getArg( argName: string ): string {
-    return this._args.get( argName );
+  protected isTransient( argName: string ): boolean {
+    return false;
+  }
+
+  /**
+   * Subclasses need to override if they do not have an associated undo command.
+   *
+   * @returns {boolean} `true` if the command is undoable
+   */
+  public isUndoable(): boolean {
+    return true;
   }
 
   /**
@@ -125,27 +150,13 @@ export abstract class Command {
           text += ", ";
         }
 
-        text += key + "=" + value;
+        text += key + "=" + String( value );
       } );
     } else {
-      text += "[]";
+      text += ", []";
     }
 
     return text;
-  }
-
-  /**
-   * @returns {Command} the command to run that will undo this command (can be `null`)
-   */
-  public get undoCommand(): Command {
-    return this._undoCommand;
-  }
-
-  /**
-   * @param {Command} cmd the undo command or `null` if removing an existing one
-   */
-  public set undoCommand( cmd: Command ) {
-    this._undoCommand = cmd;
   }
 
 }

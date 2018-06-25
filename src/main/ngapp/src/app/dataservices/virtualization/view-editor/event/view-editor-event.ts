@@ -211,10 +211,4 @@ export class ViewEditorEvent {
     return this.type === ViewEditorEventType.VIEW_STATE_CHANGED;
   }
 
-  /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.VIEW_VALID_CHANGED`
-   */
-  public typeIsViewValidChanged(): boolean {
-    return this.type === ViewEditorEventType.VIEW_VALID_CHANGED;
-  }
 }

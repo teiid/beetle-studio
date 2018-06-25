@@ -25,8 +25,9 @@ import { RowData } from "@dataservices/shared/row-data.model";
 import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
-import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
+import { Command } from "@dataservices/virtualization/view-editor/command/command";
+import { CommandUtils } from "@dataservices/virtualization/view-editor/command/command-utils";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -82,11 +83,13 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
       }
     } else if (event.typeIsViewStateChanged()) {
       // Clear results if sources were changed
-      if ( event.args.length !== 0 && event.args[ 0 ] === ViewStateChangeId.SOURCES_CHANGED ) {
-        this.clearResults();
+      if ( event.args.length === 1 && event.args[ 0 ] instanceof Command ) {
+        const cmd = event.args[ 0 ] as Command;
+
+        if ( CommandUtils.isViewSourcesChangedEvent( cmd ) ) {
+          this.clearResults();
+        }
       }
-    } else if ( event.typeIsViewValidChanged() && !this.editorService.viewIsValid() ) {
-      this.clearResults();
     } else if ( event.typeIsEditorViewSaveProgressChanged() ) {
       if ( event.args.length !== 0 ) {
         // Detect changes in view editor save progress

@@ -14,22 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Command } from "@dataservices/virtualization/view-editor/command/command";
 
-export enum ViewStateChangeId {
+export class Undoable {
+
+  private readonly _redoCmd: Command;
+  private readonly _undoCmd: Command;
+
+  public constructor( undoCmd: Command,
+                      redoCmd: Command ) {
+    this._undoCmd = undoCmd;
+    this._redoCmd = redoCmd;
+  }
 
   /**
-   * Indicates the view description has changed. The event fired contains the new description.
+   * @returns {Command} the redo command (never `null`)
    */
-  DESCRIPTION = "DESCRIPTION",
+  public get redoCommand(): Command {
+    return this._redoCmd;
+  }
 
   /**
-   * Indicates the view name has changed. The event fired contains the new name.
+   * @returns {Command} the undo command (never `null`)
    */
-  NAME = "NAME",
-
-  /**
-   * Indicates that the view sources have changed. The event fired contains the new sources.
-   */
-  SOURCES_CHANGED = "SOURCES_CHANGED",
+  public get undoCommand(): Command {
+    return this._undoCmd;
+  }
 
 }

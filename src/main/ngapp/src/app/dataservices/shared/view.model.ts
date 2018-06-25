@@ -25,7 +25,6 @@ export class View {
   private keng__id: string;
   private description: string;
   private isSelected = false;
-  private isValid = false;
   private isEditable = false;
   private sources: SchemaNode[] = [];
 
@@ -65,7 +64,7 @@ export class View {
   }
 
   /**
-   * @param {string} name the view description
+   * @param {string} description the view description
    */
   public setDescription( description?: string ): void {
     this.description = description ? description : null;
@@ -81,7 +80,7 @@ export class View {
   /**
    * @param {SchemaNode[]} sources the view sources
    */
-  public setSources( sources: SchemaNode[] ): void {
+  public setSources( sources: SchemaNode[] = [] ): void {
     this.sources = sources;
   }
 
@@ -93,16 +92,85 @@ export class View {
     // The view currently supports single source only
     let sourceNodeName = "unknownSource";
     let connectionName = "unknownConnection";
-    const source = this.getSources()[0];
-    if (source !== null) {
+    const source = this.getSources()[ 0 ];
+    if ( source !== null ) {
       sourceNodeName = source.getName();
-      if (source.getConnectionName() !== null) {
+      if ( source.getConnectionName() !== null ) {
         connectionName = source.getConnectionName();
       }
     }
 
     // Return SQL for this view
     return "SELECT * FROM " + connectionName.toLowerCase() + VdbsConstants.SCHEMA_MODEL_SUFFIX + "." + sourceNodeName + ";";
+  }
+
+  /**
+   * Duplicate sources are not added.
+   *
+   * @param {SchemaNode} sourceToAdd the source being added
+   */
+  public addSource( sourceToAdd: SchemaNode ): void {
+    const index = this.sources.findIndex( ( source ) => source.getName() === sourceToAdd.getName() );
+
+    if ( index === -1 ) {
+      this.sources.push( sourceToAdd );
+    }
+  }
+
+  /**
+   * Duplicate sources are not added.
+   *
+   * @param {SchemaNode[]} sourcesToAdd the sources being added
+   */
+  public addSources( sourcesToAdd: SchemaNode[] = [] ): void {
+    const self = this;
+
+    sourcesToAdd.forEach( ( source ) => {
+      self.addSource( source );
+    } );
+  }
+
+  /**
+   * @param {SchemaNode | string} sourceToRemove the source or the ID of the source being removed
+   */
+  public removeSource( sourceToRemove: SchemaNode | string ): void {
+    let sourceName: string;
+
+    if ( typeof sourceToRemove === "string" ) {
+      sourceName = sourceToRemove as string;
+    } else {
+      const source = sourceToRemove as SchemaNode;
+      sourceName = source.getName();
+    }
+
+    const index = this.sources.findIndex( ( source ) => source.getName() === sourceName );
+
+    if ( index !== -1 ) {
+      this.sources.splice( index, 1 );
+    }
+  }
+
+  /**
+   * @param {SchemaNode} sourcesToRemove the sources being removed
+   */
+  public removeSources( sourcesToRemove: SchemaNode[] | string[] ): void {
+    const self = this;
+
+    if ( sourcesToRemove && sourcesToRemove.length !== 0 ) {
+      if ( typeof sourcesToRemove[ 0 ] === "string" ) {
+        const ids = sourcesToRemove as string[];
+
+        ids.forEach( ( source ) => {
+          self.removeSource( source );
+        } );
+      } else {
+        const sources = sourcesToRemove as SchemaNode[];
+
+        sources.forEach( ( source ) => {
+          self.removeSource( source );
+        } );
+      }
+    }
   }
 
   /**
