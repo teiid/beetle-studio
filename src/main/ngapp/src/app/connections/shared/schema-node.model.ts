@@ -44,6 +44,8 @@ export class SchemaNode {
         schemaNode.setName(json[field]);
       } else if (field === "type") {
         schemaNode.setType(json[field]);
+      } else if (field === "path") {
+        schemaNode.setPath(json[field]);
       } else if (field === "queryable") {
         schemaNode.setQueryable(json[field]);
       } else if (field === "connectionName") {
@@ -97,6 +99,13 @@ export class SchemaNode {
    */
   public setType( type?: string ): void {
     this.type = type ? type : null;
+  }
+
+  /**
+   * @param {string} path the node path
+   */
+  public setPath( path?: string ): void {
+    this.path = path ? path : null;
   }
 
   /**
