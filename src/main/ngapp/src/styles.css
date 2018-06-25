@@ -294,7 +294,7 @@
   width: 100%;
 }
 
-.pfng-wizard-position-override {
+.wizard-pf-body .pfng-wizard-position-override {
   height: 50vh;
   overflow-y: auto;
 }
