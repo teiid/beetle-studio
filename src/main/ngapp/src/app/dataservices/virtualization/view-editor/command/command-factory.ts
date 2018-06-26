@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
-import { AddSourceCommand } from "@dataservices/virtualization/view-editor/command/add-source-command";
 import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
-import { RemoveSourceCommand } from "@dataservices/virtualization/view-editor/command/remove-source-command";
 import { UpdateViewDescriptionCommand } from "@dataservices/virtualization/view-editor/command/update-view-description-command";
 import { UpdateViewNameCommand } from "@dataservices/virtualization/view-editor/command/update-view-name-command";
 import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
@@ -28,37 +27,15 @@ import { Undoable } from "@dataservices/virtualization/view-editor/command/undo-
 export class CommandFactory {
 
   /**
-   * @param {string} addedSourceId the ID of the source being added (cannot be `null` or empty)
-   * @returns {Command} the add source command (never `null`)
+   * @param {string | SchemaNode[]} addedSources the JSON representation of or the schema nodes of the sources being added
+   * @returns {Command} the add sources command or a no op command if sources are empty
    */
-  public static createAddSourceCommand( addedSourceId: string ): Command {
-    return new AddSourceCommand( addedSourceId );
-  }
-
-  /**
-   * @param {string[] | SchemaNode[]} addedSources the IDs of the sources or the source schema nodes being added
-   * @returns {Command} the add sources command or a no op command if sources are `undefined` or `null`
-   */
-  public static createAddSourcesCommand( addedSources: string[] | SchemaNode[] ): Command {
+  public static createAddSourcesCommand( addedSources: string | SchemaNode[] ): Command | Error {
     if ( !addedSources || addedSources.length === 0 ) {
       return NoOpCommand.NO_OP;
     }
 
-    let addedSourcesIds: string[];
-
-    if ( typeof addedSources[ 0 ] === "string" ) {
-      addedSourcesIds = addedSources as string[];
-    } else {
-      addedSourcesIds = [];
-
-      const sources = addedSources as SchemaNode[];
-
-      sources.forEach( ( source ) => {
-        addedSourcesIds.push( source.getName() );
-      } );
-    }
-
-    return new AddSourcesCommand( addedSourcesIds );
+    return new AddSourcesCommand( addedSources );
   }
 
   /**
@@ -69,172 +46,127 @@ export class CommandFactory {
   }
 
   /**
-   * @param {string} removedSourceId the ID of the source being removed (cannot be `null` or empty)
-   * @returns {Command} the remove source command (never `null`)
-   */
-  public static createRemoveSourceCommand( removedSourceId: string ): Command {
-    return new RemoveSourceCommand( removedSourceId );
-  }
-
-  /**
-   * @param {string[] | SchemaNode[]} removedSources the IDs of the sources or the source schema nodes being removed
+   * @param {string | SchemaNode[]} removedSources the JSON representation of or the schema nodes of the sources being removed
    * @returns {Command} the remove sources command or a no op command if sources are `undefined` or `null`
    */
-  public static createRemoveSourcesCommand( removedSources: string[] | SchemaNode[] ): Command {
+  public static createRemoveSourcesCommand( removedSources: string | SchemaNode[] ): Command {
     if ( !removedSources || removedSources.length === 0 ) {
       return NoOpCommand.NO_OP;
     }
 
-    let removedSourcesIds: string[];
-
-    if ( typeof removedSources[ 0 ] === "string" ) {
-      removedSourcesIds = removedSources as string[];
-    } else {
-      removedSourcesIds = [];
-
-      const sources = removedSources as SchemaNode[];
-
-      sources.forEach( ( source ) => {
-        removedSourcesIds.push( source.getName() );
-      } );
-    }
-
-    return new RemoveSourcesCommand( removedSourcesIds );
+    return new RemoveSourcesCommand( removedSources );
   }
 
   /**
    *
    * @param {Command} cmd the command whose undoable is being requested
-   * @returns {Undoable} the undoable (never `null`)
-   * @throws {TypeError} if the command does not have an undo command
+   * @returns {Undoable | Error} the undoable or an error if an undoable cannot be created
    */
-  public static createUndoable( cmd: Command ): Undoable {
+  public static createUndoable( cmd: Command ): Undoable | Error {
     if ( cmd.isUndoable() ) {
-      return new Undoable( CommandFactory.createUndoCommand( cmd ), cmd );
+      const undoOrError = CommandFactory.createUndoCommand( cmd );
+
+      if ( undoOrError instanceof Command ) {
+        return new Undoable( undoOrError as Command, cmd );
+      }
+
+      return undoOrError;
     }
 
-    throw new TypeError( "The '" + cmd.id + "' command does not have an undo command" );
+    return new Error( "The '" + cmd.id + "' command does not have an undo command" );
   }
 
   /**
    * @param {Command} cmd the command whose undo command is being requested
-   * @returns {Command} the undo command (never `null`)
-   * @throws {TypeError} if the command does not have an undo command
+   * @returns {Command | Error} the undo command or an error if an undo command cannot be created
    */
-  public static createUndoCommand( cmd: Command ): Command {
-    let undoCmd: Command = null;
-
+  public static createUndoCommand( cmd: Command ): Command | Error {
     switch ( cmd.id ) {
-      case AddSourceCommand.id: {
-        undoCmd = CommandFactory.createRemoveSourceCommand( cmd.getArg( AddSourceCommand.addedSourceId ) );
-        break;
-      }
       case AddSourcesCommand.id: {
-        const value = cmd.getArg( AddSourcesCommand.addedSourcesIds );
-        const ids = value.split( Command.idsDelimiter );
-        undoCmd = CommandFactory.createRemoveSourcesCommand( ids );
-        break;
-      }
-      case RemoveSourceCommand.id: {
-        undoCmd = CommandFactory.createAddSourceCommand( cmd.getArg( RemoveSourceCommand.removedSourceId ) );
-        break;
+        const value = cmd.getArg( AddSourcesCommand.addedSources );
+        return CommandFactory.createRemoveSourcesCommand( value );
       }
       case RemoveSourcesCommand.id: {
-        const value = cmd.getArg( RemoveSourcesCommand.removedSourcesIds );
-        const ids = value.split( Command.idsDelimiter );
-        undoCmd = CommandFactory.createAddSourcesCommand( ids );
-        break;
+        const value = cmd.getArg( RemoveSourcesCommand.removedSources );
+        return CommandFactory.createAddSourcesCommand( value );
       }
       case UpdateViewDescriptionCommand.id: {
-        undoCmd = CommandFactory.createUpdateViewDescriptionCommand( cmd.getArg( UpdateViewDescriptionCommand.oldDescription ),
-                                                                     cmd.getArg( UpdateViewDescriptionCommand.newDescription ) );
-        break;
+        return CommandFactory.createUpdateViewDescriptionCommand( cmd.getArg( UpdateViewDescriptionCommand.oldDescription ),
+                                                                  cmd.getArg( UpdateViewDescriptionCommand.newDescription ) );
       }
       case UpdateViewNameCommand.id: {
-        undoCmd = CommandFactory.createUpdateViewNameCommand( cmd.getArg( UpdateViewNameCommand.oldName ),
-                                                              cmd.getArg( UpdateViewNameCommand.newName ) );
-        break;
+        return CommandFactory.createUpdateViewNameCommand( cmd.getArg( UpdateViewNameCommand.oldName ),
+                                                           cmd.getArg( UpdateViewNameCommand.newName ) );
       }
       default: {
-        throw new TypeError( "The '" + cmd.id + "' command does not have an undo command" );
+        return new Error( "The '" + cmd.id + "' command does not have an undo command" );
       }
     }
-
-    return undoCmd;
   }
 
   /**
-   * @param {string} newViewDescription the new view description (can be `null` or empty)
-   * @param {string} replacedViewDescription the view description being replaced (can be `null` or empty)
-   * @returns {Command} the update view description command (never `null`)
+   * @param {string} newDescription the new view description (can be `null` or empty if old description has a value)
+   * @param {string} oldDescription the view description being replaced (can be `null` or empty if new description has a value)
+   * @returns {Command | Error} the update view description command or an error if both the new an old description is missing
    */
-  public static createUpdateViewDescriptionCommand( newViewDescription: string,
-                                                    replacedViewDescription: string ): Command {
-    return new UpdateViewDescriptionCommand( newViewDescription, replacedViewDescription );
+  public static createUpdateViewDescriptionCommand( newDescription: string,
+                                                    oldDescription: string ): Command | Error {
+    if ( newDescription || oldDescription ) {
+      if ( newDescription === oldDescription ) {
+        return CommandFactory.createNoOpCommand();
+      }
+
+      return new UpdateViewDescriptionCommand( newDescription, oldDescription );
+    }
+
+    return new Error( "Must have either a new description or an old description when creating an UpdateViewDescriptionCommand" );
   }
 
   /**
-   * @param {string} newViewName the new view name (can be `null` or empty)
-   * @param {string} replacedViewName the view name being replaced (can be `null` or empty)
-   * @returns {Command} the update view name command (never `null`)
+   * @param {string} newName the new view name (can be `null` or empty if the old name has a value)
+   * @param {string} oldName the view name being replaced (can be `null` or empty if the new name has a value)
+   * @returns {Command | Error} the update view name command or an error if both the new and old name is missing
    */
-  public static createUpdateViewNameCommand( newViewName: string,
-                                             replacedViewName: string ): Command {
-    return new UpdateViewNameCommand( newViewName, replacedViewName );
+  public static createUpdateViewNameCommand( newName: string,
+                                             oldName: string ): Command | Error {
+    if ( newName || oldName ) {
+      if ( newName === oldName ) {
+        return CommandFactory.createNoOpCommand();
+      }
+
+      return new UpdateViewNameCommand( newName, oldName );
+    }
+
+    return new Error( "Must have either a new name or an old name when creating an UpdateViewNameCommand" );
   }
 
   /**
    * Constructs a command object from JSON.
    *
    * @param {object} json the JSON being converted to a command
-   * @returns {Command | null} the command or `null` if one could not be constructed
+   * @returns {Command | Error} the decoded command or an error if one could not be constructed
    */
-  public static decode( json: object = {} ): Command | null {
+  public static decode( json: object = {} ): Command | Error {
     const cmdId = json[ Command.idPropJson ];
-    let cmd: Command = null;
 
     switch ( cmdId ) {
-      case AddSourceCommand.id: {
-        for ( const entry of json[ Command.argsPropJson ] ) {
-          if ( entry[ Command.argNameJson ] === AddSourceCommand.addedSourceId ) {
-            cmd = CommandFactory.createAddSourceCommand( entry[ Command.argValueJson ] );
-            break;
-          }
-        }
-
-        break;
-      }
       case AddSourcesCommand.id: {
         for ( const entry of json[ Command.argsPropJson ] ) {
-          if ( entry[ Command.argNameJson ] === AddSourcesCommand.addedSourcesIds ) {
-            const args = entry[ Command.argValueJson ].split( Command.idsDelimiter );
-            cmd = CommandFactory.createAddSourcesCommand( args );
-            break;
+          if ( entry[ Command.argNameJson ] === AddSourcesCommand.addedSources ) {
+            return CommandFactory.createAddSourcesCommand( entry[ Command.argValueJson ] as string );
           }
         }
 
-        break;
-      }
-      case RemoveSourceCommand.id: {
-        for ( const entry of json[ Command.argsPropJson ] ) {
-          if ( entry[ Command.argNameJson ] === RemoveSourceCommand.removedSourceId ) {
-            cmd = CommandFactory.createRemoveSourceCommand( entry[ Command.argValueJson ] );
-            break;
-          }
-        }
-
-        break;
+        return new Error( "Unable to decode AddSourcesCommand: " + json );
       }
       case RemoveSourcesCommand.id: {
         for ( const entry of json[ Command.argsPropJson ] ) {
-          if ( entry[ Command.argNameJson ] === RemoveSourcesCommand.removedSourcesIds ) {
-            const args = entry[ Command.argValueJson ].split( Command.idsDelimiter );
-            cmd = CommandFactory.createRemoveSourcesCommand( args );
-            break;
+          if ( entry[ Command.argNameJson ] === RemoveSourcesCommand.removedSources ) {
+            return CommandFactory.createRemoveSourcesCommand( entry[ Command.argValueJson ] as string );
           }
         }
 
-        break;
+        return new Error( "Unable to decode RemoveSourcesCommand: " + json );
       }
       case UpdateViewDescriptionCommand.id: {
         let newViewDescription: string = null;
@@ -254,10 +186,10 @@ export class CommandFactory {
         }
 
         if ( newViewDescription && replacedViewDescription ) {
-          cmd = CommandFactory.createUpdateViewDescriptionCommand( newViewDescription, replacedViewDescription );
+          return CommandFactory.createUpdateViewDescriptionCommand( newViewDescription, replacedViewDescription );
         }
 
-        break;
+        return new Error( "Unable to decode UpdateViewDescriptionCommand: " + json );
       }
       case UpdateViewNameCommand.id: {
         let newViewName: string = null;
@@ -277,18 +209,15 @@ export class CommandFactory {
         }
 
         if ( newViewName && replacedViewName ) {
-          cmd = CommandFactory.createUpdateViewNameCommand( newViewName, replacedViewName );
+          return CommandFactory.createUpdateViewNameCommand( newViewName, replacedViewName );
         }
 
-        break;
+        return new Error( "Unable to decode UpdateViewNameCommand: " + json );
       }
       default: {
-        console.error( "Unable to create command from json: " + json );
-        break;
+        return new Error( "Unhandled command: " + cmdId );
       }
     }
-
-    return cmd;
   }
 
 }

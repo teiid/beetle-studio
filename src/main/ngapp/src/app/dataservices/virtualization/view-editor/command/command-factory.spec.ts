@@ -1,64 +1,55 @@
-import { AddSourceCommand } from "@dataservices/virtualization/view-editor/command/add-source-command";
-import { UpdateViewNameCommand } from "@dataservices/virtualization/view-editor/command/update-view-name-command";
-import { RemoveSourceCommand } from "@dataservices/virtualization/view-editor/command/remove-source-command";
-import { UpdateViewDescriptionCommand } from "@dataservices/virtualization/view-editor/command/update-view-description-command";
+import { SchemaNode } from "@connections/shared/schema-node.model";
+import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
 import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
 import { NoOpCommand } from "@dataservices/virtualization/view-editor/command/no-op-command";
+import { UpdateViewNameCommand } from "@dataservices/virtualization/view-editor/command/update-view-name-command";
+import { UpdateViewDescriptionCommand } from "@dataservices/virtualization/view-editor/command/update-view-description-command";
 
 describe( "Command Factory Tests", () => {
 
-  it("AddSourceCommand Test", () => {
-    const cmd = CommandFactory.createAddSourceCommand( "theNewSource" );
-    expect( cmd.id ).toBe( AddSourceCommand.id );
-    expect( cmd.args ).not.toBeNull();
-    expect( cmd.args.size ).toBe( 1 );
-    expect( cmd.getArg( AddSourceCommand.addedSourceId ) ).toEqual( "theNewSource" );
-    expect( cmd.toString() ).toBe( "AddSourceCommand, addedSourceId=theNewSource" );
-    expect( cmd.isUndoable() ).toBe( true );
-
-    const json = cmd.toJSON();
-    const roundtrip = CommandFactory.decode( json );
-    expect( roundtrip.id ).toBe( cmd.id );
-    expect( roundtrip.args.size ).toBe( cmd.args.size );
-    expect( roundtrip.getArg( AddSourceCommand.addedSourceId ) ).toBe( cmd.getArg( AddSourceCommand.addedSourceId ) );
-  });
-
-  it("AddSourceCommand Undo Test", () => {
-    const cmd = CommandFactory.createAddSourceCommand( "theNewSource" );
-    const undoCmd = CommandFactory.createUndoCommand( cmd );
-    expect( undoCmd ).not.toBeNull();
-    expect( undoCmd.id ).toBe( RemoveSourceCommand.id );
-    expect( undoCmd.args.size ).toBe( 1 );
-    expect( undoCmd.getArg( RemoveSourceCommand.removedSourceId ) ).toEqual( cmd.getArg( AddSourceCommand.addedSourceId ) );
-  });
-
   it("AddSourcesCommand Test", () => {
-    const sourcesIds: string[] = [ "a", "b", "c", "d" ];
-    const cmd = CommandFactory.createAddSourcesCommand( sourcesIds );
+    const node1 = SchemaNode.create( { connectionName: "node1", path: "node1Path" } );
+    const node2 = SchemaNode.create( { connectionName: "node2", path: "node2Path" } );
+    const tempCmd = CommandFactory.createAddSourcesCommand( [ node1, node2 ] );
+    expect( tempCmd instanceof AddSourcesCommand ).toBe( true );
+
+    const cmd = tempCmd as AddSourcesCommand;
     expect( cmd.id ).toBe( AddSourcesCommand.id );
     expect( cmd.args ).not.toBeNull();
     expect( cmd.args.size ).toBe( 1 );
-    expect( cmd.getArg( AddSourcesCommand.addedSourcesIds ) ).toEqual( "a,b,c,d" );
-    expect( cmd.toString() ).toBe( "AddSourcesCommand, addedSourcesIds=a,b,c,d" );
+
+    const expected = "2, connectionName=node1, path=node1Path, connectionName=node2, path=node2Path";
+    expect( cmd.getArg( AddSourcesCommand.addedSources ) ).toEqual( expected );
+    expect( cmd.toString() ).toBe( "AddSourcesCommand, sources=" + expected );
     expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
-    const roundtrip = CommandFactory.decode( json );
+    const tempRoundtrip = CommandFactory.decode( json );
+    expect( tempRoundtrip instanceof AddSourcesCommand ).toBe( true );
+
+    const roundtrip = tempRoundtrip as AddSourcesCommand;
     expect( roundtrip.id ).toBe( cmd.id );
     expect( roundtrip.args.size ).toBe( cmd.args.size );
-    expect( roundtrip.getArg( AddSourcesCommand.addedSourcesIds ) ).toBe( cmd.getArg( AddSourcesCommand.addedSourcesIds ) );
+    expect( roundtrip.getArg( AddSourcesCommand.addedSources ) ).toBe( cmd.getArg( AddSourcesCommand.addedSources ) );
   });
 
   it("AddSourcesCommand Undo Test", () => {
-    const sourcesIds: string[] = [ "a", "b", "c", "d" ];
-    const cmd = CommandFactory.createAddSourcesCommand( sourcesIds );
-    const undoCmd = CommandFactory.createUndoCommand( cmd );
+    const node1 = SchemaNode.create( { connectionName: "node1", path: "node1Path" } );
+    const node2 = SchemaNode.create( { connectionName: "node2", path: "node2Path" } );
+    const tempCmd = CommandFactory.createAddSourcesCommand( [ node1, node2 ] );
+    expect( tempCmd instanceof AddSourcesCommand ).toBe( true );
+
+    const cmd = tempCmd as AddSourcesCommand;
+    const tempUndoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( tempUndoCmd instanceof RemoveSourcesCommand ).toBe( true );
+
+    const undoCmd = tempUndoCmd as RemoveSourcesCommand;
     expect( undoCmd ).not.toBeNull();
     expect( undoCmd.id ).toBe( RemoveSourcesCommand.id );
     expect( undoCmd.args.size ).toBe( 1 );
-    expect( undoCmd.getArg( RemoveSourcesCommand.removedSourcesIds ) ).toEqual( cmd.getArg( AddSourcesCommand.addedSourcesIds ) );
+    expect( undoCmd.getArg( RemoveSourcesCommand.removedSources ) ).toEqual( cmd.getArg( AddSourcesCommand.addedSources ) );
   });
 
   it("NoOpCommand Test", () => {
@@ -72,66 +63,59 @@ describe( "Command Factory Tests", () => {
 
   it("NoOpCommand Undo Test", () => {
     const cmd = CommandFactory.createNoOpCommand();
-    expect( () => {
-      CommandFactory.createUndoCommand( cmd );
-    }).toThrow();
-  });
-
-  it("RemoveSourceCommand Test", () => {
-    const cmd = CommandFactory.createRemoveSourceCommand( "theRemovedSource" );
-    expect( cmd.id ).toBe( RemoveSourceCommand.id );
-    expect( cmd.args ).not.toBeNull();
-    expect( cmd.args.size ).toBe( 1 );
-    expect( cmd.getArg( RemoveSourceCommand.removedSourceId ) ).toEqual( "theRemovedSource" );
-    expect( cmd.toString() ).toEqual( "RemoveSourceCommand, removedSourceId=theRemovedSource" );
-    expect( cmd.isUndoable() ).toBe( true );
-
-    const json = cmd.toJSON();
-    const roundtrip = CommandFactory.decode( json );
-    expect( roundtrip.id ).toBe( cmd.id );
-    expect( roundtrip.args.size ).toBe( cmd.args.size );
-    expect( roundtrip.getArg( RemoveSourceCommand.removedSourceId ) ).toBe( cmd.getArg( RemoveSourceCommand.removedSourceId ) );
-  });
-
-  it("RemoveSourceCommand Undo Test", () => {
-    const cmd = CommandFactory.createRemoveSourceCommand( "theRemovedSource" );
-    const undoCmd = CommandFactory.createUndoCommand( cmd );
-    expect( undoCmd ).not.toBeNull();
-    expect( undoCmd.id ).toBe( AddSourceCommand.id );
-    expect( undoCmd.args.size ).toBe( 1 );
-    expect( undoCmd.getArg( AddSourceCommand.addedSourceId ) ).toEqual( cmd.getArg( RemoveSourceCommand.removedSourceId ) );
+    const error = CommandFactory.createUndoCommand( cmd );
+    expect( error instanceof Error).toBe( true );
   });
 
   it("RemoveSourcesCommand Test", () => {
-    const sourcesIds: string[] = [ "a", "b", "c", "d" ];
-    const cmd = CommandFactory.createRemoveSourcesCommand( sourcesIds );
+    const node1 = SchemaNode.create( { connectionName: "node1", path: "node1Path" } );
+    const node2 = SchemaNode.create( { connectionName: "node2", path: "node2Path" } );
+    const temp = CommandFactory.createRemoveSourcesCommand( [ node1, node2 ] );
+    expect( temp instanceof RemoveSourcesCommand ).toBe( true );
+
+    const cmd = temp as RemoveSourcesCommand;
     expect( cmd.id ).toBe( RemoveSourcesCommand.id );
     expect( cmd.args ).not.toBeNull();
     expect( cmd.args.size ).toBe( 1 );
-    expect( cmd.getArg( RemoveSourcesCommand.removedSourcesIds ) ).toEqual( "a,b,c,d" );
-    expect( cmd.toString() ).toEqual( "RemoveSourcesCommand, removedSourcesIds=a,b,c,d" );
+
+    const expected = "2, connectionName=node1, path=node1Path, connectionName=node2, path=node2Path";
+    expect( cmd.getArg( RemoveSourcesCommand.removedSources ) ).toEqual( expected );
+    expect( cmd.toString() ).toEqual( "RemoveSourcesCommand, sources=" + expected );
     expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
-    const roundtrip = CommandFactory.decode( json );
+    const tempRoundtrip = CommandFactory.decode( json );
+    expect( tempRoundtrip instanceof RemoveSourcesCommand ).toBe( true );
+
+    const roundtrip = tempRoundtrip as RemoveSourcesCommand;
     expect( roundtrip.id ).toBe( cmd.id );
     expect( roundtrip.args.size ).toBe( cmd.args.size );
-    expect( roundtrip.getArg( RemoveSourcesCommand.removedSourcesIds ) ).toBe( cmd.getArg( RemoveSourcesCommand.removedSourcesIds ) );
+    expect( roundtrip.getArg( RemoveSourcesCommand.removedSources ) ).toBe( cmd.getArg( RemoveSourcesCommand.removedSources ) );
   });
 
   it("RemoveSourcesCommand Undo Test", () => {
-    const sourcesIds: string[] = [ "a", "b", "c", "d" ];
-    const cmd = CommandFactory.createRemoveSourcesCommand( sourcesIds );
-    const undoCmd = CommandFactory.createUndoCommand( cmd );
+    const node1 = SchemaNode.create( { connectionName: "node1", path: "node1Path" } );
+    const node2 = SchemaNode.create( { connectionName: "node2", path: "node2Path" } );
+    const tempCmd = CommandFactory.createRemoveSourcesCommand( [ node1, node2 ] );
+    expect( tempCmd instanceof RemoveSourcesCommand ).toBe( true );
+
+    const cmd = tempCmd as RemoveSourcesCommand;
+    const tempUndoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( tempUndoCmd instanceof AddSourcesCommand ).toBe( true );
+
+    const undoCmd = tempUndoCmd as AddSourcesCommand;
     expect( undoCmd ).not.toBeNull();
     expect( undoCmd.id ).toBe( AddSourcesCommand.id );
     expect( undoCmd.args.size ).toBe( 1 );
-    expect( undoCmd.getArg( AddSourcesCommand.addedSourcesIds ) ).toEqual( cmd.getArg( RemoveSourcesCommand.removedSourcesIds ) );
+    expect( undoCmd.getArg( AddSourcesCommand.addedSources ) ).toEqual( cmd.getArg( RemoveSourcesCommand.removedSources ) );
   });
 
   it("UpdateViewDescriptionCommand Test", () => {
-    const cmd = CommandFactory.createUpdateViewDescriptionCommand( "theNewDescription",
-                                                                   "theOldDescription" );
+    const temp = CommandFactory.createUpdateViewDescriptionCommand( "theNewDescription",
+                                                                    "theOldDescription" );
+    expect( temp instanceof UpdateViewDescriptionCommand ).toBe( true );
+
+    const cmd = temp as UpdateViewDescriptionCommand;
     expect( cmd.id ).toBe( UpdateViewDescriptionCommand.id );
     expect( cmd.args ).not.toBeNull();
     expect( cmd.args.size ).toBe( 2 );
@@ -141,7 +125,10 @@ describe( "Command Factory Tests", () => {
     expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
-    const roundtrip = CommandFactory.decode( json );
+    const tempRoundtrip = CommandFactory.decode( json );
+    expect( tempRoundtrip instanceof UpdateViewDescriptionCommand ).toBe( true );
+
+    const roundtrip = tempRoundtrip as UpdateViewDescriptionCommand;
     expect( roundtrip.id ).toBe( cmd.id );
     expect( roundtrip.args.size ).toBe( cmd.args.size );
     expect( roundtrip.getArg( UpdateViewDescriptionCommand.newDescription ) )
@@ -151,9 +138,15 @@ describe( "Command Factory Tests", () => {
   });
 
   it("UpdateViewDescriptionCommand Undo Test", () => {
-    const cmd = CommandFactory.createUpdateViewDescriptionCommand( "theNewDescription",
+    const tempCmd = CommandFactory.createUpdateViewDescriptionCommand( "theNewDescription",
                                                                    "theOldDescription" );
-    const undoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( tempCmd instanceof UpdateViewDescriptionCommand ).toBe( true );
+
+    const cmd = tempCmd as UpdateViewDescriptionCommand;
+    const tempUndoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( tempUndoCmd instanceof UpdateViewDescriptionCommand ).toBe( true );
+
+    const undoCmd = tempUndoCmd as UpdateViewDescriptionCommand;
     expect( undoCmd ).not.toBeNull();
     expect( undoCmd.id ).toBe( UpdateViewDescriptionCommand.id );
     expect( undoCmd.args.size ).toBe( 2 );
@@ -164,34 +157,44 @@ describe( "Command Factory Tests", () => {
   });
 
   it("UpdateViewNameCommand Test", () => {
-    const cmd = CommandFactory.createUpdateViewNameCommand( "theNewName", "theOldName" );
+    const newName = "theNewName";
+    const oldName = "theOldName";
+    const temp = CommandFactory.createUpdateViewNameCommand( newName, oldName );
+    expect( temp instanceof UpdateViewNameCommand ).toBe( true );
+
+    const cmd = temp as UpdateViewNameCommand;
     expect( cmd.id ).toBe( UpdateViewNameCommand.id );
     expect( cmd.args ).not.toBeNull();
     expect( cmd.args.size ).toBe( 2 );
-    expect( cmd.getArg( UpdateViewNameCommand.newName ) ).toEqual( "theNewName" );
-    expect( cmd.getArg( UpdateViewNameCommand.oldName ) ).toEqual( "theOldName" );
+    expect( cmd.getArg( UpdateViewNameCommand.newName ) ).toEqual( newName );
+    expect( cmd.getArg( UpdateViewNameCommand.oldName ) ).toEqual( oldName );
     expect( cmd.toString() ).toEqual( "UpdateViewNameCommand, newName=theNewName, oldName=theOldName" );
     expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
-    const roundtrip = CommandFactory.decode( json );
-    expect( roundtrip.getArg( UpdateViewNameCommand.newName ) )
-                     .toBe( cmd.getArg( UpdateViewNameCommand.newName ) );
-    expect( roundtrip.getArg( UpdateViewNameCommand.oldName ) )
-                     .toBe( cmd.getArg( UpdateViewNameCommand.oldName ) );
+    const tempRoundtrip = CommandFactory.decode( json );
+    expect( tempRoundtrip instanceof UpdateViewNameCommand ).toBe( true );
+
+    const roundtrip = tempRoundtrip as UpdateViewNameCommand;
+    expect( roundtrip.getArg( UpdateViewNameCommand.newName ) ).toBe( cmd.getArg( UpdateViewNameCommand.newName ) );
+    expect( roundtrip.getArg( UpdateViewNameCommand.oldName ) ).toBe( cmd.getArg( UpdateViewNameCommand.oldName ) );
   });
 
   it("UpdateViewNameCommand Undo Test", () => {
-    const cmd = CommandFactory.createUpdateViewNameCommand( "theNewName",
-                                                            "theOldName" );
-    const undoCmd = CommandFactory.createUndoCommand( cmd );
+    const tempCmd = CommandFactory.createUpdateViewNameCommand( "theNewName",
+                                                                "theOldName" );
+    expect( tempCmd instanceof UpdateViewNameCommand ).toBe( true );
+
+    const cmd = tempCmd as UpdateViewNameCommand;
+    const tempUndoCmd = CommandFactory.createUndoCommand( cmd );
+    expect( tempUndoCmd instanceof UpdateViewNameCommand ).toBe( true );
+
+    const undoCmd = tempUndoCmd as UpdateViewNameCommand;
     expect( undoCmd ).not.toBeNull();
     expect( undoCmd.id ).toBe( UpdateViewNameCommand.id );
     expect( undoCmd.args.size ).toBe( 2 );
-    expect( undoCmd.getArg( UpdateViewNameCommand.newName ) )
-                   .toBe( cmd.getArg( UpdateViewNameCommand.oldName ) );
-    expect( undoCmd.getArg( UpdateViewNameCommand.oldName ) )
-                   .toBe( cmd.getArg( UpdateViewNameCommand.newName ) );
+    expect( undoCmd.getArg( UpdateViewNameCommand.newName ) ).toBe( cmd.getArg( UpdateViewNameCommand.oldName ) );
+    expect( undoCmd.getArg( UpdateViewNameCommand.oldName ) ).toBe( cmd.getArg( UpdateViewNameCommand.newName ) );
   });
 
 });

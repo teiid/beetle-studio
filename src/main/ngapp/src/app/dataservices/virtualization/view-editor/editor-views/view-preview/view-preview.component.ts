@@ -27,7 +27,8 @@ import { Subscription } from "rxjs/Subscription";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
-import { CommandUtils } from "@dataservices/virtualization/view-editor/command/command-utils";
+import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
+import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -86,7 +87,7 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
       if ( event.args.length === 1 && event.args[ 0 ] instanceof Command ) {
         const cmd = event.args[ 0 ] as Command;
 
-        if ( CommandUtils.isViewSourcesChangedEvent( cmd ) ) {
+        if ( cmd instanceof AddSourcesCommand || cmd instanceof RemoveSourcesCommand ) {
           this.clearResults();
         }
       }

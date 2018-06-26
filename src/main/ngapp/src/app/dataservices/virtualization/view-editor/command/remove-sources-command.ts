@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
+import { CommandUtils } from "@dataservices/virtualization/view-editor/command/command-utils";
 
 export class RemoveSourcesCommand extends Command {
 
@@ -28,33 +30,35 @@ export class RemoveSourcesCommand extends Command {
   public static readonly id = "RemoveSourcesCommand";
 
   /**
-   * The name of the command argument whose value is the Ids of the removed sources.
+   * The name of the command argument whose value is the removed sources.
    *
    * @type {string}
    */
-  public static readonly removedSourcesIds = "removedSourcesIds";
+  public static readonly removedSources = CommandUtils.sources;
 
   /**
-   * @param {string} removedSourcesIds the IDs of the sources being removed (cannot be `null` or empty)
+   * @param {string | SchemaNode} removedSources the JSON representation of the sources or the schema nodes of the sources
+   *                              being removed (cannot be `null` or empty)
    */
-  public constructor( removedSourcesIds: string[] ) {
+  public constructor( removedSources: string | SchemaNode[] ) {
     super( RemoveSourcesCommand.id, ViewEditorI18n.removeSourcesCommandName );
 
-    // concatenate IDs using comma as delimiter
-    let args = "";
-    let firstTime = true;
+    let arg: string;
 
-    removedSourcesIds.forEach( ( id ) => {
-      if ( firstTime ) {
-        firstTime = false;
-      } else {
-        args += Command.idsDelimiter;
-      }
+    if ( typeof removedSources === "string" ) {
+      arg = removedSources as string;
+    } else {
+      arg = CommandUtils.toJsonValue( removedSources as SchemaNode[] );
+    }
 
-      args += id;
-    } );
+    this._args.set( RemoveSourcesCommand.removedSources, arg );
+  }
 
-    this._args.set( RemoveSourcesCommand.removedSourcesIds, args );
+  /**
+   * @returns {{}[] | Error} an array of { connectionName: string, path: string } objects or an error if unable to parse
+   */
+  public decodeSourcesArg(): {}[] | Error {
+    return CommandUtils.parseSourcesArg( this.getArg( RemoveSourcesCommand.removedSources ) as string );
   }
 
 }

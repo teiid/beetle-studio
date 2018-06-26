@@ -110,7 +110,9 @@ export class View {
    * @param {SchemaNode} sourceToAdd the source being added
    */
   public addSource( sourceToAdd: SchemaNode ): void {
-    const index = this.sources.findIndex( ( source ) => source.getName() === sourceToAdd.getName() );
+    const index = this.sources.findIndex( ( source ) =>
+      source.getConnectionName() === sourceToAdd.getConnectionName() && source.getPath() === sourceToAdd.getPath()
+    );
 
     if ( index === -1 ) {
       this.sources.push( sourceToAdd );
@@ -131,19 +133,11 @@ export class View {
   }
 
   /**
-   * @param {SchemaNode | string} sourceToRemove the source or the ID of the source being removed
+   * @param {SchemaNode} sourceToRemove the schema node of the source being removed
    */
-  public removeSource( sourceToRemove: SchemaNode | string ): void {
-    let sourceName: string;
-
-    if ( typeof sourceToRemove === "string" ) {
-      sourceName = sourceToRemove as string;
-    } else {
-      const source = sourceToRemove as SchemaNode;
-      sourceName = source.getName();
-    }
-
-    const index = this.sources.findIndex( ( source ) => source.getName() === sourceName );
+  public removeSource( sourceToRemove: SchemaNode ): void {
+    const index = this.sources.findIndex( ( source ) =>
+      source.getConnectionName() === sourceToRemove.getConnectionName() &&  source.getPath() === sourceToRemove.getPath() );
 
     if ( index !== -1 ) {
       this.sources.splice( index, 1 );
@@ -151,26 +145,14 @@ export class View {
   }
 
   /**
-   * @param {SchemaNode} sourcesToRemove the sources being removed
+   * @param {SchemaNode} sourcesToRemove the schema nodes of the sources being removed
    */
-  public removeSources( sourcesToRemove: SchemaNode[] | string[] ): void {
+  public removeSources( sourcesToRemove: SchemaNode[] ): void {
     const self = this;
 
-    if ( sourcesToRemove && sourcesToRemove.length !== 0 ) {
-      if ( typeof sourcesToRemove[ 0 ] === "string" ) {
-        const ids = sourcesToRemove as string[];
-
-        ids.forEach( ( source ) => {
-          self.removeSource( source );
-        } );
-      } else {
-        const sources = sourcesToRemove as SchemaNode[];
-
-        sources.forEach( ( source ) => {
-          self.removeSource( source );
-        } );
-      }
-    }
+    sourcesToRemove.forEach( ( source ) => {
+      self.removeSource( source );
+    } );
   }
 
   /**

@@ -15,8 +15,11 @@
  * limitations under the License.
  */
 
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
+import { CommandUtils } from "@dataservices/virtualization/view-editor/command/command-utils";
+import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
 
 export class AddSourcesCommand extends Command {
 
@@ -28,33 +31,35 @@ export class AddSourcesCommand extends Command {
   public static readonly id = "AddSourcesCommand";
 
   /**
-   * The name of the command argument whose value is the IDs of the sources that are being added.
+   * The name of the command argument whose value is the sources that are being added.
    *
    * @type {string}
    */
-  public static readonly addedSourcesIds = "addedSourcesIds";
+  public static readonly addedSources = CommandUtils.sources;
 
   /**
-   * @param {string} addedSourcesIds the IDs of the sources being added (cannot be `null` or empty)
+   * @param {string | SchemaNode} addedSources the JSON representation of the sources or the schema nodes of the sources
+   *                              being added (cannot be `null` or empty)
    */
-  public constructor( addedSourcesIds: string[] ) {
+  public constructor( addedSources: string | SchemaNode[] ) {
     super( AddSourcesCommand.id, ViewEditorI18n.addSourcesCommandName );
 
-    // concatenate IDs using comma as delimiter
-    let args = "";
-    let firstTime = true;
+    let arg: string;
 
-    addedSourcesIds.forEach( ( id ) => {
-      if ( firstTime ) {
-        firstTime = false;
-      } else {
-        args += Command.idsDelimiter;
-      }
+    if ( typeof addedSources === "string" ) {
+      arg = addedSources as string;
+    } else {
+      arg = CommandUtils.toJsonValue( addedSources as SchemaNode[] );
+    }
 
-      args += id;
-    } );
+    this._args.set( AddSourcesCommand.addedSources, arg );
+  }
 
-    this._args.set( AddSourcesCommand.addedSourcesIds, args );
+  /**
+   * @returns {{}[] | Error} an array of { connectionName: string, path: string } objects or an error if unable to parse
+   */
+  public decodeSourcesArg(): {}[] | Error {
+    return CommandUtils.parseSourcesArg( this.getArg( RemoveSourcesCommand.removedSources ) as string );
   }
 
 }

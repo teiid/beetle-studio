@@ -14,30 +14,125 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Command } from "@dataservices/virtualization/view-editor/command/command";
-import { AddSourceCommand } from "@dataservices/virtualization/view-editor/command/add-source-command";
-import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
-import { RemoveSourceCommand } from "@dataservices/virtualization/view-editor/command/remove-source-command";
-import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
+
+import { SchemaNode } from "@connections/shared/schema-node.model";
 
 export class CommandUtils {
 
   /**
-   * @param {Command} cmd the command being checked (cannot be `null`)
-   * @returns {boolean} `true` if the command changes the view sources
+   * The name of the command argument whose value is the connection name of the source.
+   *
+   * @type {string}
    */
-  public static isViewSourcesChangedEvent( cmd: Command ): boolean {
-    switch ( cmd.id ) {
-      case AddSourceCommand.id:
-      case AddSourcesCommand.id:
-      case RemoveSourceCommand.id:
-      case RemoveSourcesCommand.id: {
-        return true;
+  private static readonly connectionName = "connectionName";
+
+  private static readonly connNamePrefix = CommandUtils.connectionName + "=";
+  private static readonly delim = ", ";
+
+  /**
+   * The name of the command argument whose value is the fully-qualified schema node path of the source.
+   *
+   * @type {string}
+   */
+  private static readonly path = "path";
+
+  private static readonly pathSearchPrefix = CommandUtils.path + "=";
+
+  /**
+   * The name of the command argument whose value is a list of stringified source schema nodes.
+   *
+   * @type {string}
+   */
+  public static readonly sources = "sources";
+
+
+  /**
+   *
+   * @param {string} value the sources argument value being parsed
+   * @returns {{}[] | Error} an array of { connectionName: string, path: string } objects or an error if unable to parse
+   */
+  public static parseSourcesArg( value: string ): {}[] | Error {
+    const index = value.indexOf( CommandUtils.delim );
+
+    if ( index === -1 ) {
+      return new Error( "A delimiter was not found: " + value );
+    }
+
+    const temp = value.substring( 0, index );
+    const size = parseInt( temp, 10 );
+
+    // make sure size was converted to a number
+    if ( isNaN( size ) ) {
+      return new Error( "Size is not a number: " + value );
+    }
+
+    const result: {}[] = [];
+    let text = value.substring( index );
+
+    for ( let count = 0; count <= size; ++count ) {
+      // find schema node connection name
+      if ( !text.startsWith( CommandUtils.connNamePrefix ) ) {
+        return new Error( "Connection name prefix not found: " + value );
       }
-      default: {
-        return false;
+
+      text = text.substring( CommandUtils.connNamePrefix.length );
+      let delimIndex = text.indexOf( CommandUtils.delim );
+
+      if ( delimIndex === -1 ) {
+        return new Error( "Missing delimiter after connection name: " + value );
+      }
+
+      const connName = text.substring( 0, delimIndex );
+      text = text.substring( delimIndex + CommandUtils.delim.length );
+
+      // find schema node path
+      if ( !text.startsWith( CommandUtils.pathSearchPrefix ) ) {
+        return new Error( "Missing path prefix: " + value );
+      }
+
+      text = text.substring( CommandUtils.pathSearchPrefix.length );
+      delimIndex = text.indexOf( CommandUtils.delim );
+
+      if ( delimIndex === -1 && count !== size - 1 ) {
+        return new Error( "Missing delimiter after path: " + value );
+      }
+
+      if ( count === size - 1 ) {
+        delimIndex = text.length;
+      }
+
+      const path = text.substring( 0, delimIndex );
+      result.push( { [ CommandUtils.connectionName ]: connName, [ CommandUtils.path ]: path } );
+
+      if ( count !== size - 1 ) {
+        text = text.substring( delimIndex + CommandUtils.delim.length );
       }
     }
+
+    return result;
+  }
+
+  /**
+   * @param {SchemaNode[]} schemaNodes the schema nodes whose JSON value is being requested
+   * @returns {string} the JSON value of the schema nodes
+   */
+  public static toJsonValue( schemaNodes: SchemaNode[] ): string {
+    let result = schemaNodes.length + CommandUtils.delim;
+    let firstTime = true;
+
+    schemaNodes.forEach( ( node ) => {
+      if ( firstTime ) {
+        firstTime = false;
+      } else {
+        result += CommandUtils.delim;
+      }
+
+      // for each source add connection name and path
+      result += CommandUtils.connectionName + "=" + node.getConnectionName()
+                + CommandUtils.delim + CommandUtils.path + "=" + node.getPath();
+    } );
+
+    return result;
   }
 
 }

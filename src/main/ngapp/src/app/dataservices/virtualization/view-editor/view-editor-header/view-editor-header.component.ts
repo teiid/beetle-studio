@@ -23,6 +23,7 @@ import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 import { Subscription } from "rxjs/Subscription";
+import { Command } from "@dataservices/virtualization/view-editor/command/command";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -97,8 +98,14 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
     if ( this.editorService.getEditorView() ) {
       if ( newDescription !== this.editorService.getEditorView().getDescription() ) {
         const oldDescription = this.editorService.getEditorView().getDescription();
-        const cmd = CommandFactory.createUpdateViewDescriptionCommand( newDescription, oldDescription );
-        this.editorService.fireViewStateHasChanged( ViewEditorPart.HEADER, cmd );
+        const temp = CommandFactory.createUpdateViewDescriptionCommand( newDescription, oldDescription );
+
+        if ( temp instanceof Command ) {
+          this.editorService.fireViewStateHasChanged( ViewEditorPart.HEADER, temp as Command );
+        } else {
+          const error = temp as Error;
+          this.logger.error( error.message );
+        }
       }
     } else {
       // shouldn't get here as description text input should be disabled if no view being edited
@@ -133,8 +140,14 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
     if ( this.editorService.getEditorView() ) {
       if ( newName !== this.editorService.getEditorView().getName() ) {
         const oldName = this.editorService.getEditorView().getName();
-        const cmd = CommandFactory.createUpdateViewNameCommand( newName, oldName );
-        this.editorService.fireViewStateHasChanged( ViewEditorPart.HEADER, cmd );
+        const temp = CommandFactory.createUpdateViewNameCommand( newName, oldName );
+
+        if ( temp instanceof Command ) {
+          this.editorService.fireViewStateHasChanged( ViewEditorPart.HEADER, temp as Command );
+        } else {
+          const error = temp as Error;
+          this.logger.error( error.message );
+        }
       }
     } else {
       // shouldn't get here as description text input should be disabled if no view being edited

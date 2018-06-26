@@ -42,13 +42,6 @@ export abstract class Command {
    */
   public static readonly idPropJson = "id";
 
-  /**
-   * The delimiter used to separate source IDs in a command argument.
-   *
-   * @type {string}
-   */
-  public static readonly idsDelimiter = ",";
-
   protected readonly _args = new Map< string, any >();
   protected readonly _id: string;
   protected readonly _name: string;

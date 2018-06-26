@@ -32,14 +32,13 @@ import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/ev
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
-import { RemoveSourceCommand } from "@dataservices/virtualization/view-editor/command/remove-source-command";
 import { UpdateViewDescriptionCommand } from "@dataservices/virtualization/view-editor/command/update-view-description-command";
 import { UpdateViewNameCommand } from "@dataservices/virtualization/view-editor/command/update-view-name-command";
-import { AddSourceCommand } from "@dataservices/virtualization/view-editor/command/add-source-command";
 import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
 import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
 import { UndoManager } from "@dataservices/virtualization/view-editor/command/undo-redo/undo-manager";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
+import { Undoable } from "@dataservices/virtualization/view-editor/command/undo-redo/undoable";
 
 @Injectable()
 export class ViewEditorService {
@@ -176,7 +175,12 @@ export class ViewEditorService {
     this.updateViewState( command );
 
     // add to undo manager
-    this._undoMgr.add( CommandFactory.createUndoable( command ) );
+    const tempCmd = CommandFactory.createUndoable( command );
+
+    if ( tempCmd instanceof Undoable ) {
+      const undoable = tempCmd as Undoable;
+      this._undoMgr.add( undoable );
+    }
 
     // broadcast view change
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_STATE_CHANGED, [ command ] ) );
@@ -430,24 +434,18 @@ export class ViewEditorService {
 
   private updateViewState( cmd: Command ): void {
     switch ( cmd.id ) {
-      case AddSourceCommand.id: {
-        const sourceId = cmd.getArg( AddSourceCommand.addedSourceId );
-        // TODO need to get the schema node here
-        // this.getEditorView().addSource( schemaNode );
-        break;
-      }
       case AddSourcesCommand.id: {
-        const sourcesIds = cmd.getArg( AddSourcesCommand.addedSourcesIds );
-        // TODO need to get the schema nodes here
+        const addSourcesCmd = cmd as AddSourcesCommand;
+        const nodes = addSourcesCmd.decodeSourcesArg();
+        // TODO find schema nodes here
         // this.getEditorView().addSources( schemaNodes );
         break;
       }
-      case RemoveSourceCommand.id: {
-        this.getEditorView().removeSource( cmd.getArg( RemoveSourceCommand.removedSourceId ) );
-        break;
-      }
       case RemoveSourcesCommand.id: {
-        this.getEditorView().removeSource( cmd.getArg( RemoveSourcesCommand.removedSourcesIds) );
+        const removeSourcesCmd = cmd as RemoveSourcesCommand;
+        const nodes = removeSourcesCmd.decodeSourcesArg();
+        // TODO find schema nodes here
+        // this.getEditorView().removeSource( schemaNodes );
         break;
       }
       case UpdateViewDescriptionCommand.id: {

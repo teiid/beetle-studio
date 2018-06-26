@@ -26,6 +26,7 @@ import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/vie
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 import { NotificationType } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
+import { Command } from "@dataservices/virtualization/view-editor/command/command";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -138,8 +139,14 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    * @param {SchemaNode} source the view source to be removed
    */
   public onViewSourceRemoved( source: SchemaNode ): void {
-    const cmd = CommandFactory.createRemoveSourceCommand( source.getName() );
-    this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, cmd );
+    const temp = CommandFactory.createRemoveSourcesCommand( [ source ] );
+
+    if ( temp instanceof Command ) {
+      this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, temp as Command );
+    } else {
+      const error = temp as Error;
+      this.logger.error( error.message );
+    }
   }
 
   /**
