@@ -425,12 +425,14 @@ export class TestDataService {
     "connectionName": "pgConn",
     "name": "restaurants",
     "type": "collection",
+    "path": "collection=restaurants",
     "queryable": true,
     "children": [
       {
         "connectionName": "pgConn",
         "name": "grades",
         "type": "embedded",
+        "path": "collection=restaurants/embedded=grades",
         "queryable": true,
         "children": []
       },
@@ -438,6 +440,7 @@ export class TestDataService {
         "connectionName": "pgConn",
         "name": "location",
         "type": "embedded",
+        "path": "collection=restaurants/embedded=location",
         "queryable": true,
         "children": []
       }
@@ -448,12 +451,14 @@ export class TestDataService {
     "connectionName": "conn1",
     "name": "public",
     "type": "schema",
+    "path": "schema=public",
     "queryable": false,
     "children": [
       {
         "connectionName": "conn1",
         "name": "customer",
         "type": "table",
+        "path": "schema=public/table=customer",
         "queryable": true,
         "children": []
       },
@@ -461,6 +466,7 @@ export class TestDataService {
         "connectionName": "conn1",
         "name": "stuff",
         "type": "table",
+        "path": "schema=public/table=stuff",
         "queryable": true,
         "children": []
       }
@@ -471,12 +477,14 @@ export class TestDataService {
     "connectionName": "conn2",
     "name": "restaurants",
     "type": "collection",
+    "path": "collection=restaurants",
     "queryable": true,
     "children": [
       {
         "connectionName": "conn2",
         "name": "grades",
         "type": "embedded",
+        "path": "collection=restaurants/embedded=grades",
         "queryable": true,
         "children": []
       },
@@ -484,6 +492,7 @@ export class TestDataService {
         "connectionName": "conn2",
         "name": "location",
         "type": "embedded",
+        "path": "collection=restaurants/embedded=location",
         "queryable": true,
         "children": []
       }
@@ -494,12 +503,14 @@ export class TestDataService {
     "connectionName": "conn3",
     "name": "public",
     "type": "schema",
+    "path": "schema=public",
     "queryable": false,
     "children": [
       {
         "connectionName": "conn3",
         "name": "customer",
         "type": "table",
+        "path": "schema=public/table=customer",
         "queryable": true,
         "children": []
       },
@@ -507,6 +518,7 @@ export class TestDataService {
         "connectionName": "conn3",
         "name": "stuff",
         "type": "table",
+        "path": "schema=public/table=stuff",
         "queryable": true,
         "children": []
       }
