@@ -17,6 +17,7 @@
 
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { PathUtils } from "@dataservices/shared/path-utils";
 
 /**
  * View model
@@ -26,7 +27,7 @@ export class View {
   private description: string;
   private isSelected = false;
   private isEditable = false;
-  private sources: SchemaNode[] = [];
+  private sourcePaths: string[] = [];
 
   /**
    * @param {Object} json the JSON representation of a View
@@ -71,17 +72,17 @@ export class View {
   }
 
   /**
-   * @returns {SchemaNode[]} the view sources
+   * @returns {string[]} the view source paths
    */
-  public getSources(): SchemaNode[] {
-    return this.sources;
+  public getSourcePaths(): string[] {
+    return this.sourcePaths;
   }
 
   /**
-   * @param {SchemaNode[]} sources the view sources
+   * @param {string[]} sourcePaths the view source paths
    */
-  public setSources( sources: SchemaNode[] = [] ): void {
-    this.sources = sources;
+  public setSourcePaths( sourcePaths: string[] = [] ): void {
+    this.sourcePaths = sourcePaths;
   }
 
   /**
@@ -92,11 +93,11 @@ export class View {
     // The view currently supports single source only
     let sourceNodeName = "unknownSource";
     let connectionName = "unknownConnection";
-    const source = this.getSources()[ 0 ];
-    if ( source !== null ) {
-      sourceNodeName = source.getName();
-      if ( source.getConnectionName() !== null ) {
-        connectionName = source.getConnectionName();
+    const sourcePath = this.getSourcePaths()[ 0 ];
+    if ( sourcePath !== null ) {
+      sourceNodeName = PathUtils.getSourceName(sourcePath);
+      if ( PathUtils.getConnectionName(sourcePath) !== null ) {
+        connectionName = PathUtils.getConnectionName(sourcePath);
       }
     }
 
@@ -105,53 +106,53 @@ export class View {
   }
 
   /**
-   * Duplicate sources are not added.
+   * Add source path to the list of source paths
    *
-   * @param {SchemaNode} sourceToAdd the source being added
+   * @param {string} sourcePathToAdd the source path to add
    */
-  public addSource( sourceToAdd: SchemaNode ): void {
-    const index = this.sources.findIndex( ( source ) =>
-      source.getConnectionName() === sourceToAdd.getConnectionName() && source.getPath() === sourceToAdd.getPath()
+  public addSourcePath( sourcePathToAdd: string ): void {
+    const index = this.sourcePaths.findIndex( ( sPath ) =>
+      sPath === sourcePathToAdd
     );
 
     if ( index === -1 ) {
-      this.sources.push( sourceToAdd );
+      this.sourcePaths.push( sourcePathToAdd );
     }
   }
 
   /**
-   * Duplicate sources are not added.
+   * Add source paths to the list of source paths.
    *
-   * @param {SchemaNode[]} sourcesToAdd the sources being added
+   * @param {string[]} sourcePathsToAdd the source paths being added
    */
-  public addSources( sourcesToAdd: SchemaNode[] = [] ): void {
+  public addSourcePaths( sourcePathsToAdd: string[] = [] ): void {
     const self = this;
 
-    sourcesToAdd.forEach( ( source ) => {
-      self.addSource( source );
+    sourcePathsToAdd.forEach( ( sourcePath ) => {
+      self.addSourcePath( sourcePath );
     } );
   }
 
   /**
-   * @param {SchemaNode} sourceToRemove the schema node of the source being removed
+   * @param {string} sourcePathToRemove the source path to remove
    */
-  public removeSource( sourceToRemove: SchemaNode ): void {
-    const index = this.sources.findIndex( ( source ) =>
-      source.getConnectionName() === sourceToRemove.getConnectionName() &&  source.getPath() === sourceToRemove.getPath() );
+  public removeSourcePath( sourcePathToRemove: string ): void {
+    const index = this.sourcePaths.findIndex( ( sourcePath ) =>
+      sourcePath === sourcePathToRemove );
 
     if ( index !== -1 ) {
-      this.sources.splice( index, 1 );
+      this.sourcePaths.splice( index, 1 );
     }
   }
 
   /**
-   * @param {SchemaNode} sourcesToRemove the schema nodes of the sources being removed
+   * @param {SchemaNode} sourcePathsToRemove the source paths to remove
    */
-  public removeSources( sourcesToRemove: SchemaNode[] ): void {
+  public removeSourcePaths( sourcePathsToRemove: string[] ): void {
     const self = this;
 
-    sourcesToRemove.forEach( ( source ) => {
-      self.removeSource( source );
+    sourcePathsToRemove.forEach( ( sourcePath ) => {
+      self.removeSourcePath( sourcePath );
     } );
   }
 
@@ -160,7 +161,7 @@ export class View {
    * @returns {boolean} true if valid
    */
   public get valid(): boolean {
-    return this.keng__id != null && this.sources.length > 0;
+    return this.keng__id != null && this.sourcePaths.length > 0;
   }
 
   /**

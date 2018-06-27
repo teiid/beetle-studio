@@ -30,10 +30,10 @@ import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Rx";
 import { Subscription } from "rxjs/Subscription";
-import { SchemaNode } from "@connections/shared/schema-node.model";
 import { Connection } from "@connections/shared/connection.model";
 import { View } from "@dataservices/shared/view.model";
 import { QueryResults } from "@dataservices/shared/query-results.model";
+import { PathUtils } from "@dataservices/shared/path-utils";
 
 @Injectable()
 /**
@@ -253,19 +253,19 @@ export class VdbService extends ApiService {
    * @param {string} vdbName the vdb name
    * @param {string} modelName the model name
    * @param {string[]} viewNames the view names (1:1 correspondence with schemaNodes)
-   * @param {SchemaNode[]} schemaNodes the source node for each view
+   * @param {string[]} sourceNodePaths the path for each source node
    * @param {Connection[]} connections the array of active connections
    * @returns {Observable<boolean>}
    */
   public setVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
-                          schemaNodes: SchemaNode[], connections: Connection[]): Observable<boolean> {
+                          sourceNodePaths: string[], connections: Connection[]): Observable<boolean> {
 
     // construct source table paths and modelSource paths needed for all views
     const modelSourcePaths = [];
     const tablePaths = [];
-    for ( const schemaNode of schemaNodes ) {
+    for ( const sourceNodePath of sourceNodePaths ) {
       // Get the connection for the source node
-      const connName = schemaNode.getConnectionName();
+      const connName = PathUtils.getConnectionName(sourceNodePath);
       let nodeConn: Connection = null;
       for ( const conn of connections ) {
         if ( conn.getId().toLowerCase() === connName.toLowerCase() ) {
@@ -280,7 +280,7 @@ export class VdbService extends ApiService {
 
       // Construct source table and modelSource paths for current node
       const vdbPath = this.getKomodoUserWorkspacePath() + "/" + nodeConn.getId() + "/" + schemaVdbName;
-      const tablePath = vdbPath + "/" + schemaVdbModelName + "/" + schemaNode.getName();
+      const tablePath = vdbPath + "/" + schemaVdbModelName + "/" + PathUtils.getSourceName(sourceNodePath);
       const modelSourcePath = vdbPath + "/" + schemaVdbModelName + "/vdb:sources/" + schemaVdbModelSourceName;
 
       tablePaths.push(tablePath);
@@ -455,14 +455,14 @@ export class VdbService extends ApiService {
    * @param {string} vdbName the vdb name
    * @param {string} modelName the model name
    * @param {string[]} viewNames the view names (1:1 correspondence with schemaNodes)
-   * @param {SchemaNode[]} schemaNodes the source node for each view
+   * @param {string[]} sourceNodePaths the path for each source node
    * @param {Connection[]} connections the array of active connections
    * @returns {Observable<boolean>}
    */
   public compositeSetVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
-                                   schemaNodes: SchemaNode[], connections: Connection[]): Observable<boolean> {
+                                   sourceNodePaths: string[], connections: Connection[]): Observable<boolean> {
     return this.undeployVdb(vdbName)
-      .flatMap((res) => this.setVdbModelViews(vdbName, modelName, viewNames, schemaNodes, connections));
+      .flatMap((res) => this.setVdbModelViews(vdbName, modelName, viewNames, sourceNodePaths, connections));
   }
 
 }

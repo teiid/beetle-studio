@@ -27,6 +27,7 @@ import { CommandFactory } from "@dataservices/virtualization/view-editor/command
 import { NotificationType } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
+import { PathUtils } from "@dataservices/shared/path-utils";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -117,19 +118,28 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
   public get hasViewSources(): boolean {
     const view = this.editorService.getEditorView();
     if (view) {
-      return view.getSources().length > 0;
+      return view.getSourcePaths().length > 0;
     }
     return false;
   }
 
   /**
-   * Get the sources for the view
+   * Get the source paths for the view
    * @returns {SchemaNode[]} the view sources
    */
   public get viewSources(): SchemaNode[] {
     const view = this.editorService.getEditorView();
     if (view !== null) {
-      return view.getSources();
+      const schemaNodes: SchemaNode[] = [];
+      const sourcePaths = view.getSourcePaths();
+      for(const sourcePath of sourcePaths) {
+        const sNode = new SchemaNode();
+        sNode.setName(PathUtils.getSourceName(sourcePath));
+        sNode.setType(PathUtils.getSourceType(sourcePath));
+        sNode.setConnectionName(PathUtils.getConnectionName(sourcePath));
+        schemaNodes.push(sNode);
+      }
+      return schemaNodes;
     }
     return [];
   }
