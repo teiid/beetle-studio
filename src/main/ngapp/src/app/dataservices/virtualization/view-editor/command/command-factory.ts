@@ -30,7 +30,7 @@ export class CommandFactory {
    * @param {string | SchemaNode[]} addedSources the JSON representation of or the schema nodes of the sources being added
    * @returns {Command} the add sources command or a no op command if sources are empty
    */
-  public static createAddSourcesCommand( addedSources: string | SchemaNode[] ): Command | Error {
+  public static createAddSourcesCommand( addedSources: string | SchemaNode[] ): Command {
     if ( !addedSources || addedSources.length === 0 ) {
       return NoOpCommand.NO_OP;
     }
@@ -83,11 +83,11 @@ export class CommandFactory {
   public static createUndoCommand( cmd: Command ): Command | Error {
     switch ( cmd.id ) {
       case AddSourcesCommand.id: {
-        const value = cmd.getArg( AddSourcesCommand.addedSources );
+        const value = cmd.getArg( AddSourcesCommand.addedSourcePaths );
         return CommandFactory.createRemoveSourcesCommand( value );
       }
       case RemoveSourcesCommand.id: {
-        const value = cmd.getArg( RemoveSourcesCommand.removedSources );
+        const value = cmd.getArg( RemoveSourcesCommand.removedSourcePaths );
         return CommandFactory.createAddSourcesCommand( value );
       }
       case UpdateViewDescriptionCommand.id: {
@@ -152,7 +152,7 @@ export class CommandFactory {
     switch ( cmdId ) {
       case AddSourcesCommand.id: {
         for ( const entry of json[ Command.argsPropJson ] ) {
-          if ( entry[ Command.argNameJson ] === AddSourcesCommand.addedSources ) {
+          if ( entry[ Command.argNameJson ] === AddSourcesCommand.addedSourcePaths ) {
             return CommandFactory.createAddSourcesCommand( entry[ Command.argValueJson ] as string );
           }
         }
@@ -161,7 +161,7 @@ export class CommandFactory {
       }
       case RemoveSourcesCommand.id: {
         for ( const entry of json[ Command.argsPropJson ] ) {
-          if ( entry[ Command.argNameJson ] === RemoveSourcesCommand.removedSources ) {
+          if ( entry[ Command.argNameJson ] === RemoveSourcesCommand.removedSourcePaths ) {
             return CommandFactory.createRemoveSourcesCommand( entry[ Command.argValueJson ] as string );
           }
         }

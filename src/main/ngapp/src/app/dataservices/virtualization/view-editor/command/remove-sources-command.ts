@@ -18,7 +18,6 @@
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
-import { CommandUtils } from "@dataservices/virtualization/view-editor/command/command-utils";
 
 export class RemoveSourcesCommand extends Command {
 
@@ -30,11 +29,13 @@ export class RemoveSourcesCommand extends Command {
   public static readonly id = "RemoveSourcesCommand";
 
   /**
-   * The name of the command argument whose value is the removed sources.
+   * The name of the command argument whose value is the paths of the sources being removed.
    *
    * @type {string}
    */
-  public static readonly removedSources = CommandUtils.sources;
+  public static readonly removedSourcePaths = "removedSourcePaths";
+
+  private static readonly delim = ", ";
 
   /**
    * @param {string | SchemaNode} removedSources the JSON representation of the sources or the schema nodes of the sources
@@ -48,17 +49,30 @@ export class RemoveSourcesCommand extends Command {
     if ( typeof removedSources === "string" ) {
       arg = removedSources as string;
     } else {
-      arg = CommandUtils.toJsonValue( removedSources as SchemaNode[] );
+      arg = "";
+      const sources = removedSources as SchemaNode[];
+      let firstTime = true;
+
+      sources.forEach( ( source ) => {
+        if ( firstTime ) {
+          firstTime = false;
+        } else {
+          arg += ", ";
+        }
+
+        arg += source.getPath();
+      } );
     }
 
-    this._args.set( RemoveSourcesCommand.removedSources, arg );
+    this._args.set( RemoveSourcesCommand.removedSourcePaths, arg );
   }
 
   /**
-   * @returns {{}[] | Error} an array of { connectionName: string, path: string } objects or an error if unable to parse
+   * @returns {string[]} an array of the paths of the sources being added
    */
-  public decodeSourcesArg(): {}[] | Error {
-    return CommandUtils.parseSourcesArg( this.getArg( RemoveSourcesCommand.removedSources ) as string );
+  public getSourcePaths(): string[] {
+    const argValue = this.getArg( RemoveSourcesCommand.removedSourcePaths ) as string;
+    return argValue.split( RemoveSourcesCommand.delim );
   }
 
 }

@@ -24,10 +24,9 @@ import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-ed
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
+import { PathUtils } from "@dataservices/shared/path-utils";
 import { NotificationType } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
-import { Command } from "@dataservices/virtualization/view-editor/command/command";
-import { PathUtils } from "@dataservices/shared/path-utils";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -132,8 +131,9 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
     if (view !== null) {
       const schemaNodes: SchemaNode[] = [];
       const sourcePaths = view.getSourcePaths();
-      for(const sourcePath of sourcePaths) {
+      for (const sourcePath of sourcePaths) {
         const sNode = new SchemaNode();
+        sNode.setPath(sourcePath);
         sNode.setName(PathUtils.getSourceName(sourcePath));
         sNode.setType(PathUtils.getSourceType(sourcePath));
         sNode.setConnectionName(PathUtils.getConnectionName(sourcePath));
@@ -149,14 +149,8 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    * @param {SchemaNode} source the view source to be removed
    */
   public onViewSourceRemoved( source: SchemaNode ): void {
-    const temp = CommandFactory.createRemoveSourcesCommand( [ source ] );
-
-    if ( temp instanceof Command ) {
-      this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, temp as Command );
-    } else {
-      const error = temp as Error;
-      this.logger.error( error.message );
-    }
+    const cmd = CommandFactory.createRemoveSourcesCommand( [ source ] );
+    this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, cmd );
   }
 
   /**

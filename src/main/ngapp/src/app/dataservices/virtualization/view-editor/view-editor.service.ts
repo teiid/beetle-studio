@@ -315,7 +315,6 @@ export class ViewEditorService {
   public redo(): void {
     if ( this.canRedo() ) {
       const redoCmd = this._undoMgr.popRedoCommand();
-      console.error( "redo cmd=" + redoCmd.toString() );
       this.updateViewState( redoCmd );
       this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.VIEW_STATE_CHANGED, [ redoCmd ] ) );
     } else {
@@ -435,31 +434,22 @@ export class ViewEditorService {
     switch ( cmd.id ) {
       case AddSourcesCommand.id: {
         const addSourcesCmd = cmd as AddSourcesCommand;
-        const temp = addSourcesCmd.decodeSourcesArg();
-        if (temp instanceof Error) {
+        const paths = addSourcesCmd.getSourcePaths();
 
-        } else {
-          const nodes = temp as Array<any>;
-          for(const node of nodes) {
-            const connName = node.connnectionName;
-            const path = node.path;
-            const viewPath = "connection=" + connName + "/" + path;
-            this.getEditorView().addSourcePath(viewPath);
-          }
+        for ( const path of paths ) {
+          this.getEditorView().addSourcePath( path );
         }
+
         break;
       }
       case RemoveSourcesCommand.id: {
         const removeSourcesCmd = cmd as RemoveSourcesCommand;
-        const nodes = removeSourcesCmd.decodeSourcesArg();
+        const paths = removeSourcesCmd.getSourcePaths();
 
-        // TODO: work with the decoded sources
-        for(const node of nodes) {
-          const connName = node.connnectionName;
-          const path = node.path;
-          const viewPath = "connection=" + connName + "/" + path;
-          this.getEditorView().removeSourcePath(viewPath);
+        for ( const path of paths ) {
+          this.getEditorView().removeSourcePath( path );
         }
+
         break;
       }
       case UpdateViewDescriptionCommand.id: {

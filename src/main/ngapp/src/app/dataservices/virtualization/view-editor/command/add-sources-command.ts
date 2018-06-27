@@ -18,8 +18,6 @@
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
-import { CommandUtils } from "@dataservices/virtualization/view-editor/command/command-utils";
-import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
 
 export class AddSourcesCommand extends Command {
 
@@ -31,11 +29,13 @@ export class AddSourcesCommand extends Command {
   public static readonly id = "AddSourcesCommand";
 
   /**
-   * The name of the command argument whose value is the sources that are being added.
+   * The name of the command argument whose value is the paths of the sources being added.
    *
    * @type {string}
    */
-  public static readonly addedSources = CommandUtils.sources;
+  public static readonly addedSourcePaths = "addedSourcePaths";
+
+  private static readonly delim = ", ";
 
   /**
    * @param {string | SchemaNode} addedSources the JSON representation of the sources or the schema nodes of the sources
@@ -49,17 +49,30 @@ export class AddSourcesCommand extends Command {
     if ( typeof addedSources === "string" ) {
       arg = addedSources as string;
     } else {
-      arg = CommandUtils.toJsonValue( addedSources as SchemaNode[] );
+      arg = "";
+      const sources = addedSources as SchemaNode[];
+      let firstTime = true;
+
+      sources.forEach( ( source ) => {
+        if ( firstTime ) {
+          firstTime = false;
+        } else {
+          arg += AddSourcesCommand.delim;
+        }
+
+        arg += source.getPath();
+      } );
     }
 
-    this._args.set( AddSourcesCommand.addedSources, arg );
+    this._args.set( AddSourcesCommand.addedSourcePaths, arg );
   }
 
   /**
-   * @returns {{}[] | Error} an array of { connectionName: string, path: string } objects or an error if unable to parse
+   * @returns {string[]} an array of the paths of the sources being added
    */
-  public decodeSourcesArg(): {}[] | Error {
-    return CommandUtils.parseSourcesArg( this.getArg( RemoveSourcesCommand.removedSources ) as string );
+  public getSourcePaths(): string[] {
+    const argValue = this.getArg( AddSourcesCommand.addedSourcePaths ) as string;
+    return argValue.split( AddSourcesCommand.delim );
   }
 
 }
