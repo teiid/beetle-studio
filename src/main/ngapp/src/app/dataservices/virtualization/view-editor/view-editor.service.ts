@@ -471,7 +471,7 @@ export class ViewEditorService {
     const messages = ViewValidator.validate( this.getEditorView() );
 
     // clear message log
-    if ( this.getMessageCount() !== 0 && messages.length !== 0 ) {
+    if ( this.getMessageCount() !== 0 ) {
       this.clearMessages( ViewEditorPart.EDITOR, context );
     }
 
