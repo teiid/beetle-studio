@@ -17,7 +17,6 @@
 
 import { EventEmitter, Injectable, Output } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
-import { SchemaNode } from "@connections/shared/schema-node.model";
 import { LoggerService } from "@core/logger.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
@@ -436,16 +435,31 @@ export class ViewEditorService {
     switch ( cmd.id ) {
       case AddSourcesCommand.id: {
         const addSourcesCmd = cmd as AddSourcesCommand;
-        const nodes = addSourcesCmd.decodeSourcesArg();
-        // TODO find schema nodes here
-        // this.getEditorView().addSources( schemaNodes );
+        const temp = addSourcesCmd.decodeSourcesArg();
+        if (temp instanceof Error) {
+
+        } else {
+          const nodes = temp as Array<any>;
+          for(const node of nodes) {
+            const connName = node.connnectionName;
+            const path = node.path;
+            const viewPath = "connection=" + connName + "/" + path;
+            this.getEditorView().addSourcePath(viewPath);
+          }
+        }
         break;
       }
       case RemoveSourcesCommand.id: {
         const removeSourcesCmd = cmd as RemoveSourcesCommand;
         const nodes = removeSourcesCmd.decodeSourcesArg();
-        // TODO find schema nodes here
-        // this.getEditorView().removeSource( schemaNodes );
+
+        // TODO: work with the decoded sources
+        for(const node of nodes) {
+          const connName = node.connnectionName;
+          const path = node.path;
+          const viewPath = "connection=" + connName + "/" + path;
+          this.getEditorView().removeSourcePath(viewPath);
+        }
         break;
       }
       case UpdateViewDescriptionCommand.id: {
@@ -494,17 +508,17 @@ export class ViewEditorService {
     // Accumulate the view information
     // TODO: The below assumes once source per view.  Needs to be expanded in future
     const viewNames: string[] = [];
-    const sourceNodes: SchemaNode[] = [];
+    const sourceNodePaths: string[] = [];
 
     // Add the current editor view name and source Node
     viewNames.push(this._editorView.getName());
-    sourceNodes.push(this._editorView.getSources()[0]);
+    sourceNodePaths.push(this._editorView.getSourcePaths()[0]);
 
     // Add existing views and source nodes.  skip the view being edited
     for ( const view of this._editorVirtualization.getViews() ) {
       if ( viewNames.indexOf(view.getName()) === -1 ) {
         viewNames.push(view.getName());
-        sourceNodes.push(view.getSources()[0]); // Currently limited to one source per view
+        sourceNodePaths.push(view.getSourcePaths()[0]); // Currently limited to one source per view
       }
     }
 
@@ -512,7 +526,7 @@ export class ViewEditorService {
     this._vdbService.compositeSetVdbModelViews(serviceVdbName,
                                                serviceVdbModelName,
                                                viewNames,
-                                               sourceNodes,
+                                               sourceNodePaths,
                                                connections)
       .subscribe(
         () => {

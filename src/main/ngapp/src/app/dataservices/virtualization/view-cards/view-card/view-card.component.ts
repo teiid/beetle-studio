@@ -19,6 +19,7 @@ import { Component, DoCheck, EventEmitter, Input, OnInit, Output, ViewEncapsulat
 import { Action, ActionConfig, CardAction, CardConfig } from "patternfly-ng";
 import { LoggerService } from "@core/logger.service";
 import { View } from "@dataservices/shared/view.model";
+import { PathUtils } from "@dataservices/shared/path-utils";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -130,9 +131,9 @@ export class ViewCardComponent implements DoCheck, OnInit {
    */
   public get sourceTableText(): string {
     let sourceText = "[No Source Selected]";
-    const nodes = this.view.getSources();
-    if (nodes && nodes.length > 0) {
-      sourceText = "[" + nodes[0].getConnectionName() + "]  " + nodes[0].getName();
+    const sourcePaths = this.view.getSourcePaths();
+    if (sourcePaths && sourcePaths.length > 0) {
+      sourceText = "[" + PathUtils.getConnectionName(sourcePaths[0]) + "]  " + PathUtils.getSourceName(sourcePaths[0]);
     }
     return sourceText;
   }
