@@ -74,6 +74,8 @@ export class SchemaNode {
   }
 
   /**
+   * Get the path, for example: ( schema=public/table=customer ).  It is assumed that the path here does NOT include
+   * the connection.
    * @returns {string} the node path
    */
   public getPath(): string {
@@ -102,6 +104,8 @@ export class SchemaNode {
   }
 
   /**
+   * Set the path, for example: ( schema=public/table=customer ).  It is assumed that the path here does NOT include
+   * the connection.
    * @param {string} path the node path
    */
   public setPath( path?: string ): void {

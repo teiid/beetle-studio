@@ -133,10 +133,18 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
       const sourcePaths = view.getSourcePaths();
       for (const sourcePath of sourcePaths) {
         const sNode = new SchemaNode();
-        sNode.setPath(sourcePath);
+        const connName = PathUtils.getConnectionName(sourcePath);
+        // If path contains connection - remove it for setting SchemaNode path
+        if (connName && connName !== null && connName.length > 0) {
+          const sPath = sourcePath.substring(sourcePath.indexOf("/") + 1);
+          sNode.setConnectionName(connName);
+          sNode.setPath(sPath);
+        } else {
+          sNode.setConnectionName(null);
+          sNode.setPath(sourcePath);
+        }
         sNode.setName(PathUtils.getSourceName(sourcePath));
         sNode.setType(PathUtils.getSourceType(sourcePath));
-        sNode.setConnectionName(PathUtils.getConnectionName(sourcePath));
         schemaNodes.push(sNode);
       }
       return schemaNodes;

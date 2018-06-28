@@ -60,7 +60,8 @@ export class AddSourcesCommand extends Command {
           arg += AddSourcesCommand.delim;
         }
 
-        arg += source.getPath();
+        // Prepend the connection to the schema node path
+        arg += "connection=" + source.getConnectionName() + "/" + source.getPath();
       } );
     }
 

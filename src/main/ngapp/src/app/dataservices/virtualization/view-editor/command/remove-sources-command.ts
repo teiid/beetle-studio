@@ -60,7 +60,8 @@ export class RemoveSourcesCommand extends Command {
           arg += ", ";
         }
 
-        arg += source.getPath();
+        // Prepend the connection to the schema node path
+        arg += "connection=" + source.getConnectionName() + "/" + source.getPath();
       } );
     }
 
