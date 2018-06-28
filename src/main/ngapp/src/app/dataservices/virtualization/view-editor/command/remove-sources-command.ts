@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 
@@ -28,33 +29,50 @@ export class RemoveSourcesCommand extends Command {
   public static readonly id = "RemoveSourcesCommand";
 
   /**
-   * The name of the command argument whose value is the Ids of the removed sources.
+   * The name of the command argument whose value is the paths of the sources being removed.
    *
    * @type {string}
    */
-  public static readonly removedSourcesIds = "removedSourcesIds";
+  public static readonly removedSourcePaths = "removedSourcePaths";
+
+  private static readonly delim = ", ";
 
   /**
-   * @param {string} removedSourcesIds the IDs of the sources being removed (cannot be `null` or empty)
+   * @param {string | SchemaNode} removedSources the JSON representation of the sources or the schema nodes of the sources
+   *                              being removed (cannot be `null` or empty)
    */
-  public constructor( removedSourcesIds: string[] ) {
+  public constructor( removedSources: string | SchemaNode[] ) {
     super( RemoveSourcesCommand.id, ViewEditorI18n.removeSourcesCommandName );
 
-    // concatenate IDs using comma as delimiter
-    let args = "";
-    let firstTime = true;
+    let arg: string;
 
-    removedSourcesIds.forEach( ( id ) => {
-      if ( firstTime ) {
-        firstTime = false;
-      } else {
-        args += Command.idsDelimiter;
-      }
+    if ( typeof removedSources === "string" ) {
+      arg = removedSources as string;
+    } else {
+      arg = "";
+      const sources = removedSources as SchemaNode[];
+      let firstTime = true;
 
-      args += id;
-    } );
+      sources.forEach( ( source ) => {
+        if ( firstTime ) {
+          firstTime = false;
+        } else {
+          arg += ", ";
+        }
 
-    this._args.set( RemoveSourcesCommand.removedSourcesIds, args );
+        arg += source.getPath();
+      } );
+    }
+
+    this._args.set( RemoveSourcesCommand.removedSourcePaths, arg );
+  }
+
+  /**
+   * @returns {string[]} an array of the paths of the sources being added
+   */
+  public getSourcePaths(): string[] {
+    const argValue = this.getArg( RemoveSourcesCommand.removedSourcePaths ) as string;
+    return argValue.split( RemoveSourcesCommand.delim );
   }
 
 }

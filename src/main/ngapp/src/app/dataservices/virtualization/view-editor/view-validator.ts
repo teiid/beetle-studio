@@ -34,7 +34,7 @@ export class ViewValidator {
         messages.push( Message.create( Problem.ERR0110 ) );
       }
 
-      if ( !view.getSources() || view.getSources().length === 0 ) {
+      if ( !view.getSourcePaths() || view.getSourcePaths().length === 0 ) {
         messages.push( Message.create( Problem.ERR0120 ) );
       }
     }

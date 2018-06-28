@@ -151,6 +151,51 @@ export class UndoManager {
   }
 
   /**
+   * @returns {Undoable[]} a collection of undoables in order from the first to the last (can be empty)
+   */
+  public toArray(): Undoable[] {
+    const result: Undoable[] = [];
+
+    let node = this.rootNode.right;
+
+    while ( node != null ) {
+      result.push( node.undoable );
+      node = node.right;
+    }
+
+    return result;
+  }
+
+  public toJSON(): {} {
+    const json = [];
+    this.toArray().forEach( ( undoable ) => json.push( undoable.toJSON() ) );
+
+    return {
+      undoables: json
+    };
+  }
+
+  /**
+   * @returns {string} a string representation of this undo manager
+   */
+  public toString(): string {
+    let result = "";
+    let firstTime = true;
+
+    this.toArray().forEach( ( undoable ) => {
+      if ( firstTime ) {
+        firstTime = false;
+      } else {
+        result += "\n";
+      }
+
+      result += undoable.toString();
+    } );
+
+    return result;
+  }
+
+  /**
    * @returns {string} a short description, suitable for use in tooltips, of the next available undo command
    */
   public undoLabel(): string {

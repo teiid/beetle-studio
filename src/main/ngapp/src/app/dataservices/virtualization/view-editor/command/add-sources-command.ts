@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 
@@ -28,33 +29,50 @@ export class AddSourcesCommand extends Command {
   public static readonly id = "AddSourcesCommand";
 
   /**
-   * The name of the command argument whose value is the IDs of the sources that are being added.
+   * The name of the command argument whose value is the paths of the sources being added.
    *
    * @type {string}
    */
-  public static readonly addedSourcesIds = "addedSourcesIds";
+  public static readonly addedSourcePaths = "addedSourcePaths";
+
+  private static readonly delim = ", ";
 
   /**
-   * @param {string} addedSourcesIds the IDs of the sources being added (cannot be `null` or empty)
+   * @param {string | SchemaNode} addedSources the JSON representation of the sources or the schema nodes of the sources
+   *                              being added (cannot be `null` or empty)
    */
-  public constructor( addedSourcesIds: string[] ) {
+  public constructor( addedSources: string | SchemaNode[] ) {
     super( AddSourcesCommand.id, ViewEditorI18n.addSourcesCommandName );
 
-    // concatenate IDs using comma as delimiter
-    let args = "";
-    let firstTime = true;
+    let arg: string;
 
-    addedSourcesIds.forEach( ( id ) => {
-      if ( firstTime ) {
-        firstTime = false;
-      } else {
-        args += Command.idsDelimiter;
-      }
+    if ( typeof addedSources === "string" ) {
+      arg = addedSources as string;
+    } else {
+      arg = "";
+      const sources = addedSources as SchemaNode[];
+      let firstTime = true;
 
-      args += id;
-    } );
+      sources.forEach( ( source ) => {
+        if ( firstTime ) {
+          firstTime = false;
+        } else {
+          arg += AddSourcesCommand.delim;
+        }
 
-    this._args.set( AddSourcesCommand.addedSourcesIds, args );
+        arg += source.getPath();
+      } );
+    }
+
+    this._args.set( AddSourcesCommand.addedSourcePaths, arg );
+  }
+
+  /**
+   * @returns {string[]} an array of the paths of the sources being added
+   */
+  public getSourcePaths(): string[] {
+    const argValue = this.getArg( AddSourcesCommand.addedSourcePaths ) as string;
+    return argValue.split( AddSourcesCommand.delim );
   }
 
 }

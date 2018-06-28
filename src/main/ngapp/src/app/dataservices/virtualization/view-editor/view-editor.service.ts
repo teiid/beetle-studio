@@ -17,7 +17,6 @@
 
 import { EventEmitter, Injectable, Output } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
-import { SchemaNode } from "@connections/shared/schema-node.model";
 import { LoggerService } from "@core/logger.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
@@ -32,14 +31,13 @@ import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/ev
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
-import { RemoveSourceCommand } from "@dataservices/virtualization/view-editor/command/remove-source-command";
 import { UpdateViewDescriptionCommand } from "@dataservices/virtualization/view-editor/command/update-view-description-command";
 import { UpdateViewNameCommand } from "@dataservices/virtualization/view-editor/command/update-view-name-command";
-import { AddSourceCommand } from "@dataservices/virtualization/view-editor/command/add-source-command";
 import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
 import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
 import { UndoManager } from "@dataservices/virtualization/view-editor/command/undo-redo/undo-manager";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
+import { Undoable } from "@dataservices/virtualization/view-editor/command/undo-redo/undoable";
 
 @Injectable()
 export class ViewEditorService {
@@ -176,7 +174,12 @@ export class ViewEditorService {
     this.updateViewState( command );
 
     // add to undo manager
-    this._undoMgr.add( CommandFactory.createUndoable( command ) );
+    const tempCmd = CommandFactory.createUndoable( command );
+
+    if ( tempCmd instanceof Undoable ) {
+      const undoable = tempCmd as Undoable;
+      this._undoMgr.add( undoable );
+    }
 
     // broadcast view change
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_STATE_CHANGED, [ command ] ) );
@@ -312,7 +315,6 @@ export class ViewEditorService {
   public redo(): void {
     if ( this.canRedo() ) {
       const redoCmd = this._undoMgr.popRedoCommand();
-      console.error( "redo cmd=" + redoCmd.toString() );
       this.updateViewState( redoCmd );
       this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.VIEW_STATE_CHANGED, [ redoCmd ] ) );
     } else {
@@ -430,24 +432,24 @@ export class ViewEditorService {
 
   private updateViewState( cmd: Command ): void {
     switch ( cmd.id ) {
-      case AddSourceCommand.id: {
-        const sourceId = cmd.getArg( AddSourceCommand.addedSourceId );
-        // TODO need to get the schema node here
-        // this.getEditorView().addSource( schemaNode );
-        break;
-      }
       case AddSourcesCommand.id: {
-        const sourcesIds = cmd.getArg( AddSourcesCommand.addedSourcesIds );
-        // TODO need to get the schema nodes here
-        // this.getEditorView().addSources( schemaNodes );
-        break;
-      }
-      case RemoveSourceCommand.id: {
-        this.getEditorView().removeSource( cmd.getArg( RemoveSourceCommand.removedSourceId ) );
+        const addSourcesCmd = cmd as AddSourcesCommand;
+        const paths = addSourcesCmd.getSourcePaths();
+
+        for ( const path of paths ) {
+          this.getEditorView().addSourcePath( path );
+        }
+
         break;
       }
       case RemoveSourcesCommand.id: {
-        this.getEditorView().removeSource( cmd.getArg( RemoveSourcesCommand.removedSourcesIds) );
+        const removeSourcesCmd = cmd as RemoveSourcesCommand;
+        const paths = removeSourcesCmd.getSourcePaths();
+
+        for ( const path of paths ) {
+          this.getEditorView().removeSourcePath( path );
+        }
+
         break;
       }
       case UpdateViewDescriptionCommand.id: {
@@ -469,7 +471,7 @@ export class ViewEditorService {
     const messages = ViewValidator.validate( this.getEditorView() );
 
     // clear message log
-    if ( this.getMessageCount() !== 0 && messages.length !== 0 ) {
+    if ( this.getMessageCount() !== 0 ) {
       this.clearMessages( ViewEditorPart.EDITOR, context );
     }
 
@@ -496,17 +498,17 @@ export class ViewEditorService {
     // Accumulate the view information
     // TODO: The below assumes once source per view.  Needs to be expanded in future
     const viewNames: string[] = [];
-    const sourceNodes: SchemaNode[] = [];
+    const sourceNodePaths: string[] = [];
 
     // Add the current editor view name and source Node
     viewNames.push(this._editorView.getName());
-    sourceNodes.push(this._editorView.getSources()[0]);
+    sourceNodePaths.push(this._editorView.getSourcePaths()[0]);
 
     // Add existing views and source nodes.  skip the view being edited
     for ( const view of this._editorVirtualization.getViews() ) {
       if ( viewNames.indexOf(view.getName()) === -1 ) {
         viewNames.push(view.getName());
-        sourceNodes.push(view.getSources()[0]); // Currently limited to one source per view
+        sourceNodePaths.push(view.getSourcePaths()[0]); // Currently limited to one source per view
       }
     }
 
@@ -514,7 +516,7 @@ export class ViewEditorService {
     this._vdbService.compositeSetVdbModelViews(serviceVdbName,
                                                serviceVdbModelName,
                                                viewNames,
-                                               sourceNodes,
+                                               sourceNodePaths,
                                                connections)
       .subscribe(
         () => {

@@ -22,10 +22,8 @@ export class ViewEditorI18n {
   public static readonly okButtonText = "OK";
 
   // commands
-  public static readonly addSourceCommandName = "Add Source";
   public static readonly addSourcesCommandName = "Add Sources";
   public static readonly noOpCommandName = "No operation";
-  public static readonly removeSourceCommandName = "Remove Source";
   public static readonly removeSourcesCommandName = "Remove Sources";
   public static readonly updateViewNameCommandName = "Update View Name";
   public static readonly updateViewDescriptionCommandName = "Update View Description";
@@ -75,8 +73,6 @@ export class ViewEditorI18n {
   public static readonly redoActionTooltip = "Redo";
   public static readonly saveActionTitle = "Save";
   public static readonly saveActionTooltip = "Save";
-  public static readonly saveProgressDialogMessage = "Saving View in Progress...";
-  public static readonly saveProgressDialogTitle = "Saving View";
   public static readonly showEditorCanvasAndViewsActionTooltip = "Show full editor";
   public static readonly showEditorCanvasOnlyActionTooltip = "Show canvas and properties only";
   public static readonly showEditorViewsOnlyActionTooltip = "Show information views only";

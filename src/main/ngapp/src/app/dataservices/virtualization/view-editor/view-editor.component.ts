@@ -35,6 +35,7 @@ import { CommandFactory } from "@dataservices/virtualization/view-editor/command
 import { BsModalService } from "ngx-bootstrap";
 import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
+import { Command } from "@dataservices/virtualization/view-editor/command/command";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -154,9 +155,15 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     // Show Dialog, act upon confirmation click
     const modalRef = this.modalService.show(ConnectionTableDialogComponent, {initialState});
     modalRef.content.okAction.take(1).subscribe((selectedNodes) => {
-      this.editorService.getEditorView().setSources( selectedNodes ); // TODO remove this line when service.updateViewState works for sources
-      const cmd = CommandFactory.createAddSourcesCommand( selectedNodes );
-      this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR, cmd );
+      // this.editorService.getEditorView().setSources( selectedNodes ); // TODO remove this line when service.updateViewState works for sources
+      const tempCmd = CommandFactory.createAddSourcesCommand( selectedNodes );
+
+      if ( tempCmd instanceof Command ) {
+        const cmd = tempCmd as Command;
+        this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR, cmd );
+      } else {
+        this.logger.error( "Failed to create AddSourcesCommand" );
+      }
     });
   }
 

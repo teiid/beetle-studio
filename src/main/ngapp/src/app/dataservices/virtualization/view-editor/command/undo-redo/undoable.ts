@@ -35,6 +35,23 @@ export class Undoable {
   }
 
   /**
+   * @returns {{}} a JSON representation of this undoable
+   */
+  public toJSON(): {} {
+    return {
+      undo: this.undoCommand.toJSON(),
+      redo: this.redoCommand.toJSON()
+    };
+  }
+
+  /**
+   * @returns {string} a string representation of this undoable
+   */
+  public toString(): string {
+    return "undo: " + this.undoCommand.toString() + ", redo: " + this.redoCommand.toString();
+  }
+
+  /**
    * @returns {Command} the undo command (never `null`)
    */
   public get undoCommand(): Command {

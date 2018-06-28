@@ -42,13 +42,6 @@ export abstract class Command {
    */
   public static readonly idPropJson = "id";
 
-  /**
-   * The delimiter used to separate source IDs in a command argument.
-   *
-   * @type {string}
-   */
-  public static readonly idsDelimiter = ",";
-
   protected readonly _args = new Map< string, any >();
   protected readonly _id: string;
   protected readonly _name: string;
@@ -99,6 +92,7 @@ export abstract class Command {
     return this._id;
   }
 
+  // noinspection JSMethodCanBeStatic
   /**
    * @param {string} argName the name of the argument being checked
    * @returns {boolean} `true` if the argument should not be serialized

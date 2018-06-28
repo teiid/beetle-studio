@@ -110,16 +110,17 @@ export class MockVdbService extends VdbService {
   }
 
   /**
-   * Creates the Vdb Model Views via the komodo rest interface
+   * Creates the Vdb Model Views via the komodo rest interface.  This is currently limited - will need to be improved
+   * in subsequent development.
    * @param {string} vdbName the vdb name
    * @param {string} modelName the model name
-   * @param {string[]} viewNames the view names
-   * @param {SchemaNode[]} sourceNodes the source node for each view
-   * @param {Connection[]} connections the array of available active connections
+   * @param {string[]} viewNames the view names (1:1 correspondence with schemaNodes)
+   * @param {string[]} sourceNodePaths the path for each source node
+   * @param {Connection[]} connections the array of active connections
    * @returns {Observable<boolean>}
    */
   public setVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
-                          sourceNodes: SchemaNode[], connections: Connection[]): Observable<boolean> {
+                          sourceNodePaths: string[], connections: Connection[]): Observable<boolean> {
     return Observable.of(true);
   }
 

@@ -24,6 +24,7 @@ import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-ed
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
+import { PathUtils } from "@dataservices/shared/path-utils";
 import { NotificationType } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 
@@ -116,19 +117,29 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
   public get hasViewSources(): boolean {
     const view = this.editorService.getEditorView();
     if (view) {
-      return view.getSources().length > 0;
+      return view.getSourcePaths().length > 0;
     }
     return false;
   }
 
   /**
-   * Get the sources for the view
+   * Get the source paths for the view
    * @returns {SchemaNode[]} the view sources
    */
   public get viewSources(): SchemaNode[] {
     const view = this.editorService.getEditorView();
     if (view !== null) {
-      return view.getSources();
+      const schemaNodes: SchemaNode[] = [];
+      const sourcePaths = view.getSourcePaths();
+      for (const sourcePath of sourcePaths) {
+        const sNode = new SchemaNode();
+        sNode.setPath(sourcePath);
+        sNode.setName(PathUtils.getSourceName(sourcePath));
+        sNode.setType(PathUtils.getSourceType(sourcePath));
+        sNode.setConnectionName(PathUtils.getConnectionName(sourcePath));
+        schemaNodes.push(sNode);
+      }
+      return schemaNodes;
     }
     return [];
   }
@@ -138,7 +149,7 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    * @param {SchemaNode} source the view source to be removed
    */
   public onViewSourceRemoved( source: SchemaNode ): void {
-    const cmd = CommandFactory.createRemoveSourceCommand( source.getName() );
+    const cmd = CommandFactory.createRemoveSourcesCommand( [ source ] );
     this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, cmd );
   }
 
