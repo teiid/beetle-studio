@@ -9,10 +9,12 @@ import { UpdateViewDescriptionCommand } from "@dataservices/virtualization/view-
 describe( "Command Factory Tests", () => {
 
   it("AddSourcesCommand Test", () => {
-    const path1 = "connection=conn1/table=node1";
-    const path2 = "connection=conn2/table=node2";
-    const node1 = SchemaNode.create( { path: path1 } );
-    const node2 = SchemaNode.create( { path: path2 } );
+    const conn1 = "conn1";
+    const conn2 = "conn2";
+    const path1 = "table=node1";
+    const path2 = "table=node2";
+    const node1 = SchemaNode.create( { connectionName: conn1, path: path1 } );
+    const node2 = SchemaNode.create( { connectionName: conn2, path: path2 } );
     const tempCmd = CommandFactory.createAddSourcesCommand( [ node1, node2 ] );
     expect( tempCmd instanceof AddSourcesCommand ).toBe( true );
 
@@ -21,7 +23,7 @@ describe( "Command Factory Tests", () => {
     expect( cmd.args ).not.toBeNull();
     expect( cmd.args.size ).toBe( 1 );
 
-    const expected = path1 + ", " + path2;
+    const expected = "connection=" + conn1 + "/" + path1 + ", connection=" + conn2 + "/" + path2;
     expect( cmd.getArg( AddSourcesCommand.addedSourcePaths ) ).toEqual( expected );
     expect( cmd.toString() ).toBe( "AddSourcesCommand, addedSourcePaths=" + expected );
     expect( cmd.isUndoable() ).toBe( true );
@@ -37,8 +39,8 @@ describe( "Command Factory Tests", () => {
   });
 
   it("AddSourcesCommand Undo Test", () => {
-    const node1 = SchemaNode.create( { path: "connection=conn1/table=node1" } );
-    const node2 = SchemaNode.create( { path: "connection=conn2/table=node2" } );
+    const node1 = SchemaNode.create( { connectionName: "conn1", path: "table=node1" } );
+    const node2 = SchemaNode.create( { connectionName: "conn2", path: "table=node2" } );
     const tempCmd = CommandFactory.createAddSourcesCommand( [ node1, node2 ] );
     expect( tempCmd instanceof AddSourcesCommand ).toBe( true );
 
@@ -69,10 +71,12 @@ describe( "Command Factory Tests", () => {
   });
 
   it("RemoveSourcesCommand Test", () => {
-    const path1 = "connection=conn1/table=node1";
-    const path2 = "connection=conn2/table=node2";
-    const node1 = SchemaNode.create( { path: path1 } );
-    const node2 = SchemaNode.create( { path: path2 } );
+    const conn1 = "conn1";
+    const conn2 = "conn2";
+    const path1 = "table=node1";
+    const path2 = "table=node2";
+    const node1 = SchemaNode.create( { connectionName: "conn1", path: path1 } );
+    const node2 = SchemaNode.create( { connectionName: "conn2", path: path2 } );
     const temp = CommandFactory.createRemoveSourcesCommand( [ node1, node2 ] );
     expect( temp instanceof RemoveSourcesCommand ).toBe( true );
 
@@ -81,7 +85,7 @@ describe( "Command Factory Tests", () => {
     expect( cmd.args ).not.toBeNull();
     expect( cmd.args.size ).toBe( 1 );
 
-    const expected = path1 + ", " + path2;
+    const expected = "connection=" + conn1 + "/" + path1 + ", connection=" + conn2 + "/" + path2;
     expect( cmd.getArg( RemoveSourcesCommand.removedSourcePaths ) ).toEqual( expected );
     expect( cmd.toString() ).toEqual( "RemoveSourcesCommand, removedSourcePaths=" + expected );
     expect( cmd.isUndoable() ).toBe( true );
@@ -97,8 +101,8 @@ describe( "Command Factory Tests", () => {
   });
 
   it("RemoveSourcesCommand Undo Test", () => {
-    const node1 = SchemaNode.create( { path: "connection=conn1/table=node1" } );
-    const node2 = SchemaNode.create( { path: "connection=conn2/table=node2" } );
+    const node1 = SchemaNode.create( { connectionName: "conn1", path: "table=node1" } );
+    const node2 = SchemaNode.create( { connectionName: "conn2", path: "table=node2" } );
     const tempCmd = CommandFactory.createRemoveSourcesCommand( [ node1, node2 ] );
     expect( tempCmd instanceof RemoveSourcesCommand ).toBe( true );
 

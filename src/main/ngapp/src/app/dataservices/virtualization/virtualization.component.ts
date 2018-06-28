@@ -446,28 +446,6 @@ export class VirtualizationComponent implements OnInit {
     //   );
   }
 
-  // private getSourceNode(nodeFqn: string): SchemaNode {
-  //
-  //   const fqnArray = nodeFqn.split("/", 10);
-  //
-  //   const arrayLength = fqnArray.length;
-  //   const connectionSegment = fqnArray[0];
-  //   let parts = connectionSegment.split("=", 2);
-  //   const connName = parts[1];
-  //
-  //   const nodeSeqment = fqnArray[arrayLength - 1];
-  //   parts = nodeSeqment.split("=", 2);
-  //   const nodeName = parts[1];
-  //   const nodeType = parts[0];
-  //
-  //   const schemaNode = new SchemaNode();
-  //   schemaNode.setConnectionName(connName);
-  //   schemaNode.setName(nodeName);
-  //   schemaNode.setType(nodeType);
-  //
-  //   return schemaNode;
-  // }
-
   /*
    * Set the editable state of all views.
    * @param {boolean} isEditable the editable state
