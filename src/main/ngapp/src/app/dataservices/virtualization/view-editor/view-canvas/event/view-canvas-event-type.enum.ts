@@ -15,38 +15,26 @@
  * limitations under the License.
  */
 
-/**
- * An enumeration of Deployment state
- */
-export enum DeploymentState {
+export enum ViewCanvasEventType {
 
   /**
-   * loading
+   * An event indicating the selection of objects in the canvas has changed.
    */
-  LOADING,
+  CANVAS_SELECTION_CHANGED = "CANVAS_SELECTION_CHANGED",
 
   /**
-   * active
+   * An event indicating a source node should be created
    */
-  ACTIVE,
+  CREATE_SOURCE = "CREATE_SOURCE",
 
   /**
-   * inactive
+   * An event indicating a composition node should be created
    */
-  INACTIVE,
+  CREATE_COMPOSITION = "CREATE_COMPOSITION",
 
   /**
-   * failed
+   * An event indicating a node should be deleted
    */
-  FAILED,
+  DELETE_NODE = "DELETE_NODE",
 
-  /**
-   * not deployed
-   */
-  NOT_DEPLOYED,
-
-  /**
-   * Indicates that the view compositions have changed.
-   */
-  COMPOSITIONS_CHANGED = "COMPOSITIONS_CHANGED",
 }

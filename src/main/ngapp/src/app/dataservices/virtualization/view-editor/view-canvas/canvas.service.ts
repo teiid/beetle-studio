@@ -14,25 +14,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Injectable, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Injectable, EventEmitter, ChangeDetectorRef, Output } from '@angular/core';
 import { CanvasConstants } from '@dataservices/virtualization/view-editor/view-canvas/canvas-constants';
 import { CanvasNode, CanvasLink, CanvasGraph } from '@dataservices/virtualization/view-editor/view-canvas/models';
+import { ViewCanvasEvent } from "@dataservices/virtualization/view-editor/view-canvas/event/view-canvas-event";
+import { ViewCanvasEventType } from "@dataservices/virtualization/view-editor/view-canvas/event/view-canvas-event-type.enum";
 import * as d3 from 'd3';
 import * as _ from "lodash";
 
 @Injectable()
 export class CanvasService {
 
+  /**
+   * An event fired when the state of the canvas has changed.
+   *
+   * @type {EventEmitter<ViewCanvasEvent>}
+   */
+  @Output() public canvasEvent: EventEmitter< ViewCanvasEvent > = new EventEmitter();
+
   private canvasGraph: CanvasGraph;
   private viewReference: ChangeDetectorRef;
-
-  public canvasNodesSelected: EventEmitter<CanvasNode[]> = new EventEmitter();
 
   /**
    * This service will provide methods to enable user interaction with elements
    * while maintaining the d3 simulations physics
    */
   constructor() {}
+
+  /**
+   * The interactable graph.
+   * This method does not interact with the document, purely physical calculations with d3
+   */
+  public newCanvasGraph(options: { width, height }, changeDetectorRef: ChangeDetectorRef): CanvasGraph {
+    this.viewReference = changeDetectorRef;
+
+    this.canvasGraph = new CanvasGraph(this, options);
+    this.canvasGraph.nodesSelected.subscribe((nodes) => {
+      const event = ViewCanvasEvent.create(ViewCanvasEventType.CANVAS_SELECTION_CHANGED, nodes);
+      this.canvasEvent.emit(event);
+    });
+
+    /**
+     * Binding change detection check on each tick
+     * This along with an onPush change detection strategy should enforce checking only when relevant!
+     * This improves scripting computation duration, consistently.
+     * Also, it makes sense to avoid unnecessary checks when we are dealing only with simulations data binding.
+     */
+    this.canvasGraph.ticker.subscribe((d) => {
+      this.viewReference.markForCheck();
+    });
+
+    return this.canvasGraph;
+  }
 
   private stopPropagation(): void {
     // Stop propagration of click event to parent svg
@@ -53,62 +86,45 @@ export class CanvasService {
   }
 
   private addNodeCallback(source: CanvasNode): void {
-
-    //
-    // Ensure all nodes have been unfixed
-    // to allow the graph to properly relayout
-    //
-    this.canvasGraph.unfixNodes();
-
-    //
-    // Fix the source node
-    //
-    source.setFixed(true);
-
-    let type = null;
+    let eventType = null;
     if (source.type === CanvasConstants.SOURCE_TYPE)
-      type = CanvasConstants.COMPONENT_TYPE;
-    else
-      type = CanvasConstants.SOURCE_TYPE;
+      eventType = ViewCanvasEventType.CREATE_COMPOSITION;
+    else if (source.type === CanvasConstants.COMPONENT_TYPE)
+      eventType = ViewCanvasEventType.CREATE_SOURCE;
 
-    const tgtId = this.createNode(type, '<<ToBeImplemented>>');
-    const srcId = source.id;
-
+    const event = ViewCanvasEvent.create(eventType, []);
+    this.canvasEvent.emit(event);
     //
-    // Create the link and update the graph
+    // //
+    // // Ensure all nodes have been unfixed
+    // // to allow the graph to properly relayout
+    // //
+    // this.canvasGraph.unfixNodes();
     //
-    this.createLink(srcId, tgtId, true);
+    // //
+    // // Fix the source node
+    // //
+    // source.setFixed(true);
+    //
+    // let type = null;
+    // if (source.type === CanvasConstants.SOURCE_TYPE)
+    //   type = CanvasConstants.COMPONENT_TYPE;
+    // else
+    //   type = CanvasConstants.SOURCE_TYPE;
+    //
+    // const tgtId = this.createNode(type, '<<ToBeImplemented>>');
+    // const srcId = source.id;
+    //
+    // //
+    // // Create the link and update the graph
+    // //
+    // this.createLink(srcId, tgtId, true);
     this.stopPropagation();
   }
 
   private removeNodeCallback(node: CanvasNode) {
     this.deleteNode(node.id, true);
     this.stopPropagation();
-  }
-
-  /**
-   * The interactable graph.
-   * This method does not interact with the document, purely physical calculations with d3
-   */
-  public newCanvasGraph(options: { width, height }, changeDetectorRef: ChangeDetectorRef): CanvasGraph {
-    this.viewReference = changeDetectorRef;
-
-    this.canvasGraph = new CanvasGraph(this, options);
-    this.canvasGraph.nodesSelected.subscribe((nodes) => {
-      this.canvasNodesSelected.emit(nodes);
-    });
-
-    /**
-     * Binding change detection check on each tick
-     * This along with an onPush change detection strategy should enforce checking only when relevant!
-     * This improves scripting computation duration, consistently.
-     * Also, it makes sense to avoid unnecessary checks when we are dealing only with simulations data binding.
-     */
-    this.canvasGraph.ticker.subscribe((d) => {
-      this.viewReference.markForCheck();
-    });
-
-    return this.canvasGraph;
   }
 
   public nodes(): CanvasNode[] {
@@ -227,6 +243,9 @@ export class CanvasService {
     return canvasNode.id;
   }
 
+  /**
+   * Delete the node with the given id
+   */
   public deleteNode(nodeId: string, refresh?: boolean) {
     if (! this.canvasGraph)
       throw new Error("A canvas graph is required before removing a node");

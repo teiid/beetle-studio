@@ -17,6 +17,7 @@
 
 import { Component, OnDestroy, OnInit, AfterViewInit, ViewEncapsulation } from "@angular/core";
 import { SchemaNode } from "@connections/shared/schema-node.model";
+import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
@@ -31,6 +32,8 @@ import { Subscription } from "rxjs/Subscription";
 import { CanvasNode, CanvasLink } from '@dataservices/virtualization/view-editor/view-canvas/models';
 import { CanvasConstants } from '@dataservices/virtualization/view-editor/view-canvas/canvas-constants';
 import { CanvasService } from '@dataservices/virtualization/view-editor/view-canvas/canvas.service';
+import { ViewCanvasEvent } from "@dataservices/virtualization/view-editor/view-canvas/event/view-canvas-event";
+import { ViewCanvasEventType } from "@dataservices/virtualization/view-editor/view-canvas/event/view-canvas-event-type.enum";
 import * as _ from "lodash";
 
 @Component({
@@ -50,11 +53,14 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly logger: LoggerService;
   private readonly editorService: ViewEditorService;
   private readonly canvasService: CanvasService;
-  private subscription: Subscription;
+
   private saveViewNotificationHeader: string;
   private saveViewNotificationMessage: string;
   private saveViewNotificationType = NotificationType.SUCCESS;
   private saveViewNotificationVisible = false;
+
+  private editorSubscription: Subscription;
+  private canvasSubscription: Subscription;
 
   constructor( editorService: ViewEditorService,
                logger: LoggerService,
@@ -65,14 +71,15 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private viewStateChanged(source: ViewEditorPart, args: any[]): void {
-    if (args.length > 0 && args[0] === ViewStateChangeId.SOURCES_CHANGED) {
-      if (args[1] instanceof Array) {
-        const schemaNodes: Array<SchemaNode> = <Array<SchemaNode>> args[1];
-        for (let i = 0; i < schemaNodes.length; ++i) {
-          const schemaNode = schemaNodes[i];
-          const label = schemaNode.getName() + " : " + schemaNode.getConnectionName();
-          const id = this.canvasService.createNode(CanvasConstants.SOURCE_TYPE, label, i == (schemaNodes.length - 1));
-        }
+    if (args.length === 0)
+      return;
+
+    if (args[0] instanceof AddSourcesCommand) {
+      const cmd: AddSourcesCommand = <AddSourcesCommand> args[0];
+      const srcPaths = cmd.getSourcePaths();
+      for (let i = 0; i < srcPaths.length; ++i) {
+        const srcPath = srcPaths[i];
+        const id = this.canvasService.createNode(CanvasConstants.SOURCE_TYPE, srcPath, i == (srcPaths.length - 1));
       }
     }
   }
@@ -107,26 +114,63 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
           setTimeout(() => this.saveViewNotificationVisible = false, 8000);
         }
       }
-    } else if (event.typeIsViewStateChanged()) {
+    }
+    else if (event.typeIsViewStateChanged()) {
       this.viewStateChanged(event.source, event.args);
     }
     else {
-      this.logger.debug( "ViewCanvasComponent not handling received event: " + event.toString() );
+      this.logger.debug( "ViewCanvasComponent not handling received editor event: " + event.toString());
     }
   }
 
+  private handleCanvasEvent(event: ViewCanvasEvent): void {
+    switch (event.type) {
+      case ViewCanvasEventType.CREATE_SOURCE:
+        const srcEvent = ViewEditorEvent.create(ViewEditorPart.CANVAS, ViewEditorEventType.CREATE_SOURCE, event.args);
+        this.editorService.editorEvent.emit(srcEvent);
+        break;
+      case ViewCanvasEventType.CREATE_COMPOSITION:
+        const compEvent = ViewEditorEvent.create(ViewEditorPart.CANVAS, ViewEditorEventType.CREATE_COMPOSITION, event.args);
+        this.editorService.editorEvent.emit(compEvent);
+        break;
+      case ViewCanvasEventType.DELETE_NODE:
+      case ViewCanvasEventType.CANVAS_SELECTION_CHANGED:
+
+        //
+        // TODO
+        // Need to work out what to place inside the event
+        // for other compomenents to make use of
+        //
+        // const selectEvent = ViewEditorEvent.create(ViewEditorPart.CANVAS, ViewEditorEventType.CANVAS_SELECTION_CHANGED, event.args);
+        // this.editorService.editorEvent.emit(srcEvent);
+        // break;
+
+        const selected = <Array<CanvasNode>> event.args;
+        this.logger.debug("ViewCanvasComponent selected " + selected.length + " nodes");
+        selected.forEach((node) => {
+          this.logger.debug("Selected: " + node.label);
+        });
+
+        break;
+      default:
+        this.logger.debug("ViewCanvasComponent not handling received canvas event: " + event.toString());
+    }
+  }
   /**
    * Cleanup code when destroying the canvas and properties parts.
    */
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.editorSubscription.unsubscribe();
+    this.canvasSubscription.unsubscribe();
   }
 
   /**
    * Initialization code run after construction.
    */
   public ngOnInit(): void {
-    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
+    this.editorSubscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
+
+    this.canvasSubscription = this.canvasService.canvasEvent.subscribe((event) => this.handleCanvasEvent(event));
   }
 
   public ngAfterViewInit() {
@@ -151,7 +195,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.canvasService.createLink(nodeIds[2], nodeIds[4]);
     // this.canvasService.createLink(nodeIds[3], nodeIds[4], true);
 
-    this.canvasService.canvasNodesSelected.subscribe((nodes) => {
+    this.canvasService.canvasEvent.subscribe((nodes) => {
       if (_.isEmpty(nodes)) {
         console.log("No nodes selected");
         return;

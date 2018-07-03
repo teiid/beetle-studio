@@ -32,6 +32,16 @@ export enum ViewEditorEventType {
   CANVAS_SELECTION_CHANGED = "CANVAS_SELECTION_CHANGED",
 
   /**
+   * An event indicating a source should be created
+   */
+  CREATE_SOURCE = "CREATE_SOURCE",
+
+  /**
+   * An event indicating a composition should be created
+   */
+  CREATE_COMPOSITION = "CREATE_COMPOSITION",
+
+  /**
    * An event indicating the view being edited has been set. This will only be fired one time one the view editor is
    * opened. The one event argument is the {@link View} being set.
    *
