@@ -1,0 +1,114 @@
+<pfng-wizard #wizard
+             [config]="wizardConfig"
+             class = "add-composition-wizard"
+             (onCancel)="cancelClicked($event)"
+             (onNext)="nextClicked($event)"
+             (onStepChange)="stepChanged($event)">
+  <!-- ------------------------- -->
+  <!-- Step 1 : Composition Table -->
+  <!-- ------------------------- -->
+  <pfng-wizard-step [config]="step1Config">
+    <div *ngIf="treeLoading">
+      <div class="spinner spinner-lg blank-slate-pf-icon"></div>
+    </div>
+    <!-- Connection Types failed to load -->
+    <div class="card-pf card-pf-accented card-pf-error" *ngIf="treeLoadedFailed">
+      <div class="card-pf-heading">
+        <h2 class="card-pf-title">
+          <span class="fa fa-fw fa-exclamation"></span>
+          <span i18n="@@addCompositionWizard.step1InitError">Step Initialization Error</span>
+        </h2>
+      </div>
+      <div class="card-pf-body">
+        <p i18n="@@addCompositionWizard.couldNotLoadCompositionTables">
+          Could not load the tables.  Please Try relaunching the wizard or check the console log.
+        </p>
+      </div>
+    </div>
+    <div [hidden]="!treeLoadedSuccess">
+      <h5><strong>{{step1InstructionMessage}}</strong></h5>
+      <app-connection-tree-selector #connTree
+        (nodeSelected)="onTreeNodeSelected($event)"
+        (nodeDeselected)="onTreeNodeDeselected($event)"></app-connection-tree-selector>
+      <div>
+        <h4>{{currentSelectionMsg}}</h4>
+        <strong>{{ selectionText }}</strong>
+      </div>
+    </div>
+  </pfng-wizard-step>
+  <!-- ------------------------------- -->
+  <!-- Step 2 : Composition Definition -->
+  <!-- ------------------------------- -->
+  <pfng-wizard-step [config]="step2Config">
+    <h5><strong>{{step2InstructionMessage}}</strong></h5>
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-5">
+          <h5><strong>{{ leftCompositionTableTitle }}</strong></h5>
+        </div>
+        <div class="col-md-2">
+          &nbsp;
+        </div>
+        <div class="col-md-5">
+          <h5><strong>{{ rightCompositionTableTitle }}</strong></h5>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-5" *ngIf="lhColumnsLoadedSuccess">
+          <pfng-table
+            [columns]="lhTableColumns"
+            [config]="lhTableConfig"
+            [dataTableConfig]="ngxLhTableConfig"
+            (onSelect)="lhColumnSelectionChange($event)"
+            [rows]="lhTableRows">
+          </pfng-table>
+        </div>
+        <div class="col-md-5 comp-wizard-column-margins" *ngIf="lhColumnsLoading">
+          <div class="spinner spinner-lg blank-slate-pf-icon"></div>
+        </div>
+        <div class="col-md-5 comp-wizard-column-margins" *ngIf="lhColumnsLoadedFailed">
+          <pfng-inline-notification
+            [header]="columnLoadFailedHeader"
+            [message]="columnLoadFailedMsg"
+            [type]="columnLoadFailedType">
+          </pfng-inline-notification>
+        </div>
+        <div class="col-md-2">
+          <h5><strong>Operator</strong></h5>
+          <select class="form-control" name="composition-type" [(ngModel)]="selectedCompositionType">
+            <option *ngFor="let compositionType of compositionTypes( )" [value]="compositionType">{{compositionType}}</option>
+          </select>
+          <div class="comp-wizard-condition"><h5><strong>Condition</strong></h5></div>
+          <select class="form-control" name="composition-condition" [(ngModel)]="selectedCompositionCondition">
+            <option *ngFor="let compositionCondition of compositionConditions( )" [value]="compositionCondition">{{compositionCondition}}</option>
+          </select>
+          <span class="fa fa-2x fa-arrows-h btn btn-default comp-wizard-swap" (click)="onSwapClicked()" title="Swap sources"></span>
+        </div>
+        <div class="col-md-5" *ngIf="lhColumnsLoadedSuccess">
+          <pfng-table
+            [columns]="rhTableColumns"
+            [config]="rhTableConfig"
+            [dataTableConfig]="ngxRhTableConfig"
+            (onSelect)="rhColumnSelectionChange($event)"
+            [rows]="rhTableRows">
+          </pfng-table>
+        </div>
+        <div class="col-md-4 comp-wizard-column-margins" *ngIf="rhColumnsLoading">
+          <div class="spinner spinner-lg blank-slate-pf-icon"></div>
+        </div>
+        <div class="col-md-4 comp-wizard-column-margins" *ngIf="rhColumnsLoadedFailed">
+          <pfng-inline-notification
+            [header]="columnLoadFailedHeader"
+            [message]="columnLoadFailedMsg"
+            [type]="columnLoadFailedType">
+          </pfng-inline-notification>
+        </div>
+      </div>
+    </div>
+
+  </pfng-wizard-step>
+</pfng-wizard>

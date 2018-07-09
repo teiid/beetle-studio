@@ -17,7 +17,7 @@
 
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
 import { SchemaNode } from "@connections/shared/schema-node.model";
-import { Column } from "@dataservices/selected-node/column";
+import { Column } from "@dataservices/shared/column.model";
 import { CardAction, CardConfig, TableConfig, TableEvent } from "patternfly-ng";
 
 @Component({
@@ -49,16 +49,39 @@ export class SelectedNodeComponent implements OnInit {
     ];
 
     // TODO: replace with call to get the column metadata
-    this.columns = [
-      new Column( "name", true, "string", 25 ),
-      new Column( "age", true, "integer", 3 ),
-      new Column( "street", true, "string", 30 ),
-      new Column( "state", true, "string", 2 ),
-      new Column( "zipcode", true, "string", 9 ),
-      new Column( "company", true, "string", 50 ),
-      new Column( "married", true, "boolean", 1 ),
-      new Column( "gender", true, "string", 1 ),
-    ];
+    const c1 = new Column();
+    const c2 = new Column();
+    const c3 = new Column();
+    const c4 = new Column();
+    const c5 = new Column();
+    const c6 = new Column();
+    const c7 = new Column();
+    const c8 = new Column();
+    c1.setName("name");
+    c2.setName("age");
+    c3.setName("street");
+    c4.setName("state");
+    c5.setName("zipcode");
+    c6.setName("company");
+    c7.setName("married");
+    c8.setName("gender");
+    c1.setDatatype("string");
+    c2.setDatatype("integer");
+    c3.setDatatype("string");
+    c4.setDatatype("string");
+    c5.setDatatype("string");
+    c6.setDatatype("string");
+    c7.setDatatype("boolean");
+    c8.setDatatype("string");
+    c1.setSize(25);
+    c2.setSize(3);
+    c3.setSize(30);
+    c4.setSize(2);
+    c5.setSize(9);
+    c6.setSize(50);
+    c7.setSize(1);
+    c8.setSize(1);
+    this.columns = [ c1, c2, c3, c4, c5, c6, c7, c8 ];
 
     this.tableConfig = {
       showCheckbox: true

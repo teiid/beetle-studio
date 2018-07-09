@@ -28,6 +28,7 @@ import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
 import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
+import { Column } from "@dataservices/shared/column.model";
 
 @Injectable()
 export class TestDataService {
@@ -403,19 +404,19 @@ export class TestDataService {
   private static connSummariesConnOnly = [
     TestDataService.createConnectionSummary(TestDataService.conn1, null),
     TestDataService.createConnectionSummary(TestDataService.conn2, null),
-    TestDataService.createConnectionSummary(TestDataService.conn3, null)
+    // TestDataService.createConnectionSummary(TestDataService.conn3, null)
   ];
 
   private static connSummariesSchemaStatusOnly = [
     TestDataService.createConnectionSummary(null, TestDataService.conn1Status),
     TestDataService.createConnectionSummary(null, TestDataService.conn2Status),
-    TestDataService.createConnectionSummary(null, TestDataService.conn3Status)
+    // TestDataService.createConnectionSummary(null, TestDataService.conn3Status)
   ];
 
   private static connSummariesBothConnAndStatus = [
     TestDataService.createConnectionSummary(TestDataService.conn1, TestDataService.conn1Status),
     TestDataService.createConnectionSummary(TestDataService.conn2, TestDataService.conn2Status),
-    TestDataService.createConnectionSummary(TestDataService.conn3, TestDataService.conn3Status)
+    // TestDataService.createConnectionSummary(TestDataService.conn3, TestDataService.conn3Status)
   ];
 
   // =================================================================
@@ -1103,11 +1104,81 @@ export class TestDataService {
     const sNode3 = SchemaNode.create(TestDataService.conn3SchemaJson);
     conn3SchemaRoots.push(sNode3);
 
-    nodesMap.set( TestDataService.pgConn.getId(), pgConnSchemaRoots );
+    // nodesMap.set( TestDataService.pgConn.getId(), pgConnSchemaRoots );
     nodesMap.set( TestDataService.conn1.getId(), conn1SchemaRoots );
     nodesMap.set( TestDataService.conn2.getId(), conn2SchemaRoots );
-    nodesMap.set( TestDataService.conn3.getId(), conn3SchemaRoots );
+    // nodesMap.set( TestDataService.conn3.getId(), conn3SchemaRoots );
     return nodesMap;
+  }
+
+  /**
+   * @returns {Map<string, Column[]>} the array of Columns for connection:tableOption
+   */
+  public getConnectionSchemaColumnsMap(): Map<string, Column[]> {
+    const columnsMap = new Map<string, Column[]>();
+
+    const col1 = new Column();
+    col1.setName("col1");
+    col1.setDatatype("string");
+    col1.setSize(6);
+    col1.setSelected(false);
+    const col2 = new Column();
+    col2.setName("col2");
+    col2.setDatatype("string");
+    col2.setSize(6);
+    col2.setSelected(false);
+    const col3 = new Column();
+    col3.setName("col3");
+    col3.setDatatype("string");
+    col3.setSize(6);
+    col3.setSelected(false);
+    const col4 = new Column();
+    col4.setName("col4");
+    col4.setDatatype("string");
+    col4.setSize(6);
+    col4.setSelected(false);
+    const col5 = new Column();
+    col5.setName("col5");
+    col5.setDatatype("string");
+    col5.setSize(6);
+    col5.setSelected(false);
+    const col6 = new Column();
+    col6.setName("col6");
+    col6.setDatatype("string");
+    col6.setSize(6);
+    col6.setSelected(false);
+    const col7 = new Column();
+    col7.setName("col7");
+    col7.setDatatype("string");
+    col7.setSize(6);
+    col7.setSelected(false);
+    const col8 = new Column();
+    col8.setName("col8");
+    col8.setDatatype("string");
+    col8.setSize(6);
+    col8.setSelected(false);
+    const col9 = new Column();
+    col9.setName("col9");
+    col9.setDatatype("string");
+    col9.setSize(6);
+    col9.setSelected(false);
+    const col10 = new Column();
+    col10.setName("col10");
+    col10.setDatatype("string");
+    col10.setSize(6);
+    col10.setSelected(false);
+
+    const conn1Table1Id = TestDataService.conn1.getId() + ":" + "schema=public/table=customer";
+    const conn1Table2Id = TestDataService.conn1.getId() + ":" + "schema=public/table=stuff";
+    const conn2Table1Id = TestDataService.conn2.getId() + ":" + "collection=restaurants";
+    const conn2Table2Id = TestDataService.conn2.getId() + ":" + "collection=restaurants/embedded=grades";
+    const conn2Table3Id = TestDataService.conn2.getId() + ":" + "collection=restaurants/embedded=location";
+    columnsMap.set( conn1Table1Id, [col1, col2] );
+    columnsMap.set( conn1Table2Id, [col3, col4, col5] );
+    columnsMap.set( conn2Table1Id, [col6] );
+    columnsMap.set( conn2Table2Id, [col7, col8] );
+    columnsMap.set( conn2Table3Id, [col9, col10] );
+    return columnsMap;
   }
 
   /**

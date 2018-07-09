@@ -12,14 +12,14 @@
       </div>
       <span class="pull-left fa fa-check-circle-o fa-2x card-action-icon"
             style="color:green;"
-            *ngIf="view.valid"
+            *ngIf="view.complete"
             data-toggle="tooltip"
             data-placement="right"
             title="Valid">
       </span>
       <span class="pull-left fa fa-exclamation-triangle fa-2x card-action-icon"
             style="color:orange;"
-            *ngIf="!view.valid"
+            *ngIf="!view.complete"
             data-toggle="tooltip"
             data-placement="right"
             title="Invalid">

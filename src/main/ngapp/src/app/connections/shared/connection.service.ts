@@ -33,6 +33,7 @@ import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { Column } from "@dataservices/shared/column.model";
 
 @Injectable()
 export class ConnectionService extends ApiService {
@@ -226,10 +227,36 @@ export class ConnectionService extends ApiService {
   public getConnectionSchema(connectionId: string): Observable<SchemaNode[]> {
     return this.http
       .get( environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath
-                                               + "/" + connectionId + "/schema", this.getAuthRequestOptions())
+        + "/" + connectionId + "/schema", this.getAuthRequestOptions())
       .map((response) => {
         const schemaNodes = response.json();
         return schemaNodes.map((schemaNode) => SchemaNode.create( schemaNode ));
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Get the columns for the specified connection and table.  The connection must be ACTIVE, otherwise the schema
+   * will be empty.
+   * @param {string} connectionId the connection id
+   * @param {string} tableOption the table option (eg. schema=public/table=customer)
+   * @returns {Observable<Column[]>}
+   */
+  public getConnectionSchemaColumns(connectionId: string, tableOption: string): Observable<Column[]> {
+    // setup query parameters
+    const tableParam = {
+      params: {
+        "tableOption": tableOption
+      }
+    };
+    const options = new RequestOptions( tableParam );
+
+    return this.http
+      .get( environment.komodoWorkspaceUrl + ConnectionsConstants.connectionsRootPath
+        + "/" + connectionId + "/schema-columns", this.getAuthRequestOptions().merge(options))
+      .map((response) => {
+        const columns = response.json();
+        return columns.map((column) => Column.create( column ));
       })
       .catch( ( error ) => this.handleError( error ) );
   }

@@ -37,6 +37,11 @@ import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng"
 import { Subscription } from "rxjs/Subscription";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
+import { AddCompositionWizardComponent } from "@dataservices/virtualization/view-editor/add-composition-wizard/add-composition-wizard.component";
+import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
+import { AddCompositionCommand } from "@dataservices/virtualization/view-editor/command/add-composition-command";
+import { SchemaNode } from "@connections/shared/schema-node.model";
+import { Composition } from "@dataservices/shared/composition.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -55,6 +60,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   private isNewView = false;
   private readonly logger: LoggerService;
   private modalService: BsModalService;
+  private selectionService: SelectionService;
   private subscription: Subscription;
   private saveInProgress = false;
 
@@ -102,6 +108,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     this.connectionService = connectionService;
     this.logger = logger;
     this.modalService = modalService;
+    this.selectionService = selectionService;
 
     // this is the service that is injected into all the editor parts
     this.editorService = editorService;
@@ -110,12 +117,10 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   }
 
   private canAddComposition(): boolean {
-    // TODO implement canAddComposition
-    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
+    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas && this.canvasSingleSourceSelected;
   }
 
   private canAddSource(): boolean {
-    // TODO implement canAddSource
     return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
   }
 
@@ -142,9 +147,42 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     return !this.fatalErrorOccurred && this.editorService.canUndo();
   }
 
-  private doAddComposition(): void {
-    // TODO implement doAddComposition
-    alert( "Display add composition dialog" );
+  private doAddComposition(sourcePaths: string[]): void {
+    let sourcePath = null;
+    if (sourcePaths && sourcePaths.length === 1) {
+      sourcePath = sourcePaths[0];
+    }
+
+    // Show AddComposition Wizard, setting initial state
+    const initialState = { initialSourcePath: sourcePath, editorService: this.editorService};
+    const modalConfig = {};
+    const addCompositionModalRef = this.modalService.show(AddCompositionWizardComponent,
+      Object.assign({}, modalConfig, { class: 'modal-lg', initialState }));
+
+    // Acts upon finish button click
+    addCompositionModalRef.content.finishAction.take(1).subscribe((composition) => {
+      // Check the composition and add any missing view sources
+      const leftSourcePath = composition.getLeftSourcePath();
+      const rightSourcePath = composition.getRightSourcePath();
+      const viewHasLeftSource = this.editorService.getEditorView().hasSourcePath(leftSourcePath);
+      const viewHasRightSource = this.editorService.getEditorView().hasSourcePath(rightSourcePath);
+      if ( !viewHasLeftSource ) {
+        this.fireAddSourcesCommand(leftSourcePath);
+      }
+      if ( !viewHasRightSource ) {
+        this.fireAddSourcesCommand(rightSourcePath);
+      }
+
+      // Create and fire command to Add the Composition
+      this.fireAddCompositionCommand(composition);
+
+      addCompositionModalRef.hide();
+    });
+
+    // Acts upon cancel button click (closes wizard)
+    addCompositionModalRef.content.cancelAction.take(1).subscribe((composition) => {
+      addCompositionModalRef.hide();
+    });
   }
 
   private doAddSource(): void {
@@ -156,18 +194,46 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     };
 
     // Show Dialog, act upon confirmation click
+    const self = this;
     const modalRef = this.modalService.show(ConnectionTableDialogComponent, {initialState});
     modalRef.content.okAction.take(1).subscribe((selectedNodes) => {
-      // this.editorService.getEditorView().setSources( selectedNodes ); // TODO remove this line when service.updateViewState works for sources
-      const tempCmd = CommandFactory.createAddSourcesCommand( selectedNodes );
-
-      if ( tempCmd instanceof Command ) {
-        const cmd = tempCmd as Command;
-        this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR, cmd );
-      } else {
-        this.logger.error( "Failed to create AddSourcesCommand" );
-      }
+      self.fireAddSourcesCommand(selectedNodes);
     });
+  }
+
+  /**
+   * Generates the AddSourcesCommand for the supplied sources, and fires the viewEditor state change with the command.
+   * 'addedSources' must be an array of SchemaNodes -OR-
+   * string of the source paths (comma delimited) - path form: "connection=aConn/schema=aSchema/table=aTable"
+   *
+   * @param {string | SchemaNode} addedSources the string representation of the sources or the schema nodes of the sources
+   *                              being added (cannot be `null` or empty)
+   */
+  private fireAddSourcesCommand(addedSources: string | SchemaNode[]): void {
+    const tempCmd = CommandFactory.createAddSourcesCommand( addedSources );
+
+    if ( tempCmd instanceof Command ) {
+      const cmd = tempCmd as Command;
+      this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR, cmd );
+    } else {
+      this.logger.error( "Failed to create AddSourcesCommand" );
+    }
+  }
+
+  /**
+   * Generates the AddCompositionCommand for the supplied composition, and fires the viewEditor state change with the command.
+   *
+   * @param {Composition} addedComposition the Composition being added (cannot be `null` or empty)
+   */
+  private fireAddCompositionCommand(addedComposition: Composition): void {
+    const tempCmd = CommandFactory.createAddCompositionCommand( addedComposition );
+
+    if ( tempCmd instanceof Command ) {
+      const cmd = tempCmd as Command;
+      this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR, cmd );
+    } else {
+      this.logger.error( "Failed to create AddCompositionCommand" );
+    }
   }
 
   private doDelete(idents: string[]): void {
@@ -196,8 +262,15 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     modalRef.content.confirmAction.take(1).subscribe((value) => {
       idents.forEach((ident) => {
         const identBits = ident.split(Command.identDivider);
-        const tempCmd = CommandFactory.createRemoveSourcesCommand(identBits[1], identBits[0]);
-        if ( tempCmd instanceof Command ) {
+        const commandPart = identBits[0];
+        const argPart = identBits[1];
+        let tempCmd: Command = null;
+        if (commandPart.startsWith(AddSourcesCommand.id)) {
+          tempCmd = CommandFactory.createRemoveSourcesCommand(argPart, commandPart);
+        } else if (commandPart.startsWith(AddCompositionCommand.id)) {
+          tempCmd = CommandFactory.createRemoveCompositionCommand(argPart, commandPart);
+        }
+        if ( tempCmd !== null && tempCmd instanceof Command ) {
           const cmd = tempCmd as Command;
           this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR, cmd );
         } else {
@@ -364,7 +437,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   public handleAction( action: Action ): void {
     switch ( action.id ) {
       case this.addCompositionActionId:
-        this.doAddComposition();
+        this.doAddComposition([]);
         break;
       case this.addSourceActionId:
         this.doAddSource();
@@ -415,7 +488,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
       this.doAddSource();
     }
     else if (event.typeIsCreateComposition()) {
-      this.doAddComposition();
+      this.doAddComposition(event.args);
     }
     else if (event.typeIsDeleteNode()) {
       const selection = [];
@@ -475,6 +548,21 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
    */
   public get isShowingCanvas(): boolean {
     return this.editorCssType === this.canvasOnlyCssType || this.editorCssType === this.fullEditorCssType;
+  }
+
+  /**
+   * Indicates if the canvas has a single source selected
+   *
+   * @returns {boolean} `true` if canvas has single source selection
+   */
+  public get canvasSingleSourceSelected(): boolean {
+    const selections = this.editorService.getSelection();
+    if (selections && selections.length === 1) {
+      const selection = selections[0];
+      const identBits = selection.split(Command.identDivider);
+      return true;
+    }
+    return false;
   }
 
   /**

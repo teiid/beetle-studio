@@ -21,7 +21,6 @@ import { LoggerService } from "@core/logger.service";
 import * as _ from "lodash";
 import "codemirror/mode/javascript/javascript.js";
 import "codemirror/mode/xml/xml.js";
-import { ColumnData } from "@dataservices/shared/column-data.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { OdataConstants } from "@dataservices/odata-control/odata-constants";

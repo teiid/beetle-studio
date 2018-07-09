@@ -59,9 +59,13 @@ import * as _ from "lodash";
 
 export class NodeVisualComponent {
 
-  @Input('node-visual') node: CanvasNode;
+  @Input('node-visual') public node: CanvasNode;
 
-  constructor(private canvasService: CanvasService) {}
+  private canvasService: CanvasService;
+
+  constructor(canvasService: CanvasService) {
+    this.canvasService = canvasService;
+  }
 
   /**
    * @return an id for the object type

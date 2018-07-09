@@ -98,12 +98,14 @@ export class CanvasService {
 
   private addNodeCallback(source: CanvasNode): void {
     let eventType = null;
-    if (source.type === CanvasConstants.SOURCE_TYPE)
+    const args = [];
+    if (source.type === CanvasConstants.SOURCE_TYPE) {
       eventType = ViewCanvasEventType.CREATE_COMPOSITION;
-    else if (source.type === CanvasConstants.COMPONENT_TYPE)
+      args.push(source.decodedId);
+    } else if (source.type === CanvasConstants.COMPONENT_TYPE)
       eventType = ViewCanvasEventType.CREATE_SOURCE;
 
-    const event = ViewCanvasEvent.create(eventType, []);
+    const event = ViewCanvasEvent.create(eventType, args);
     this.canvasEvent.emit(event);
     //
     // //

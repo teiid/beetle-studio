@@ -41,7 +41,7 @@ export class CanvasNode implements cola.Node {
   }
 
   public static decodeId(id: string): string {
-    return id.replace('/5X5/g', '/').replace('/6X6/g', '=');
+    return id.replace(/5X5/g, '/').replace(/6X6/g, '=');
   }
 
   constructor(id: string, type: string, label: string, root?: boolean) {

@@ -33,6 +33,7 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
+import { Column } from "@dataservices/shared/column.model";
 
 @Injectable()
 export class MockConnectionService extends ConnectionService {
@@ -40,6 +41,7 @@ export class MockConnectionService extends ConnectionService {
   private connections: Connection[];
   private readonly serviceCatalogSources: ServiceCatalogSource[];
   private connectionSchemaMap = new Map<string, SchemaNode[]>();
+  private connectionSchemaColumnsMap = new Map<string, Column[]>();
   private testDataService: TestDataService;
 
   constructor( http: Http, vdbService: VdbService, notifierService: NotifierService,
@@ -59,6 +61,7 @@ export class MockConnectionService extends ConnectionService {
     this.connections = conns;
     this.serviceCatalogSources = this.testDataService.getServiceCatalogSources();
     this.connectionSchemaMap = this.testDataService.getConnectionSchemaMap();
+    this.connectionSchemaColumnsMap = this.testDataService.getConnectionSchemaColumnsMap();
   }
 
   public isValidName( name: string ): Observable< string > {
@@ -126,6 +129,17 @@ export class MockConnectionService extends ConnectionService {
    */
   public getConnectionSchema( connectionName: string ): Observable< SchemaNode[] > {
     return Observable.of( this.connectionSchemaMap.get( connectionName ) );
+  }
+
+  /**
+   * Get the columns for the specified connection and table.  The connection must be ACTIVE, otherwise the schema
+   * will be empty.
+   * @param {string} connectionName the connection id
+   * @param {string} tableOption the table option (eg. schema=public/table=customer)
+   * @returns {Observable<Column[]>}
+   */
+  public getConnectionSchemaColumns(connectionName: string, tableOption: string): Observable<Column[]> {
+    return Observable.of( this.connectionSchemaColumnsMap.get( connectionName + ":" + tableOption ));
   }
 
   /**

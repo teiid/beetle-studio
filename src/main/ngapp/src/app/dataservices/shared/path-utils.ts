@@ -17,12 +17,30 @@
 
 export class PathUtils {
 
+  private readonly undefined = "undefined";
+
+  /**
+   * Return the path, without the leading connection info
+   * @param {string} sourcePath
+   * @returns {string} the connection name
+   */
+  public static getPathWithoutConnection(sourcePath: string): string {
+    if (!sourcePath || sourcePath === null || sourcePath.length === 0) {
+      return undefined;
+    }
+    const indx = sourcePath.indexOf("/");
+    return sourcePath.substring(indx + 1);
+  }
+
   /**
    * Get the connection name from the supplied source path
    * @param {string} sourcePath
    * @returns {string} the connection name
    */
   public static getConnectionName(sourcePath: string): string {
+    if (!sourcePath || sourcePath === null || sourcePath.length === 0) {
+      return undefined;
+    }
     const fqnArray = sourcePath.split("/", 10);
 
     const arrayLength = fqnArray.length;
@@ -39,6 +57,9 @@ export class PathUtils {
    * @returns {string} the source name
    */
   public static getSourceName(sourcePath: string): string {
+    if (!sourcePath || sourcePath === null || sourcePath.length === 0) {
+      return undefined;
+    }
     const fqnArray = sourcePath.split("/", 10);
 
     const arrayLength = fqnArray.length;
@@ -55,6 +76,9 @@ export class PathUtils {
    * @returns {string} the source type
    */
   public static getSourceType(sourcePath: string): string {
+    if (!sourcePath || sourcePath === null || sourcePath.length === 0) {
+      return undefined;
+    }
     const fqnArray = sourcePath.split("/", 10);
 
     const arrayLength = fqnArray.length;

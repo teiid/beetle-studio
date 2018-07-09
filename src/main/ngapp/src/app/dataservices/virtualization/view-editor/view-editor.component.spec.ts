@@ -7,7 +7,6 @@ import { CoreModule } from "@core/core.module";
 import { AppSettingsService } from "@core/app-settings.service";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { SelectionService } from "@core/selection.service";
-import { SelectedNodeComponent } from "@dataservices/selected-node/selected-node.component";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
@@ -71,7 +70,6 @@ describe('ViewEditorComponent', () => {
         LinkVisualComponent,
         NodeVisualComponent,
         MessageLogComponent,
-        SelectedNodeComponent,
         ViewCanvasComponent,
         ViewEditorComponent,
         ViewEditorHeaderComponent,

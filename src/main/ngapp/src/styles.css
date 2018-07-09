@@ -320,8 +320,8 @@
 }
 
 .wizard-pf-steps-indicator {
-  height: 75px;
-  padding: 0;
+  height: 90px;
+  padding: 15px 0 0 0;
 }
 
 /**************************************************************/

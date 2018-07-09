@@ -15,21 +15,41 @@
  * limitations under the License.
  */
 
-export class Column {
+export enum CompositionType {
 
-  public selected = true;
-  public name: string;
-  public type: string;
-  public size: number;
+  /**
+   * Indicates an inner join composition
+   *
+   * @type {string}
+   */
+  INNER_JOIN = "INNER_JOIN",
 
-  public constructor( name: string,
-                      selected: boolean,
-                      type: string,
-                      size: number ) {
-    this.name = name;
-    this.type = type;
-    this.selected = selected;
-    this.size = size;
-  }
+  /**
+   * Indicates a left outer join composition
+   *
+   * @type {string}
+   */
+  LEFT_OUTER_JOIN = "LEFT_OUTER_JOIN",
+
+  /**
+   * Indicates a right outer join composition
+   *
+   * @type {string}
+   */
+  RIGHT_OUTER_JOIN = "RIGHT_OUTER_JOIN",
+
+  /**
+   * Indicates a full outer join composition
+   *
+   * @type {string}
+   */
+  FULL_OUTER_JOIN = "FULL_OUTER_JOIN",
+
+  /**
+   * Indicates a union composition
+   *
+   * @type {string}
+   */
+  UNION = "UNION"
 
 }

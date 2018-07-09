@@ -86,7 +86,7 @@ export abstract class ApiService {
   public tryNumberParse(jsonString: string): number {
     try {
       const n = parseInt(jsonString, 10);
-      if (n && typeof n === "number") {
+      if (n) {
         return n;
       }
     } catch (e) {
@@ -122,8 +122,6 @@ export abstract class ApiService {
    * @returns true if the item is parseable
    */
   public isJSON(item: string): boolean {
-    item = typeof item !== "string" ? JSON.stringify(item) : item;
-
     try {
       item = JSON.parse(item);
     } catch (e) {
