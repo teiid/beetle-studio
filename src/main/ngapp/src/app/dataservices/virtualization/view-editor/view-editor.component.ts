@@ -382,7 +382,14 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
           this.editorService.setEditorConfig( this.fullEditorCssType );
         }
       }
-    } else if ( event.typeIsEditorViewSaveProgressChanged() ) {
+    }
+    else if (event.typeIsCreateSource()) {
+      this.doAddSource();
+    }
+    else if (event.typeIsCreateComposition()) {
+      this.doAddComposition();
+    }
+    else if ( event.typeIsEditorViewSaveProgressChanged() ) {
       if ( event.args.length !== 0 ) {
         // Detect changes in view editor save progress
         if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.IN_PROGRESS ) {

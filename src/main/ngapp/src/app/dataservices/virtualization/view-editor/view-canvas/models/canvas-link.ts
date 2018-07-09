@@ -14,39 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import * as d3 from 'd3';
+import * as cola from 'webcola';
+import { CanvasNode } from '@dataservices/virtualization/view-editor/view-canvas/models/canvas-node';
 
-/**
- * An enumeration of Deployment state
- */
-export enum DeploymentState {
+export class CanvasLink implements cola.Link<CanvasNode> {
+  // optional - defining optional implementation properties - required for relevant typing assistance
+  index?: number;
 
-  /**
-   * loading
-   */
-  LOADING,
+  // must - defining enforced implementation properties
+  source: CanvasNode;
+  target: CanvasNode;
 
-  /**
-   * active
-   */
-  ACTIVE,
-
-  /**
-   * inactive
-   */
-  INACTIVE,
-
-  /**
-   * failed
-   */
-  FAILED,
-
-  /**
-   * not deployed
-   */
-  NOT_DEPLOYED,
-
-  /**
-   * Indicates that the view compositions have changed.
-   */
-  COMPOSITIONS_CHANGED = "COMPOSITIONS_CHANGED",
+  constructor(source: CanvasNode, target: CanvasNode) {
+    this.source = source;
+    this.target = target;
+  }
 }

@@ -14,39 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Component, Input } from '@angular/core';
+import { CanvasLink } from '@dataservices/virtualization/view-editor/view-canvas/models';
 
-/**
- * An enumeration of Deployment state
- */
-export enum DeploymentState {
+@Component({
+  selector: '[link-visual]',
+  template: `
+    <svg:line
+        class="link"
+        marker-start="url(#arrowtail)"
+        marker-end="url(#arrowhead)"
+        [attr.x1]="link.source.x"
+        [attr.y1]="link.source.y"
+        [attr.x2]="link.target.x"
+        [attr.y2]="link.target.y"
+    ></svg:line>
+  `,
+  styleUrls: ['./link-visual.component.css']
+})
 
-  /**
-   * loading
-   */
-  LOADING,
-
-  /**
-   * active
-   */
-  ACTIVE,
-
-  /**
-   * inactive
-   */
-  INACTIVE,
-
-  /**
-   * failed
-   */
-  FAILED,
-
-  /**
-   * not deployed
-   */
-  NOT_DEPLOYED,
-
-  /**
-   * Indicates that the view compositions have changed.
-   */
-  COMPOSITIONS_CHANGED = "COMPOSITIONS_CHANGED",
+export class LinkVisualComponent  {
+  @Input('link-visual') link: CanvasLink;
 }

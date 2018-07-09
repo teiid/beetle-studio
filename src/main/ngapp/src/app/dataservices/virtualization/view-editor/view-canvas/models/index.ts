@@ -14,39 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/**
- * An enumeration of Deployment state
- */
-export enum DeploymentState {
-
-  /**
-   * loading
-   */
-  LOADING,
-
-  /**
-   * active
-   */
-  ACTIVE,
-
-  /**
-   * inactive
-   */
-  INACTIVE,
-
-  /**
-   * failed
-   */
-  FAILED,
-
-  /**
-   * not deployed
-   */
-  NOT_DEPLOYED,
-
-  /**
-   * Indicates that the view compositions have changed.
-   */
-  COMPOSITIONS_CHANGED = "COMPOSITIONS_CHANGED",
-}
+export * from './canvas-node';
+export * from './canvas-link';
+export * from './canvas-graph';

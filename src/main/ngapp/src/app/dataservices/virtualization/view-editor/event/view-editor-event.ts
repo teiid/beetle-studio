@@ -211,4 +211,17 @@ export class ViewEditorEvent {
     return this.type === ViewEditorEventType.VIEW_STATE_CHANGED;
   }
 
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.CREATE_SOURCE`
+   */
+  public typeIsCreateSource(): boolean {
+    return this.type === ViewEditorEventType.CREATE_SOURCE;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.CREATE_COMPOSITION`
+   */
+  public typeIsCreateComposition(): boolean {
+    return this.type === ViewEditorEventType.CREATE_COMPOSITION;
+  }
 }

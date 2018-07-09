@@ -12,7 +12,7 @@
                                  [type]="saveViewNotificationType">
         </pfng-toast-notification>
       </div>
-      <div class="alert-padding" *ngIf="!hasViewSources">
+      <!-- <div class="alert-padding" *ngIf="!hasViewSources">
         <div class="alert alert-info text-center">
           <span class="pficon pficon-info"></span>
           <strong>{{noSourcesAlert}}</strong>
@@ -20,7 +20,9 @@
       </div>
       <div class="object-card-container" *ngIf="hasViewSources">
         <app-selected-node [node]="viewSources[0]" (selectionNodeRemoved)="onViewSourceRemoved($event)"></app-selected-node>
-      </div>
+      </div> -->
+
+      <canvas-graph></canvas-graph>
   </div>
 
   <!-- ================================ -->
