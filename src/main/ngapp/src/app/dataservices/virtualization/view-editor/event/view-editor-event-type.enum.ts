@@ -42,6 +42,11 @@ export enum ViewEditorEventType {
   CREATE_COMPOSITION = "CREATE_COMPOSITION",
 
   /**
+   * An event indicating a node should be deleted
+   */
+  DELETE_NODE = "DELETE_NODE",
+
+  /**
    * An event indicating the view being edited has been set. This will only be fired one time one the view editor is
    * opened. The one event argument is the {@link View} being set.
    *

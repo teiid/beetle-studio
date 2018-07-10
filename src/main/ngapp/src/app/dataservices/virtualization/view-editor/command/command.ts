@@ -42,6 +42,17 @@ export abstract class Command {
    */
   public static readonly idPropJson = "id";
 
+
+  /**
+   * The identifier used for the id argument
+   */
+  public static readonly identArg = "ObjectId";
+
+  /**
+   * Divider symbol between the command ident and source paths
+   */
+  public static readonly identDivider = "_-_";
+
   protected readonly _args = new Map< string, any >();
   protected readonly _id: string;
   protected readonly _name: string;

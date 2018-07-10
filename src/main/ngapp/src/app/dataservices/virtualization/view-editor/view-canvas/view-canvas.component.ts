@@ -18,6 +18,7 @@
 import { Component, OnDestroy, OnInit, AfterViewInit, ViewEncapsulation } from "@angular/core";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
+import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
@@ -79,7 +80,18 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       const srcPaths = cmd.getSourcePaths();
       for (let i = 0; i < srcPaths.length; ++i) {
         const srcPath = srcPaths[i];
-        const id = this.canvasService.createNode(CanvasConstants.SOURCE_TYPE, srcPath, i == (srcPaths.length - 1));
+        const update = (i == (srcPaths.length - 1));
+        const id = cmd.getId(srcPath);
+        this.canvasService.createNode(id, CanvasConstants.SOURCE_TYPE, srcPath, update);
+      }
+    } else if (args[0] instanceof RemoveSourcesCommand) {
+      const cmd: RemoveSourcesCommand = <RemoveSourcesCommand> args[0];
+      const srcPaths = cmd.getSourcePaths();
+      for (let i = 0; i < srcPaths.length; ++i) {
+        const srcPath = srcPaths[i];
+        const update = (i == (srcPaths.length - 1));
+        const id = cmd.getId(srcPath);
+        this.canvasService.deleteNode(id, update);
       }
     }
   }
@@ -134,6 +146,9 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         this.editorService.editorEvent.emit(compEvent);
         break;
       case ViewCanvasEventType.DELETE_NODE:
+        const deleteEvt = ViewEditorEvent.create(ViewEditorPart.CANVAS, ViewEditorEventType.DELETE_NODE, event.args);
+        this.editorService.editorEvent.emit(deleteEvt);
+        break;
       case ViewCanvasEventType.CANVAS_SELECTION_CHANGED:
 
         //
@@ -255,15 +270,15 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return [];
   }
-
-  /**
-   * Handle removal of View Source
-   * @param {SchemaNode} source the view source to be removed
-   */
-  public onViewSourceRemoved( source: SchemaNode ): void {
-    const cmd = CommandFactory.createRemoveSourcesCommand( [ source ] );
-    this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, cmd );
-  }
+  //
+  // /**
+  //  * Handle removal of View Source
+  //  * @param {SchemaNode} source the view source to be removed
+  //  */
+  // public onViewSourceRemoved( source: SchemaNode ): void {
+  //   const cmd = CommandFactory.createRemoveSourcesCommand( [ source ] );
+  //   this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, cmd );
+  // }
 
   /**
    * @returns {boolean} true if save view notification is to be shown

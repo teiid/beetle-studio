@@ -41,7 +41,7 @@ export class AddSourcesCommand extends Command {
    * @param {string | SchemaNode} addedSources the JSON representation of the sources or the schema nodes of the sources
    *                              being added (cannot be `null` or empty)
    */
-  public constructor( addedSources: string | SchemaNode[] ) {
+  public constructor( addedSources: string | SchemaNode[], id?: string ) {
     super( AddSourcesCommand.id, ViewEditorI18n.addSourcesCommandName );
 
     let arg: string;
@@ -66,6 +66,15 @@ export class AddSourcesCommand extends Command {
     }
 
     this._args.set( AddSourcesCommand.addedSourcePaths, arg );
+
+    if (!id) {
+      //
+      // Generate new id for this source
+      //
+      id = AddSourcesCommand.id + Date.now();
+    }
+
+    this._args.set( Command.identArg, id);
   }
 
   /**
@@ -76,4 +85,14 @@ export class AddSourcesCommand extends Command {
     return argValue.split( AddSourcesCommand.delim );
   }
 
+  /**
+   * @returns {string} a unique identifier of this command
+   */
+  public getId(sourcePath?: string): string {
+    let argValue = this.getArg( Command.identArg ) as string;
+    if (sourcePath)
+      argValue = argValue + Command.identDivider + sourcePath;
+
+    return argValue;
+  }
 }
