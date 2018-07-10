@@ -20,7 +20,7 @@ import { View } from "@dataservices/shared/view.model";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
-import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
+import { ViewEditorProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 
 export enum ViewEditorEventType {
 
@@ -64,7 +64,7 @@ export enum ViewEditorEventType {
 
   /**
    * An event indicating the view save progress has changed. The one event argument is the
-   * {@link ViewEditorSaveProgressChangeId} value.
+   * {@link ViewEditorProgressChangeId} value.
    *
    * @type {string}
    */
@@ -100,11 +100,20 @@ export enum ViewEditorEventType {
   PREVIEW_RESULTS_CHANGED = "PREVIEW_RESULTS_CHANGED",
 
   /**
-   * An event indication the editor's readonly property has changed. The one event argument is the new readonly state.
+   * An event indicating the editor's readonly property has changed. The one event argument is the new readonly state.
    *
    * @type {string}
    */
   READONLY_CHANGED = "READONLY_CHANGED",
+
+  /**
+   * An event indicating the restoring of the editor state is in progress or has finished. The first argument is the
+   * {@link ViewEditorProgressChangeId} value. A second argument, the error message, only occurs when restoring
+   * the editor state failed.
+   *
+   * @type {string}
+   */
+  RESTORE_EDITOR_STATE = "RESTORE_EDITOR_STATE",
 
   /**
    * An event indicating an editor part should become visible. The one event argument is the editor part that should

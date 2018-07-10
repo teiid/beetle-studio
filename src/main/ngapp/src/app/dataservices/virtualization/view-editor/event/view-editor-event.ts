@@ -135,77 +135,84 @@ export class ViewEditorEvent {
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.CANVAS_SELECTION_CHANGED`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.CANVAS_SELECTION_CHANGED}
    */
   public typeIsCanvasSelectionChanged(): boolean {
     return this.type === ViewEditorEventType.CANVAS_SELECTION_CHANGED;
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.EDITED_VIEW_SET`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.EDITED_VIEW_SET}
    */
   public typeIsEditedViewSet(): boolean {
     return this.type === ViewEditorEventType.EDITED_VIEW_SET;
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.EDITOR_CONFIG_CHANGED`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.EDITOR_CONFIG_CHANGED}
    */
   public typeIsEditorConfigChanged(): boolean {
     return this.type === ViewEditorEventType.EDITOR_CONFIG_CHANGED;
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED}
    */
   public typeIsEditorViewSaveProgressChanged(): boolean {
     return this.type === ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED;
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.LOG_MESSAGE_ADDED`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.LOG_MESSAGE_ADDED}
    */
   public typeIsLogMessageAdded(): boolean {
     return this.type === ViewEditorEventType.LOG_MESSAGE_ADDED;
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.LOG_MESSAGE_DELETED`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.LOG_MESSAGE_DELETED}
    */
   public typeIsLogMessageDeleted(): boolean {
     return this.type === ViewEditorEventType.LOG_MESSAGE_DELETED;
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.LOG_MESSAGES_CLEARED`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.LOG_MESSAGES_CLEARED}
    */
   public typeIsLogMessagesCleared(): boolean {
     return this.type === ViewEditorEventType.LOG_MESSAGES_CLEARED;
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.PREVIEW_RESULTS_CHANGED`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.PREVIEW_RESULTS_CHANGED}
    */
   public typeIsPreviewResultsChanged(): boolean {
     return this.type === ViewEditorEventType.PREVIEW_RESULTS_CHANGED;
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.READONLY_CHANGED`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.READONLY_CHANGED}
    */
   public typeIsReadonlyChanged(): boolean {
     return this.type === ViewEditorEventType.READONLY_CHANGED;
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.SHOW_EDITOR_PART`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.RESTORE_EDITOR_STATE}.
+   */
+  public typeIsRestoreEditorState(): boolean {
+    return this.type === ViewEditorEventType.READONLY_CHANGED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.SHOW_EDITOR_PART}
    */
   public typeIsShowEditorPart(): boolean {
     return this.type === ViewEditorEventType.SHOW_EDITOR_PART;
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.VIEW_STATE_CHANGED`
+   * @returns {boolean} `true` if the type is {@link ViewEditorEventType.VIEW_STATE_CHANGED}
    */
   public typeIsViewStateChanged(): boolean {
     return this.type === ViewEditorEventType.VIEW_STATE_CHANGED;

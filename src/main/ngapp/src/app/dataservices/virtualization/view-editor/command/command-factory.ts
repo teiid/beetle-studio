@@ -149,37 +149,21 @@ export class CommandFactory {
    */
   public static decode( json: object = {} ): Command | Error {
     const cmdId = json[ Command.idPropJson ];
+    const args = json[ Command.argsPropJson ];
 
     switch ( cmdId ) {
       case AddSourcesCommand.id: {
-        let addSourcePaths: string = null;
-        let addIdent: string = null;
+        const addSourcePaths = args[ AddSourcesCommand.addedSourcePaths ];
+        const addIdent = args[ Command.identArg ];
 
-        for ( const entry of json[ Command.argsPropJson ] ) {
-          if ( entry[ Command.argNameJson ] === AddSourcesCommand.addedSourcePaths ) {
-            addSourcePaths = entry[ Command.argValueJson ];
-          } else if (entry[ Command.argNameJson ] === Command.identArg ) {
-            addIdent = entry[ Command.argValueJson ];
-          }
-        }
-
-        if (addSourcePaths)
-          return CommandFactory.createAddSourcesCommand(addSourcePaths, addIdent);
+        if ( addSourcePaths )
+          return CommandFactory.createAddSourcesCommand( addSourcePaths, addIdent );
 
         return new Error( "Unable to decode AddSourcesCommand: " + json );
       }
       case RemoveSourcesCommand.id: {
-        let removedSourcePaths: string = null;
-        let removedIdent: string = null;
-
-        for ( const entry of json[ Command.argsPropJson ] ) {
-          if ( entry[ Command.argNameJson ] === RemoveSourcesCommand.removedSourcePaths ) {
-            removedSourcePaths = entry[ Command.argValueJson ];
-          }
-          else if (entry[ Command.argNameJson ] === Command.identArg ) {
-            removedIdent = entry [ Command.argValueJson ];
-          }
-        }
+        const removedSourcePaths = args[ RemoveSourcesCommand.removedSourcePaths ];
+        const removedIdent = args[ Command.identArg ];
 
         if (removedSourcePaths && removedIdent) {
           return CommandFactory.createRemoveSourcesCommand(removedSourcePaths, removedIdent);
@@ -188,46 +172,20 @@ export class CommandFactory {
         return new Error( "Unable to decode RemoveSourcesCommand: " + json );
       }
       case UpdateViewDescriptionCommand.id: {
-        let newViewDescription: string = null;
-        let replacedViewDescription: string = null;
+        const newViewDescription = args[ UpdateViewDescriptionCommand.newDescription ];
+        const replacedViewDescription = args[ UpdateViewDescriptionCommand.oldDescription ];
 
-        for ( const entry of json[ Command.argsPropJson ] ) {
-          if ( entry[ Command.argNameJson ] === UpdateViewDescriptionCommand.newDescription ) {
-            newViewDescription = entry[ Command.argValueJson ];
-          }
-          else if ( entry[ Command.argNameJson ] === UpdateViewDescriptionCommand.oldDescription ) {
-            replacedViewDescription = entry[ Command.argValueJson ];
-          }
-
-          if ( newViewDescription && replacedViewDescription ) {
-            break;
-          }
-        }
-
-        if ( newViewDescription && replacedViewDescription ) {
+        if ( newViewDescription || replacedViewDescription ) {
           return CommandFactory.createUpdateViewDescriptionCommand( newViewDescription, replacedViewDescription );
         }
 
         return new Error( "Unable to decode UpdateViewDescriptionCommand: " + json );
       }
       case UpdateViewNameCommand.id: {
-        let newViewName: string = null;
-        let replacedViewName: string = null;
+        const newViewName = args[ UpdateViewNameCommand.newName ];
+        const replacedViewName = args[UpdateViewNameCommand.oldName];
 
-        for ( const entry of json[ Command.argsPropJson ] ) {
-          if ( entry[ Command.argNameJson ] === UpdateViewNameCommand.newName ) {
-            newViewName = entry[ Command.argValueJson ];
-          }
-          else if ( entry[ Command.argNameJson ] === UpdateViewNameCommand.oldName ) {
-            replacedViewName = entry[ Command.argValueJson ];
-          }
-
-          if ( newViewName && replacedViewName ) {
-            break;
-          }
-        }
-
-        if ( newViewName && replacedViewName ) {
+        if ( newViewName || replacedViewName ) {
           return CommandFactory.createUpdateViewNameCommand( newViewName, replacedViewName );
         }
 
@@ -237,6 +195,46 @@ export class CommandFactory {
         return new Error( "Unhandled command: " + cmdId );
       }
     }
+  }
+
+  /**
+   * @param {Object} json the JSON representation of a Undoable
+   * @returns {Undoable | Error} the new Undoable or an error if the undoable could not be created
+   */
+  public static decodeUndoable( json: object = {} ): Undoable | Error {
+    let undo: Command = null;
+    let redo: Command = null;
+    for (const field of Object.keys(json)) {
+      if (field === "undo") {
+        // length of 2 or shorter - no object.  TODO: better way to do this?
+        if (JSON.stringify(json[field]).length > 2) {
+          const temp = CommandFactory.decode( json[ field ] );
+
+          if ( temp instanceof Command ) {
+            undo = temp;
+          } else {
+            return new Error( "Unable to decode undo command: " + temp );
+          }
+        }
+      } else if (field === "redo") {
+        // length of 2 or shorter - no object.  TODO: better way to do this?
+        if (JSON.stringify(json[field]).length > 2) {
+          const temp = CommandFactory.decode( json[ field ] );
+
+          if ( temp instanceof Command ) {
+            redo = temp;
+          } else {
+            return new Error( "Unable to decode redo command: " + temp );
+          }
+        }
+      }
+    }
+
+    if (!undo || !redo) {
+      return new Error( "Unable to create undoable" );
+    }
+
+    return new Undoable(undo, redo);
   }
 
 }

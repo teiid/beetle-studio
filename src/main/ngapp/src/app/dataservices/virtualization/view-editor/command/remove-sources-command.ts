@@ -66,7 +66,6 @@ export class RemoveSourcesCommand extends Command {
     }
 
     this._args.set( RemoveSourcesCommand.removedSourcePaths, arg );
-
     this._args.set( Command.identArg, id);
   }
 

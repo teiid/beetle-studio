@@ -1,5 +1,3 @@
-import { NavigationItemConfig } from "patternfly-ng";
-
 /**
  * @license
  * Copyright 2017 JBoss Inc
@@ -11,6 +9,9 @@ import { NavigationItemConfig } from "patternfly-ng";
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import { NavigationItemConfig } from "patternfly-ng";
+import { environment } from "@environments/environment";
 
 export class DataservicesConstants {
 

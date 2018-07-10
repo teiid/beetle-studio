@@ -28,7 +28,7 @@ import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-ed
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
-import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
+import { ViewEditorProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { UpdateViewDescriptionCommand } from "@dataservices/virtualization/view-editor/command/update-view-description-command";
@@ -38,6 +38,7 @@ import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/c
 import { UndoManager } from "@dataservices/virtualization/view-editor/command/undo-redo/undo-manager";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 import { Undoable } from "@dataservices/virtualization/view-editor/command/undo-redo/undoable";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 @Injectable()
 export class ViewEditorService {
@@ -58,10 +59,12 @@ export class ViewEditorService {
   private _messages: Message[] = [];
   private _previewResults: QueryResults;
   private _readOnly = false;
+  private _shouldFireEvents = true;
   private readonly _undoMgr: UndoManager;
   private readonly _vdbService: VdbService;
   private _warningMsgCount = 0;
   private _selection: string[] = [];
+  private _originalViewName = null;
 
   constructor( logger: LoggerService,
                vdbService: VdbService ) {
@@ -85,7 +88,7 @@ export class ViewEditorService {
     } else if ( msg.isInfo() ) {
       this._infoMsgCount++;
     } else {
-      this._logger.error( "unhandled message type of '" + msg.type + "'");
+      this._logger.error( "[ViewEditorService.addMessage] unhandled message type of '" + msg.type + "'");
     }
 
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGE_ADDED, [ msg ] ) );
@@ -143,7 +146,7 @@ export class ViewEditorService {
       } else if ( deleted[ 0 ].isInfo() ) {
         this._infoMsgCount++;
       } else {
-        this._logger.error( "unhandled message type of '" + deleted[ 0 ].type + "'");
+        this._logger.error( "[ViewEditorService.deleteMessage] unhandled message type of '" + deleted[ 0 ].type + "'");
       }
 
       this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGE_DELETED, [ deleted[ 0 ] ] ) );
@@ -154,12 +157,15 @@ export class ViewEditorService {
    * @param {ViewEditorEvent} event the event to broadcast
    */
   public fire( event: ViewEditorEvent ): void {
-    this._logger.debug( "firing event: " + event );
-    this.editorEvent.emit( event );
+    this._logger.debug( "[ViewEditorService.fire] firing event: " + event );
 
-    // validate view when first set or when its state changes
-    if ( event.typeIsViewStateChanged() || event.typeIsEditedViewSet() ) {
-      this.validateView( event.type );
+    if (this._shouldFireEvents ) {
+      this.editorEvent.emit( event );
+
+      // validate view when first set or when its state changes
+      if ( event.typeIsViewStateChanged() || event.typeIsEditedViewSet() ) {
+        this.validateView( event.type );
+      }
     }
   }
 
@@ -191,6 +197,15 @@ export class ViewEditorService {
    */
   public getEditorConfig(): string {
     return this._editorConfig;
+  }
+
+  /**
+   * @param {string} viewName the view name
+   * @returns {string} the ID used to persist the editor state
+   */
+  private getEditorStateId(viewName: string): string {
+    const serviceVdbName = this._editorVirtualization.getServiceVdbName().toLowerCase();
+    return serviceVdbName + "." + viewName;
   }
 
   /**
@@ -319,8 +334,118 @@ export class ViewEditorService {
       this.updateViewState( redoCmd );
       this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.VIEW_STATE_CHANGED, [ redoCmd ] ) );
     } else {
-      this._logger.error( "Redo called when there is not a redo command available" );
+      this._logger.error( "[ViewEditorService.redo] Redo called when there is not a redo command available" );
     }
+  }
+
+  private restoreEditorState(): void {
+    if ( this.getEditorVirtualization() && this.getEditorView() ) {
+      // fire editor state in progress event
+      this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
+                                         ViewEditorEventType.RESTORE_EDITOR_STATE,
+                                         [ ViewEditorProgressChangeId.IN_PROGRESS ] ) );
+
+      const self = this;
+      const editorId = this.getEditorStateId(this._editorView.getName());
+      let errorMsg: string;
+
+      this._logger.debug( "[ViewEditorService.restoreEditorState]: getViewEditorState for " + editorId );
+      this._vdbService.getViewEditorState( editorId ).subscribe(
+        ( resp ) => {
+          const undoables = resp["value"];
+          if ( undoables && undoables.length !== 0 ) {
+            for ( const json of undoables ) {
+              const temp = CommandFactory.decodeUndoable( json );
+
+              if ( temp instanceof Undoable ) {
+                const undoable = temp as Undoable;
+
+                // update view
+                this.updateViewState( undoable.redoCommand );
+
+                // add command to undo/redo manager
+                this._undoMgr.add( undoable );
+              } else {
+                const error = temp as Error;
+                errorMsg = ViewEditorI18n.errorRestoringViewEditorState + error.message;
+              }
+            }
+          }
+        }, ( error ) => {
+          errorMsg = error.message ? error.message
+                                   : error.status ? `${error.status} - ${error.statusText}`
+                                                  : ViewEditorI18n.serverError;
+          self._logger.error( "Unable to restore editor state '" + editorId + "'. Error: " + error );
+        }, () => {
+          const args = errorMsg ? [ ViewEditorProgressChangeId.COMPLETED_FAILED, errorMsg ]
+                                : [ ViewEditorProgressChangeId.COMPLETED_SUCCESS ];
+
+          // fire restore completed
+          this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
+                                             ViewEditorEventType.RESTORE_EDITOR_STATE,
+                                             [ args ] ) );
+        }
+      );
+    }
+  }
+
+  /**
+   * Saves the current editor state.  If a previous state exists, it is deleted first
+   */
+  public saveEditorState(): void {
+    // fire save in progress event
+    this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
+      ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
+      [ ViewEditorProgressChangeId.IN_PROGRESS ] ) );
+
+    // If a previous view state needs to be deleted, do that first.  Then save the new state
+    if (this._originalViewName !== null && this._originalViewName !== this._editorView.getName()) {
+      // Delete the 'old' view editorState and view first
+      const oldEditorState = this.getEditorStateId(this._originalViewName);
+      const serviceVdbName = this._editorVirtualization.getServiceVdbName().toLowerCase();
+      const modelName = this._editorVirtualization.getServiceViewModel().toLowerCase();
+
+      const self = this;
+      this._vdbService.deleteViewAndViewEditorState( serviceVdbName, modelName, this._originalViewName,
+                                                     oldEditorState ).subscribe( () => {
+          self.saveCurrentState();
+        }, () => {
+          // fire save editor state failed event
+          this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
+                     ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
+                     [ ViewEditorProgressChangeId.COMPLETED_FAILED ] ) );
+        }
+      );
+    } else {
+      this.saveCurrentState();
+    }
+  }
+
+  /**
+   * Saves the current editor's undo stack. The current redo stack is not saved.
+   * If the original view name is different from the current view name, delete its editor state
+   */
+  private saveCurrentState(): void {
+    const json = this._undoMgr.toJSON();
+    // resets the original view upon save
+    this._originalViewName = this._editorView.getName();
+    const editorId = this.getEditorStateId(this._originalViewName);
+    const serviceVdbName = this._editorVirtualization.getServiceVdbName().toLowerCase();
+    const modelName = this._editorVirtualization.getServiceViewModel().toLowerCase();
+
+    this._vdbService.createViewAndSaveViewEditorState( serviceVdbName, modelName, this._originalViewName,
+                                                       editorId, json ).subscribe( () => {
+        // fire save editor state succeeded event
+        this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
+                                           ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
+                                           [ ViewEditorProgressChangeId.COMPLETED_SUCCESS ] ) );
+      }, () => {
+        // fire save editor state failed event
+        this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
+                                           ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
+                                           [ ViewEditorProgressChangeId.COMPLETED_FAILED ] ) );
+      }
+    );
   }
 
   /**
@@ -337,6 +462,14 @@ export class ViewEditorService {
   }
 
   /**
+   * Set the original view name (when editor initialized or last save)
+   * @param {string} viewName the view name
+   */
+  public setOriginalViewName( viewName: string ): void {
+    this._originalViewName = viewName;
+  }
+
+  /**
    * Sets the view being edited. This should only be called once. Subsequent calls are ignored. Fires a
    * `ViewEditorEventType.VIEW_CHANGED` event having the view as an argument.
    *
@@ -348,6 +481,7 @@ export class ViewEditorService {
     if ( !this._editorView ) {
       this._editorView = view;
       this.fire( ViewEditorEvent.create( source, ViewEditorEventType.EDITED_VIEW_SET, [ this._editorView ] ) );
+      this.restoreEditorState();
     } else {
       this._logger.debug( "setEditorView called more than once" );
     }
@@ -385,7 +519,7 @@ export class ViewEditorService {
           self.setPreviewResults(queryResult, ViewEditorPart.EDITOR);
         },
         (error) => {
-          alert("error getting results");
+          this._logger.error( "[ViewEditorService.updatePreviewResults] - error getting results" );
         }
       );
   }
@@ -427,7 +561,7 @@ export class ViewEditorService {
       this.updateViewState( undoCmd );
       this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.VIEW_STATE_CHANGED, [ undoCmd ] ) );
     } else {
-      this._logger.error( "Undo called when there is not an undo command available" );
+      this._logger.error( "[ViewEditorService.undo] Undo called when there is not an undo command available" );
     }
   }
 
@@ -485,13 +619,13 @@ export class ViewEditorService {
   }
 
   /**
-   * Save the current View.
+   * Deploys the current View.
    * Currently, this regenerates *all* of the views.
    */
-  public saveView(connections: Connection[]): void {
+  public deployView(connections: Connection[]): void {
     // Fire save in progress event
     this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
-                                                         [ ViewEditorSaveProgressChangeId.IN_PROGRESS ] ) );
+                                                         [ ViewEditorProgressChangeId.IN_PROGRESS ] ) );
 
     const serviceVdbName = this._editorVirtualization.getServiceVdbName();
     const serviceVdbModelName = this._editorVirtualization.getServiceViewModel();
@@ -521,14 +655,17 @@ export class ViewEditorService {
                                                connections)
       .subscribe(
         () => {
+          // clear undo/redo stack
+          this._undoMgr.clear();
+
           // Fire save completed success event
           this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
-                                                               [ ViewEditorSaveProgressChangeId.COMPLETED_SUCCESS ] ) );
+                                                               [ ViewEditorProgressChangeId.COMPLETED_SUCCESS ] ) );
         },
         () => {
           // Fire save completed failed event
           this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
-                                                               [ ViewEditorSaveProgressChangeId.COMPLETED_FAILED ] ) );
+                                                               [ ViewEditorProgressChangeId.COMPLETED_FAILED ] ) );
         }
       );
   }
@@ -543,7 +680,7 @@ export class ViewEditorService {
   /**
    * Update the node selection
    */
-  public select(selection: string[]) {
+  public select(selection: string[]): void {
     if (!selection)
       selection = [];
 

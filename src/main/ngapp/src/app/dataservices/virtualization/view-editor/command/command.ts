@@ -24,18 +24,6 @@ export abstract class Command {
   public static readonly argsPropJson = "args";
 
   /**
-   * The name of the JSON key used to store an argument.
-   * @type {string}
-   */
-  public static readonly argNameJson = "name";
-
-  /**
-   * The name of the JSON key used to store an argument value.
-   * @type {string}
-   */
-  public static readonly argValueJson = "value";
-
-  /**
    * The name of the JSON key used to store the command identifier.
    *
    * @type {string}
@@ -75,12 +63,12 @@ export abstract class Command {
     return copy;
   }
 
-  private argsToArray(): object[] {
-    const result = [];
+  private argsToJson(): {} {
+    const result = {};
 
     this.args.forEach( ( value, key ) => {
       if ( !this.isTransient( key ) ) {
-        result.push( { [ Command.argNameJson ]: key, [ Command.argValueJson ]: value } );
+        result[ key ] = value;
       }
     } );
 
@@ -133,7 +121,7 @@ export abstract class Command {
   public toJSON(): {} {
     return {
       id: this.id,
-      args: this.argsToArray()
+      args: this.argsToJson()
     };
   }
 

@@ -94,7 +94,7 @@ export class View {
     let sourceNodeName = "unknownSource";
     let connectionName = "unknownConnection";
     const sourcePath = this.getSourcePaths()[ 0 ];
-    if ( sourcePath !== null ) {
+    if ( sourcePath && sourcePath !== null ) {
       sourceNodeName = PathUtils.getSourceName(sourcePath);
       if ( PathUtils.getConnectionName(sourcePath) !== null ) {
         connectionName = PathUtils.getConnectionName(sourcePath);

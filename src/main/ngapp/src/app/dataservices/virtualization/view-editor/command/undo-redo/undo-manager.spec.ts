@@ -67,4 +67,54 @@ describe( "UndoManager Tests", () => {
     expect( undoMgr.toJSON()[ "undoables"].length ).toBe( 1 );
   } );
 
+  it( "shouldConvertToArrayCorrectly" , () => {
+    const undoMgr = new UndoManager();
+
+    // add update name command
+    let cmd = CommandFactory.createUpdateViewNameCommand( "newName", "oldName");
+    let undoable = CommandFactory.createUndoable( cmd as Command ) ;
+    undoMgr.add( undoable as Undoable );
+
+    // add update description command
+    cmd = CommandFactory.createUpdateViewNameCommand( "newName", "oldName");
+    undoable = CommandFactory.createUndoable( cmd as Command ) ;
+    undoMgr.add( undoable as Undoable );
+
+    // should include both undoables
+    expect( undoMgr.toArray()).not.toBe( null );
+    expect( undoMgr.toArray().length).toBe( 2 );
+
+    // move the pointer to the left
+    undoMgr.popUndoCommand();
+    expect( undoMgr.toArray().length).toBe( 1 );
+    expect( undoMgr.toArray().length).toBe( 1 );
+  } );
+
+  it( "shouldConvertToJsonCorrectly" , () => {
+    const undoMgr = new UndoManager();
+
+    // add update name command
+    let cmd = CommandFactory.createUpdateViewNameCommand( "newName", "oldName");
+    let undoable = CommandFactory.createUndoable( cmd as Command ) ;
+    undoMgr.add( undoable as Undoable );
+
+    // add update description command
+    cmd = CommandFactory.createUpdateViewDescriptionCommand( "newDescription", "oldDescription");
+    undoable = CommandFactory.createUndoable( cmd as Command ) ;
+    undoMgr.add( undoable as Undoable );
+
+    // should include both undoables
+    expect( undoMgr.toJSON() ).not.toBe( null );
+    expect( undoMgr.toJSON()[ UndoManager.undoables ] ).not.toBe( null );
+    expect( undoMgr.toJSON()[ UndoManager.undoables ] instanceof Array ).toBe( true );
+
+    const undoables = undoMgr.toJSON()[ UndoManager.undoables ] as Array< any >;
+    expect( undoables.length ).toBe( 2 );
+
+    // move the pointer to the left
+    undoMgr.popUndoCommand();
+    expect( undoMgr.toArray().length).toBe( 1 );
+    expect( undoMgr.toArray().length).toBe( 1 );
+  } );
+
 } );

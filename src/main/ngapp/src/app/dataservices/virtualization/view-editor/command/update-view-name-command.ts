@@ -43,13 +43,19 @@ export class UpdateViewNameCommand extends Command {
 
   /**
    * @param {string} newViewName the new view name (can be `null` or empty)
-   * @param {string} replacedViewName the view name being replaced (can be `null` or empty)
+   * @param {string} oldViewName the view name being replaced (can be `null` or empty)
    */
   public constructor( newViewName: string,
-                      replacedViewName: string ) {
+                      oldViewName: string ) {
     super( UpdateViewNameCommand.id, ViewEditorI18n.updateViewNameCommandName );
-    this._args.set( UpdateViewNameCommand.newName, newViewName );
-    this._args.set( UpdateViewNameCommand.oldName, replacedViewName );
+
+    if ( newViewName ) {
+      this._args.set( UpdateViewNameCommand.newName, newViewName );
+    }
+
+    if ( oldViewName ) {
+      this._args.set( UpdateViewNameCommand.oldName, oldViewName );
+    }
   }
 
 }
