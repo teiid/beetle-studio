@@ -94,7 +94,7 @@ export class CanvasGraph {
                    .flowLayout("x", 150)
                    .symmetricDiffLinkLengths(30)
                    .avoidOverlaps(true)
-                   .handleDisconnected(true)
+                   .handleDisconnected(false)
                    .nodes(this.nodes)
                    .links(this.links);
 

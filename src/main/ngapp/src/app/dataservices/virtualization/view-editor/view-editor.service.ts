@@ -61,6 +61,7 @@ export class ViewEditorService {
   private readonly _undoMgr: UndoManager;
   private readonly _vdbService: VdbService;
   private _warningMsgCount = 0;
+  private _selection: string[] = [];
 
   constructor( logger: LoggerService,
                vdbService: VdbService ) {
@@ -532,4 +533,33 @@ export class ViewEditorService {
       );
   }
 
+  /**
+   * Access the current selection
+   */
+  public getSelection(): string[] {
+    return this._selection;
+  }
+
+  /**
+   * Update the node selection
+   */
+  public select(selection: string[]) {
+    if (!selection)
+      selection = [];
+
+    this._selection = selection;
+
+    let msg = "View Editor selection updated to: [ ";
+    this._selection.forEach((id) => {
+      msg = msg + id + " ";
+    });
+
+    msg = msg + "]";
+
+    this._logger.debug(msg);
+  }
+
+  public hasSelection(): boolean {
+    return this._selection.length > 0;
+  }
 }

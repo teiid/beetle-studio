@@ -51,7 +51,15 @@ export class CanvasService {
 
     this.canvasGraph = new CanvasGraph(this, options);
     this.canvasGraph.nodesSelected.subscribe((nodes) => {
-      const event = ViewCanvasEvent.create(ViewCanvasEventType.CANVAS_SELECTION_CHANGED, nodes);
+
+      const selection = [];
+      if (nodes) {
+        nodes.forEach((node) => {
+          selection.push(node.decodedId);
+        });
+      }
+
+      const event = ViewCanvasEvent.create(ViewCanvasEventType.CANVAS_SELECTION_CHANGED, selection);
       this.canvasEvent.emit(event);
     });
 
