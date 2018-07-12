@@ -33,6 +33,12 @@ import {
   TableModule,
   ToolbarModule,
   WizardModule } from "patternfly-ng";
+import {
+  GraphVisualComponent,
+  LinkVisualComponent,
+  NodeVisualComponent
+} from "@dataservices/virtualization/view-editor/view-canvas/visuals";
+import { CanvasService } from "@dataservices/virtualization/view-editor/view-canvas/canvas.service";
 
 describe('ViewEditorComponent', () => {
   let component: ViewEditorComponent;
@@ -61,6 +67,9 @@ describe('ViewEditorComponent', () => {
         ConnectionTableDialogComponent,
         ConnectionTreeSelectorComponent,
         EditorViewsComponent,
+        GraphVisualComponent,
+        LinkVisualComponent,
+        NodeVisualComponent,
         MessageLogComponent,
         SelectedNodeComponent,
         ViewCanvasComponent,
@@ -71,6 +80,7 @@ describe('ViewEditorComponent', () => {
       ],
       providers: [
         { provide: AppSettingsService, useClass: MockAppSettingsService },
+        CanvasService,
         { provide: ConnectionService, useClass: MockConnectionService },
         NotifierService,
         SelectionService,

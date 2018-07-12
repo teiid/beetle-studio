@@ -26,22 +26,21 @@ import * as _ from "lodash";
 const FORCES = {
   LINKS: 0.2,
   COLLISION: 1
-}
+};
 
 export class CanvasGraph {
 
   private canvasService: CanvasService;
-  private options: any
+  private options: any;
   private _nodes: CanvasNode[] = [];
   private _links: CanvasLink[] = [];
-
 
   public ticker: EventEmitter<cola.Layout> = new EventEmitter();
   public nodesSelected: EventEmitter<CanvasNode[]> = new EventEmitter();
 
   private layout: cola.Layout;
 
-  constructor(canvasService: CanvasService, options: { width, height }) {
+  constructor(canvasService: CanvasService, options: { width: number, height: number }) {
     this.canvasService = canvasService;
     this.options = options;
 
@@ -98,7 +97,6 @@ export class CanvasGraph {
                    .nodes(this.nodes)
                    .links(this.links);
 
-
       // Connecting the d3 ticker to an angular event emitter
       this.layout.on('tick', function() {
         ticker.emit(this);
@@ -111,7 +109,7 @@ export class CanvasGraph {
    * This will stop the layout and will require an update
    * to be called after it.
    */
-  public setOptions(options: any) {
+  public setOptions(options: any): void {
     this.options = options;
     if (this.layout) {
       this.layout.stop();
@@ -122,7 +120,7 @@ export class CanvasGraph {
   /**
    * Callback for conducting a (de)selection of nodes
    */
-  public selectionCallback(node: CanvasNode) {
+  public selectionCallback(node: CanvasNode): void {
     const append = d3.event.shiftKey;
 
     if (! node) {
@@ -164,7 +162,7 @@ export class CanvasGraph {
   /**
    * @returns the collection of nodes
    */
-  public get nodes() {
+  public get nodes(): CanvasNode[] {
     return this._nodes;
   }
 
@@ -273,7 +271,7 @@ export class CanvasGraph {
       this.canvasService.update(true);
   }
 
-  public get links() {
+  public get links(): CanvasLink[] {
     return this._links;
   }
 

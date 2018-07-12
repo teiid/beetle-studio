@@ -67,7 +67,7 @@ export class NodeVisualComponent {
    * @return an id for the object type
    *         based on the node's own id
    */
-  public id(type: string) {
+  public id(type: string): string {
     return this.node.id + '-' + type;
   }
 
@@ -75,7 +75,7 @@ export class NodeVisualComponent {
     if (this.node.type === CanvasConstants.SOURCE_TYPE)
       return "/assets/graphicsfuel/database-64.png";
     else if (this.node.type === CanvasConstants.COMPONENT_TYPE)
-      return "/assets/component.png"
+      return "/assets/component.png";
 
     return "/assets/iconfinder/Natalya-Skidan/question-mark.png";
   }
