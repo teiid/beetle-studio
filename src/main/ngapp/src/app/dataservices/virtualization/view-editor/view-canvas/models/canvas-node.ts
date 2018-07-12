@@ -30,11 +30,11 @@ export class CanvasNode implements cola.Node {
   fx?: number | null;
   fy?: number | null;
 
-  private _id: string;
-  private _type: string;
+  private readonly _id: string;
+  private readonly _type: string;
   private _label: string;
-  private _selected: boolean = false;
-  private _root: boolean = false;
+  private _selected = false;
+  private _root = false;
 
   public static encodeId(id: string): string {
     return btoa(id);

@@ -21,6 +21,8 @@ import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { ViewPropertyEditorsComponent } from "@dataservices/virtualization/view-editor/view-property-editors/view-property-editors.component";
 import { TabsModule } from "ngx-bootstrap";
+import { GraphVisualComponent, LinkVisualComponent, NodeVisualComponent } from "@dataservices/virtualization/view-editor/view-canvas/visuals";
+import { CanvasService } from "@dataservices/virtualization/view-editor/view-canvas/canvas.service";
 
 describe('ViewCanvasComponent', () => {
   let component: ViewCanvasComponent;
@@ -42,12 +44,16 @@ describe('ViewCanvasComponent', () => {
         TabsModule.forRoot()
       ],
       declarations: [
+        GraphVisualComponent,
+        LinkVisualComponent,
+        NodeVisualComponent,
         SelectedNodeComponent,
         ViewCanvasComponent,
         ViewPropertyEditorsComponent
       ],
       providers: [
         { provide: AppSettingsService, useClass: MockAppSettingsService },
+        CanvasService,
         LoggerService,
         NotifierService,
         { provide: VdbService, useClass: MockVdbService },

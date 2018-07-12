@@ -27,7 +27,7 @@ export class PathUtils {
 
     const arrayLength = fqnArray.length;
     const connectionSegment = fqnArray[0];
-    let parts = connectionSegment.split("=", 2);
+    const parts = connectionSegment.split("=", 2);
     const connName = parts[1];
 
     return connName;
@@ -43,7 +43,7 @@ export class PathUtils {
 
     const arrayLength = fqnArray.length;
     const nodeSeqment = fqnArray[arrayLength - 1];
-    let parts = nodeSeqment.split("=", 2);
+    const parts = nodeSeqment.split("=", 2);
     const nodeName = parts[1];
 
     return nodeName;
@@ -59,7 +59,7 @@ export class PathUtils {
 
     const arrayLength = fqnArray.length;
     const nodeSeqment = fqnArray[arrayLength - 1];
-    let parts = nodeSeqment.split("=", 2);
+    const parts = nodeSeqment.split("=", 2);
     const nodeType = parts[0];
 
     return nodeType;

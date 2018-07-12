@@ -32,7 +32,7 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
-import {VdbsConstants} from "@dataservices/shared/vdbs-constants";
+import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 
 @Injectable()
 export class ConnectionService extends ApiService {

@@ -15,17 +15,19 @@ describe( "Command Factory Tests", () => {
     const path2 = "table=node2";
     const node1 = SchemaNode.create( { connectionName: conn1, path: path1 } );
     const node2 = SchemaNode.create( { connectionName: conn2, path: path2 } );
-    const tempCmd = CommandFactory.createAddSourcesCommand( [ node1, node2 ] );
+    const tempCmd = CommandFactory.createAddSourcesCommand( [ node1, node2 ], "ident" );
     expect( tempCmd instanceof AddSourcesCommand ).toBe( true );
 
     const cmd = tempCmd as AddSourcesCommand;
     expect( cmd.id ).toBe( AddSourcesCommand.id );
     expect( cmd.args ).not.toBeNull();
-    expect( cmd.args.size ).toBe( 1 );
+    expect( cmd.args.size ).toBe( 2 );
 
-    const expected = "connection=" + conn1 + "/" + path1 + ", connection=" + conn2 + "/" + path2;
-    expect( cmd.getArg( AddSourcesCommand.addedSourcePaths ) ).toEqual( expected );
-    expect( cmd.toString() ).toBe( "AddSourcesCommand, addedSourcePaths=" + expected );
+    const expectedSrcPaths = "connection=" + conn1 + "/" + path1 + ", connection=" + conn2 + "/" + path2;
+    const expectedFull = expectedSrcPaths + ", ObjectId=ident";
+    const actual = cmd.getArg( AddSourcesCommand.addedSourcePaths );
+    expect( cmd.getArg( AddSourcesCommand.addedSourcePaths ) ).toEqual( expectedSrcPaths );
+    expect( cmd.toString() ).toBe( "AddSourcesCommand, addedSourcePaths=" + expectedFull );
     expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
@@ -41,7 +43,7 @@ describe( "Command Factory Tests", () => {
   it("AddSourcesCommand Undo Test", () => {
     const node1 = SchemaNode.create( { connectionName: "conn1", path: "table=node1" } );
     const node2 = SchemaNode.create( { connectionName: "conn2", path: "table=node2" } );
-    const tempCmd = CommandFactory.createAddSourcesCommand( [ node1, node2 ] );
+    const tempCmd = CommandFactory.createAddSourcesCommand( [ node1, node2 ], "ident" );
     expect( tempCmd instanceof AddSourcesCommand ).toBe( true );
 
     const cmd = tempCmd as AddSourcesCommand;
@@ -51,7 +53,7 @@ describe( "Command Factory Tests", () => {
     const undoCmd = tempUndoCmd as RemoveSourcesCommand;
     expect( undoCmd ).not.toBeNull();
     expect( undoCmd.id ).toBe( RemoveSourcesCommand.id );
-    expect( undoCmd.args.size ).toBe( 1 );
+    expect( undoCmd.args.size ).toBe( 2 );
     expect( undoCmd.getArg( RemoveSourcesCommand.removedSourcePaths ) ).toEqual( cmd.getArg( AddSourcesCommand.addedSourcePaths ) );
   });
 
@@ -77,17 +79,18 @@ describe( "Command Factory Tests", () => {
     const path2 = "table=node2";
     const node1 = SchemaNode.create( { connectionName: "conn1", path: path1 } );
     const node2 = SchemaNode.create( { connectionName: "conn2", path: path2 } );
-    const temp = CommandFactory.createRemoveSourcesCommand( [ node1, node2 ] );
+    const temp = CommandFactory.createRemoveSourcesCommand( [ node1, node2 ], "ident" );
     expect( temp instanceof RemoveSourcesCommand ).toBe( true );
 
     const cmd = temp as RemoveSourcesCommand;
     expect( cmd.id ).toBe( RemoveSourcesCommand.id );
     expect( cmd.args ).not.toBeNull();
-    expect( cmd.args.size ).toBe( 1 );
+    expect( cmd.args.size ).toBe( 2 );
 
-    const expected = "connection=" + conn1 + "/" + path1 + ", connection=" + conn2 + "/" + path2;
-    expect( cmd.getArg( RemoveSourcesCommand.removedSourcePaths ) ).toEqual( expected );
-    expect( cmd.toString() ).toEqual( "RemoveSourcesCommand, removedSourcePaths=" + expected );
+    const expectedSrcPaths = "connection=" + conn1 + "/" + path1 + ", connection=" + conn2 + "/" + path2;
+    const expectedFull = expectedSrcPaths + ", ObjectId=ident";
+    expect( cmd.getArg( RemoveSourcesCommand.removedSourcePaths ) ).toEqual( expectedSrcPaths );
+    expect( cmd.toString() ).toEqual( "RemoveSourcesCommand, removedSourcePaths=" + expectedFull );
     expect( cmd.isUndoable() ).toBe( true );
 
     const json = cmd.toJSON();
@@ -103,7 +106,7 @@ describe( "Command Factory Tests", () => {
   it("RemoveSourcesCommand Undo Test", () => {
     const node1 = SchemaNode.create( { connectionName: "conn1", path: "table=node1" } );
     const node2 = SchemaNode.create( { connectionName: "conn2", path: "table=node2" } );
-    const tempCmd = CommandFactory.createRemoveSourcesCommand( [ node1, node2 ] );
+    const tempCmd = CommandFactory.createRemoveSourcesCommand( [ node1, node2 ], "ident" );
     expect( tempCmd instanceof RemoveSourcesCommand ).toBe( true );
 
     const cmd = tempCmd as RemoveSourcesCommand;
@@ -113,7 +116,7 @@ describe( "Command Factory Tests", () => {
     const undoCmd = tempUndoCmd as AddSourcesCommand;
     expect( undoCmd ).not.toBeNull();
     expect( undoCmd.id ).toBe( AddSourcesCommand.id );
-    expect( undoCmd.args.size ).toBe( 1 );
+    expect( undoCmd.args.size ).toBe( 2 );
     expect( undoCmd.getArg( AddSourcesCommand.addedSourcePaths ) ).toEqual( cmd.getArg( RemoveSourcesCommand.removedSourcePaths ) );
   });
 

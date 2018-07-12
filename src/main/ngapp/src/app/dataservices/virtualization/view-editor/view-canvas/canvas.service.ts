@@ -40,13 +40,15 @@ export class CanvasService {
    * This service will provide methods to enable user interaction with elements
    * while maintaining the d3 simulations physics
    */
-  constructor() {}
+  constructor() {
+    // Nothing to do
+  }
 
   /**
    * The interactable graph.
    * This method does not interact with the document, purely physical calculations with d3
    */
-  public newCanvasGraph(options: { width, height }, changeDetectorRef: ChangeDetectorRef): CanvasGraph {
+  public newCanvasGraph(options: { width: number, height: number }, changeDetectorRef: ChangeDetectorRef): CanvasGraph {
     this.viewReference = changeDetectorRef;
 
     this.canvasGraph = new CanvasGraph(this, options);
@@ -123,14 +125,14 @@ export class CanvasService {
     this.stopPropagation();
   }
 
-  private removeNodeCallback(node: CanvasNode) {
-    let eventType = ViewCanvasEventType.DELETE_NODE;
+  private removeNodeCallback(node: CanvasNode): void {
+    const eventType = ViewCanvasEventType.DELETE_NODE;
     const args = [];
     //
     // Send the decoded id so that it can be parsed
     // and the source path extracted from it if required
     //
-    args.push(node.decodedId)
+    args.push(node.decodedId);
 
     const event = ViewCanvasEvent.create(eventType, args);
     this.canvasEvent.emit(event);
@@ -226,7 +228,7 @@ export class CanvasService {
 
     const selection = d3.select('#' + elementId);
     if (selection)
-      return (<SVGGraphicsElement>selection.node()).getBBox();
+      return (selection.node() as SVGGraphicsElement).getBBox();
 
     return null;
   }
@@ -235,7 +237,7 @@ export class CanvasService {
    * @returns the icon for the command type provided. If depressed then
    *            returns the depressed version of the icon
    */
-  public commandIcon(cmdType: string, depressed: boolean) {
+  public commandIcon(cmdType: string, depressed: boolean): string {
     if (depressed)
       return "/assets/iconfinder/Aha-soft/" + cmdType + "-depressed.png";
 
@@ -256,7 +258,7 @@ export class CanvasService {
   /**
    * Delete the node with the given id
    */
-  public deleteNode(nodeId: string, refresh?: boolean) {
+  public deleteNode(nodeId: string, refresh?: boolean): void {
     if (! this.canvasGraph)
       throw new Error("A canvas graph is required before removing a node");
 

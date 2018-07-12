@@ -42,7 +42,6 @@ export abstract class Command {
    */
   public static readonly idPropJson = "id";
 
-
   /**
    * The identifier used for the id argument
    */

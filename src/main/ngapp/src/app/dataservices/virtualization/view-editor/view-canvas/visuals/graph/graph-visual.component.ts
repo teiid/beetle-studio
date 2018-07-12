@@ -75,31 +75,37 @@ import * as _ from "lodash";
 export class GraphVisualComponent implements OnInit {
 
   public canvasGraph: CanvasGraph;
-  private _options: { width, height } = { width: 800, height: 600 };
+  public _options: { width: number, height: number } = { width: 800, height: 600 };
+
+  private canvasService: CanvasService;
+  private ref: ChangeDetectorRef;
 
   @HostListener('window:resize', ['$event'])
-  onResize(event) {
+  public onResize(event): void {
     this.canvasService.update(true, this.options);
   }
 
-  constructor(private canvasService: CanvasService, private ref: ChangeDetectorRef) {}
+  constructor(canvasService: CanvasService, ref: ChangeDetectorRef) {
+    this.canvasService = canvasService;
+    this.ref = ref;
+  }
 
-  public get nodes() {
+  public get nodes(): CanvasNode[] {
     return this.canvasService.nodes();
   }
 
-  public get links() {
+  public get links(): CanvasLink[] {
     return this.canvasService.links();
   }
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     console.log("graph-visual: ngOnInit");
 
     /** Receiving an initialized simulated graph from our custom canvas.service */
     this.canvasGraph = this.canvasService.newCanvasGraph(this.options, this.ref);
   }
 
-  public get options() {
+  public get options(): any {
     return this._options = {
       width: window.innerWidth,
       height: window.innerHeight

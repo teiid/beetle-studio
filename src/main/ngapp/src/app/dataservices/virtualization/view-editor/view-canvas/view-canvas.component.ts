@@ -80,7 +80,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       const srcPaths = cmd.getSourcePaths();
       for (let i = 0; i < srcPaths.length; ++i) {
         const srcPath = srcPaths[i];
-        const update = (i == (srcPaths.length - 1));
+        const update = (i === (srcPaths.length - 1));
         const id = cmd.getId(srcPath);
         this.canvasService.createNode(id, CanvasConstants.SOURCE_TYPE, srcPath, update);
       }
@@ -89,7 +89,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       const srcPaths = cmd.getSourcePaths();
       for (let i = 0; i < srcPaths.length; ++i) {
         const srcPath = srcPaths[i];
-        const update = (i == (srcPaths.length - 1));
+        const update = (i === (srcPaths.length - 1));
         const id = cmd.getId(srcPath);
         this.canvasService.deleteNode(id, update);
       }
@@ -188,7 +188,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.canvasSubscription = this.canvasService.canvasEvent.subscribe((event) => this.handleCanvasEvent(event));
   }
 
-  public ngAfterViewInit() {
+  public ngAfterViewInit(): void {
     // const labels:string[] = ['Employee', 'Admin', 'Payroll', 'EmployeeAdmin', 'EmployeePayDay'];
     // const type:string[] = [
     //   CanvasConstants.SOURCE_TYPE,
@@ -216,7 +216,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
 
-      for (let node of nodes) {
+      for (const node of nodes) {
         console.log("Node " + node.label + " selected");
       }
     });
