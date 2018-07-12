@@ -20,8 +20,6 @@ import * as cola from 'webcola';
 
 export class CanvasNode implements cola.Node {
 
-  private static idGenerator: number = 0;
-
   // optional - defining optional implementation properties - required for relevant typing assistance
   index?: number;
   x: number;
@@ -38,8 +36,16 @@ export class CanvasNode implements cola.Node {
   private _selected: boolean = false;
   private _root: boolean = false;
 
-  constructor(type: string, label: string, root?: boolean) {
-    this._id = CanvasConstants.NODE_PREFIX + CanvasNode.idGenerator++;
+  public static encodeId(id: string): string {
+    return btoa(id);
+  }
+
+  public static decodeId(id: string): string {
+    return atob(id);
+  }
+
+  constructor(id: string, type: string, label: string, root?: boolean) {
+    this._id = CanvasNode.encodeId(id);
     this._type = type;
     this._label = label;
     if (root !== undefined)
@@ -48,6 +54,10 @@ export class CanvasNode implements cola.Node {
 
   public get id(): string {
     return this._id;
+  }
+
+  public get decodedId(): string {
+    return CanvasNode.decodeId(this.id);
   }
 
   public get type(): string {

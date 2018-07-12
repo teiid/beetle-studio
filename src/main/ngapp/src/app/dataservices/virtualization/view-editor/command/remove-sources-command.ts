@@ -41,7 +41,7 @@ export class RemoveSourcesCommand extends Command {
    * @param {string | SchemaNode} removedSources the JSON representation of the sources or the schema nodes of the sources
    *                              being removed (cannot be `null` or empty)
    */
-  public constructor( removedSources: string | SchemaNode[] ) {
+  public constructor( removedSources: string | SchemaNode[], id: string ) {
     super( RemoveSourcesCommand.id, ViewEditorI18n.removeSourcesCommandName );
 
     let arg: string;
@@ -66,6 +66,8 @@ export class RemoveSourcesCommand extends Command {
     }
 
     this._args.set( RemoveSourcesCommand.removedSourcePaths, arg );
+
+    this._args.set( Command.identArg, id);
   }
 
   /**
@@ -76,4 +78,14 @@ export class RemoveSourcesCommand extends Command {
     return argValue.split( RemoveSourcesCommand.delim );
   }
 
+  /**
+   * @returns {string} a unique identifier of this command
+   */
+  public getId(sourcePath?: string): string {
+    let argValue = this.getArg( Command.identArg ) as string;
+    if (sourcePath)
+      argValue = argValue + Command.identDivider + sourcePath;
+
+    return argValue;
+  }
 }

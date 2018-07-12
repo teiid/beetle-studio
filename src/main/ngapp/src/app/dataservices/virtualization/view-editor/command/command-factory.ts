@@ -30,12 +30,12 @@ export class CommandFactory {
    * @param {string | SchemaNode[]} addedSources the JSON representation of or the schema nodes of the sources being added
    * @returns {Command} the add sources command or a no op command if sources are empty
    */
-  public static createAddSourcesCommand( addedSources: string | SchemaNode[] ): Command {
+  public static createAddSourcesCommand( addedSources: string | SchemaNode[], id?: string ): Command {
     if ( !addedSources || addedSources.length === 0 ) {
       return NoOpCommand.NO_OP;
     }
 
-    return new AddSourcesCommand( addedSources );
+    return new AddSourcesCommand( addedSources, id );
   }
 
   /**
@@ -49,12 +49,12 @@ export class CommandFactory {
    * @param {string | SchemaNode[]} removedSources the JSON representation of or the schema nodes of the sources being removed
    * @returns {Command} the remove sources command or a no op command if sources are `undefined` or `null`
    */
-  public static createRemoveSourcesCommand( removedSources: string | SchemaNode[] ): Command {
+  public static createRemoveSourcesCommand( removedSources: string | SchemaNode[], id: string ): Command {
     if ( !removedSources || removedSources.length === 0 ) {
       return NoOpCommand.NO_OP;
     }
 
-    return new RemoveSourcesCommand( removedSources );
+    return new RemoveSourcesCommand( removedSources, id );
   }
 
   /**
@@ -84,7 +84,8 @@ export class CommandFactory {
     switch ( cmd.id ) {
       case AddSourcesCommand.id: {
         const value = cmd.getArg( AddSourcesCommand.addedSourcePaths );
-        return CommandFactory.createRemoveSourcesCommand( value );
+        const id = cmd.getArg(Command.identArg);
+        return CommandFactory.createRemoveSourcesCommand( value, id );
       }
       case RemoveSourcesCommand.id: {
         const value = cmd.getArg( RemoveSourcesCommand.removedSourcePaths );
@@ -151,19 +152,37 @@ export class CommandFactory {
 
     switch ( cmdId ) {
       case AddSourcesCommand.id: {
+        let addSourcePaths: string = null;
+        let addIdent: string = null;
+
         for ( const entry of json[ Command.argsPropJson ] ) {
           if ( entry[ Command.argNameJson ] === AddSourcesCommand.addedSourcePaths ) {
-            return CommandFactory.createAddSourcesCommand( entry[ Command.argValueJson ] as string );
+            addSourcePaths = entry[ Command.argValueJson ];
+          } else if (entry[ Command.argNameJson ] === Command.identArg ) {
+            addIdent = entry[ Command.argValueJson ];
           }
         }
+
+        if (addSourcePaths)
+          return CommandFactory.createAddSourcesCommand(addSourcePaths, addIdent);
 
         return new Error( "Unable to decode AddSourcesCommand: " + json );
       }
       case RemoveSourcesCommand.id: {
+        let removedSourcePaths: string = null;
+        let removedIdent: string = null;
+
         for ( const entry of json[ Command.argsPropJson ] ) {
           if ( entry[ Command.argNameJson ] === RemoveSourcesCommand.removedSourcePaths ) {
-            return CommandFactory.createRemoveSourcesCommand( entry[ Command.argValueJson ] as string );
+            removedSourcePaths = entry[ Command.argValueJson ];
           }
+          else if (entry[ Command.argNameJson ] === Command.identArg ) {
+            removedIdent = entry [ Command.argValueJson ];
+          }
+        }
+
+        if (removedSourcePaths && removedIdent) {
+          return CommandFactory.createRemoveSourcesCommand(removedSourcePaths, removedIdent);
         }
 
         return new Error( "Unable to decode RemoveSourcesCommand: " + json );

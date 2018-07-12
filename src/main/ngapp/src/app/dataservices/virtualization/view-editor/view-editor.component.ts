@@ -36,6 +36,7 @@ import { BsModalService } from "ngx-bootstrap";
 import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
+import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -167,23 +168,35 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     });
   }
 
-  private doDelete(): void {
-    // TODO implement doDelete
-    alert( "Display delete canvas object confirmation dialog" );
-    // // Dialog Content
-    // const message = "Do you really want to delete View '" + this.editorService.getEditorView().getName() + "'?";
-    // const initialState = {
-    //   title: "Confirm Delete",
-    //   bodyContent: message,
-    //   cancelButtonText: "Cancel",
-    //   confirmButtonText: "Delete"
-    // };
-    //
-    // // Show Dialog, act upon confirmation click
-    // const modalRef = this.modalService.show(ConfirmDialogComponent, {initialState});
-    // modalRef.content.confirmAction.take(1).subscribe((value) => {
-    //   this.deleteView();
-    // });
+  private doDelete(ident: string): void {
+
+    if (!ident) {
+      alert("Nothing selected for delete");
+      return;
+    }
+
+    const identBits = ident.split(Command.identDivider);
+
+    // Dialog Content
+    const message = "Do you really want to delete '" + identBits[0] + "'?";
+    const initialState = {
+      title: "Confirm Delete",
+      bodyContent: message,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Delete"
+    };
+
+    // Show Dialog, act upon confirmation click
+    const modalRef = this.modalService.show(ConfirmDialogComponent, {initialState});
+    modalRef.content.confirmAction.take(1).subscribe((value) => {
+      const tempCmd = CommandFactory.createRemoveSourcesCommand(identBits[1], identBits[0]);
+      if ( tempCmd instanceof Command ) {
+        const cmd = tempCmd as Command;
+        this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR, cmd );
+      } else {
+        this.logger.error( "Failed to create RemoveSourcesCommand");
+      }
+    });
   }
 
   private doDisplayLogMessages( actionId: string ): void {
@@ -343,7 +356,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
         this.doAddSource();
         break;
       case this.deleteActionId:
-        this.doDelete();
+        this.doDelete(null);
         break;
       case this.errorsActionId:
         this.doDisplayLogMessages( this.errorsActionId );
@@ -388,6 +401,9 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     }
     else if (event.typeIsCreateComposition()) {
       this.doAddComposition();
+    }
+    else if (event.typeIsDeleteNode()) {
+      this.doDelete(event.args[0]);
     }
     else if ( event.typeIsEditorViewSaveProgressChanged() ) {
       if ( event.args.length !== 0 ) {

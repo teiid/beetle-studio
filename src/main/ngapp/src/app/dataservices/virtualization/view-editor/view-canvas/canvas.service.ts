@@ -19,6 +19,7 @@ import { CanvasConstants } from '@dataservices/virtualization/view-editor/view-c
 import { CanvasNode, CanvasLink, CanvasGraph } from '@dataservices/virtualization/view-editor/view-canvas/models';
 import { ViewCanvasEvent } from "@dataservices/virtualization/view-editor/view-canvas/event/view-canvas-event";
 import { ViewCanvasEventType } from "@dataservices/virtualization/view-editor/view-canvas/event/view-canvas-event-type.enum";
+import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import * as d3 from 'd3';
 import * as _ from "lodash";
 
@@ -123,7 +124,16 @@ export class CanvasService {
   }
 
   private removeNodeCallback(node: CanvasNode) {
-    this.deleteNode(node.id, true);
+    let eventType = ViewCanvasEventType.DELETE_NODE;
+    const args = [];
+    //
+    // Send the decoded id so that it can be parsed
+    // and the source path extracted from it if required
+    //
+    args.push(node.decodedId)
+
+    const event = ViewCanvasEvent.create(eventType, args);
+    this.canvasEvent.emit(event);
     this.stopPropagation();
   }
 
@@ -235,11 +245,11 @@ export class CanvasService {
   /**
    * Create a new node and add it to the graph
    */
-  public createNode(type: string, label: string, refresh?: boolean): string {
+  public createNode(id: string, type: string, label: string, refresh?: boolean): string {
     if (! this.canvasGraph)
       throw new Error("A canvas graph is required before creating a node");
 
-    const canvasNode = this.canvasGraph.addNode(type, label, refresh);
+    const canvasNode = this.canvasGraph.addNode(id, type, label, refresh);
     return canvasNode.id;
   }
 
@@ -249,6 +259,14 @@ export class CanvasService {
   public deleteNode(nodeId: string, refresh?: boolean) {
     if (! this.canvasGraph)
       throw new Error("A canvas graph is required before removing a node");
+
+    if (nodeId.includes(Command.identDivider)) {
+      //
+      // identifier has been delivered as plaintext
+      // while the node identifiers are encoded
+      //
+      nodeId = CanvasNode.encodeId(nodeId);
+    }
 
     this.canvasGraph.removeNode(nodeId, refresh);
   }

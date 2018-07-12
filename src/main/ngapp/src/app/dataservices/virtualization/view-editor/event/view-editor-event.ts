@@ -224,4 +224,11 @@ export class ViewEditorEvent {
   public typeIsCreateComposition(): boolean {
     return this.type === ViewEditorEventType.CREATE_COMPOSITION;
   }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.DELETE_NODE`
+   */
+  public typeIsDeleteNode(): boolean {
+    return this.type === ViewEditorEventType.DELETE_NODE;
+  }
 }

@@ -171,9 +171,9 @@ export class CanvasGraph {
   /**
    * Add a new node to the graph
    */
-  public addNode(type: string, label: string, update?: boolean): CanvasNode {
+  public addNode(id: string, type: string, label: string, update?: boolean): CanvasNode {
     const isEmpty = _.isEmpty(this.nodes);
-    const canvasNode = new CanvasNode(type, label, isEmpty);
+    const canvasNode = new CanvasNode(id, type, label, isEmpty);
 
     //
     // Set as fixed by default until its linked
