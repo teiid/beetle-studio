@@ -37,11 +37,11 @@ export class CanvasNode implements cola.Node {
   private _root = false;
 
   public static encodeId(id: string): string {
-    return btoa(id);
+    return id.replace(/\//g, '5X5').replace(/=/g, '6X6');
   }
 
   public static decodeId(id: string): string {
-    return atob(id);
+    return id.replace('/5X5/g', '/').replace('/6X6/g', '=');
   }
 
   constructor(id: string, type: string, label: string, root?: boolean) {

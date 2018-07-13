@@ -150,22 +150,8 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         this.editorService.editorEvent.emit(deleteEvt);
         break;
       case ViewCanvasEventType.CANVAS_SELECTION_CHANGED:
-
-        //
-        // TODO
-        // Need to work out what to place inside the event
-        // for other compomenents to make use of
-        //
-        // const selectEvent = ViewEditorEvent.create(ViewEditorPart.CANVAS, ViewEditorEventType.CANVAS_SELECTION_CHANGED, event.args);
-        // this.editorService.editorEvent.emit(srcEvent);
-        // break;
-
-        const selected = <Array<CanvasNode>> event.args;
-        this.logger.debug("ViewCanvasComponent selected " + selected.length + " nodes");
-        selected.forEach((node) => {
-          this.logger.debug("Selected: " + node.label);
-        });
-
+        const selectEvent = ViewEditorEvent.create(ViewEditorPart.CANVAS, ViewEditorEventType.CANVAS_SELECTION_CHANGED, event.args);
+        this.editorService.editorEvent.emit(selectEvent);
         break;
       default:
         this.logger.debug("ViewCanvasComponent not handling received canvas event: " + event.toString());
