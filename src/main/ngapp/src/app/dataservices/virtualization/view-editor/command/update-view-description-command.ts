@@ -43,13 +43,19 @@ export class UpdateViewDescriptionCommand extends Command {
 
   /**
    * @param {string} newViewDescription the new view description (can be `null` or empty)
-   * @param {string} replacedViewDescription the view description being replaced (can be `null` or empty)
+   * @param {string} oldViewDescription the view description being replaced (can be `null` or empty)
    */
   public constructor( newViewDescription: string,
-                      replacedViewDescription: string ) {
+                      oldViewDescription: string ) {
     super( UpdateViewDescriptionCommand.id, ViewEditorI18n.updateViewDescriptionCommandName );
-    this._args.set( UpdateViewDescriptionCommand.newDescription, newViewDescription );
-    this._args.set( UpdateViewDescriptionCommand.oldDescription, replacedViewDescription );
+
+    if ( newViewDescription ) {
+      this._args.set( UpdateViewDescriptionCommand.newDescription, newViewDescription );
+    }
+
+    if ( oldViewDescription ) {
+      this._args.set( UpdateViewDescriptionCommand.oldDescription, oldViewDescription );
+    }
   }
 
 }

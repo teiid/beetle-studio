@@ -404,46 +404,29 @@ export class VirtualizationComponent implements OnInit {
     this.viewsLoadingState = LoadingState.LOADING;
     const vdbName = this.currentVirtualization.getServiceVdbName();
     const modelName = this.currentVirtualization.getServiceViewModel();
-    const viewNames = this.currentVirtualization.getServiceViewNames();
-    const viewSourceTables = this.currentVirtualization.getServiceViewTables();
-
-    const virtViews: View[] = [];
-    for (let i = 0; i < viewNames.length; i++) {
-      const viewName = viewNames[i];
-      const sourcePaths: string[] = [viewSourceTables[i]];
-
-      const view = new View();
-      view.setName(viewName);
-      view.setSourcePaths(sourcePaths);
-
-      virtViews.push(view);
-    }
-
-    this.currentVirtualization.setViews(virtViews);
-    this.views = this.currentVirtualization.getViews().sort( (left, right): number => {
-      if (left.getName() < right.getName()) return -1;
-      if (left.getName() > right.getName()) return 1;
-      return 0;
-    });
 
     this.setViewsEditableState(true);
-    this.viewsLoadingState = LoadingState.LOADED_VALID;
-    // const self = this;
-    // this.vdbService
-    //   .getVdbModelViews(vdbName, modelName)
-    //   .subscribe(
-    //     (views) => {
-    //       self.currentVirtualization.setViews(views);
-    //       self.views = self.currentVirtualization.getViews();
-    //       self.setViewsEditableState(true);
-    //       this.viewsLoadingState = LoadingState.LOADED_VALID;
-    //     },
-    //     (error) => {
-    //       self.logger.error("[VirtualizationComponent] Error updating the views for the virtualization: %o", error);
-    //       self.viewCreateInProgress = false;
-    //       this.viewsLoadingState = LoadingState.LOADED_INVALID;
-    //     }
-    //   );
+
+    const self = this;
+    this.vdbService
+      .getVdbModelViews(vdbName, modelName)
+      .subscribe(
+        (views) => {
+          self.currentVirtualization.setViews(views);
+          self.views = this.currentVirtualization.getViews().sort( (left, right): number => {
+            if (left.getName() < right.getName()) return -1;
+            if (left.getName() > right.getName()) return 1;
+            return 0;
+          });
+          self.setViewsEditableState(true);
+          this.viewsLoadingState = LoadingState.LOADED_VALID;
+        },
+        (error) => {
+          self.logger.error("[VirtualizationComponent] Error updating the views for the virtualization: %o", error);
+          self.viewCreateInProgress = false;
+          this.viewsLoadingState = LoadingState.LOADED_INVALID;
+        }
+      );
   }
 
   /*

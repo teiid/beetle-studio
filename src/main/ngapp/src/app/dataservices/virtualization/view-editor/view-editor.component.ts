@@ -29,7 +29,7 @@ import { Message } from "@dataservices/virtualization/view-editor/editor-views/m
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { ConnectionTableDialogComponent } from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
-import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
+import { ViewEditorProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 import { BsModalService } from "ngx-bootstrap";
@@ -209,7 +209,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     });
   }
 
-  private doSelection(selection: string[]) {
+  private doSelection(selection: string[]): void {
     this.editorService.select(selection);
   }
 
@@ -224,7 +224,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   }
 
   private doSave(): void {
-    this.editorService.saveView(this.connections);
+    this.editorService.saveEditorState();
   }
 
   private doUndo(): void {
@@ -428,12 +428,12 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     else if ( event.typeIsEditorViewSaveProgressChanged() ) {
       if ( event.args.length !== 0 ) {
         // Detect changes in view editor save progress
-        if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.IN_PROGRESS ) {
+        if ( event.args[ 0 ] === ViewEditorProgressChangeId.IN_PROGRESS ) {
           this.saveInProgress = true;
-        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_SUCCESS ) {
+        } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_SUCCESS ) {
           this.editorService.updatePreviewResults();
           this.saveInProgress = false;
-        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_FAILED ) {
+        } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_FAILED ) {
           this.saveInProgress = false;
         }
       }
@@ -544,6 +544,9 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
       this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorPart.EDITOR );
       this.fatalErrorOccurred = true;
     }
+
+    // Keep track of lastSaved view for this edit session
+    this.editorService.setOriginalViewName(null);
 
     // Load the connections
     const self = this;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-export enum ViewEditorSaveProgressChangeId {
+export enum ViewEditorProgressChangeId {
 
   /**
    * Indicates the view save is in progress.

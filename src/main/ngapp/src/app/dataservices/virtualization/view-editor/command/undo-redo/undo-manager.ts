@@ -21,18 +21,18 @@ import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-ed
 
 export class UndoManager {
 
+  /**
+   * The name of the JSON property whose value is the array of {@link Undoable}s.
+   *
+   * @type {string}
+   */
+  public static readonly undoables = "undoables";
+
   private currentIndex: UndoNode = null;
   private readonly rootNode: UndoNode;
 
   public constructor() {
     this.rootNode = new UndoNode();
-    this.currentIndex = this.rootNode;
-  }
-
-  /**
-   * Removes all undoables.
-   */
-  public clear(): void {
     this.currentIndex = this.rootNode;
   }
 
@@ -44,6 +44,13 @@ export class UndoManager {
     this.currentIndex.right = node;
     node.left = this.currentIndex;
     this.currentIndex = node;
+  }
+
+  /**
+   * Removes all undoables.
+   */
+  public clear(): void {
+    this.currentIndex = this.rootNode;
   }
 
   /**
@@ -151,15 +158,21 @@ export class UndoManager {
   }
 
   /**
+   * @param {boolean} includeAll if `false` will include from the first up to the current node
    * @returns {Undoable[]} a collection of undoables in order from the first to the last (can be empty)
    */
-  public toArray(): Undoable[] {
+  public toArray( includeAll: boolean = false ): Undoable[] {
     const result: Undoable[] = [];
 
     let node = this.rootNode.right;
 
     while ( node != null ) {
       result.push( node.undoable );
+
+      if ( !includeAll && this.currentIndex === node ) {
+        break;
+      }
+
       node = node.right;
     }
 
@@ -171,7 +184,7 @@ export class UndoManager {
     this.toArray().forEach( ( undoable ) => json.push( undoable.toJSON() ) );
 
     return {
-      undoables: json
+      [ UndoManager.undoables ]: json
     };
   }
 

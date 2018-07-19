@@ -25,7 +25,7 @@ import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/ev
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
-import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
+import { ViewEditorProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 import { PathUtils } from "@dataservices/shared/path-utils";
 import { NotificationType } from "patternfly-ng";
@@ -107,18 +107,18 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         const viewName = this.editorService.getEditorView().getName();
 
         // Detect changes in view editor save progress
-        if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.IN_PROGRESS ) {
+        if ( event.args[ 0 ] === ViewEditorProgressChangeId.IN_PROGRESS ) {
           this.saveViewNotificationHeader = this.viewSaveInProgressHeader;
           this.saveViewNotificationMessage = "Saving View '" + viewName + "'...";
           this.saveViewNotificationType = NotificationType.INFO;
           this.saveViewNotificationVisible = true;
-        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_SUCCESS ) {
+        } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_SUCCESS ) {
           this.saveViewNotificationHeader = this.viewSaveSuccessHeader;
           this.saveViewNotificationMessage = "View '" + viewName + "' save successful";
           this.saveViewNotificationType = NotificationType.SUCCESS;
           // After 8 seconds, the notification is dismissed
           setTimeout(() => this.saveViewNotificationVisible = false, 8000);
-        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_FAILED ) {
+        } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_FAILED ) {
           this.saveViewNotificationHeader = this.viewSaveFailedHeader;
           this.saveViewNotificationMessage = "View '" + viewName + "' save failed";
           this.saveViewNotificationType = NotificationType.DANGER;
@@ -256,6 +256,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return [];
   }
+
   //
   // /**
   //  * Handle removal of View Source

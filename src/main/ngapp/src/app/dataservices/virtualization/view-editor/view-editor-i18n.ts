@@ -67,12 +67,14 @@ export class ViewEditorI18n {
   public static readonly deleteActionTooltip = "Delete the selection(s)";
   public static readonly errorsActionTitle = "Errors";
   public static readonly errorsActionTooltip = "Show error messages";
+  public static readonly errorRestoringViewEditorState = "There was an error restoring the view editor state: ";
   public static readonly infosActionTitle = "Infos";
   public static readonly infosActionTooltip = "Show info messages";
   public static readonly redoActionTitle = "Redo";
   public static readonly redoActionTooltip = "Redo";
   public static readonly saveActionTitle = "Save";
   public static readonly saveActionTooltip = "Save";
+  public static readonly serverError = "Server Error";
   public static readonly showEditorCanvasAndViewsActionTooltip = "Show full editor";
   public static readonly showEditorCanvasOnlyActionTooltip = "Show canvas and properties only";
   public static readonly showEditorViewsOnlyActionTooltip = "Show information views only";

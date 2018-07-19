@@ -26,8 +26,6 @@ import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 @Injectable()
 export class AppSettingsService {
 
-  private static readonly userProfileUrl = environment.komodoServiceUrl + "/userProfile";
-
   // ** Dont change git keys - must match Komodo rest call parameters **
   public readonly GIT_REPO_BRANCH_KEY = "repo-branch-property";
   public readonly GIT_REPO_AUTHOR_NAME_KEY = "author-name-property";
@@ -82,7 +80,7 @@ export class AppSettingsService {
   }
 
   protected fetchUserProfile(): Observable<object> {
-    return this.http.get(AppSettingsService.userProfileUrl, this.getAuthRequestOptions())
+    return this.http.get(environment.userProfileUrl, this.getAuthRequestOptions())
       .map((response) => {
         const userInfo = response.json();
         return userInfo.Information;

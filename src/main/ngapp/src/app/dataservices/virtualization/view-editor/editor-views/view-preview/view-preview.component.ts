@@ -25,7 +25,7 @@ import { RowData } from "@dataservices/shared/row-data.model";
 import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
-import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
+import { ViewEditorProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
 import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
@@ -94,11 +94,11 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
     } else if ( event.typeIsEditorViewSaveProgressChanged() ) {
       if ( event.args.length !== 0 ) {
         // Detect changes in view editor save progress
-        if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.IN_PROGRESS ) {
+        if ( event.args[ 0 ] === ViewEditorProgressChangeId.IN_PROGRESS ) {
           this.saveInProgress = true;
-        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_SUCCESS ) {
+        } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_SUCCESS ) {
           this.saveInProgress = false;
-        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_FAILED ) {
+        } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_FAILED ) {
           this.saveInProgress = false;
         }
       }

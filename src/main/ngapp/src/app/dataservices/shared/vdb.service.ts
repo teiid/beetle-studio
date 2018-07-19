@@ -34,6 +34,7 @@ import { Connection } from "@connections/shared/connection.model";
 import { View } from "@dataservices/shared/view.model";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { PathUtils } from "@dataservices/shared/path-utils";
+import { UndoManager } from "@dataservices/virtualization/view-editor/command/undo-redo/undo-manager";
 
 @Injectable()
 /**
@@ -69,13 +70,38 @@ export class VdbService extends ApiService {
   /**
    * Determine if the workspace has a vdb with the supplied name
    * @param {string} vdbName the name of the VDB
-   * @returns {Observable<Vdb[]>}
+   * @returns {Observable<boolean>}
    */
   public hasWorkspaceVdb(vdbName: string): Observable<boolean> {
     return this.http
       .get(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName, this.getAuthRequestOptions())
       .map((response) => {
           return response.ok;
+      })
+      .catch((error) => {
+        // VDB not found returns a 404
+        if (error.status === 404) {
+          return Observable.of(false);
+        }
+        this.handleError( error );
+      } );
+  }
+
+  /**
+   * Determine if the workspace has the specified vdb model view
+   * @param {string} vdbName the name of the VDB
+   * @param {string} modelName the name of the Model
+   * @param {string} viewName the name of the View
+   * @returns {Observable<boolean>}
+   */
+  public hasWorkspaceVdbModelView(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
+    const url = environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName
+                                               + VdbsConstants.vdbModelsRootPath + "/" + modelName + "/Views/" + viewName;
+
+    return this.http
+      .get(url, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
       })
       .catch((error) => {
         // VDB not found returns a 404
@@ -223,6 +249,53 @@ export class VdbService extends ApiService {
         + VdbsConstants.vdbModelsRootPath + "/" + modelName
         + VdbsConstants.vdbModelSourcesRootPath + "/" + vdbModelSource.getId(),
         vdbModelSource, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Create the workspace VDB Model View if specified view is not found.
+   * If specified VDB Model View is found, the create attempt is skipped.
+   * @param {string} vdbName the name of the vdb
+   * @param {string} modelName the name of the model
+   * @param {string} viewName the name of the view
+   * @returns {Observable<boolean>}
+   */
+  public createVdbModelViewIfNotFound(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
+    return this.hasWorkspaceVdbModelView(vdbName, modelName, viewName)
+      .switchMap( (resp) => {
+        if (resp === false) {
+          return this.createVdbModelView(vdbName, modelName, viewName);
+        } else {
+          return Observable.of(true);
+        }
+      });
+  }
+
+  /**
+   * Create a vdb model view via the komodo rest interface
+   * @param {string} vdbName
+   * @param {string} modelName
+   * @param {string} viewName
+   * @returns {Observable<boolean>}
+   */
+  public createVdbModelView(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
+    // The payload for the rest call
+    const userWorkspacePath = this.getKomodoUserWorkspacePath();
+    const payload = {
+      "keng__id": viewName,
+      "keng__kType": "View",
+      "keng__dataPath": userWorkspacePath + "/" + vdbName + "/" + modelName + "/" + viewName,
+    };
+
+    const url = environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName
+                                               + VdbsConstants.vdbModelsRootPath + "/" + modelName + "/Views/" + viewName;
+    const paystr = JSON.stringify(payload);
+
+    return this.http
+      .post(url, paystr, this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
       })
@@ -451,6 +524,53 @@ export class VdbService extends ApiService {
   }
 
   /**
+   * Deletes the workspace VDB model view if found.  Checks the workspace first, before attempting the delete.
+   * If the View is not found the delete attempt is skipped.
+   * @param {string} vdbName the name of the vdb
+   * @param {string} modelName the name of the model
+   * @param {string} viewName the name of the view
+   * @returns {Observable<boolean>}
+   */
+  public deleteViewIfFound(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
+    return this.hasWorkspaceVdbModelView(vdbName, modelName, viewName)
+      .switchMap( (resp) => {
+        if (resp === true) {
+          return this.deleteView(vdbName, modelName, viewName);
+        } else {
+          return Observable.of(true);
+        }
+      });
+  }
+
+  /**
+   * Deletes the workspace VDB model view if found.  Also deletes specified editorId
+   * @param {string} vdbName the name of the vdb
+   * @param {string} modelName the name of the model
+   * @param {string} viewName the name of the view
+   * @param {string} editorStateId the editorState Id
+   * @returns {Observable<boolean>}
+   */
+  public deleteViewAndViewEditorState(vdbName: string, modelName: string, viewName: string, editorStateId: string): Observable<boolean> {
+    return this.deleteViewIfFound(vdbName, modelName, viewName)
+      .flatMap((res) => this.deleteViewEditorState(editorStateId));
+  }
+
+  /**
+   * Create the workspace VDB model view if not found.  Also saves specified viewEditor state
+   * @param {string} vdbName the name of the vdb
+   * @param {string} modelName the name of the model
+   * @param {string} viewName the name of the view
+   * @param {string} editorId the ID of the view editor being saved
+   * @param {{}} editorState the JSON representation of the editor state
+   * @returns {Observable<boolean>}
+   */
+  public createViewAndSaveViewEditorState(vdbName: string, modelName: string, viewName: string,
+                                          editorStateId: string, editorState: {}): Observable<boolean> {
+    return this.createVdbModelViewIfNotFound(vdbName, modelName, viewName)
+      .flatMap((res) => this.saveViewEditorState(editorStateId, editorState));
+  }
+
+  /**
    * Composite service which 1) undeploys current service VDB and 2) sets the Vdb Model Views.
    * @param {string} vdbName the vdb name
    * @param {string} modelName the model name
@@ -463,6 +583,61 @@ export class VdbService extends ApiService {
                                    sourceNodePaths: string[], connections: Connection[]): Observable<boolean> {
     return this.undeployVdb(vdbName)
       .flatMap((res) => this.setVdbModelViews(vdbName, modelName, viewNames, sourceNodePaths, connections));
+  }
+
+  /**
+   * @param {string} editorId the ID of the editor state being requested
+   * @returns {Observable<{}>} the view editor state or empty object if not found
+   */
+  public getViewEditorState( editorId: string ): Observable< {} > {
+    return this.http.get(environment.viewEditorState + "/" + editorId, this.getAuthRequestOptions() )
+                    .map( ( response ) => {
+                      return Observable.of( response.json().undoables );
+                    } )
+                    .catch( ( error ) => {
+                      // no editor state found
+                      if ( error.status === 404 ) {
+                        return Observable.of( {} );
+                      }
+
+                      return this.handleError( error );
+                    } );
+  }
+
+  /**
+   * @param {string} editorId the ID of the view editor being saved
+   * @param {{}} editorState the JSON representation of the editor state
+   * @returns {Observable<boolean>} `true` if the editor state was successfully saved
+   */
+  public saveViewEditorState( editorId: string,
+                              editorState: {} ): Observable< boolean > {
+    const payload = {
+      "id": editorId,
+      [ UndoManager.undoables ]: editorState[ UndoManager.undoables ]
+    };
+
+    console.error( JSON.stringify( payload ) );
+    return this.http.put( environment.viewEditorState, payload, this.getAuthRequestOptions() )
+                    .map( ( response ) => {
+                      return response.ok;
+                    } )
+                    .catch( ( error ) =>
+                      this.handleError( error )
+                    );
+  }
+
+  /**
+   * @param {string} editorId the ID of the editor state being deleted
+   * @returns {Observable<boolean>} `true` if the editor state was successfully deleted
+   */
+  public deleteViewEditorState( editorId: string ): Observable< boolean > {
+    return this.http.delete(environment.viewEditorState + "/" + editorId, this.getAuthRequestOptions() )
+      .map( ( response ) => {
+        return response.ok;
+      } )
+      .catch( ( error ) =>
+        this.handleError( error )
+      );
   }
 
 }

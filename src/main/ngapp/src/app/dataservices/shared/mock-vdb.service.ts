@@ -196,4 +196,9 @@ export class MockVdbService extends VdbService {
     return Observable.of(this.testDataService.getQueryResults());
   }
 
+  public saveViewEditorState( editorId: string,
+                              editorState: {} ): Observable< boolean > {
+    return Observable.of(true);
+  }
+
 }
