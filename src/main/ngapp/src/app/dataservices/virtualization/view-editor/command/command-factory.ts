@@ -16,6 +16,7 @@
  */
 
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
+import { AddCompositionCommand } from "@dataservices/virtualization/view-editor/command/add-composition-command";
 import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
 import { UpdateViewDescriptionCommand } from "@dataservices/virtualization/view-editor/command/update-view-description-command";
 import { UpdateViewNameCommand } from "@dataservices/virtualization/view-editor/command/update-view-name-command";
@@ -23,6 +24,8 @@ import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/c
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { NoOpCommand } from "@dataservices/virtualization/view-editor/command/no-op-command";
 import { Undoable } from "@dataservices/virtualization/view-editor/command/undo-redo/undoable";
+import { Composition } from "@dataservices/shared/composition.model";
+import { RemoveCompositionCommand } from "@dataservices/virtualization/view-editor/command/remove-composition-command";
 
 export class CommandFactory {
 
@@ -36,6 +39,18 @@ export class CommandFactory {
     }
 
     return new AddSourcesCommand( addedSources, id );
+  }
+
+  /**
+   * @param {string | Composition} addedSources the JSON representation of or the composition being added
+   * @returns {Command} the add composition command or a no op command if composition is null
+   */
+  public static createAddCompositionCommand( addedComposition: string | Composition, id?: string ): Command {
+    if ( !addedComposition || addedComposition === null ) {
+      return NoOpCommand.NO_OP;
+    }
+
+    return new AddCompositionCommand( addedComposition, id );
   }
 
   /**
@@ -55,6 +70,18 @@ export class CommandFactory {
     }
 
     return new RemoveSourcesCommand( removedSources, id );
+  }
+
+  /**
+   * @param {string | SchemaNode[]} removedSources the JSON representation of or the schema nodes of the sources being removed
+   * @returns {Command} the remove sources command or a no op command if sources are `undefined` or `null`
+   */
+  public static createRemoveCompositionCommand( removedComposition: string | Composition, id: string ): Command {
+    if ( !removedComposition || removedComposition === null ) {
+      return NoOpCommand.NO_OP;
+    }
+
+    return new RemoveCompositionCommand( removedComposition, id );
   }
 
   /**
@@ -90,6 +117,15 @@ export class CommandFactory {
       case RemoveSourcesCommand.id: {
         const value = cmd.getArg( RemoveSourcesCommand.removedSourcePaths );
         return CommandFactory.createAddSourcesCommand( value );
+      }
+      case AddCompositionCommand.id: {
+        const value = cmd.getArg( AddCompositionCommand.addedComposition );
+        const id = cmd.getArg(Command.identArg);
+        return CommandFactory.createRemoveCompositionCommand( value, id );
+      }
+      case RemoveCompositionCommand.id: {
+        const value = cmd.getArg( RemoveCompositionCommand.removedComposition );
+        return CommandFactory.createAddCompositionCommand( value );
       }
       case UpdateViewDescriptionCommand.id: {
         return CommandFactory.createUpdateViewDescriptionCommand( cmd.getArg( UpdateViewDescriptionCommand.oldDescription ),
@@ -170,6 +206,25 @@ export class CommandFactory {
         }
 
         return new Error( "Unable to decode RemoveSourcesCommand: " + json );
+      }
+      case AddCompositionCommand.id: {
+        const addComposition = args[ AddCompositionCommand.addedComposition ];
+        const addIdent = args[ Command.identArg ];
+
+        if ( addComposition )
+          return CommandFactory.createAddCompositionCommand( addComposition, addIdent );
+
+        return new Error( "Unable to decode AddCompositionCommand: " + json );
+      }
+      case RemoveCompositionCommand.id: {
+        const removedComposition = args[ RemoveCompositionCommand.removedComposition ];
+        const removedIdent = args[ Command.identArg ];
+
+        if (removedComposition && removedIdent) {
+          return CommandFactory.createRemoveCompositionCommand(removedComposition, removedIdent);
+        }
+
+        return new Error( "Unable to decode RemoveCompositionCommand: " + json );
       }
       case UpdateViewDescriptionCommand.id: {
         const newViewDescription = args[ UpdateViewDescriptionCommand.newDescription ];

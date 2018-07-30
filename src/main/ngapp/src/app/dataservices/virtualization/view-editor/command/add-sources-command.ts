@@ -38,8 +38,13 @@ export class AddSourcesCommand extends Command {
   private static readonly delim = ", ";
 
   /**
-   * @param {string | SchemaNode} addedSources the JSON representation of the sources or the schema nodes of the sources
+   * Constructor
+   * 'addedSources' must be an array of SchemaNodes -OR-
+   * string of the source paths (comma delimited) - path form: "connection=aConn/schema=aSchema/table=aTable"
+   *
+   * @param {string | SchemaNode} addedSources the string representation of the sources or the schema nodes of the sources
    *                              being added (cannot be `null` or empty)
+   * @param {string} id the command id.  If not supplied, an id is generated.
    */
   public constructor( addedSources: string | SchemaNode[], id?: string ) {
     super( AddSourcesCommand.id, ViewEditorI18n.addSourcesCommandName );

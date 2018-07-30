@@ -20,10 +20,14 @@ export class ViewEditorI18n {
   // shared
   public static readonly cancelButtonText = "Cancel";
   public static readonly okButtonText = "OK";
+  public static readonly finishButtonText = "Finish";
+  public static readonly wizardNextButtonText = "Next >";
 
   // commands
   public static readonly addSourcesCommandName = "Add Sources";
+  public static readonly addCompositionCommandName = "Add Composition";
   public static readonly noOpCommandName = "No operation";
+  public static readonly removeCompositionCommandName = "Remove Composition";
   public static readonly removeSourcesCommandName = "Remove Sources";
   public static readonly updateViewNameCommandName = "Update View Name";
   public static readonly updateViewDescriptionCommandName = "Update View Description";
@@ -33,6 +37,16 @@ export class ViewEditorI18n {
   public static readonly connectionTableSelectionDialogTitle = "Select Source for View";
   public static readonly currentSelection = "Current Selection:";
   public static readonly noSelection = "Nothing selected";
+
+  // Add Composition Wizard
+  public static readonly addCompositionWizardTitle = "Add Composition";
+  public static readonly addCompositionWizardSelectSourceMessage = "Expand connection and select a source for the composition";
+  public static readonly addCompositionWizardCriteriaStepMessage = "Select the left and right columns, and define the criteria";
+  public static readonly addCompositionWizardStep1Text = "Select Source";
+  public static readonly addCompositionWizardStep2Text = "Define Composition";
+  public static readonly addCompositionWizardLoadingPrimaryText = "Add Composition Wizard loading";
+  public static readonly addCompositionWizardLoadingSecondaryText = "Please wait for the wizard to finish loading...";
+  public static readonly addCompositionWizardSwapButtonText = "Swap";
 
   // editor views
   public static readonly messagesTabName = "Messages";

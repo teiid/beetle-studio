@@ -66,7 +66,7 @@ export class SlideInComponent {
 
   private state = false;
 
-  private hostElement: ElementRef;
+  private readonly hostElement: ElementRef;
 
   constructor(elRef: ElementRef) {
     this.hostElement = elRef;

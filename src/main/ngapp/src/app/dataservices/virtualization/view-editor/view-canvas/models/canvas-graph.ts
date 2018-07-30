@@ -98,7 +98,7 @@ export class CanvasGraph {
                    .links(this.links);
 
       // Connecting the d3 ticker to an angular event emitter
-      this.layout.on('tick', function() {
+      this.layout.on('tick', function(): void {
         ticker.emit(this);
       });
     }
@@ -207,8 +207,8 @@ export class CanvasGraph {
   /**
    * Remove the node and all its dependents
    */
-  public removeNode(nodeId: string, update?: boolean);
-  public removeNode(nodeToRemove: CanvasNode, update?: boolean);
+  public removeNode(nodeId: string, update?: boolean): void;
+  public removeNode(nodeToRemove: CanvasNode, update?: boolean): void;
   public removeNode(nodeToRemoveOrNodeId: CanvasNode | string, update?: boolean): void {
     let nodeToRemove = null;
     if (typeof nodeToRemoveOrNodeId === "string") {

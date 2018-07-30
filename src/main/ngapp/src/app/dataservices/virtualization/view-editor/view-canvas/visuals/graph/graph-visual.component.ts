@@ -78,7 +78,7 @@ export class GraphVisualComponent implements OnInit {
   public _options: { width: number, height: number } = { width: 800, height: 600 };
 
   private canvasService: CanvasService;
-  private ref: ChangeDetectorRef;
+  private readonly ref: ChangeDetectorRef;
 
   @HostListener('window:resize', ['$event'])
   public onResize(event): void {

@@ -196,8 +196,15 @@ export class MockVdbService extends VdbService {
     return Observable.of(this.testDataService.getQueryResults());
   }
 
-  public saveViewEditorState( editorId: string,
-                              editorState: {} ): Observable< boolean > {
+  /**
+   * Create the workspace VDB Model View if specified view is not found.
+   * If specified VDB Model View is found, the create attempt is skipped.
+   * @param {string} vdbName the name of the vdb
+   * @param {string} modelName the name of the model
+   * @param {string} viewName the name of the view
+   * @returns {Observable<boolean>}
+   */
+  public createVdbModelViewIfNotFound(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
     return Observable.of(true);
   }
 

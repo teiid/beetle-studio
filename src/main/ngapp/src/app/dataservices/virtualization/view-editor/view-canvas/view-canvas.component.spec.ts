@@ -3,7 +3,6 @@ import { HttpModule } from "@angular/http";
 import { LoggerService } from "@core/logger.service";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { AppSettingsService } from "@core/app-settings.service";
-import { SelectedNodeComponent } from "@dataservices/selected-node/selected-node.component";
 import { ViewCanvasComponent } from '@dataservices/virtualization/view-editor/view-canvas/view-canvas.component';
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import {
@@ -47,7 +46,6 @@ describe('ViewCanvasComponent', () => {
         GraphVisualComponent,
         LinkVisualComponent,
         NodeVisualComponent,
-        SelectedNodeComponent,
         ViewCanvasComponent,
         ViewPropertyEditorsComponent
       ],

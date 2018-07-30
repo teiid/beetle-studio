@@ -38,8 +38,13 @@ export class RemoveSourcesCommand extends Command {
   private static readonly delim = ", ";
 
   /**
-   * @param {string | SchemaNode} removedSources the JSON representation of the sources or the schema nodes of the sources
+   * Constructor
+   * 'removedSources' must be an array of SchemaNodes -OR-
+   * string of the source paths (comma delimited) - path form: "connection=aConn/schema=aSchema/table=aTable"
+   *
+   * @param {string | SchemaNode} removedSources the string representation of the sources or the schema nodes of the sources
    *                              being removed (cannot be `null` or empty)
+   * @param {string} id the command id (cannot be 'null' or empty)
    */
   public constructor( removedSources: string | SchemaNode[], id: string ) {
     super( RemoveSourcesCommand.id, ViewEditorI18n.removeSourcesCommandName );

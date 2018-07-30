@@ -18,6 +18,7 @@
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { PathUtils } from "@dataservices/shared/path-utils";
+import { Composition } from "@dataservices/shared/composition.model";
 
 /**
  * View model
@@ -28,6 +29,7 @@ export class View {
   private isSelected = false;
   private isEditable = false;
   private sourcePaths: string[] = [];
+  private compositions: Composition[] = [];
 
   /**
    * @param {Object} json the JSON representation of a View
@@ -106,6 +108,30 @@ export class View {
   }
 
   /**
+   * Add Composition to the View
+   *
+   * @param {Composition} compositionToAdd the composition to add
+   */
+  public addComposition( compositionToAdd: Composition ): void {
+    const index = this.compositions.findIndex( ( comp ) => comp.getName() === compositionToAdd.getName() );
+
+    if ( index === -1 ) {
+      this.compositions.push( compositionToAdd );
+    }
+  }
+
+  /**
+   * @param {string} compositionToRemove the composition name to remove
+   */
+  public removeComposition( compositionToRemove: string ): void {
+    const index = this.compositions.findIndex( ( comp ) => comp.getName() === compositionToRemove );
+
+    if ( index !== -1 ) {
+      this.compositions.splice( index, 1 );
+    }
+  }
+
+  /**
    * Add source path to the list of source paths
    *
    * @param {string} sourcePathToAdd the source path to add
@@ -157,10 +183,24 @@ export class View {
   }
 
   /**
-   * Determine whether the view is in a valid state
-   * @returns {boolean} true if valid
+   * Determine if this view currenly has the specified source path
+   * @param {string} sourcePathToTest the source path
    */
-  public get valid(): boolean {
+  public hasSourcePath( sourcePathToTest: string ): boolean {
+    const index = this.sourcePaths.findIndex( ( sourcePath ) =>
+      sourcePath === sourcePathToTest );
+
+    if ( index !== -1 ) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Determine whether the view is in a complete state
+   * @returns {boolean} true if complete
+   */
+  public get complete(): boolean {
     return this.keng__id != null && this.sourcePaths.length > 0;
   }
 
@@ -198,6 +238,45 @@ export class View {
    */
   public setValues(values: object = {}): void {
     Object.assign(this, values);
+  }
+
+  /**
+   * @returns {{}} a JSON representation of the view
+   */
+  public toJSON(): {} {
+    return {
+      name: this.keng__id,
+      description: this.description,
+      isComplete: this.complete,
+      sourcePaths: this.sourcePaths,
+      compositions: this.compositions
+    };
+  }
+
+  /**
+   * @returns {string} a string representation of the event
+   */
+  public toString(): string {
+    let text = `id: ${this.keng__id}, description: ${this.description}, isComplete: ${this.complete}`;
+
+    let firstTime = true;
+    if ( this.sourcePaths.length !== 0 ) {
+      text += ", sourcePaths: ";
+
+      for ( const sourcePath of this.sourcePaths ) {
+        if ( firstTime ) {
+          firstTime = false;
+        } else {
+          text += ", ";
+        }
+
+        text += sourcePath;
+      }
+    } else {
+      text += ", []";
+    }
+
+    return text;
   }
 
 }

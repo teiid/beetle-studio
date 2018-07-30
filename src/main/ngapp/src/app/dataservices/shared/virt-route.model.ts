@@ -24,7 +24,7 @@ export class VirtRoute {
 
   public static readonly ODATA_PROTOCOL = 'odata';
 
-  private name: string;
+  private readonly name: string;
   private protocol: string;
   private host: string;
   private port: string;

@@ -98,12 +98,12 @@ describe("ConnectionsComponent", () => {
     console.log("========== [ConnectionsComponent] should have Connections");
     // Check component object
     const connections = component.allConnections;
-    expect(connections.length).toEqual(3);
+    expect(connections.length).toEqual(2);
 
     // Check html has the same number of connection cards
     const cardDebugElems = fixture.debugElement.queryAll(By.css(".object-card"));
     expect(cardDebugElems).toBeDefined();
-    expect(cardDebugElems.length).toEqual(3);
+    expect(cardDebugElems.length).toEqual(2);
   });
 
   it("should have initial card layout", () => {

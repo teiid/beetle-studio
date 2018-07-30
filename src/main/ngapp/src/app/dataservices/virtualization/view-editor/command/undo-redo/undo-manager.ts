@@ -215,7 +215,7 @@ export class UndoManager {
     let label = ViewEditorI18n.undoActionTooltip;
 
     if ( this.canUndo() ) {
-      label += " " + this.peekUndoCommand().name;
+      label += " " + this.currentIndex.undoable.redoCommand.name;
     }
 
     return label;

@@ -39,6 +39,8 @@ import { UndoManager } from "@dataservices/virtualization/view-editor/command/un
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 import { Undoable } from "@dataservices/virtualization/view-editor/command/undo-redo/undoable";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
+import { AddCompositionCommand } from "@dataservices/virtualization/view-editor/command/add-composition-command";
+import { RemoveCompositionCommand } from "@dataservices/virtualization/view-editor/command/remove-composition-command";
 
 @Injectable()
 export class ViewEditorService {
@@ -577,6 +579,20 @@ export class ViewEditorService {
 
         break;
       }
+      case AddCompositionCommand.id: {
+        const addCompositionCmd = cmd as AddCompositionCommand;
+        const composition = addCompositionCmd.getComposition();
+
+        this.getEditorView().addComposition( composition );
+
+        // Adds left and right source paths if not on composition already
+        const lhSourcePath = composition.getLeftSourcePath();
+        const rhSourcePath = composition.getRightSourcePath();
+        this.getEditorView().addSourcePath(lhSourcePath);
+        this.getEditorView().addSourcePath(rhSourcePath);
+
+        break;
+      }
       case RemoveSourcesCommand.id: {
         const removeSourcesCmd = cmd as RemoveSourcesCommand;
         const paths = removeSourcesCmd.getSourcePaths();
@@ -585,6 +601,12 @@ export class ViewEditorService {
           this.getEditorView().removeSourcePath( path );
         }
 
+        break;
+      }
+      case RemoveCompositionCommand.id: {
+        const removeCompositionCmd = cmd as RemoveCompositionCommand;
+        const composition = removeCompositionCmd.getComposition();
+        this.getEditorView().removeComposition(composition.getName());
         break;
       }
       case UpdateViewDescriptionCommand.id: {

@@ -22,12 +22,28 @@ export class CanvasLink implements cola.Link<CanvasNode> {
   // optional - defining optional implementation properties - required for relevant typing assistance
   index?: number;
 
-  // must - defining enforced implementation properties
-  source: CanvasNode;
-  target: CanvasNode;
+  // source and target nodes for the CanvasLink
+  private src: CanvasNode;
+  private tgt: CanvasNode;
 
   constructor(source: CanvasNode, target: CanvasNode) {
-    this.source = source;
-    this.target = target;
+    this.src = source;
+    this.tgt = target;
+  }
+
+  public get source(): CanvasNode {
+    return this.src;
+  }
+
+  public set source(src: CanvasNode) {
+    this.src = src;
+  }
+
+  public get target(): CanvasNode {
+    return this.tgt;
+  }
+
+  public set target(tgt: CanvasNode) {
+    this.tgt = tgt;
   }
 }

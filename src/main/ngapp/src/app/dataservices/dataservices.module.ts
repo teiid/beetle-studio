@@ -74,6 +74,7 @@ import { ConnectionTreeSelectorComponent } from './virtualization/view-editor/co
 import { ConnectionTableDialogComponent } from './virtualization/view-editor/connection-table-dialog/connection-table-dialog.component';
 import { ProgressDialogComponent } from "@shared/progress-dialog/progress-dialog.component";
 import { ViewPropertyEditorsComponent } from './virtualization/view-editor/view-property-editors/view-property-editors.component';
+import { AddCompositionWizardComponent } from './virtualization/view-editor/add-composition-wizard/add-composition-wizard.component';
 
 @NgModule({
   imports: [
@@ -127,7 +128,8 @@ import { ViewPropertyEditorsComponent } from './virtualization/view-editor/view-
     ViewPropertyEditorsComponent,
     GraphVisualComponent,
     NodeVisualComponent,
-    LinkVisualComponent
+    LinkVisualComponent,
+    AddCompositionWizardComponent
   ],
   providers: [
     {
@@ -149,7 +151,7 @@ import { ViewPropertyEditorsComponent } from './virtualization/view-editor/view-
   ],
   exports: [
   ],
-  entryComponents: [ConfirmDialogComponent, ConnectionTableDialogComponent, ProgressDialogComponent]
+  entryComponents: [AddCompositionWizardComponent, ConfirmDialogComponent, ConnectionTableDialogComponent, ProgressDialogComponent]
 })
 export class DataservicesModule { }
 
