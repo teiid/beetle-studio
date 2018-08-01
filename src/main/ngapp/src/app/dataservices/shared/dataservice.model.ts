@@ -17,7 +17,6 @@
 
 import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { PublishState } from "@dataservices/shared/publish-state.enum";
-import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { VirtRoute } from "@dataservices/shared/virt-route.model";
 import { Identifiable } from "@shared/identifiable";
@@ -30,12 +29,10 @@ export class Dataservice implements Identifiable< string > {
   private tko__description: string;
   private serviceVdbName: string;
   private serviceVdbVersion: string;
-  private serviceViews: string[];
+  private serviceViewDefinitions: string[];
   private serviceViewModel: string;
-  private serviceViewTables: string[];
   private deploymentState: DeploymentState = DeploymentState.LOADING;
   private virtualization: Virtualization = null;
-  private views: View[] = [];
 
   /**
    * @param {Object} json the JSON representation of a Dataservice
@@ -122,8 +119,8 @@ export class Dataservice implements Identifiable< string > {
    * @returns {string[]} the dataservice view names (never null or undefined)
    */
   public getServiceViewNames(): string[] {
-    if ( this.serviceViews ) {
-      return this.serviceViews;
+    if ( this.serviceViewDefinitions ) {
+      return this.serviceViewDefinitions;
     }
 
     return [];
@@ -134,20 +131,6 @@ export class Dataservice implements Identifiable< string > {
    */
   public getServiceViewModel(): string {
     return this.serviceViewModel;
-  }
-
-  /**
-   * @returns {string} the dataservice view table names array (can be null)
-   */
-  public getServiceViewTables(): string[] {
-    return this.serviceViewTables;
-  }
-
-  /**
-   * @returns {View[]} the dataservice views array (never null, but can be empty)
-   */
-  public getViews(): View[] {
-    return this.views;
   }
 
   /**
@@ -319,31 +302,10 @@ export class Dataservice implements Identifiable< string > {
   }
 
   /**
-   * @param {View[]} views the dataservice views
-   */
-  public setViews( views: View[] ): void {
-    this.views = views;
-  }
-
-  /**
-   * @param {string[]} viewNames the dataservice view names
-   */
-  public setServiceViewNames( viewNames: string[] ): void {
-    this.serviceViews = viewNames;
-  }
-
-  /**
    * @param {string} viewModel the dataservice view model
    */
   public setServiceViewModel( viewModel: string ): void {
     this.serviceViewModel = viewModel;
-  }
-
-  /**
-   * @param {string[]} viewTables the dataservice view tables
-   */
-  public setServiceViewTables( viewTables: string[] ): void {
-    this.serviceViewTables = viewTables;
   }
 
   /**
@@ -367,9 +329,8 @@ export class Dataservice implements Identifiable< string > {
       tko__description: this.tko__description,
       serviceVdbName: this.serviceVdbName,
       serviceVdbVersion: this.serviceVdbVersion,
-      serviceViews: this.serviceViews,
-      serviceViewModel: this.serviceViewModel,
-      serviceViewTables: this.serviceViewTables
+      serviceViews: this.serviceViewDefinitions,
+      serviceViewModel: this.serviceViewModel
     };
   }
 

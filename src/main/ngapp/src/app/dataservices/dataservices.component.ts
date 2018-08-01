@@ -29,7 +29,6 @@ import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
@@ -51,6 +50,7 @@ import {
   SortField
 } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
+import { SqlView } from "@dataservices/shared/sql-view.model";
 
 @Component({
   moduleId: module.id,
@@ -104,8 +104,8 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private dataserviceDeployStateSubscription: Subscription;
   private dataservicePublishStateSubscription: Subscription;
   private notifierService: NotifierService;
-  private selectedSvcViews: View[] = [];
-  private allSvcViews: View[] = [];
+  private selectedSvcViewNames: SqlView[] = [];
+  private allSvcViewNames: SqlView[] = [];
   private modalService: BsModalService;
   private selectionService: SelectionService;
 
@@ -386,17 +386,17 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   /**
-   * Accessor for all available service views
+   * Accessor for all available service view names
    */
-  public get allServiceViews( ): View[] {
-    return this.allSvcViews;
+  public get allServiceViewNames( ): SqlView[] {
+    return this.allSvcViewNames;
   }
 
   /**
-   * Accessor for selected service view
+   * Accessor for selected service view names
    */
-  public get selectedViews( ): View[] {
-    return this.selectedSvcViews;
+  public get selectedViewNames( ): SqlView[] {
+    return this.selectedSvcViewNames;
   }
 
   /**
@@ -455,9 +455,9 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   public onTest(svcName: string): void {
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
     this.dataserviceService.setSelectedDataservice(selectedService);
-    this.allSvcViews = this.dataserviceService.getSelectedDataserviceViews();
-    this.selectedSvcViews = [];
-    this.selectedSvcViews.push(this.allServiceViews[0]);
+    this.allSvcViewNames = this.dataserviceService.getSelectedDataserviceViewNames();
+    this.selectedSvcViewNames = [];
+    this.selectedSvcViewNames.push(this.allServiceViewNames[0]);
 
     this.closeLookPanels();
 
@@ -601,10 +601,10 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   public onQuickLook(svcName: string): void {
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
     this.dataserviceService.setSelectedDataservice(selectedService);
-    this.allSvcViews = this.dataserviceService.getSelectedDataserviceViews();
-    this.selectedSvcViews = [];
-    this.selectedSvcViews.push(this.allServiceViews[0]);
-    const viewName = this.selectedSvcViews[0].getName();
+    this.allSvcViewNames = this.dataserviceService.getSelectedDataserviceViewNames();
+    this.selectedSvcViewNames = [];
+    this.selectedSvcViewNames.push(this.allServiceViewNames[0]);
+    const viewName = this.selectedSvcViewNames[0];
     this.quickLookQueryText = "SELECT * FROM " + viewName + ";";
 
     if (!this.resultsShowing) {

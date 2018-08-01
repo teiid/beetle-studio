@@ -70,12 +70,13 @@ export class RemoveCompositionCommand extends Command {
   }
 
   /**
+   * @param {Composition} composition the Composition to use in generating the id
    * @returns {string} a unique identifier of this command
    */
-  public getId(compositionName?: string): string {
+  public getId(composition?: Composition): string {
     let argValue = this.getArg( Command.identArg ) as string;
-    if (compositionName)
-      argValue = argValue + Command.identDivider + compositionName;
+    if (composition)
+      argValue = argValue + Command.identDivider + JSON.stringify(composition);
 
     return argValue;
   }

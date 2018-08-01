@@ -26,9 +26,9 @@ import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
-import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { Column } from "@dataservices/shared/column.model";
+import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 
 @Injectable()
 export class TestDataService {
@@ -973,6 +973,694 @@ export class TestDataService {
     }
   );
 
+  // =================================================================
+  // ViewEditorStates
+  // =================================================================
+
+  private static employeesViewState1 = ViewEditorState.create(
+    {
+      "keng__baseUri": "http://das-beetle-studio.192.168.42.154.nip.io/vdb-builder/v1/",
+      "id": "employeesvdb.employeesView1",
+      "undoables": [
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "oldName": "v"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "v"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "v",
+              "oldName": "vi"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vi",
+              "oldName": "v"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vi",
+              "oldName": "vie"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vie",
+              "oldName": "vi"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vie",
+              "oldName": "view"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "view",
+              "oldName": "vie"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727452660",
+              "removedSourcePaths": "connection=pgConn/schema=public/table=account"
+            }
+          },
+          "redo": {
+            "id": "AddSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727452660",
+              "addedSourcePaths": "connection=pgConn/schema=public/table=account"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727472867",
+              "removedSourcePaths": "connection=pgConn/schema=public/table=product"
+            }
+          },
+          "redo": {
+            "id": "AddSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727472867",
+              "addedSourcePaths": "connection=pgConn/schema=public/table=product"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveCompositionCommand",
+            "args": {
+              "ObjectId": "AddCompositionCommand1532727472875",
+              "removedComposition": "{\"name\":\"account-product\",\"leftSourcePath\":\"connection=pgConn/schema=public/table=account\",\"rightSourcePath\":\"connection=pgConn/schema=public/table=product\",\"leftCriteriaColumn\":\"account_id\",\"rightCriteriaColumn\":\"id\",\"type\":\"INNER_JOIN\",\"operator\":\"EQ\"}"
+            }
+          },
+          "redo": {
+            "id": "AddCompositionCommand",
+            "args": {
+              "ObjectId": "AddCompositionCommand1532727472875",
+              "addedComposition": "{\"name\":\"account-product\",\"leftSourcePath\":\"connection=pgConn/schema=public/table=account\",\"rightSourcePath\":\"connection=pgConn/schema=public/table=product\",\"leftCriteriaColumn\":\"account_id\",\"rightCriteriaColumn\":\"id\",\"type\":\"INNER_JOIN\",\"operator\":\"EQ\"}"
+            }
+          }
+        }
+      ],
+      "viewDefinition":
+        {
+          "viewName": "employeesView1",
+          "keng__description": "Single Source",
+          "isComplete": true,
+          "sourcePaths":
+            [
+              "connection=conn1/schema=public/table=customer"
+            ]
+        }
+    }
+  );
+
+  private static employeesViewState2 = ViewEditorState.create(
+    {
+      "keng__baseUri": "http://das-beetle-studio.192.168.42.154.nip.io/vdb-builder/v1/",
+      "id": "employeesvdb.employeesView2",
+      "undoables": [
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "oldName": "v"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "v"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "v",
+              "oldName": "vi"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vi",
+              "oldName": "v"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vi",
+              "oldName": "vie"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vie",
+              "oldName": "vi"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vie",
+              "oldName": "view"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "view",
+              "oldName": "vie"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727452660",
+              "removedSourcePaths": "connection=pgConn/schema=public/table=account"
+            }
+          },
+          "redo": {
+            "id": "AddSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727452660",
+              "addedSourcePaths": "connection=pgConn/schema=public/table=account"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727472867",
+              "removedSourcePaths": "connection=pgConn/schema=public/table=product"
+            }
+          },
+          "redo": {
+            "id": "AddSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727472867",
+              "addedSourcePaths": "connection=pgConn/schema=public/table=product"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveCompositionCommand",
+            "args": {
+              "ObjectId": "AddCompositionCommand1532727472875",
+              "removedComposition": "{\"name\":\"account-product\",\"leftSourcePath\":\"connection=pgConn/schema=public/table=account\",\"rightSourcePath\":\"connection=pgConn/schema=public/table=product\",\"leftCriteriaColumn\":\"account_id\",\"rightCriteriaColumn\":\"id\",\"type\":\"INNER_JOIN\",\"operator\":\"EQ\"}"
+            }
+          },
+          "redo": {
+            "id": "AddCompositionCommand",
+            "args": {
+              "ObjectId": "AddCompositionCommand1532727472875",
+              "addedComposition": "{\"name\":\"account-product\",\"leftSourcePath\":\"connection=pgConn/schema=public/table=account\",\"rightSourcePath\":\"connection=pgConn/schema=public/table=product\",\"leftCriteriaColumn\":\"account_id\",\"rightCriteriaColumn\":\"id\",\"type\":\"INNER_JOIN\",\"operator\":\"EQ\"}"
+            }
+          }
+        }
+      ],
+      "viewDefinition":
+        {
+          "viewName": "employeesView2",
+          "keng__description": "Join between customer and stuff",
+          "isComplete": true,
+          "sourcePaths":
+            [
+              "connection=conn1/schema=public/table=customer",
+              "connection=conn1/schema=public/table=stuff"
+            ],
+          "compositions":
+            [
+              {
+                "name": "customer-stuff",
+                "leftSourcePath": "connection=conn1/schema=public/table=customer",
+                "rightSourcePath": "connection=conn1/schema=public/table=stuff",
+                "leftCriteriaColumn": "leftCriteriaCol",
+                "rightCriteriaColumn": "rightCriteriaCol",
+                "type": "INNER_JOIN",
+                "operator": "EQ"
+              }
+            ]
+        }
+    }
+  );
+
+  private static productsViewState1 = ViewEditorState.create(
+    {
+      "keng__baseUri": "http://das-beetle-studio.192.168.42.154.nip.io/vdb-builder/v1/",
+      "id": "productsvdb.productsView1",
+      "undoables": [
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "oldName": "v"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "v"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "v",
+              "oldName": "vi"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vi",
+              "oldName": "v"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vi",
+              "oldName": "vie"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vie",
+              "oldName": "vi"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vie",
+              "oldName": "view"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "view",
+              "oldName": "vie"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727452660",
+              "removedSourcePaths": "connection=pgConn/schema=public/table=account"
+            }
+          },
+          "redo": {
+            "id": "AddSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727452660",
+              "addedSourcePaths": "connection=pgConn/schema=public/table=account"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727472867",
+              "removedSourcePaths": "connection=pgConn/schema=public/table=product"
+            }
+          },
+          "redo": {
+            "id": "AddSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727472867",
+              "addedSourcePaths": "connection=pgConn/schema=public/table=product"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveCompositionCommand",
+            "args": {
+              "ObjectId": "AddCompositionCommand1532727472875",
+              "removedComposition": "{\"name\":\"account-product\",\"leftSourcePath\":\"connection=pgConn/schema=public/table=account\",\"rightSourcePath\":\"connection=pgConn/schema=public/table=product\",\"leftCriteriaColumn\":\"account_id\",\"rightCriteriaColumn\":\"id\",\"type\":\"INNER_JOIN\",\"operator\":\"EQ\"}"
+            }
+          },
+          "redo": {
+            "id": "AddCompositionCommand",
+            "args": {
+              "ObjectId": "AddCompositionCommand1532727472875",
+              "addedComposition": "{\"name\":\"account-product\",\"leftSourcePath\":\"connection=pgConn/schema=public/table=account\",\"rightSourcePath\":\"connection=pgConn/schema=public/table=product\",\"leftCriteriaColumn\":\"account_id\",\"rightCriteriaColumn\":\"id\",\"type\":\"INNER_JOIN\",\"operator\":\"EQ\"}"
+            }
+          }
+        }
+      ],
+      "viewDefinition":
+        {
+          "viewName": "productsView1",
+          "keng__description": "signle source conn1 stuff",
+          "isComplete": true,
+          "sourcePaths":
+            [
+              "connection=conn1/schema=public/table=stuff"
+            ]
+        }
+    }
+  );
+
+  private static productsViewState2 = ViewEditorState.create(
+    {
+      "keng__baseUri": "http://das-beetle-studio.192.168.42.154.nip.io/vdb-builder/v1/",
+      "id": "productsvdb.productsView2",
+      "undoables": [
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "oldName": "v"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "v"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "v",
+              "oldName": "vi"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vi",
+              "oldName": "v"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vi",
+              "oldName": "vie"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vie",
+              "oldName": "vi"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vie",
+              "oldName": "view"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "view",
+              "oldName": "vie"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727452660",
+              "removedSourcePaths": "connection=pgConn/schema=public/table=account"
+            }
+          },
+          "redo": {
+            "id": "AddSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727452660",
+              "addedSourcePaths": "connection=pgConn/schema=public/table=account"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727472867",
+              "removedSourcePaths": "connection=pgConn/schema=public/table=product"
+            }
+          },
+          "redo": {
+            "id": "AddSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727472867",
+              "addedSourcePaths": "connection=pgConn/schema=public/table=product"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveCompositionCommand",
+            "args": {
+              "ObjectId": "AddCompositionCommand1532727472875",
+              "removedComposition": "{\"name\":\"account-product\",\"leftSourcePath\":\"connection=pgConn/schema=public/table=account\",\"rightSourcePath\":\"connection=pgConn/schema=public/table=product\",\"leftCriteriaColumn\":\"account_id\",\"rightCriteriaColumn\":\"id\",\"type\":\"INNER_JOIN\",\"operator\":\"EQ\"}"
+            }
+          },
+          "redo": {
+            "id": "AddCompositionCommand",
+            "args": {
+              "ObjectId": "AddCompositionCommand1532727472875",
+              "addedComposition": "{\"name\":\"account-product\",\"leftSourcePath\":\"connection=pgConn/schema=public/table=account\",\"rightSourcePath\":\"connection=pgConn/schema=public/table=product\",\"leftCriteriaColumn\":\"account_id\",\"rightCriteriaColumn\":\"id\",\"type\":\"INNER_JOIN\",\"operator\":\"EQ\"}"
+            }
+          }
+        }
+      ],
+      "viewDefinition":
+        {
+          "viewName": "productsView2",
+          "keng__description": "join restaurants and grades",
+          "isComplete": true,
+          "sourcePaths":
+            [
+              "connection=conn2/collections=restaurants",
+              "connection=conn2/collections=restaurants/embedded=grades"
+            ],
+          "compositions":
+            [
+              {
+                "name": "compositionName",
+                "leftSourcePath": "connection=conn2/collections=restaurants",
+                "rightSourcePath": "connection=conn2/collections=restaurants/embedded=grades",
+                "leftCriteriaColumn": "leftCriteriaCol",
+                "rightCriteriaColumn": "rightCriteriaCol",
+                "type": "INNER_JOIN",
+                "operator": "EQ"
+              }
+            ]
+        }
+    }
+  );
+
+  private static productsViewState3 = ViewEditorState.create(
+    {
+      "keng__baseUri": "http://das-beetle-studio.192.168.42.154.nip.io/vdb-builder/v1/",
+      "id": "productsvdb.productsView3",
+      "undoables": [
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "oldName": "v"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "v"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "v",
+              "oldName": "vi"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vi",
+              "oldName": "v"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vi",
+              "oldName": "vie"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vie",
+              "oldName": "vi"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "vie",
+              "oldName": "view"
+            }
+          },
+          "redo": {
+            "id": "UpdateViewNameCommand",
+            "args": {
+              "newName": "view",
+              "oldName": "vie"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727452660",
+              "removedSourcePaths": "connection=pgConn/schema=public/table=account"
+            }
+          },
+          "redo": {
+            "id": "AddSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727452660",
+              "addedSourcePaths": "connection=pgConn/schema=public/table=account"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727472867",
+              "removedSourcePaths": "connection=pgConn/schema=public/table=product"
+            }
+          },
+          "redo": {
+            "id": "AddSourcesCommand",
+            "args": {
+              "ObjectId": "AddSourcesCommand1532727472867",
+              "addedSourcePaths": "connection=pgConn/schema=public/table=product"
+            }
+          }
+        },
+        {
+          "undo": {
+            "id": "RemoveCompositionCommand",
+            "args": {
+              "ObjectId": "AddCompositionCommand1532727472875",
+              "removedComposition": "{\"name\":\"account-product\",\"leftSourcePath\":\"connection=pgConn/schema=public/table=account\",\"rightSourcePath\":\"connection=pgConn/schema=public/table=product\",\"leftCriteriaColumn\":\"account_id\",\"rightCriteriaColumn\":\"id\",\"type\":\"INNER_JOIN\",\"operator\":\"EQ\"}"
+            }
+          },
+          "redo": {
+            "id": "AddCompositionCommand",
+            "args": {
+              "ObjectId": "AddCompositionCommand1532727472875",
+              "addedComposition": "{\"name\":\"account-product\",\"leftSourcePath\":\"connection=pgConn/schema=public/table=account\",\"rightSourcePath\":\"connection=pgConn/schema=public/table=product\",\"leftCriteriaColumn\":\"account_id\",\"rightCriteriaColumn\":\"id\",\"type\":\"INNER_JOIN\",\"operator\":\"EQ\"}"
+            }
+          }
+        }
+      ],
+      "viewDefinition":
+        {
+          "viewName": "productsView3",
+          "keng__description": "join restaurants and customer",
+          "isComplete": true,
+          "sourcePaths":
+            [
+              "connection=conn2/collections=restaurants",
+              "connection=conn1/schema=public/table=customer"
+            ],
+          "compositions":
+            [
+              {
+                "name": "compositionName",
+                "leftSourcePath": "connection=conn2/collections=restaurants",
+                "rightSourcePath": "connection=conn1/schema=public/table=customer",
+                "leftCriteriaColumn": "leftCriteriaCol",
+                "rightCriteriaColumn": "rightCriteriaCol",
+                "type": "INNER_JOIN",
+                "operator": "EQ"
+              }
+            ]
+        }
+    }
+  );
+
   private catalogSources: ServiceCatalogSource[] = [
     TestDataService.pgConnCatalogSource,
     TestDataService.catalogSource1,
@@ -1203,42 +1891,24 @@ export class TestDataService {
   }
 
   /**
-   * @param {string} vdbName the vdb name
-   * @param {string} modelName the model name
-   * @returns {View[]} the views for the specified vdb and model
+   * @returns {Map<string, ViewEditorState>} the ViewEditorState by id map
    */
-  public getViews(vdbName: string, modelName: string): View[] {
-    if (vdbName.toLowerCase() === "employeesvdb") {
-      const svc2View1: View = new View();
-      svc2View1.setName("employeesView1");
-      svc2View1.setDescription("employees view 1 description");
-      const svc2View2: View = new View();
-      svc2View2.setName("employeesView2");
-      svc2View2.setDescription("employees view 2 description");
+  public getViewEditorStateMap(): Map<string, ViewEditorState> {
+    const stateMap = new Map<string, ViewEditorState>();
 
-      const svc2Views: View[] = [];
-      svc2Views.push(svc2View1);
-      svc2Views.push(svc2View2);
-      return svc2Views;
-    } else if (vdbName.toLowerCase() === "productsvdb") {
-      const svc3View1: View = new View();
-      svc3View1.setName("productsView1");
-      svc3View1.setDescription("products view 1 description");
-      const svc3View2: View = new View();
-      svc3View2.setName("productsView2");
-      svc3View2.setDescription("products view 2 description");
-      const svc3View3: View = new View();
-      svc3View3.setName("productsView3");
-      svc3View3.setDescription("products view 3 description");
+    const state1 = ViewEditorState.create(TestDataService.employeesViewState1);
+    const state2 = ViewEditorState.create(TestDataService.employeesViewState2);
+    const state3 = ViewEditorState.create(TestDataService.productsViewState1);
+    const state4 = ViewEditorState.create(TestDataService.productsViewState2);
+    const state5 = ViewEditorState.create(TestDataService.productsViewState3);
 
-      const svc3Views: View[] = [];
-      svc3Views.push(svc3View1);
-      svc3Views.push(svc3View2);
-      svc3Views.push(svc3View3);
-      return svc3Views;
-    } else {
-      return [];
-    }
+    stateMap.set(state1.getId(), state1);
+    stateMap.set(state2.getId(), state2);
+    stateMap.set(state3.getId(), state3);
+    stateMap.set(state4.getId(), state4);
+    stateMap.set(state5.getId(), state5);
+
+    return stateMap;
   }
 
 }

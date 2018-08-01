@@ -21,15 +21,10 @@ describe("Dataservice", () => {
         "serviceVdbName": "mongovirtualizationvdb",
         "serviceVdbVersion": "1",
         "serviceViewModel": "views",
-        "serviceViews": [
+        "serviceViewDefinitions": [
           "addressView",
           "gradesView",
           "restaurantsView"
-        ],
-        "serviceViewTables": [
-          "mongoconnschemavdb.address",
-          "mongoconnschemavdb.grades",
-          "mongoconnschemavdb.restaurants"
         ],
         "connections": 0,
         "drivers": 0,
@@ -62,7 +57,6 @@ describe("Dataservice", () => {
     expect(dataservice.getServiceVdbName()).toEqual("mongovirtualizationvdb");
     expect(dataservice.getServiceVdbVersion()).toEqual("1");
     expect(dataservice.getServiceViewModel()).toEqual("views");
-    expect(dataservice.getServiceViewTables().length).toEqual(3);
     expect(dataservice.getServiceViewNames().length).toEqual(3);
     expect(dataservice.getServiceDeploymentState()).toEqual(DeploymentState.LOADING);
     expect(dataservice.getServicePublishState()).toEqual(PublishState.NOT_PUBLISHED);

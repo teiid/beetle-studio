@@ -14,27 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { View } from "@dataservices/shared/view.model";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
+import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 
 export class ViewValidator {
 
   /**
-   * Validates the stated of the specified view.
+   * Validates the stated of the specified view definition.
    *
-   * @param {View} view the view whose state is being validated.
+   * @param {ViewDefinition} viewDefn the view definition whose state is being validated.
    * @returns {Message[]} the validation messages (never `null` but can be empty)
    */
-  public static validate( view: View ): Message[] {
+  public static validate( viewDefn: ViewDefinition ): Message[] {
     const messages: Message[] = [];
 
-    if ( view ) {
-      if ( !view.getName() || view.getName().length === 0 ) {
+    if ( viewDefn ) {
+      if ( !viewDefn.getName() || viewDefn.getName().length === 0 ) {
         messages.push( Message.create( Problem.ERR0110 ) );
       }
 
-      if ( !view.getSourcePaths() || view.getSourcePaths().length === 0 ) {
+      if ( !viewDefn.getSourcePaths() || viewDefn.getSourcePaths().length === 0 ) {
         messages.push( Message.create( Problem.ERR0120 ) );
       }
     }

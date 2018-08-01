@@ -13,7 +13,7 @@ import {
   WizardModule } from "patternfly-ng";
 import { RouterTestingModule } from "@angular/router/testing";
 import { LoggerService } from "@core/logger.service";
-import { View } from "@dataservices//shared/view.model";
+import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 
 describe('ViewCardComponent', () => {
   let component: ViewCardComponent;
@@ -47,7 +47,7 @@ describe('ViewCardComponent', () => {
     fixture = TestBed.createComponent(ViewCardComponent);
     component = fixture.componentInstance;
 
-    component.view = new View();
+    component.view = new ViewDefinition();
     fixture.detectChanges();
   });
 

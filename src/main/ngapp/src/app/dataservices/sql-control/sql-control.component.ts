@@ -22,12 +22,12 @@ import { ColumnData } from "@dataservices/shared/column-data.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { RowData } from "@dataservices/shared/row-data.model";
-import { View } from "@dataservices/shared/view.model";
 import { LoadingState } from "@shared/loading-state.enum";
 import "codemirror/addon/display/placeholder.js";
 import "codemirror/addon/selection/active-line.js";
 import "codemirror/mode/sql/sql.js";
 import { NgxDataTableConfig, TableConfig } from "patternfly-ng";
+import { SqlView } from "@dataservices/shared/sql-view.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -38,8 +38,8 @@ import { NgxDataTableConfig, TableConfig } from "patternfly-ng";
 export class SqlControlComponent implements OnInit {
 
   @Input() public quicklook = false;
-  @Input() public selectedViews: View[] = [];
-  @Input() public serviceViews: View[] = [];
+  @Input() public selectedViews: SqlView[] = [];
+  @Input() public serviceViews: SqlView[] = [];
   @Input() public viewSql = "";
 
   public ngxConfig: NgxDataTableConfig;
@@ -84,7 +84,7 @@ export class SqlControlComponent implements OnInit {
       {
         draggable: false,
         name: "Views",
-        prop: "keng__id",
+        prop: "name",
         resizeable: true,
         sortable: true,
         width: "100"
@@ -107,7 +107,7 @@ export class SqlControlComponent implements OnInit {
       reorderable: false,
       selected: this.selectedViews,
       selectionType: "'single'",
-      sorts: [ { prop: "keng__id", dir: "asc" } ],
+      sorts: [ { prop: "name", dir: "asc" } ],
     } as NgxDataTableConfig;
 
     this.viewTableConfig = {
@@ -123,8 +123,8 @@ export class SqlControlComponent implements OnInit {
     this.queryMap.set(this.previousViewName, this.queryText);
 
     // View table is single select so use first element
-    const selected: View[] = $event.selected;
-    const view: View = selected[ 0 ];
+    const selected: SqlView[] = $event.selected;
+    const view: SqlView = selected[ 0 ];
 
     this.selectedViews = [];
     this.selectedViews.push(view);
@@ -184,7 +184,7 @@ export class SqlControlComponent implements OnInit {
   }
 
   public get viewName(): string {
-    return !this.selectedViews ? "" : this.selectedViews[0].getName();
+    return !this.selectedViews ? "" : this.selectedViews[0].name;
   }
 
   /*

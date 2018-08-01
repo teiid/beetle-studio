@@ -32,16 +32,13 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
-import { SchemaNode } from "@connections/shared/schema-node.model";
-import { Connection } from "@connections/shared/connection.model";
-import { View } from "@dataservices/shared/view.model";
-import { environment } from "@environments/environment";
-import { QueryResults } from "@dataservices/shared/query-results.model";
+import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 
 @Injectable()
 export class MockVdbService extends VdbService {
 
   private testDataService: TestDataService;
+  private editorViewStateMap = new Map<string, ViewEditorState>();
 
   constructor(http: Http, appSettings: AppSettingsService, notifierService: NotifierService, logger: LoggerService ) {
     super(http, appSettings, notifierService, logger);
@@ -51,6 +48,7 @@ export class MockVdbService extends VdbService {
     const testDataService = injector.get(TestDataService);
 
     this.testDataService = testDataService;
+    this.editorViewStateMap = this.testDataService.getViewEditorStateMap();
   }
 
   /**
@@ -96,31 +94,6 @@ export class MockVdbService extends VdbService {
    * @returns {Observable<boolean>}
    */
   public createVdbModelSource(vdbName: string, modelName: string, vdbModelSource: VdbModelSource): Observable<boolean> {
-    return Observable.of(true);
-  }
-
-  /**
-   * Get the views from the specified Vdb model from the komodo rest interface
-   * @param {string} vdbName the vdb name
-   * @param {string} modelName the model name
-   * @returns {Observable<View[]>}
-   */
-  public getVdbModelViews(vdbName: string, modelName: string): Observable<View[]> {
-    return Observable.of(this.testDataService.getViews(vdbName, modelName));
-  }
-
-  /**
-   * Creates the Vdb Model Views via the komodo rest interface.  This is currently limited - will need to be improved
-   * in subsequent development.
-   * @param {string} vdbName the vdb name
-   * @param {string} modelName the model name
-   * @param {string[]} viewNames the view names (1:1 correspondence with schemaNodes)
-   * @param {string[]} sourceNodePaths the path for each source node
-   * @param {Connection[]} connections the array of active connections
-   * @returns {Observable<boolean>}
-   */
-  public setVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
-                          sourceNodePaths: string[], connections: Connection[]): Observable<boolean> {
     return Observable.of(true);
   }
 
@@ -205,6 +178,54 @@ export class MockVdbService extends VdbService {
    * @returns {Observable<boolean>}
    */
   public createVdbModelViewIfNotFound(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
+    return Observable.of(true);
+  }
+
+  /**
+   * @param {ViewEditorState} editorState the view editor state
+   * @returns {Observable<boolean>} `true` if the editor state was successfully saved
+   */
+  public saveViewEditorState( editorState: ViewEditorState ): Observable< boolean > {
+    return Observable.of(true);
+  }
+
+  /**
+   * @param {string} editorId the ID of the editor state being requested
+   * @returns {Observable<ViewEditorState>} the view editor state or empty object if not found
+   */
+  public getViewEditorState( editorId: string ): Observable< ViewEditorState > {
+    return Observable.of(this.editorViewStateMap.get(editorId));
+  }
+
+  /**
+   * @param {string} editorStatePattern the editorState name pattern
+   * @returns {Observable<ViewEditorState[]>} the view editor state array
+   */
+  public getViewEditorStates( editorStatePattern?: string ): Observable< ViewEditorState[] > {
+    const editorStates = [];
+
+    this.editorViewStateMap.forEach( ( value, key ) => {
+      if (editorStatePattern && editorStatePattern.length > 0) {
+
+        // Just match the first few chars with this test method
+        const patternTrimmed = editorStatePattern.substring(0, 5);
+        const keyTrimmed = key.substring(0, 5);
+        if (keyTrimmed.startsWith(patternTrimmed)) {
+          editorStates.push(value);
+        }
+      } else {
+        editorStates.push(value);
+      }
+    } );
+
+    return Observable.of(editorStates);
+  }
+
+  /**
+   * @param {string} editorId the ID of the editor state being deleted
+   * @returns {Observable<boolean>} `true` if the editor state was successfully deleted
+   */
+  public deleteViewEditorState( editorId: string ): Observable< boolean > {
     return Observable.of(true);
   }
 

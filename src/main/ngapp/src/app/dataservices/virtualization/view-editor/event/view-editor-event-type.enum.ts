@@ -16,7 +16,6 @@
  */
 
 import { QueryResults } from "@dataservices/shared/query-results.model";
-import { View } from "@dataservices/shared/view.model";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";

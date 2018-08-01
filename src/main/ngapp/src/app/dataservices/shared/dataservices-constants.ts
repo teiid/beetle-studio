@@ -11,7 +11,6 @@
  */
 
 import { NavigationItemConfig } from "patternfly-ng";
-import { environment } from "@environments/environment";
 
 export class DataservicesConstants {
 

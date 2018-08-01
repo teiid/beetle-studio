@@ -16,7 +16,6 @@
  */
 import { Component, Input, ChangeDetectorRef, HostListener, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { CanvasService } from '@dataservices/virtualization/view-editor/view-canvas/canvas.service';
-import { CanvasConstants } from '@dataservices/virtualization/view-editor/view-canvas/canvas-constants';
 import { CanvasGraph, CanvasNode, CanvasLink } from '@dataservices/virtualization/view-editor/view-canvas/models';
 import * as d3 from 'd3';
 import * as _ from "lodash";

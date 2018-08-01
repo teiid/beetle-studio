@@ -1,6 +1,5 @@
 import { Composition } from "@dataservices/shared/composition.model";
 import { CompositionType } from "@dataservices/shared/composition-type.enum";
-import { Column } from "@dataservices/shared/column.model";
 import { CompositionOperator } from "@dataservices/shared/composition-operator.enum";
 
 describe("Composition", () => {
@@ -25,8 +24,8 @@ describe("Composition", () => {
     expect(composition.getName()).toEqual("myView");
     expect(composition.getLeftSourcePath()).toEqual("leftPath");
     expect(composition.getRightSourcePath()).toEqual("rightPath");
-    expect(composition.getType()).toEqual("INNER_JOIN");
-    expect(composition.getOperator()).toEqual("EQ");
+    expect(composition.getType()).toEqual(CompositionType.INNER_JOIN);
+    expect(composition.getOperator()).toEqual(CompositionOperator.EQ);
 
     const json = composition.toJSON();
 

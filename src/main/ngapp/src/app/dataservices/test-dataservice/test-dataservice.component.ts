@@ -5,9 +5,9 @@ import { LoggerService } from "@core/logger.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
-import { View } from "@dataservices/shared/view.model";
 import { AbstractPageComponent } from "@shared/abstract-page.component";
 import { LoadingState } from "@shared/loading-state.enum";
+import { SqlView } from "@dataservices/shared/sql-view.model";
 
 @Component({
   selector: "app-test-dataservice",
@@ -23,8 +23,8 @@ export class TestDataserviceComponent extends AbstractPageComponent {
   private dataservice: Dataservice;
   private dataserviceService: DataserviceService;
   private pageLoadingState: LoadingState = LoadingState.LOADED_VALID;
-  private selectedSvcViews: View[] = [];
-  private allSvcViews: View[] = [];
+  private selectedSvcViewNames: SqlView[] = [];
+  private allSvcViewNames: SqlView[] = [];
   private quickLookQueryText: string;
 
   constructor( router: Router, route: ActivatedRoute, dataserviceService: DataserviceService, logger: LoggerService ) {
@@ -34,10 +34,10 @@ export class TestDataserviceComponent extends AbstractPageComponent {
 
   public loadAsyncPageData(): void {
     this.dataservice = this.dataserviceService.getSelectedDataservice();
-    this.allSvcViews = this.dataserviceService.getSelectedDataserviceViews();
-    this.selectedSvcViews = [];
-    this.selectedSvcViews.push(this.allSvcViews[0]);
-    const viewName = this.selectedSvcViews[0].getName();
+    this.allSvcViewNames = this.dataserviceService.getSelectedDataserviceViewNames();
+    this.selectedSvcViewNames = [];
+    this.selectedSvcViewNames.push(this.allSvcViewNames[0]);
+    const viewName = this.selectedSvcViewNames[0];
     this.quickLookQueryText = "SELECT * FROM " + viewName + ";";
   }
 
@@ -56,17 +56,17 @@ export class TestDataserviceComponent extends AbstractPageComponent {
   }
 
   /**
-   * Accessor for all available service views
+   * Accessor for all available service view definitions
    */
-  public get allServiceViews( ): View[] {
-    return this.allSvcViews;
+  public get allServiceViewNames( ): SqlView[] {
+    return this.allSvcViewNames;
   }
 
   /**
-   * Accessor for selected service view
+   * Accessor for selected service view definition
    */
-  public get selectedViews( ): View[] {
-    return this.selectedSvcViews;
+  public get selectedViewNames( ): SqlView[] {
+    return this.selectedSvcViewNames;
   }
 
   /**

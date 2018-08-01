@@ -18,7 +18,6 @@
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { Composition } from "@dataservices/shared/composition.model";
-import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
 
 export class AddCompositionCommand extends Command {
 
@@ -80,11 +79,12 @@ export class AddCompositionCommand extends Command {
    * @returns {string} a unique identifier of this command
    */
   public getId(compositionName?: string): string {
-    let argValue = this.getArg( Command.identArg ) as string;
-    if (compositionName)
-      argValue = argValue + Command.identDivider + compositionName;
-
-    return argValue;
+    let result = this.getArg( Command.identArg ) as string;
+    const compArgValue = this.getArg( AddCompositionCommand.addedComposition ) as string;
+    if (compArgValue) {
+      result = result + Command.identDivider + compArgValue;
+    }
+    return result;
   }
 
 }
