@@ -181,8 +181,8 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     //   CanvasConstants.SOURCE_TYPE,
     //   CanvasConstants.SOURCE_TYPE,
     //   CanvasConstants.SOURCE_TYPE,
-    //   CanvasConstants.COMPONENT_TYPE,
-    //   CanvasConstants.COMPONENT_TYPE
+    //   CanvasConstants.COMPOSITION_TYPE,
+    //   CanvasConstants.COMPOSITION_TYPE
     // ];
     //
     // /** constructing the nodes array */
@@ -303,7 +303,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private createComposition(command: AddCompositionCommand): void {
     const composition = command.getComposition();
-    const compNodeId = this.canvasService.createNode(command.getId(composition.getName()), CanvasConstants.COMPONENT_TYPE, composition.getName(), true);
+    const compNodeId = this.canvasService.createNode(command.getId(composition.getName()), CanvasConstants.COMPOSITION_TYPE, composition.getName(), true);
     // Create links to source nodes if not found
     this.createLink(compNodeId, composition.getLeftSourcePath());
     this.createLink(compNodeId, composition.getRightSourcePath());

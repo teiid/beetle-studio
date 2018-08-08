@@ -78,8 +78,8 @@ export class NodeVisualComponent {
   public get icon(): string {
     if (this.node.type === CanvasConstants.SOURCE_TYPE)
       return "/assets/graphicsfuel/database-64.png";
-    else if (this.node.type === CanvasConstants.COMPONENT_TYPE)
-      return "/assets/component.png";
+    else if (this.node.type === CanvasConstants.COMPOSITION_TYPE)
+      return "/assets/composition.png";
 
     return "/assets/iconfinder/Natalya-Skidan/question-mark.png";
   }

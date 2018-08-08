@@ -45,31 +45,16 @@
     </div>
     <div class="row">
       <div class="object-card-description">
+        <!-- View Description -->
         {{ view.getDescription() }}
-        <!-- <div><span class="fa fa-database"></span>&nbsp;&nbsp;<strong>{{ sourceTableText }}</strong></div> -->
-      </div>
-    </div>
-  </ng-template>
-  <!--
-  <div class="object-card-body">
-    <div *ngIf="showDetails">
-      <div [class]="isSelected() ? 'object-card-body-title-selected' : 'object-card-body-title'">Properties</div>
-      <div [class]="isSelected() ? 'col-sm-12 properties-group-selected' : 'col-sm-12 properties-group'">
-        <div class="form-group">
-          <pfng-list
-            [config]="listConfig"
-            [itemTemplate]="itemTemplate"
-            [items]="properties">
-            <ng-template #itemTemplate let-item="item">
-              <div class="object-card-body-item">
-                <div class="col-sm-6 property-name">{{ item[ 0 ] }}</div>
-                <div class="col-sm-6 property-value">{{ item[ 1 ] }}</div>
-              </div>
-            </ng-template>
-          </pfng-list>
+        <!-- View Sources -->
+        <div class="sources-indent" *ngIf="view.getSourcePaths().length > 0">
+          <div *ngFor="let sourceStr of sourceTablesText"><span class="fa fa-database"></span>&nbsp;&nbsp;<strong>{{sourceStr}}</strong></div>
+        </div>
+        <div class="sources-indent" *ngIf="view.getSourcePaths().length === 0">
+          <div><strong>[No sources defined]</strong></div>
         </div>
       </div>
     </div>
-  </div>
-  -->
+  </ng-template>
 </pfng-card>
