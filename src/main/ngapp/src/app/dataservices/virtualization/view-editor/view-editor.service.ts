@@ -321,6 +321,13 @@ export class ViewEditorService {
   }
 
   /**
+   * @returns {boolean} `true` if the editor view can be saved
+   */
+  public canSaveView(): boolean {
+    return this._editorView && this._editorView.getName() && this._editorView.getName().length > 0;
+  }
+
+  /**
    * @returns {boolean} `true` if editor is readonly or has not been set
    */
   public isReadOnly(): boolean {

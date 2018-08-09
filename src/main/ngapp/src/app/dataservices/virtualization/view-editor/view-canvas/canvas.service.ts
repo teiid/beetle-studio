@@ -102,7 +102,7 @@ export class CanvasService {
     if (source.type === CanvasConstants.SOURCE_TYPE) {
       eventType = ViewCanvasEventType.CREATE_COMPOSITION;
       args.push(source.decodedId);
-    } else if (source.type === CanvasConstants.COMPONENT_TYPE)
+    } else if (source.type === CanvasConstants.COMPOSITION_TYPE)
       eventType = ViewCanvasEventType.CREATE_SOURCE;
 
     const event = ViewCanvasEvent.create(eventType, args);
@@ -121,7 +121,7 @@ export class CanvasService {
     //
     // let type = null;
     // if (source.type === CanvasConstants.SOURCE_TYPE)
-    //   type = CanvasConstants.COMPONENT_TYPE;
+    //   type = CanvasConstants.COMPOSITION_TYPE;
     // else
     //   type = CanvasConstants.SOURCE_TYPE;
     //

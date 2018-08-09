@@ -25,7 +25,6 @@ import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 export class ViewDefinition {
   private viewName: string;
   private keng__description: string;
-  private isComplete = false;
   private isEditable = false;
   private sourcePaths: string[] = [];
   private compositions: Composition[] = [];
@@ -216,7 +215,48 @@ export class ViewDefinition {
    * @returns {boolean} true if complete
    */
   public get complete(): boolean {
-    return this.viewName != null && this.sourcePaths.length > 0;
+    // Checks to determine whether the viewDefinition is complete.
+
+    // View name must be set
+    if (!this.viewName || this.viewName.length === 0) {
+      return false;
+    }
+
+    // Must be at least one source Path
+    if (!this.sourcePaths || this.sourcePaths.length === 0) {
+      return false;
+    }
+
+    // If single source path, then any compositions will be ignored - and it's complete
+    if (this.sourcePaths.length === 1) {
+      return true;
+    } else {
+      // Has more than one source path.  Make sure the composition is complete,
+      // and the sides of the composition are contained in the sourcePaths
+      const comps: Composition[] = this.getCompositions();
+      if (!comps || comps.length !== 1) {
+        return false;
+      } else if (!comps[0].complete) {
+        return false;
+      }
+      // Make sure the left and right composition source paths are present in the view definition sourcePaths
+      const leftSrcPath = comps[0].getLeftSourcePath();
+      const rightSrcPath = comps[0].getRightSourcePath();
+      let hasLeft = false;
+      let hasRight = false;
+      for (const srcPath of this.sourcePaths) {
+        if (srcPath === leftSrcPath) {
+          hasLeft = true;
+        } else if (srcPath === rightSrcPath) {
+          hasRight = true;
+        }
+      }
+      if (!hasLeft || !hasRight) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   /**
@@ -240,7 +280,8 @@ export class ViewDefinition {
    * @returns {string} the view SQL
    */
   public getSql(): string {
-    // The view currently supports single source only
+    // TODO: The view currently supports single source only.
+    // Probably need to get SQL from a rest service call.  to support joins
     let sourceNodeName = "unknownSource";
     let connectionName = "unknownConnection";
     const sourcePath = this.getSourcePaths()[ 0 ];

@@ -137,7 +137,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
   private canSave(): boolean {
     return !this.fatalErrorOccurred
            && !this.editorService.isReadOnly()
-           && this.editorService.getErrorMessageCount() === 0
+           && this.editorService.canSaveView()
            && this.editorService.hasChanges()
            && !this.saveInProgress;
   }
@@ -484,7 +484,11 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
       }
     }
     else if (event.typeIsCreateSource()) {
-      this.doAddSource();
+      if (event.sourceIsCanvas()) {
+        alert("Multiple compositions not yet supported");
+      } else {
+        this.doAddSource();
+      }
     }
     else if (event.typeIsCreateComposition()) {
       this.doAddComposition(event.args);

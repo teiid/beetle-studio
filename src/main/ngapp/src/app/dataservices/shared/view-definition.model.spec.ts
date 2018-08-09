@@ -25,8 +25,8 @@ describe("ViewDefinition", () => {
           [
             {
               "name": "compositionName",
-              "leftSourcePath": "leftSourcePath",
-              "rightSourcePath": "rightSourcePath",
+              "leftSourcePath": "sourcePath1",
+              "rightSourcePath": "sourcePath2",
               "leftCriteriaColumn": "leftCriteriaCol",
               "rightCriteriaColumn": "rightCriteriaCol",
               "type": "INNER_JOIN",
@@ -44,8 +44,8 @@ describe("ViewDefinition", () => {
     expect(viewDefn.getSourcePaths()[1]).toEqual("sourcePath2");
     expect(viewDefn.getCompositions().length).toEqual(1);
     expect(viewDefn.getCompositions()[0].getName()).toEqual("compositionName");
-    expect(viewDefn.getCompositions()[0].getLeftSourcePath()).toEqual("leftSourcePath");
-    expect(viewDefn.getCompositions()[0].getRightSourcePath()).toEqual("rightSourcePath");
+    expect(viewDefn.getCompositions()[0].getLeftSourcePath()).toEqual("sourcePath1");
+    expect(viewDefn.getCompositions()[0].getRightSourcePath()).toEqual("sourcePath2");
     expect(viewDefn.getCompositions()[0].getLeftCriteriaColumn()).toEqual("leftCriteriaCol");
     expect(viewDefn.getCompositions()[0].getRightCriteriaColumn()).toEqual("rightCriteriaCol");
     expect(viewDefn.getCompositions()[0].getType()).toEqual(CompositionType.INNER_JOIN);

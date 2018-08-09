@@ -126,43 +126,19 @@ export class ViewCardComponent implements DoCheck, OnInit {
   }
 
   /**
-   * Returns display text for the selected view source
+   * Returns display text array for the selected view sources
    * @returns {string}
    */
-  public get sourceTableText(): string {
-    let sourceText = "[No Source Selected]";
+  public get sourceTablesText(): string[] {
+    const sourceTextArray: string[] = [];
     const sourcePaths = this.view.getSourcePaths();
     if (sourcePaths && sourcePaths.length > 0) {
-      sourceText = "[" + PathUtils.getConnectionName(sourcePaths[0]) + "]  " + PathUtils.getSourceName(sourcePaths[0]);
+      for (const path of sourcePaths) {
+        const sourceText = "[" + PathUtils.getConnectionName(path) + "]: " + PathUtils.getSourceName(path);
+        sourceTextArray.push(sourceText);
+      }
     }
-    return sourceText;
+    return sourceTextArray;
   }
-
-  /**
-   * An event handler for footer action link.
-   * @param {CardAction} $event the event being processed
-   */
-  // public onShowDetails( $event: CardAction ): void {
-  //   this.showDetails = !this.showDetails;
-  //   $event.hypertext = this.showDetailsTitle;
-  // }
-
-  /**
-   * @returns {string[][]} the properties of a connection
-   */
-  // public get properties(): string[][] {
-  //   const props = [
-  //     [ "testLabel", "value" ],
-  //   ];
-  //
-  //   return props;
-  // }
-
-  /**
-   * @returns {string} the footer details action text
-   */
-  // public get showDetailsTitle(): string {
-  //   return this.showDetails ? "Less" : "More";
-  // }
 
 }

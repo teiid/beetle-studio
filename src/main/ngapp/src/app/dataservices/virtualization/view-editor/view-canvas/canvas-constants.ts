@@ -34,7 +34,7 @@ export class CanvasConstants {
   // Node Types
   //
   public static readonly SOURCE_TYPE = 'SOURCE';
-  public static readonly COMPONENT_TYPE = 'COMPONENT';
+  public static readonly COMPOSITION_TYPE = 'COMPOSITION';
 
   //
   // Model constants

@@ -191,7 +191,7 @@ export class Composition {
    * Determine whether the composition is in a complete state
    * @returns {boolean} true if complete
    */
-  public get valid(): boolean {
+  public get complete(): boolean {
     if ( this.name !== null &&
          this.type && this.type !== null &&
          this.operator && this.operator !== null &&

@@ -486,7 +486,7 @@ export class AddCompositionWizardComponent implements OnInit {
    * Updates the page 2 status
    */
   private updatePage2ValidStatus( ): void {
-    this.step2Config.nextEnabled = this.composition.valid;
+    this.step2Config.nextEnabled = this.composition.complete;
   }
 
   /**
