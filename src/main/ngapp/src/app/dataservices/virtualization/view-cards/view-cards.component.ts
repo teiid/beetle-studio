@@ -18,7 +18,7 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { ViewCardComponent } from "@dataservices/virtualization/view-cards/view-card/view-card.component";
 import { LoggerService } from "@core/logger.service";
-import { View } from "@dataservices/shared/view.model";
+import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 
 @Component({
   moduleId: module.id,
@@ -28,11 +28,11 @@ import { View } from "@dataservices/shared/view.model";
 })
 export class ViewCardsComponent {
 
-  @Input() public views: View[];
-  @Input() public selectedViews: View[];
+  @Input() public views: ViewDefinition[];
+  @Input() public selectedViews: ViewDefinition[];
 
-  @Output() public viewSelected: EventEmitter<View> = new EventEmitter<View>();
-  @Output() public viewDeselected: EventEmitter<View> = new EventEmitter<View>();
+  @Output() public viewSelected: EventEmitter<ViewDefinition> = new EventEmitter<ViewDefinition>();
+  @Output() public viewDeselected: EventEmitter<ViewDefinition> = new EventEmitter<ViewDefinition>();
   @Output() public deleteView: EventEmitter<string> = new EventEmitter<string>();
   @Output() public editView: EventEmitter<string> = new EventEmitter<string>();
 
@@ -45,7 +45,7 @@ export class ViewCardsComponent {
     this.logger = logger;
   }
 
-  public isSelected( view: View ): boolean {
+  public isSelected( view: ViewDefinition ): boolean {
     return this.selectedViews.indexOf( view ) !== -1;
   }
 
@@ -64,7 +64,7 @@ export class ViewCardsComponent {
     }
   }
 
-  public onSelectEvent( view: View ): void {
+  public onSelectEvent( view: ViewDefinition ): void {
     this.viewSelected.emit( view );
   }
 

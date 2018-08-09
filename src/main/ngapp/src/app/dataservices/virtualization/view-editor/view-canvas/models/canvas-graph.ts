@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 import { EventEmitter } from '@angular/core';
-import { CanvasConstants } from '@dataservices/virtualization/view-editor/view-canvas/canvas-constants';
 import { CanvasService } from '@dataservices/virtualization/view-editor/view-canvas/canvas.service';
 import { CanvasNode } from '@dataservices/virtualization/view-editor/view-canvas/models/canvas-node';
 import { CanvasLink } from '@dataservices/virtualization/view-editor/view-canvas/models/canvas-link';
@@ -207,8 +206,6 @@ export class CanvasGraph {
   /**
    * Remove the node and all its dependents
    */
-  public removeNode(nodeId: string, update?: boolean): void;
-  public removeNode(nodeToRemove: CanvasNode, update?: boolean): void;
   public removeNode(nodeToRemoveOrNodeId: CanvasNode | string, update?: boolean): void {
     let nodeToRemove = null;
     if (typeof nodeToRemoveOrNodeId === "string") {

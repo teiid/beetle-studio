@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-import { Component, DoCheck, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from "@angular/core";
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { SelectionService } from "@core/selection.service";
 import { Connection } from "@connections/shared/connection.model";
 import { ConnectionService } from "@connections/shared/connection.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
-import { View } from "@dataservices/shared/view.model";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
@@ -42,6 +41,7 @@ import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/comm
 import { AddCompositionCommand } from "@dataservices/virtualization/view-editor/command/add-composition-command";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { Composition } from "@dataservices/shared/composition.model";
+import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -50,7 +50,7 @@ import { Composition } from "@dataservices/shared/composition.model";
   styleUrls: ["./view-editor.component.css"],
   providers: [ ViewEditorService ]
 })
-export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
+export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterViewInit {
 
   private actionConfig: ActionConfig;
   private connections: Connection[] = [];
@@ -113,7 +113,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     // this is the service that is injected into all the editor parts
     this.editorService = editorService;
     this.editorService.setEditorVirtualization( selectionService.getSelectedVirtualization() );
-    this.editorService.setEditorView( selectionService.getSelectedView(), ViewEditorPart.EDITOR );
   }
 
   private canAddComposition(): boolean {
@@ -618,24 +617,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
       ]
     } as ToolbarConfig;
 
-    // must have a virtualization parent
-    if ( this.editorService.getEditorVirtualization() ) {
-      // check to see if creating a new view
-      if ( !this.editorService.getEditorView() ) {
-        this.isNewView = true;
-        this.editorService.setEditorView( new View(), ViewEditorPart.EDITOR );
-      } else {
-        this.editorService.updatePreviewResults();
-      }
-    } else {
-      // must have a virtualization selected
-      this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorPart.EDITOR );
-      this.fatalErrorOccurred = true;
-    }
-
-    // Keep track of lastSaved view for this edit session
-    this.editorService.setOriginalViewName(null);
-
     // Load the connections
     const self = this;
     this.connectionService
@@ -657,6 +638,34 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
         }
       );
 
+  }
+
+  /**
+   * Lifecycle hook after the component is fully initialized.  Need to set viewDefinition here to ensure that the
+   * child components have been fully intiialized and can receive events
+   */
+  public ngAfterViewInit(): void {
+    const virtualization = this.editorService.getEditorVirtualization();
+
+    let selectedViewDefn = this.selectionService.getSelectedViewDefinition();
+    if (!selectedViewDefn) {
+      this.isNewView = true;
+      selectedViewDefn = new ViewDefinition();
+    }
+
+    this.editorService.setOriginalViewName(selectedViewDefn.getName());
+
+    // must have a virtualization parent
+    if ( virtualization ) {
+      this.editorService.setEditorView(selectedViewDefn, ViewEditorPart.EDITOR);
+      if (!this.isNewView) {
+        this.editorService.updatePreviewResults();
+      }
+    } else {
+      // must have a virtualization selected
+      this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorPart.EDITOR );
+      this.fatalErrorOccurred = true;
+    }
   }
 
   /**

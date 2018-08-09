@@ -6,13 +6,13 @@ import { SelectionService } from "@core/selection.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
-import { View } from "@dataservices/shared/view.model";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { BsModalService } from "ngx-bootstrap";
 import { ActionConfig, EmptyStateConfig } from "patternfly-ng";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { LoadingState } from "@shared/loading-state.enum";
+import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 
 @Component({
   selector: "app-virtualization",
@@ -25,8 +25,8 @@ export class VirtualizationComponent implements OnInit {
 
   public viewPropertyForm: FormGroup;
   public nameValidationError = "";
-  public views: View[] = [];
-  public selectedViews: View[] = [];
+  public viewDefinitions: ViewDefinition[] = [];
+  public selectedViewDefinitions: ViewDefinition[] = [];
   public viewCreateInProgress = false;
   public showDescription = false;
 
@@ -68,7 +68,7 @@ export class VirtualizationComponent implements OnInit {
       this.newVirtualization = this.dataserviceService.newDataserviceInstance(this.originalName, "");
       this.initForm(this.newVirtualization.getId(), this.newVirtualization.getDescription(), true);
       // Init Views
-      this.views = [];
+      this.viewDefinitions = [];
       this.viewsLoadingState = LoadingState.LOADED_VALID;
     }
   }
@@ -82,11 +82,11 @@ export class VirtualizationComponent implements OnInit {
   }
 
   /**
-   * Get the virtualization views
-   * @returns {View[]} the views
+   * Get the virtualization view definitions
+   * @returns {ViewDefinition[]} the view definitions
    */
-  public get allViews( ): View[] {
-    return this.views;
+  public get allViewDefinitions( ): ViewDefinition[] {
+    return this.viewDefinitions;
   }
 
   /**
@@ -170,13 +170,13 @@ export class VirtualizationComponent implements OnInit {
           if ( errorMsg !== self.nameValidationError ) {
             self.nameValidationError = errorMsg;
           }
-          self.setViewsEditableState(false);
+          self.setViewDefinitionsEditableState(false);
         } else { // name is valid
           self.nameValidationError = "";
           if (self.hasPendingNameChange) {
-            self.setViewsEditableState(false);
+            self.setViewDefinitionsEditableState(false);
           } else {
-            self.setViewsEditableState(true);
+            self.setViewDefinitionsEditableState(true);
           }
         }
       },
@@ -276,8 +276,8 @@ export class VirtualizationComponent implements OnInit {
    * Handle request for new View
    */
   public onNew(): void {
-    // Setting the selected view null indicates new view
-    this.selectionService.setSelectedView( this.currentVirtualization, null );
+    // Setting the selected view definition null indicates new view
+    this.selectionService.setSelectedViewDefinition( this.currentVirtualization, null );
 
     const link: string[] = [ DataservicesConstants.viewPath ];
     this.logger.debug("[VirtualizationComponent] Navigating to: %o", link);
@@ -292,8 +292,8 @@ export class VirtualizationComponent implements OnInit {
    */
   public onEdit(viewName: string): void {
     // Sets the selected view in the service
-    const selectedView =  this.views.find((x) => x.getName() === viewName);
-    this.selectionService.setSelectedView( this.currentVirtualization, selectedView );
+    const selectedViewDefn =  this.viewDefinitions.find((x) => x.getName() === viewName);
+    this.selectionService.setSelectedViewDefinition( this.currentVirtualization, selectedViewDefn );
 
     const link: string[] = [ DataservicesConstants.viewPath ];
     this.logger.debug("[VirtualizationComponent] Navigating to: %o", link);
@@ -302,8 +302,8 @@ export class VirtualizationComponent implements OnInit {
     });
   }
 
-  public onSelected( view: View ): void {
-    this.selectionService.setSelectedView( this.currentVirtualization, view );
+  public onSelected( viewDefn: ViewDefinition ): void {
+    this.selectionService.setSelectedViewDefinition( this.currentVirtualization, viewDefn );
   }
 
   // ----------------
@@ -311,24 +311,24 @@ export class VirtualizationComponent implements OnInit {
   // ----------------
 
   /**
-   * Deletes the specified view
-   * @param {string} viewName the name of the view
+   * Deletes the specified ViewEditorState from the userProfile, and removes ViewDefinition from the current list.
+   * @param {string} viewDefnName the name of the view
    */
-  private onDeleteView(viewName: string): void {
-    const selectedView =  this.views.find((x) => x.getName() === viewName);
+  private onDeleteView(viewDefnName: string): void {
+    const selectedViewDefn =  this.viewDefinitions.find((x) => x.getName() === viewDefnName);
     const vdbName = this.currentVirtualization.getServiceVdbName();
-    const modelName = this.currentVirtualization.getServiceViewModel();
+    const editorStateId = vdbName.toLowerCase() + "." + viewDefnName;
     // Note: we can only doDelete selected items that we can see in the UI.
     this.logger.debug("[VirtualizationComponent] Deleting selected Virtualization View.");
     const self = this;
     this.vdbService
-      .deleteView(vdbName, modelName, selectedView.getName())
+      .deleteViewEditorState(editorStateId)
       .subscribe(
         (wasSuccess) => {
-          self.removeViewFromList(selectedView);
+          self.removeViewDefinitionFromList(selectedViewDefn);
         },
         (error) => {
-          self.logger.error("[VirtualizationComponent] Error deleting the view: %o", error);
+          self.logger.error("[VirtualizationComponent] Error deleting the editor state: %o", error);
         }
       );
   }
@@ -397,28 +397,32 @@ export class VirtualizationComponent implements OnInit {
   }
 
   /*
-   * Initialize the views for the current dataservice.  Makes a rest call to get the views for the service vdb,
-   * and sets them on the dataservice
+   * Initialize the views for the current dataservice.  Makes a rest call to get the ViewEditorStates for the serviceVdb
    */
   private initViews( ): void {
     this.viewsLoadingState = LoadingState.LOADING;
     const vdbName = this.currentVirtualization.getServiceVdbName();
-    const modelName = this.currentVirtualization.getServiceViewModel();
-
-    this.setViewsEditableState(true);
+    const statesPattern = vdbName.toLowerCase() + "*";
+    this.setViewDefinitionsEditableState(true);
 
     const self = this;
     this.vdbService
-      .getVdbModelViews(vdbName, modelName)
+      .getViewEditorStates(statesPattern)
       .subscribe(
-        (views) => {
-          self.currentVirtualization.setViews(views);
-          self.views = this.currentVirtualization.getViews().sort( (left, right): number => {
+        (viewEditorStates) => {
+          const viewDefns: ViewDefinition[] = [];
+          for ( const viewState of viewEditorStates ) {
+            const viewDefn = viewState.getViewDefinition();
+            if ( viewDefn ) {
+              viewDefns.push( viewDefn );
+            }
+          }
+          self.viewDefinitions = viewDefns.sort( (left, right): number => {
             if (left.getName() < right.getName()) return -1;
             if (left.getName() > right.getName()) return 1;
             return 0;
           });
-          self.setViewsEditableState(true);
+          self.setViewDefinitionsEditableState(true);
           this.viewsLoadingState = LoadingState.LOADED_VALID;
         },
         (error) => {
@@ -430,21 +434,21 @@ export class VirtualizationComponent implements OnInit {
   }
 
   /*
-   * Set the editable state of all views.
+   * Set the editable state of all view definitions
    * @param {boolean} isEditable the editable state
    */
-  private setViewsEditableState(isEditable: boolean): void {
-    for (const view of this.views) {
-      view.editable = isEditable;
+  private setViewDefinitionsEditableState(isEditable: boolean): void {
+    for (const viewDefn of this.viewDefinitions) {
+      viewDefn.setEditable(isEditable);
     }
   }
 
   /*
-   * Remove the specified View from the list of views
-   * @param {View} view the view to remove
+   * Remove the specified ViewDefinition from the list of view definitions
+   * @param {ViewDefinition} viewDefn the view definition to remove
    */
-  private removeViewFromList(view: View): void {
-    this.views.splice(this.views.indexOf(view), 1);
+  private removeViewDefinitionFromList(viewDefn: ViewDefinition): void {
+    this.viewDefinitions.splice(this.viewDefinitions.indexOf(viewDefn), 1);
   }
 
 }

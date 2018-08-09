@@ -11,7 +11,6 @@ import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.se
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { View } from "@dataservices/shared/view.model";
 import { CodemirrorModule } from "ng2-codemirror";
 import {
   ActionModule,
@@ -25,6 +24,7 @@ import {
   WizardModule
 } from "patternfly-ng";
 import { SqlControlComponent } from "./sql-control.component";
+import { SqlView } from "@dataservices/shared/sql-view.model";
 
 describe("SqlControlComponent", () => {
   let component: SqlControlComponent;
@@ -74,12 +74,11 @@ describe("SqlControlComponent", () => {
 
     // Set the inputs for the component
     component.viewSql = "SELECT * FROM views.View1";
-    const view = new View();
-    view.setName("views.View1");
-    const views: View[] = [];
-    views.push(view);
-    component.serviceViews = views;
-    component.selectedViews = views;
+    const sqlView = new SqlView("views.View1");
+    const sqlViews: SqlView[] = [];
+    sqlViews.push(sqlView);
+    component.serviceViews = sqlViews;
+    component.selectedViews = sqlViews;
 
     fixture.detectChanges();
   });

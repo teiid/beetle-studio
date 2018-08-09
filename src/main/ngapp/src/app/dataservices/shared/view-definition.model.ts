@@ -15,30 +15,51 @@
  * limitations under the License.
  */
 
-import { SchemaNode } from "@connections/shared/schema-node.model";
-import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
-import { PathUtils } from "@dataservices/shared/path-utils";
 import { Composition } from "@dataservices/shared/composition.model";
+import { PathUtils } from "@dataservices/shared/path-utils";
+import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 
 /**
- * View model
+ * ViewDefinition model
  */
-export class View {
-  private keng__id: string;
-  private description: string;
-  private isSelected = false;
+export class ViewDefinition {
+  private viewName: string;
+  private keng__description: string;
+  private isComplete = false;
   private isEditable = false;
   private sourcePaths: string[] = [];
   private compositions: Composition[] = [];
 
   /**
-   * @param {Object} json the JSON representation of a View
-   * @returns {View} the new View (never null)
+   * @param {Object} json the JSON representation of a ViewDefinition
+   * @returns {ViewDefinition} the new ViewDefinition (never null)
    */
-  public static create( json: object = {} ): View {
-    const view = new View();
-    view.setValues( json );
-    return view;
+  public static create( json: object = {} ): ViewDefinition {
+    const viewDefn = new ViewDefinition();
+    for (const field of Object.keys(json)) {
+      if (field === "viewName") {
+        viewDefn.setName(json[field]);
+      } else if (field === "keng__description") {
+        viewDefn.setDescription(json[field]);
+      } else if (field === "sourcePaths") {
+        const arrayElems = json[field];
+        for (const arrayElem of arrayElems) {
+          if (arrayElem.length > 0) {
+            viewDefn.addSourcePath(arrayElem);
+          }
+        }
+      } else if (field === "compositions") {
+        const arrayElems = json[field];
+        for (const arrayElem of arrayElems) {
+          const compStr = JSON.stringify(arrayElem);
+          if (compStr.length > 2) {
+            const comp = Composition.create(arrayElem);
+            viewDefn.addComposition(comp);
+          }
+        }
+      }
+    }
+    return viewDefn;
   }
 
   constructor() {
@@ -46,31 +67,31 @@ export class View {
   }
 
   /**
-   * @returns {string} the table name
+   * @returns {string} the view definition name
    */
   public getName(): string {
-    return this.keng__id;
+    return this.viewName;
   }
 
   /**
-   * @param {string} name the table name
+   * @param {string} name the view definition name
    */
   public setName( name?: string ): void {
-    this.keng__id = name ? name : null;
+    this.viewName = name ? name : null;
   }
 
   /**
    * @returns {string} the view description
    */
   public getDescription(): string {
-    return this.description;
+    return this.keng__description;
   }
 
   /**
    * @param {string} description the view description
    */
   public setDescription( description?: string ): void {
-    this.description = description ? description : null;
+    this.keng__description = description ? description : null;
   }
 
   /**
@@ -88,23 +109,17 @@ export class View {
   }
 
   /**
-   * Get the SQL for the view, given the current selections
-   * @returns {string} the view SQL
+   * @returns {Composition[]} the view compositions
    */
-  public getSql(): string {
-    // The view currently supports single source only
-    let sourceNodeName = "unknownSource";
-    let connectionName = "unknownConnection";
-    const sourcePath = this.getSourcePaths()[ 0 ];
-    if ( sourcePath && sourcePath !== null ) {
-      sourceNodeName = PathUtils.getSourceName(sourcePath);
-      if ( PathUtils.getConnectionName(sourcePath) !== null ) {
-        connectionName = PathUtils.getConnectionName(sourcePath);
-      }
-    }
+  public getCompositions(): Composition[] {
+    return this.compositions;
+  }
 
-    // Return SQL for this view
-    return "SELECT * FROM " + connectionName.toLowerCase() + VdbsConstants.SCHEMA_MODEL_SUFFIX + "." + sourceNodeName + ";";
+  /**
+   * @param {Composition[]} compositions the view compositions
+   */
+  public setCompositions( compositions: Composition[] = [] ): void {
+    this.compositions = compositions;
   }
 
   /**
@@ -172,7 +187,7 @@ export class View {
   }
 
   /**
-   * @param {SchemaNode} sourcePathsToRemove the source paths to remove
+   * @param {string[]} sourcePathsToRemove the source paths to remove
    */
   public removeSourcePaths( sourcePathsToRemove: string[] ): void {
     const self = this;
@@ -183,7 +198,7 @@ export class View {
   }
 
   /**
-   * Determine if this view currenly has the specified source path
+   * Determine if this view definition currenly has the specified source path
    * @param {string} sourcePathToTest the source path
    */
   public hasSourcePath( sourcePathToTest: string ): boolean {
@@ -197,28 +212,15 @@ export class View {
   }
 
   /**
-   * Determine whether the view is in a complete state
+   * Determine whether the view definition is in a complete state
    * @returns {boolean} true if complete
    */
   public get complete(): boolean {
-    return this.keng__id != null && this.sourcePaths.length > 0;
+    return this.viewName != null && this.sourcePaths.length > 0;
   }
 
   /**
-   * @returns {boolean} true if selected
-   */
-  public get selected(): boolean {
-    return this.isSelected;
-  }
-
-  /**
-   * @param {boolean} selected 'true' if selected
-   */
-  public set selected( selected: boolean ) {
-    this.isSelected = selected;
-  }
-
-  /**
+   * Determine whether the view definition is editable
    * @returns {boolean} true if editable
    */
   public get editable(): boolean {
@@ -226,14 +228,35 @@ export class View {
   }
 
   /**
-   * @param {boolean} editable 'true' if editable
+   * Set the ViewDefinition editable status
+   * @param {boolean} editable true if editable
    */
-  public set editable( editable: boolean ) {
+  public setEditable(editable: boolean): void {
     this.isEditable = editable;
   }
 
   /**
-   * Set all object values using the supplied View json
+   * Get the SQL for the view, given the current selections
+   * @returns {string} the view SQL
+   */
+  public getSql(): string {
+    // The view currently supports single source only
+    let sourceNodeName = "unknownSource";
+    let connectionName = "unknownConnection";
+    const sourcePath = this.getSourcePaths()[ 0 ];
+    if ( sourcePath && sourcePath !== null ) {
+      sourceNodeName = PathUtils.getSourceName(sourcePath);
+      if ( PathUtils.getConnectionName(sourcePath) !== null ) {
+        connectionName = PathUtils.getConnectionName(sourcePath);
+      }
+    }
+
+    // Return SQL for this view
+    return "SELECT * FROM " + connectionName.toLowerCase() + VdbsConstants.SCHEMA_MODEL_SUFFIX + "." + sourceNodeName + ";";
+  }
+
+  /**
+   * Set all object values using the supplied ViewDefinition json
    * @param {Object} values
    */
   public setValues(values: object = {}): void {
@@ -241,12 +264,12 @@ export class View {
   }
 
   /**
-   * @returns {{}} a JSON representation of the view
+   * @returns {{}} a JSON representation of the view definition
    */
   public toJSON(): {} {
     return {
-      name: this.keng__id,
-      description: this.description,
+      viewName: this.viewName,
+      keng__description: this.keng__description,
       isComplete: this.complete,
       sourcePaths: this.sourcePaths,
       compositions: this.compositions
@@ -257,7 +280,7 @@ export class View {
    * @returns {string} a string representation of the event
    */
   public toString(): string {
-    let text = `id: ${this.keng__id}, description: ${this.description}, isComplete: ${this.complete}`;
+    let text = `viewName: ${this.viewName}, keng__description: ${this.keng__description}, isComplete: ${this.complete}`;
 
     let firstTime = true;
     if ( this.sourcePaths.length !== 0 ) {

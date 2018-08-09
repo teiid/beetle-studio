@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, RequestOptions } from "@angular/http";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
@@ -30,11 +30,8 @@ import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Rx";
 import { Subscription } from "rxjs/Subscription";
-import { Connection } from "@connections/shared/connection.model";
-import { View } from "@dataservices/shared/view.model";
 import { QueryResults } from "@dataservices/shared/query-results.model";
-import { PathUtils } from "@dataservices/shared/path-utils";
-import { UndoManager } from "@dataservices/virtualization/view-editor/command/undo-redo/undo-manager";
+import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 
 @Injectable()
 /**
@@ -256,25 +253,6 @@ export class VdbService extends ApiService {
   }
 
   /**
-   * Create the workspace VDB Model View if specified view is not found.
-   * If specified VDB Model View is found, the create attempt is skipped.
-   * @param {string} vdbName the name of the vdb
-   * @param {string} modelName the name of the model
-   * @param {string} viewName the name of the view
-   * @returns {Observable<boolean>}
-   */
-  public createVdbModelViewIfNotFound(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
-    return this.hasWorkspaceVdbModelView(vdbName, modelName, viewName)
-      .switchMap( (resp) => {
-        if (resp === false) {
-          return this.createVdbModelView(vdbName, modelName, viewName);
-        } else {
-          return Observable.of(true);
-        }
-      });
-  }
-
-  /**
    * Create a vdb model view via the komodo rest interface
    * @param {string} vdbName
    * @param {string} modelName
@@ -296,74 +274,6 @@ export class VdbService extends ApiService {
 
     return this.http
       .post(url, paystr, this.getAuthRequestOptions())
-      .map((response) => {
-        return response.ok;
-      })
-      .catch( ( error ) => this.handleError( error ) );
-  }
-
-  /**
-   * Get the views from the specified Vdb model from the komodo rest interface
-   * @param {string} vdbName the vdb name
-   * @param {string} modelName the model name
-   * @returns {Observable<View[]>}
-   */
-  public getVdbModelViews(vdbName: string, modelName: string): Observable<View[]> {
-    return this.http
-      .get(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName
-                                              + VdbsConstants.vdbModelsRootPath + "/"
-                                              + modelName + "/Views", this.getAuthRequestOptions())
-      .map((response) => {
-        const views = response.json();
-        return views.map((view) => View.create( view ));
-      })
-      .catch( ( error ) => this.handleError( error ) );
-  }
-
-  /**
-   * Creates the Vdb Model Views via the komodo rest interface.  This is currently limited - will need to be improved
-   * in subsequent development.
-   * @param {string} vdbName the vdb name
-   * @param {string} modelName the model name
-   * @param {string[]} viewNames the view names (1:1 correspondence with schemaNodes)
-   * @param {string[]} sourceNodePaths the path for each source node
-   * @param {Connection[]} connections the array of active connections
-   * @returns {Observable<boolean>}
-   */
-  public setVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
-                          sourceNodePaths: string[], connections: Connection[]): Observable<boolean> {
-
-    // construct source table paths and modelSource paths needed for all views
-    const modelSourcePaths = [];
-    const tablePaths = [];
-    for ( const sourceNodePath of sourceNodePaths ) {
-      // Get the connection for the source node
-      const connName = PathUtils.getConnectionName(sourceNodePath);
-      let nodeConn: Connection = null;
-      for ( const conn of connections ) {
-        if ( conn.getId().toLowerCase() === connName.toLowerCase() ) {
-          nodeConn = conn;
-          break;
-        }
-      }
-      // derive schema vdb names from connection
-      const schemaVdbName = nodeConn.schemaVdbName;
-      const schemaVdbModelName = nodeConn.schemaVdbModelName;
-      const schemaVdbModelSourceName = nodeConn.schemaVdbModelSourceName;
-
-      // Construct source table and modelSource paths for current node
-      const vdbPath = this.getKomodoUserWorkspacePath() + "/" + nodeConn.getId() + "/" + schemaVdbName;
-      const tablePath = vdbPath + "/" + schemaVdbModelName + "/" + PathUtils.getSourceName(sourceNodePath);
-      const modelSourcePath = vdbPath + "/" + schemaVdbModelName + "/vdb:sources/" + schemaVdbModelSourceName;
-
-      tablePaths.push(tablePath);
-      modelSourcePaths.push(modelSourcePath);
-    }
-
-    return this.http
-      .post(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName
-                                               + VdbsConstants.vdbModelsRootPath + "/" + modelName + "/defineViews",
-        { viewNames, tablePaths, modelSourcePaths}, this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
       })
@@ -543,81 +453,64 @@ export class VdbService extends ApiService {
   }
 
   /**
-   * Deletes the workspace VDB model view if found.  Also deletes specified editorId
-   * @param {string} vdbName the name of the vdb
-   * @param {string} modelName the name of the model
-   * @param {string} viewName the name of the view
-   * @param {string} editorStateId the editorState Id
-   * @returns {Observable<boolean>}
+   * @param {string} editorStatePattern the name pattern to use for returning the array of viewEditorStates.
+   *                                    If no pattern is supplied, all states are returned
+   * @returns {Observable<ViewEditorState[]>} the view editor states or empty array if none found
    */
-  public deleteViewAndViewEditorState(vdbName: string, modelName: string, viewName: string, editorStateId: string): Observable<boolean> {
-    return this.deleteViewIfFound(vdbName, modelName, viewName)
-      .flatMap((res) => this.deleteViewEditorState(editorStateId));
-  }
+  public getViewEditorStates( editorStatePattern?: string ): Observable< ViewEditorState[] > {
+    // pattern is added to the request options
+    let statePattern = {};
+    if (editorStatePattern && editorStatePattern.length > 0) {
+      statePattern = {
+        params: {
+          "pattern": editorStatePattern
+        }
+      };
+    }
 
-  /**
-   * Create the workspace VDB model view if not found.  Also saves specified viewEditor state
-   * @param {string} vdbName the name of the vdb
-   * @param {string} modelName the name of the model
-   * @param {string} viewName the name of the view
-   * @param {string} editorId the ID of the view editor being saved
-   * @param {{}} editorState the JSON representation of the editor state
-   * @returns {Observable<boolean>}
-   */
-  public createViewAndSaveViewEditorState(vdbName: string, modelName: string, viewName: string,
-                                          editorStateId: string, editorState: {}): Observable<boolean> {
-    return this.createVdbModelViewIfNotFound(vdbName, modelName, viewName)
-      .flatMap((res) => this.saveViewEditorState(editorStateId, editorState));
-  }
+    return this.http.get(environment.viewEditorState, this.getAuthRequestOptions().merge(new RequestOptions(statePattern)) )
+      .map( ( response ) => {
+          const editorStates = response.json();
+          return editorStates.map((state) => ViewEditorState.create( state ));
+      } )
+      .catch( ( error ) => {
+        // no editor state found
+        if ( error.status === 404 ) {
+          return Observable.of( {} );
+        }
 
-  /**
-   * Composite service which 1) undeploys current service VDB and 2) sets the Vdb Model Views.
-   * @param {string} vdbName the vdb name
-   * @param {string} modelName the model name
-   * @param {string[]} viewNames the view names (1:1 correspondence with schemaNodes)
-   * @param {string[]} sourceNodePaths the path for each source node
-   * @param {Connection[]} connections the array of active connections
-   * @returns {Observable<boolean>}
-   */
-  public compositeSetVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
-                                   sourceNodePaths: string[], connections: Connection[]): Observable<boolean> {
-    return this.undeployVdb(vdbName)
-      .flatMap((res) => this.setVdbModelViews(vdbName, modelName, viewNames, sourceNodePaths, connections));
+        return this.handleError( error );
+      } );
   }
 
   /**
    * @param {string} editorId the ID of the editor state being requested
-   * @returns {Observable<{}>} the view editor state or empty object if not found
+   * @returns {Observable<ViewEditorState>} the view editor state or empty object if not found
    */
-  public getViewEditorState( editorId: string ): Observable< {} > {
+  public getViewEditorState( editorId: string ): Observable< ViewEditorState > {
     return this.http.get(environment.viewEditorState + "/" + editorId, this.getAuthRequestOptions() )
-                    .map( ( response ) => {
-                      return Observable.of( response.json().undoables );
-                    } )
-                    .catch( ( error ) => {
-                      // no editor state found
-                      if ( error.status === 404 ) {
-                        return Observable.of( {} );
-                      }
+      .map( ( response ) => {
+        const editorState = response.json();
+        const viewEditorState = ViewEditorState.create(editorState);
+        return Observable.of( viewEditorState );
+      } )
+      .catch( ( error ) => {
+        // no editor state found
+        if ( error.status === 404 ) {
+          return Observable.of( {} );
+        }
 
-                      return this.handleError( error );
-                    } );
+        return this.handleError( error );
+      } );
   }
 
   /**
-   * @param {string} editorId the ID of the view editor being saved
-   * @param {{}} editorState the JSON representation of the editor state
+   * @param {ViewEditorState} editorState the view editor state
    * @returns {Observable<boolean>} `true` if the editor state was successfully saved
    */
-  public saveViewEditorState( editorId: string,
-                              editorState: {} ): Observable< boolean > {
-    const payload = {
-      "id": editorId,
-      [ UndoManager.undoables ]: editorState[ UndoManager.undoables ]
-    };
+  public saveViewEditorState( editorState: ViewEditorState ): Observable< boolean > {
 
-    console.error( JSON.stringify( payload ) );
-    return this.http.put( environment.viewEditorState, payload, this.getAuthRequestOptions() )
+    return this.http.put( environment.viewEditorState, editorState.toJSON(), this.getAuthRequestOptions() )
                     .map( ( response ) => {
                       return response.ok;
                     } )

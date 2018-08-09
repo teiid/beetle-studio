@@ -32,7 +32,6 @@ import { QueryResults } from "@dataservices/shared/query-results.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
-import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
 import { environment } from "@environments/environment";
 import { saveAs } from "file-saver/FileSaver";
@@ -42,6 +41,8 @@ import { Subject } from "rxjs/Subject";
 import { Subscription } from "rxjs/Subscription";
 import * as _ from "lodash";
 import * as vkbeautify from 'vkbeautify';
+import { ViewDefinition } from "@dataservices/shared/view-definition.model";
+import { SqlView } from "@dataservices/shared/sql-view.model";
 
 @Injectable()
 export class DataserviceService extends ApiService {
@@ -59,7 +60,7 @@ export class DataserviceService extends ApiService {
   private appSettingsService: AppSettingsService;
   private vdbService: VdbService;
   private selectedDataservice: Dataservice;
-  private dataserviceCurrentView: View[] = [];
+  private dataserviceCurrentViewDefinition: ViewDefinition[] = [];
   private cachedDataserviceDeployStates: Map<string, DeploymentState> = new Map<string, DeploymentState>();
   private cachedDataserviceVirtualizations: Map<string, Virtualization> = new Map<string, Virtualization>();
   private updatesSubscription: Subscription;
@@ -98,10 +99,10 @@ export class DataserviceService extends ApiService {
   public setSelectedDataservice(service: Dataservice): void {
     this.selectedDataservice = service;
     // When the dataservice is selected, init the selected view
-    const views: View[] = this.getSelectedDataserviceViews();
-    this.dataserviceCurrentView = [];
-    if (views && views.length > 0) {
-      this.dataserviceCurrentView.push(views[0]);
+    const viewDefns: ViewDefinition[] = this.getSelectedDataserviceViews();
+    this.dataserviceCurrentViewDefinition = [];
+    if (viewDefns && viewDefns.length > 0) {
+      this.dataserviceCurrentViewDefinition.push(viewDefns[0]);
     }
   }
 
@@ -115,10 +116,10 @@ export class DataserviceService extends ApiService {
 
   /**
    * Get the current Dataservice selection's views.View
-   * The View name is currently set to the full "modelName"."viewName" of the view.
-   * @returns {View[]} the selected Dataservice views
+   * The ViewDefinition name is currently set to the full "modelName"."viewName" of the view.
+   * @returns {ViewDefinition[]} the selected Dataservice view definitions
    */
-  public getSelectedDataserviceViews( ): View[] {
+  public getSelectedDataserviceViews( ): ViewDefinition[] {
     if (!this.selectedDataservice || this.selectedDataservice === null) {
       return [];
     }
@@ -127,9 +128,9 @@ export class DataserviceService extends ApiService {
     const serviceViews = this.selectedDataservice.getServiceViewNames();
 
     // build the views using the model and view names
-    const allViews: View[] = [];
+    const allViews: ViewDefinition[] = [];
     for ( const serviceView of serviceViews ) {
-      const aView: View = new View();
+      const aView: ViewDefinition = new ViewDefinition();
       aView.setName(modelName + "." + serviceView);
 
       allViews.push(aView);
@@ -139,21 +140,42 @@ export class DataserviceService extends ApiService {
   }
 
   /**
+   * Get the current Dataservice selection's views.View
+   * The ViewDefinition name is currently set to the full "modelName"."viewName" of the view.
+   * @returns {ViewDefinition[]} the selected Dataservice view definitions
+   */
+  public getSelectedDataserviceViewNames( ): SqlView[] {
+    if (!this.selectedDataservice || this.selectedDataservice === null) {
+      return [];
+    }
+
+    const modelName = this.selectedDataservice.getServiceViewModel();
+    const serviceViews = this.selectedDataservice.getServiceViewNames();
+
+    const allViewNames: SqlView[] = [];
+    for ( const serviceView of serviceViews ) {
+      allViewNames.push(new SqlView(modelName + "." + serviceView));
+    }
+
+    return allViewNames;
+  }
+
+  /**
    * Get the current Dataservice current view.  The table object is used for the view,
    * with the View name set to the full "modelName"."viewName" of the view.
-   * @returns {View[]} the Dataservice current view
+   * @returns {ViewDefinition[]} the Dataservice current view definition
    */
-  public getSelectedDataserviceCurrentView( ): View[] {
-    return this.dataserviceCurrentView;
+  public getSelectedDataserviceCurrentView( ): ViewDefinition[] {
+    return this.dataserviceCurrentViewDefinition;
   }
 
   /**
    * Set the current Dataservice current view.  The table object is used for the view,
    * with the View name set to the full "modelName"."viewName" of the view.
-   * @param {View[]} view the current view
+   * @param {ViewDefinition[]} view the current view
    */
-  public setSelectedDataserviceCurrentView( view: View[] ): void {
-    this.dataserviceCurrentView = view;
+  public setSelectedDataserviceCurrentView( view: ViewDefinition[] ): void {
+    this.dataserviceCurrentViewDefinition = view;
   }
 
   /**

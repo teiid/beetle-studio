@@ -18,8 +18,8 @@
 import { Component, DoCheck, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
 import { Action, ActionConfig, CardAction, CardConfig } from "patternfly-ng";
 import { LoggerService } from "@core/logger.service";
-import { View } from "@dataservices/shared/view.model";
 import { PathUtils } from "@dataservices/shared/path-utils";
+import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -34,10 +34,10 @@ export class ViewCardComponent implements DoCheck, OnInit {
 
   public readonly editEvent = ViewCardComponent.editViewEvent;
 
-  @Input() public view: View;
-  @Input() public selectedViews: View[] = [];
+  @Input() public view: ViewDefinition;
+  @Input() public selectedViews: ViewDefinition[] = [];
   @Output() public cardEvent: EventEmitter< {} > = new EventEmitter< {} >();
-  @Output() public selectEvent: EventEmitter< View > = new EventEmitter< View >();
+  @Output() public selectEvent: EventEmitter< ViewDefinition > = new EventEmitter< ViewDefinition >();
 
   public actionConfig: ActionConfig;
   public cardConfig: CardConfig;

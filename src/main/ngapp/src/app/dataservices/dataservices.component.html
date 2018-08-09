@@ -105,7 +105,7 @@
           <span class="pull-right fa fa-fw fa-close dataservice-results-action-icon-close" (click)="setQuickLookPanelOpenState(false)"></span>
         </div>
         <br>
-        <app-sql-control [quicklook]="true" [selectedViews]="selectedViews" [serviceViews]="allServiceViews"
+        <app-sql-control [quicklook]="true" [selectedViews]="selectedViewNames" [serviceViews]="allServiceViewNames"
                                             [viewSql]="quickLookSql"></app-sql-control>
       </div>
       <div class="col-md-12 {{resultsAreaCss}}" *ngIf="showOdataEditor">

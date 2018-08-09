@@ -55,7 +55,7 @@
       </div>
     </form>
 
-    <div class="row" *ngIf="!viewCreateInProgress && !isNew && views.length > 0">
+    <div class="row" *ngIf="!viewCreateInProgress && !isNew && viewDefinitions.length > 0">
       <div class="col-sm-3">
         <a i18n="@@virtualization.addView" class="btn btn-primary" (click)="onNew()">Add View</a>
       </div>
@@ -92,7 +92,7 @@
       </div>
 
       <!-- Blank State if no views -->
-      <div class="row" *ngIf="!viewCreateInProgress && viewsLoadedSuccess && !isNew && views.length === 0" >
+      <div class="row" *ngIf="!viewCreateInProgress && viewsLoadedSuccess && !isNew && viewDefinitions.length === 0" >
         <div class="col-sm-12">
           <div class="form-group">
             <pfng-empty-state
@@ -113,8 +113,8 @@
       </div>
 
       <!-- Card View if one or more views -->
-      <div class="col-md-12" *ngIf="viewsLoadedSuccess && views.length > 0">
-        <app-view-cards [views]="views" [selectedViews]="selectedViews"
+      <div class="col-md-12" *ngIf="viewsLoadedSuccess && viewDefinitions.length > 0">
+        <app-view-cards [views]="viewDefinitions" [selectedViews]="selectedViewDefinitions"
                         (deleteView)="onDelete($event)" (editView)="onEdit($event)"
                         (viewSelected)="onSelected($event)" (viewDeselected)="onDeselected($event)">
         </app-view-cards>

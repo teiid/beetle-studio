@@ -25,7 +25,6 @@ import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { View } from "@dataservices/shared/view.model";
 import { TestDataService } from "@shared/test-data.service";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/throw";
@@ -33,6 +32,8 @@ import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
 import { ErrorObservable } from "rxjs/observable/ErrorObservable";
+import { ViewDefinition } from "@dataservices/shared/view-definition.model";
+import { SqlView } from "@dataservices/shared/sql-view.model";
 
 @Injectable()
 export class MockDataserviceService extends DataserviceService {
@@ -90,16 +91,27 @@ export class MockDataserviceService extends DataserviceService {
   }
 
   /**
-   * Get the views for the selected Dataservice
-   * @returns {View[]} the views
+   * Get the view definitions for the selected Dataservice
+   * @returns {ViewDefinition[]} the view definitions
    */
-  public getSelectedDataserviceViews(): View[] {
-    const table: View = new View();
+  public getSelectedDataserviceViews(): ViewDefinition[] {
+    const table: ViewDefinition = new ViewDefinition();
     table.setName("views.View1");
-    const tables: View[] = [];
+    const tables: ViewDefinition[] = [];
     tables.push(table);
 
     return tables;
+  }
+
+  /**
+   * Get the views for the selected Dataservice
+   * @returns {SqlView[]} the views
+   */
+  public getSelectedDataserviceViewNames(): SqlView[] {
+    const views: SqlView[] = [];
+    views.push(new SqlView("views.View1"));
+
+    return views;
   }
 
   /**

@@ -17,15 +17,15 @@
 
 import { Injectable } from "@angular/core";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
-import { View } from "@dataservices/shared/view.model";
 import { Connection } from "@connections/shared/connection.model";
+import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 
 @Injectable()
 export class SelectionService {
 
   private selectedConnection: Connection;
   private selectedVirtualization: Dataservice;
-  private selectedView: View;
+  private selectedViewDefinition: ViewDefinition;
   private connectionForSchemaRegen = "";
 
   constructor() {
@@ -81,28 +81,28 @@ export class SelectionService {
   }
 
   /**
-   * Gets the selected view
-   * @returns {View} the selected view
+   * Gets the selected view definition
+   * @returns {ViewDefinition} the selected view definition
    */
-  public getSelectedView(): View {
-    return this.selectedView;
+  public getSelectedViewDefinition(): ViewDefinition {
+    return this.selectedViewDefinition;
   }
 
   /**
-   * Sets the selected view
-   * @param {View} view the selected view
+   * Sets the selected view definition
+   * @param {ViewDefinition} view the selected view definition
    */
-  public setSelectedView(virtualization: Dataservice, view: View): void {
+  public setSelectedViewDefinition(virtualization: Dataservice, viewDefn: ViewDefinition): void {
     this.selectedVirtualization = virtualization;
-    this.selectedView = view;
+    this.selectedViewDefinition = viewDefn;
   }
 
   /**
-   * Determine if there is a selected view
-   * @returns {boolean} 'true' if a view is selected
+   * Determine if there is a selected view definition
+   * @returns {boolean} 'true' if a view definition is selected
    */
-  public get hasSelectedView(): boolean {
-    return this.selectedView && this.selectedView !== null;
+  public get hasSelectedViewDefinition(): boolean {
+    return this.selectedViewDefinition && this.selectedViewDefinition !== null;
   }
 
   /**

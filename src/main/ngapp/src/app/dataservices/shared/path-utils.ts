@@ -43,7 +43,6 @@ export class PathUtils {
     }
     const fqnArray = sourcePath.split("/", 10);
 
-    const arrayLength = fqnArray.length;
     const connectionSegment = fqnArray[0];
     const parts = connectionSegment.split("=", 2);
     const connName = parts[1];
