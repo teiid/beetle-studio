@@ -97,8 +97,8 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
   private readonly redoActionIndex = 4;
   private readonly deleteActionIndex = 5;
   private readonly errorsActionIndex = 6;
-  private readonly infosActionIndex = 7;
-  private readonly warningsActionIndex = 8;
+  private readonly warningsActionIndex = 7;
+  private readonly infosActionIndex = 8;
 
   constructor( connectionService: ConnectionService,
                selectionService: SelectionService,
@@ -322,13 +322,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
   }
 
   /**
-   * @returns {number} the number of error messages
-   */
-  public get errorMsgCount(): number {
-    return this.editorService.getErrorMessageCount();
-  }
-
-  /**
    * Callback for when the toolbar is configured.
    *
    * @param {TemplateRef<any>} addSourceTemplate the template for the add source toolbar button
@@ -510,6 +503,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
           this.editorService.updatePreviewResults();
           this.saveInProgress = false;
         } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_FAILED ) {
+          this.editorService.setPreviewResults(null, null, ViewEditorPart.EDITOR);
           this.saveInProgress = false;
         }
       }
@@ -526,6 +520,20 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
 
   private hasWarnings(): boolean {
     return this.warningMsgCount !== 0;
+  }
+
+  /**
+   * @returns {number} the number of error messages
+   */
+  public get errorMsgCount(): number {
+    return this.editorService.getErrorMessageCount();
+  }
+
+  /**
+   * @returns {number} the number of warning messages
+   */
+  public get warningMsgCount(): number {
+    return this.editorService.getWarningMessageCount();
   }
 
   /**
@@ -677,13 +685,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
    */
   public get virtualizationLink(): string {
     return this.editorService.getVirtualizationLink();
-  }
-
-  /**
-   * @returns {number} the number of warning messages
-   */
-  public get warningMsgCount(): number {
-    return this.editorService.getWarningMessageCount();
   }
 
 }

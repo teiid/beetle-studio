@@ -18,6 +18,8 @@
 import { Composition } from "@dataservices/shared/composition.model";
 import { PathUtils } from "@dataservices/shared/path-utils";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { CompositionOperator } from "@dataservices/shared/composition-operator.enum";
+import { CompositionType } from "@dataservices/shared/composition-type.enum";
 
 /**
  * ViewDefinition model
@@ -231,8 +233,10 @@ export class ViewDefinition {
     if (this.sourcePaths.length === 1) {
       return true;
     } else {
-      // Has more than one source path.  Make sure the composition is complete,
-      // and the sides of the composition are contained in the sourcePaths
+      // Has more than one source path.  Make sure
+      // 1 - has a composition
+      // 2 - composition is complete,
+      // 3 - sides of the composition are contained in the sourcePaths
       const comps: Composition[] = this.getCompositions();
       if (!comps || comps.length !== 1) {
         return false;
@@ -276,24 +280,54 @@ export class ViewDefinition {
   }
 
   /**
-   * Get the SQL for the view, given the current selections
+   * Get the preview SQL for the view, given the current selections
    * @returns {string} the view SQL
    */
-  public getSql(): string {
-    // TODO: The view currently supports single source only.
-    // Probably need to get SQL from a rest service call.  to support joins
+  public getPreviewSql(): string {
+    let previewSql = "";
+
+    // TODO:  This method currently handles single source views, and single join views
+    //        Will need to expand capabilites in the future - as more complex joins are supported.
+
+    // The preview SQL is only generated if the view is complete
+    if ( this.complete ) {
+      // Join View
+      if ( this.getCompositions().length === 1 ) {
+        const composition = this.getCompositions()[0];
+        const leftTable = this.getPreviewTableName(composition.getLeftSourcePath());
+        const rightTable = this.getPreviewTableName(composition.getRightSourcePath());
+        const leftCriteriaColName = composition.getLeftCriteriaColumn();
+        const rightCriteriaColName = composition.getRightCriteriaColumn();
+        const criteriaOperator = CompositionOperator.toSql(composition.getOperator());
+        const joinType = CompositionType.toSql(composition.getType());
+        previewSql = "SELECT * FROM " + leftTable + " AS A " + joinType + " " +
+                                        rightTable + " AS B ON " +
+                                        "A." + leftCriteriaColName + " " + criteriaOperator + " " +
+                                        "B." + rightCriteriaColName + ";";
+        // Single Source View
+      } else {
+        const tableName = this.getPreviewTableName(this.getSourcePaths()[0]);
+        previewSql = "SELECT * FROM " + tableName + ";";
+      }
+    }
+
+    return previewSql;
+  }
+
+  /**
+   * Generates the table name for the preview query, given the source path
+   * @param {string} sourcePath the path for the view source
+   */
+  private getPreviewTableName( sourcePath: string ): string {
     let sourceNodeName = "unknownSource";
     let connectionName = "unknownConnection";
-    const sourcePath = this.getSourcePaths()[ 0 ];
     if ( sourcePath && sourcePath !== null ) {
       sourceNodeName = PathUtils.getSourceName(sourcePath);
       if ( PathUtils.getConnectionName(sourcePath) !== null ) {
         connectionName = PathUtils.getConnectionName(sourcePath);
       }
     }
-
-    // Return SQL for this view
-    return "SELECT * FROM " + connectionName.toLowerCase() + VdbsConstants.SCHEMA_MODEL_SUFFIX + "." + sourceNodeName + ";";
+    return connectionName.toLowerCase() + VdbsConstants.SCHEMA_MODEL_SUFFIX + "." + sourceNodeName;
   }
 
   /**

@@ -318,11 +318,12 @@ export class VirtualizationComponent implements OnInit {
     const selectedViewDefn =  this.viewDefinitions.find((x) => x.getName() === viewDefnName);
     const vdbName = this.currentVirtualization.getServiceVdbName();
     const editorStateId = vdbName.toLowerCase() + "." + viewDefnName;
+    const dataserviceName = this.currentVirtualization.getId();
     // Note: we can only doDelete selected items that we can see in the UI.
     this.logger.debug("[VirtualizationComponent] Deleting selected Virtualization View.");
     const self = this;
-    this.vdbService
-      .deleteViewEditorState(editorStateId)
+    this.dataserviceService
+      .deleteViewEditorStateRefreshViews(editorStateId, dataserviceName)
       .subscribe(
         (wasSuccess) => {
           self.removeViewDefinitionFromList(selectedViewDefn);
@@ -383,6 +384,7 @@ export class VirtualizationComponent implements OnInit {
           for (const ds of dataservices) {
             if (ds.getId() === dsName) {
               self.currentVirtualization = ds;
+              self.dataserviceService.setSelectedDataservice(ds);
               self.originalName = this.currentVirtualization.getId();
               self.initForm(this.currentVirtualization.getId(), this.currentVirtualization.getDescription(), false);
             }
@@ -406,7 +408,7 @@ export class VirtualizationComponent implements OnInit {
     this.setViewDefinitionsEditableState(true);
 
     const self = this;
-    this.vdbService
+    this.dataserviceService
       .getViewEditorStates(statesPattern)
       .subscribe(
         (viewEditorStates) => {

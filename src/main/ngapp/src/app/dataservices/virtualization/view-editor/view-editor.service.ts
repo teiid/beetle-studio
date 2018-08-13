@@ -41,6 +41,7 @@ import { AddCompositionCommand } from "@dataservices/virtualization/view-editor/
 import { RemoveCompositionCommand } from "@dataservices/virtualization/view-editor/command/remove-composition-command";
 import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
 
 @Injectable()
 export class ViewEditorService {
@@ -60,17 +61,21 @@ export class ViewEditorService {
   private readonly _logger: LoggerService;
   private _messages: Message[] = [];
   private _previewResults: QueryResults;
+  private _previewSql = null;
   private _readOnly = false;
   private _shouldFireEvents = true;
   private readonly _undoMgr: UndoManager;
+  private readonly _dataserviceService: DataserviceService;
   private readonly _vdbService: VdbService;
   private _warningMsgCount = 0;
   private _selection: string[] = [];
   private _originalViewName = null;
 
   constructor( logger: LoggerService,
+               dataserviceService: DataserviceService,
                vdbService: VdbService ) {
     this._logger = logger;
+    this._dataserviceService = dataserviceService;
     this._vdbService = vdbService;
     this._undoMgr = new UndoManager();
   }
@@ -267,6 +272,13 @@ export class ViewEditorService {
   }
 
   /**
+   * @returns {string} the preview sql or '<not defined>' if not set
+   */
+  public getPreviewSql(): string {
+    return this._previewSql;
+  }
+
+  /**
    * @returns {QueryResults} the preview results or `null` if not set
    */
   public getPreviewResults(): QueryResults {
@@ -359,7 +371,7 @@ export class ViewEditorService {
       let errorMsg: string;
 
       this._logger.debug( "[ViewEditorService.restoreEditorState]: getViewEditorState for " + editorId );
-      this._vdbService.getViewEditorState( editorId ).subscribe(
+      this._dataserviceService.getViewEditorState( editorId ).subscribe(
         ( resp ) => {
           const undoables = resp["undoables"];
           if ( undoables && undoables.length !== 0 ) {
@@ -408,12 +420,12 @@ export class ViewEditorService {
       [ ViewEditorProgressChangeId.IN_PROGRESS ] ) );
 
     // If a previous view state needs to be deleted, do that first.  Then save the new state
-    if (this._originalViewName !== null && this._originalViewName !== this._editorView.getName()) {
+    if (this._originalViewName && this._originalViewName !== null && this._originalViewName !== this._editorView.getName()) {
       // Delete the 'old' view editorState and view first
       const oldEditorStateId = this.getEditorStateId(this._originalViewName);
 
       const self = this;
-      this._vdbService.deleteViewEditorState( oldEditorStateId ).subscribe( () => {
+      this._dataserviceService.deleteViewEditorState( oldEditorStateId ).subscribe( () => {
           self.saveCurrentState();
         }, () => {
           // fire save editor state failed event
@@ -443,7 +455,9 @@ export class ViewEditorService {
     editorState.setUndoables(this._undoMgr.toArray());
     editorState.setViewDefinition(this._editorView);
 
-    this._vdbService.saveViewEditorState( editorState ).subscribe( () => {
+    const dataserviceName = this._dataserviceService.getSelectedDataservice().getId();
+
+    this._dataserviceService.saveViewEditorStateRefreshViews( editorState, dataserviceName ).subscribe( () => {
         // fire save editor state succeeded event
         this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
                                            ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
@@ -516,16 +530,16 @@ export class ViewEditorService {
    */
   public updatePreviewResults( ): void {
     // Clear preview results
-    this.setPreviewResults(null, ViewEditorPart.EDITOR);
+    this.setPreviewResults(null, null, ViewEditorPart.EDITOR);
 
     // Fetch new results
-    const viewSql = this._editorView.getSql();
+    const viewSql = this._editorView.getPreviewSql();
     const self = this;
     // Resets all of the views in the service VDB
     this._vdbService.queryVdb(viewSql, VdbsConstants.PREVIEW_VDB_NAME, 15, 0)
       .subscribe(
         (queryResult) => {
-          self.setPreviewResults(queryResult, ViewEditorPart.EDITOR);
+          self.setPreviewResults(viewSql, queryResult, ViewEditorPart.EDITOR);
         },
         (error) => {
           this._logger.error( "[ViewEditorService.updatePreviewResults] - error getting results" );
@@ -537,11 +551,14 @@ export class ViewEditorService {
    * Sets the preview results. Fires a `ViewEditorEventType.PREVIEW_RESULTS_CHANGED` event having the results as an
    * argument.
    *
+   * @param {string} sql the preview query
    * @param {QueryResults} results the new preview results
    * @param {ViewEditorPart} source the source making the update
    */
-  public setPreviewResults( results: QueryResults,
+  public setPreviewResults( sql: string,
+                            results: QueryResults,
                             source: ViewEditorPart ): void {
+    this._previewSql = sql;
     this._previewResults = results;
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.PREVIEW_RESULTS_CHANGED, [ results ] ) );
   }
@@ -606,6 +623,23 @@ export class ViewEditorService {
 
         for ( const path of paths ) {
           this.getEditorView().removeSourcePath( path );
+        }
+
+        // Remove any compositions that have a left or right source equal to one of the removed sources
+        const comps = this.getEditorView().getCompositions();
+        for ( const comp of comps ) {
+          let remove = false;
+          const leftSource = comp.getLeftSourcePath();
+          const rightSource = comp.getRightSourcePath();
+          for ( const removedPath of paths ) {
+            if ( removedPath === leftSource || removedPath === rightSource ) {
+              remove = true;
+              break;
+            }
+          }
+          if ( remove ) {
+            this.getEditorView().removeComposition(comp.getName());
+          }
         }
 
         break;

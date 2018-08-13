@@ -7,6 +7,8 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { ViewEditorService } from '@dataservices/virtualization/view-editor/view-editor.service';
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 
 describe('ViewEditorService', () => {
   beforeEach(() => {
@@ -16,6 +18,7 @@ describe('ViewEditorService', () => {
       ],
       providers: [
         { provide: AppSettingsService, useClass: MockAppSettingsService },
+        { provide: DataserviceService, useClass: MockDataserviceService },
         LoggerService,
         NotifierService,
         { provide: VdbService, useClass: MockVdbService },

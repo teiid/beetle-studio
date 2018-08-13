@@ -53,3 +53,20 @@ export enum CompositionType {
   UNION = "UNION"
 
 }
+
+export namespace CompositionType {
+  export function toSql( type: CompositionType): string {
+    if ( type === CompositionType.INNER_JOIN ) {
+      return "INNER JOIN";
+    } else if ( type === CompositionType.LEFT_OUTER_JOIN ) {
+      return "LEFT OUTER JOIN";
+    } else if ( type === CompositionType.RIGHT_OUTER_JOIN ) {
+      return "RIGHT OUTER JOIN";
+    } else if ( type === CompositionType.FULL_OUTER_JOIN ) {
+      return "FULL OUTER JOIN";
+    } else if ( type === CompositionType.UNION ) {
+      return "UNION";
+    }
+    return "INNER JOIN";
+  }
+}

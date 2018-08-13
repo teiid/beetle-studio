@@ -63,6 +63,9 @@ export class ViewEditorI18n {
   public static readonly error0100 = "There must be a virtualization selected in order to use this editor.";
   public static readonly error0110 = "A view must have a name.";
   public static readonly error0120 = "A view must have at least one source.";
+  public static readonly error0130 = "A view with two or more sources must have at least one composition.";
+
+  public static readonly warn0100 = "The view contains an orphan source which will be ignored";
 
   // property editors
   public static readonly columnPropsTabName = "Column";

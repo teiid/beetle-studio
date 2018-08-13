@@ -181,8 +181,7 @@ export class AddCompositionWizardComponent implements OnInit {
 
     this.ngxLhTableConfig = {
       reorderable: false,
-      selectionType: "'single'",
-      sorts: [ { prop: "keng__id", dir: "asc" } ],
+      selectionType: "'single'"
     } as NgxDataTableConfig;
 
     this.lhTableConfig = {
@@ -204,8 +203,7 @@ export class AddCompositionWizardComponent implements OnInit {
 
     this.ngxRhTableConfig = {
       reorderable: false,
-      selectionType: "'single'",
-      sorts: [ { prop: "keng__id", dir: "asc" } ],
+      selectionType: "'single'"
     } as NgxDataTableConfig;
 
     this.rhTableConfig = {
@@ -394,6 +392,9 @@ export class AddCompositionWizardComponent implements OnInit {
     }
     // Click finish on page 2 - fires finish event with the composition
     else if ($event.step.config.id === this.step2Id) {
+      // Set the selected composition type and operator
+      this.composition.setType(this.selectedCompositionType);
+      this.composition.setOperator(this.selectedCompositionCondition);
       this.finishAction.emit(this.composition);
     }
   }

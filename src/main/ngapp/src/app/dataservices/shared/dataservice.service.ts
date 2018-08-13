@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, RequestOptions } from "@angular/http";
 import { Connection } from "@connections/shared/connection.model";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ApiService } from "@core/api.service";
@@ -43,6 +43,7 @@ import * as _ from "lodash";
 import * as vkbeautify from 'vkbeautify';
 import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { SqlView } from "@dataservices/shared/sql-view.model";
+import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 
 @Injectable()
 export class DataserviceService extends ApiService {
@@ -344,6 +345,24 @@ export class DataserviceService extends ApiService {
   }
 
   /**
+   * Refresh the views for a dataservice via the komodo rest interface
+   * @param {string} dataserviceName
+   * @returns {Observable<boolean>}
+   */
+  public refreshDataserviceViews(dataserviceName: string): Observable<boolean> {
+    const refreshViewsUrl = environment.komodoWorkspaceUrl
+                            + DataservicesConstants.dataservicesRestPath
+                            + "/refreshViews/" + encodeURIComponent(dataserviceName);
+
+    return this.http
+      .post(refreshViewsUrl, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
    * Derive the service vdb name from the given dataservice
    *
    * @param {Dataservice} dataservice
@@ -610,6 +629,107 @@ export class DataserviceService extends ApiService {
     this.updatesSubscription = timer.subscribe((t: any) => {
       self.updateDataserviceStates();
     });
+  }
+
+  /**
+   * @param {string} editorStatePattern the name pattern to use for returning the array of viewEditorStates.
+   *                                    If no pattern is supplied, all states are returned
+   * @returns {Observable<ViewEditorState[]>} the view editor states or empty array if none found
+   */
+  public getViewEditorStates( editorStatePattern?: string ): Observable< ViewEditorState[] > {
+    // pattern is added to the request options
+    let statePattern = {};
+    if (editorStatePattern && editorStatePattern.length > 0) {
+      statePattern = {
+        params: {
+          "pattern": editorStatePattern
+        }
+      };
+    }
+
+    return this.http.get(environment.viewEditorState, this.getAuthRequestOptions().merge(new RequestOptions(statePattern)) )
+      .map( ( response ) => {
+        const editorStates = response.json();
+        return editorStates.map((state) => ViewEditorState.create( state ));
+      } )
+      .catch( ( error ) => {
+        // no editor state found
+        if ( error.status === 404 ) {
+          return Observable.of( {} );
+        }
+
+        return this.handleError( error );
+      } );
+  }
+
+  /**
+   * @param {string} editorId the ID of the editor state being requested
+   * @returns {Observable<ViewEditorState>} the view editor state or empty object if not found
+   */
+  public getViewEditorState( editorId: string ): Observable< ViewEditorState > {
+    return this.http.get(environment.viewEditorState + "/" + editorId, this.getAuthRequestOptions() )
+      .map( ( response ) => {
+        const editorState = response.json();
+        const viewEditorState = ViewEditorState.create(editorState);
+        return Observable.of( viewEditorState );
+      } )
+      .catch( ( error ) => {
+        // no editor state found
+        if ( error.status === 404 ) {
+          return Observable.of( {} );
+        }
+
+        return this.handleError( error );
+      } );
+  }
+
+  /**
+   * @param {ViewEditorState} editorState the view editor state
+   * @returns {Observable<boolean>} `true` if the editor state was successfully saved
+   */
+  public saveViewEditorState( editorState: ViewEditorState ): Observable< boolean > {
+
+    return this.http.put( environment.viewEditorState, editorState.toJSON(), this.getAuthRequestOptions() )
+      .map( ( response ) => {
+        return response.ok;
+      } )
+      .catch( ( error ) =>
+        this.handleError( error )
+      );
+  }
+
+  /**
+   * @param {string} editorId the ID of the editor state being deleted
+   * @returns {Observable<boolean>} `true` if the editor state was successfully deleted
+   */
+  public deleteViewEditorState( editorId: string ): Observable< boolean > {
+    return this.http.delete(environment.viewEditorState + "/" + editorId, this.getAuthRequestOptions() )
+      .map( ( response ) => {
+        return response.ok;
+      } )
+      .catch( ( error ) =>
+        this.handleError( error )
+      );
+  }
+
+  /**
+   * @param {ViewEditorState} editorState the view editor state
+   * @param {string} dataserviceName the name of the dataservice
+   * @returns {Observable<boolean>} `true` if the editor state was successfully saved
+   */
+  public saveViewEditorStateRefreshViews( editorState: ViewEditorState, dataserviceName: string ): Observable< boolean > {
+    return this.saveViewEditorState(editorState)
+      .flatMap((res) => this.refreshDataserviceViews(dataserviceName));
+  }
+
+  /**
+   * @param {string} editorId the ID of the editor state being deleted
+   * @param {string} dataserviceName the name of the dataservice
+   * @returns {Observable<boolean>} `true` if the editor state was successfully saved
+   */
+  public deleteViewEditorStateRefreshViews( editorId: string, dataserviceName: string ): Observable< boolean > {
+    return this.deleteViewEditorState(editorId)
+      .flatMap((res) => this.refreshDataserviceViews(dataserviceName));
   }
 
   /**

@@ -16,6 +16,8 @@ import {
   SortModule,
   TableModule,
   WizardModule } from "patternfly-ng";
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
@@ -42,6 +44,7 @@ describe("ViewPreviewComponent", () => {
       declarations: [ ViewPreviewComponent ],
       providers: [
         { provide: AppSettingsService, useClass: MockAppSettingsService },
+        { provide: DataserviceService, useClass: MockDataserviceService },
         LoggerService,
         NotifierService,
         { provide: VdbService, useClass: MockVdbService },

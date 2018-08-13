@@ -32,13 +32,11 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
-import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 
 @Injectable()
 export class MockVdbService extends VdbService {
 
   private testDataService: TestDataService;
-  private editorViewStateMap = new Map<string, ViewEditorState>();
 
   constructor(http: Http, appSettings: AppSettingsService, notifierService: NotifierService, logger: LoggerService ) {
     super(http, appSettings, notifierService, logger);
@@ -48,7 +46,6 @@ export class MockVdbService extends VdbService {
     const testDataService = injector.get(TestDataService);
 
     this.testDataService = testDataService;
-    this.editorViewStateMap = this.testDataService.getViewEditorStateMap();
   }
 
   /**
@@ -178,54 +175,6 @@ export class MockVdbService extends VdbService {
    * @returns {Observable<boolean>}
    */
   public createVdbModelViewIfNotFound(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
-    return Observable.of(true);
-  }
-
-  /**
-   * @param {ViewEditorState} editorState the view editor state
-   * @returns {Observable<boolean>} `true` if the editor state was successfully saved
-   */
-  public saveViewEditorState( editorState: ViewEditorState ): Observable< boolean > {
-    return Observable.of(true);
-  }
-
-  /**
-   * @param {string} editorId the ID of the editor state being requested
-   * @returns {Observable<ViewEditorState>} the view editor state or empty object if not found
-   */
-  public getViewEditorState( editorId: string ): Observable< ViewEditorState > {
-    return Observable.of(this.editorViewStateMap.get(editorId));
-  }
-
-  /**
-   * @param {string} editorStatePattern the editorState name pattern
-   * @returns {Observable<ViewEditorState[]>} the view editor state array
-   */
-  public getViewEditorStates( editorStatePattern?: string ): Observable< ViewEditorState[] > {
-    const editorStates = [];
-
-    this.editorViewStateMap.forEach( ( value, key ) => {
-      if (editorStatePattern && editorStatePattern.length > 0) {
-
-        // Just match the first few chars with this test method
-        const patternTrimmed = editorStatePattern.substring(0, 5);
-        const keyTrimmed = key.substring(0, 5);
-        if (keyTrimmed.startsWith(patternTrimmed)) {
-          editorStates.push(value);
-        }
-      } else {
-        editorStates.push(value);
-      }
-    } );
-
-    return Observable.of(editorStates);
-  }
-
-  /**
-   * @param {string} editorId the ID of the editor state being deleted
-   * @returns {Observable<boolean>} `true` if the editor state was successfully deleted
-   */
-  public deleteViewEditorState( editorId: string ): Observable< boolean > {
     return Observable.of(true);
   }
 

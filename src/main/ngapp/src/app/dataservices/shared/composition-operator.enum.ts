@@ -60,3 +60,22 @@ export enum CompositionOperator {
   NE = "NE"
 
 }
+
+export namespace CompositionOperator {
+  export function toSql( oper: CompositionOperator): string {
+    if (oper === CompositionOperator.EQ) {
+      return "=";
+    } else if (oper === CompositionOperator.LT) {
+      return "<";
+    } else if (oper === CompositionOperator.GT) {
+      return ">";
+    } else if (oper === CompositionOperator.LE) {
+      return "<=";
+    } else if (oper === CompositionOperator.GE) {
+      return ">=";
+    } else if (oper === CompositionOperator.NE) {
+      return "<>";
+    }
+    return "=";
+  }
+}
