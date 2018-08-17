@@ -104,10 +104,11 @@ export class GraphVisualComponent implements OnInit {
     this.canvasGraph = this.canvasService.newCanvasGraph(this.options, this.ref);
   }
 
+  // TODO: Need to discuss how all the layout sizes affect each other.
   public get options(): any {
     return this._options = {
-      width: window.innerWidth,
-      height: window.innerHeight
+      width: window.innerWidth * .7,
+      height: window.innerHeight * .4
     };
   }
 }

@@ -30,3 +30,11 @@
 #view-preview-in-progress {
   margin-top: 25px;
 }
+
+/*
+ * Style the SQL text same as table
+ */
+#view-preview-sql {
+  margin: 0 20px;
+  width: 100%;
+}

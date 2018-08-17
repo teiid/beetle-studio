@@ -1862,7 +1862,7 @@ export class TestDataService {
     const conn2Table2Id = TestDataService.conn2.getId() + ":" + "collection=restaurants/embedded=grades";
     const conn2Table3Id = TestDataService.conn2.getId() + ":" + "collection=restaurants/embedded=location";
     columnsMap.set( conn1Table1Id, [col1, col2] );
-    columnsMap.set( conn1Table2Id, [col3, col4, col5] );
+    columnsMap.set( conn1Table2Id, [col3, col5, col4] );
     columnsMap.set( conn2Table1Id, [col6] );
     columnsMap.set( conn2Table2Id, [col7, col8] );
     columnsMap.set( conn2Table3Id, [col9, col10] );

@@ -10,6 +10,8 @@ import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 
 describe('ViewPropertyEditorsComponent', () => {
   let component: ViewPropertyEditorsComponent;
@@ -24,6 +26,7 @@ describe('ViewPropertyEditorsComponent', () => {
       declarations: [ ViewPropertyEditorsComponent ],
       providers: [
         { provide: AppSettingsService, useClass: MockAppSettingsService },
+        { provide: DataserviceService, useClass: MockDataserviceService },
         LoggerService,
         NotifierService,
         { provide: VdbService, useClass: MockVdbService },

@@ -10,6 +10,8 @@ import { ViewEditorHeaderComponent } from '@dataservices/virtualization/view-edi
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 
 describe('ViewEditorHeaderComponent', () => {
   let component: ViewEditorHeaderComponent;
@@ -25,6 +27,7 @@ describe('ViewEditorHeaderComponent', () => {
       declarations: [ ViewEditorHeaderComponent ],
       providers: [
         { provide: AppSettingsService, useClass: MockAppSettingsService },
+        { provide: DataserviceService, useClass: MockDataserviceService },
         LoggerService,
         NotifierService,
         { provide: VdbService, useClass: MockVdbService },

@@ -1,3 +1,7 @@
+<div *ngIf="!this.saveInProgress" id="view-preview-sql">
+  Preview SQL: {{previewSql}}
+</div>
+
 <div class="row" id="view-preview-container">
 
   <pfng-table *ngIf="!this.saveInProgress" id="view-preview-table"

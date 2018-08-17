@@ -22,6 +22,9 @@ export class Problem {
   public static readonly ERR0100 = new Problem( "ERR0100", MessageType.ERROR, ViewEditorI18n.error0100 );
   public static readonly ERR0110 = new Problem( "ERR0110", MessageType.ERROR, ViewEditorI18n.error0110 );
   public static readonly ERR0120 = new Problem( "ERR0120", MessageType.ERROR, ViewEditorI18n.error0120 );
+  public static readonly ERR0130 = new Problem( "ERR0130", MessageType.ERROR, ViewEditorI18n.error0130 );
+
+  public static readonly WARN0100 = new Problem( "WARN0100", MessageType.WARNING, ViewEditorI18n.warn0100 );
 
   private readonly _id: string;
   private readonly _description: string;

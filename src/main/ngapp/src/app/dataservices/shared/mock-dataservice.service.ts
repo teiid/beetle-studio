@@ -34,12 +34,14 @@ import { Observable } from "rxjs/Observable";
 import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { SqlView } from "@dataservices/shared/sql-view.model";
+import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 
 @Injectable()
 export class MockDataserviceService extends DataserviceService {
 
   private readonly services: Dataservice[];
   private readonly queryResults: QueryResults;
+  private editorViewStateMap = new Map<string, ViewEditorState>();
 
   constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
               notifierService: NotifierService, logger: LoggerService ) {
@@ -52,6 +54,8 @@ export class MockDataserviceService extends DataserviceService {
     // Get test data
     this.services = testDataService.getDataservices();
     this.queryResults = testDataService.getQueryResults();
+
+    this.editorViewStateMap = testDataService.getViewEditorStateMap();
   }
 
   /**
@@ -165,6 +169,63 @@ export class MockDataserviceService extends DataserviceService {
                                              tablePaths: string[],
                                              modelSourcePath: string ): Observable< boolean > {
     return Observable.of( true );
+  }
+
+  /**
+   * @param {ViewEditorState} editorState the view editor state
+   * @returns {Observable<boolean>} `true` if the editor state was successfully saved
+   */
+  public saveViewEditorState( editorState: ViewEditorState ): Observable< boolean > {
+    return Observable.of(true);
+  }
+
+  /**
+   * @param {string} editorId the ID of the editor state being requested
+   * @returns {Observable<ViewEditorState>} the view editor state or empty object if not found
+   */
+  public getViewEditorState( editorId: string ): Observable< ViewEditorState > {
+    return Observable.of(this.editorViewStateMap.get(editorId));
+  }
+
+  /**
+   * @param {string} editorStatePattern the editorState name pattern
+   * @returns {Observable<ViewEditorState[]>} the view editor state array
+   */
+  public getViewEditorStates( editorStatePattern?: string ): Observable< ViewEditorState[] > {
+    const editorStates = [];
+
+    this.editorViewStateMap.forEach( ( value, key ) => {
+      if (editorStatePattern && editorStatePattern.length > 0) {
+
+        // Just match the first few chars with this test method
+        const patternTrimmed = editorStatePattern.substring(0, 5);
+        const keyTrimmed = key.substring(0, 5);
+        if (keyTrimmed.startsWith(patternTrimmed)) {
+          editorStates.push(value);
+        }
+      } else {
+        editorStates.push(value);
+      }
+    } );
+
+    return Observable.of(editorStates);
+  }
+
+  /**
+   * @param {string} editorId the ID of the editor state being deleted
+   * @returns {Observable<boolean>} `true` if the editor state was successfully deleted
+   */
+  public deleteViewEditorState( editorId: string ): Observable< boolean > {
+    return Observable.of(true);
+  }
+
+  /**
+   * @param {ViewEditorState} editorState the view editor state
+   * @param {string} dataserviceName the name of the dataservice
+   * @returns {Observable<boolean>} `true` if the editor state was successfully saved
+   */
+  public saveViewEditorStateRefreshViews( editorState: ViewEditorState, dataserviceName: string ): Observable< boolean > {
+    return Observable.of(true);
   }
 
 }

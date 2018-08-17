@@ -29,6 +29,8 @@ import { ViewEditorProgressChangeId } from "@dataservices/virtualization/view-ed
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
 import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
+import { AddCompositionCommand } from "@dataservices/virtualization/view-editor/command/add-composition-command";
+import { RemoveCompositionCommand } from "@dataservices/virtualization/view-editor/command/remove-composition-command";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -48,6 +50,7 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
   private readonly editorService: ViewEditorService;
   private readonly logger: LoggerService;
   private subscription: Subscription;
+  private _previewSql = null;
 
   /**
    * @param {ViewEditorService} editorService the editor service
@@ -76,6 +79,7 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
 
     if ( event.typeIsPreviewResultsChanged() ) {
       const results = this.editorService.getPreviewResults();
+      this._previewSql = this.editorService.getPreviewSql();
 
       if ( results && results !== null ) {
         this.reload( results );
@@ -87,8 +91,10 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
       if ( event.args.length === 1 && event.args[ 0 ] instanceof Command ) {
         const cmd = event.args[ 0 ] as Command;
 
-        if ( cmd instanceof AddSourcesCommand || cmd instanceof RemoveSourcesCommand ) {
+        if ( cmd instanceof AddSourcesCommand || cmd instanceof RemoveSourcesCommand ||
+             cmd instanceof AddCompositionCommand || cmd instanceof RemoveCompositionCommand ) {
           this.clearResults();
+          this._previewSql = null;
         }
       }
     } else if ( event.typeIsEditorViewSaveProgressChanged() ) {
@@ -197,6 +203,13 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
         sortable: true };
       this.columns.push( col );
     }
+  }
+
+  private get previewSql(): string {
+    if (this._previewSql && this._previewSql !== null) {
+      return this._previewSql;
+    }
+    return "<not defined>";
   }
 
 }
