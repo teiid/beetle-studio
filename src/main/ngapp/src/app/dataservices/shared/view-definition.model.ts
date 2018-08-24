@@ -315,6 +315,19 @@ export class ViewDefinition {
   }
 
   /**
+   * Get the preview SQL for the table in the connection source path
+   * @returns {string} the source table SQL
+   */
+  public getSourcePreviewSql( sourcePath: string ): string {
+    let previewSql = "";
+
+    const tableName = this.getPreviewTableName(sourcePath);
+    previewSql = "SELECT * FROM " + tableName + ";";
+
+    return previewSql;
+  }
+
+  /**
    * Generates the table name for the preview query, given the source path
    * @param {string} sourcePath the path for the view source
    */

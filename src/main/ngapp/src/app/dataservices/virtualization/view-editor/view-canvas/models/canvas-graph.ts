@@ -299,8 +299,8 @@ export class CanvasGraph {
     //
     // Remove the fix on the nodes unless it is the root
     //
-    src.setFixed(!src.root);
-    tgt.setFixed(!tgt.root);
+    src.setFixed(false);
+    tgt.setFixed(false);
 
     if (update !== undefined && update)
       this.canvasService.update(true);

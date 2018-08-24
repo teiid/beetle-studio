@@ -548,6 +548,34 @@ export class ViewEditorService {
   }
 
   /**
+   * Update the preview results for the current view.  This issues a query against the preview VDB and sets
+   * the previewResults
+   */
+  public updateSourcePreviewResults( sourcePath: string): void {
+    // Clear preview results
+    if ( sourcePath.startsWith("AddCompositionCommand") ) {
+      this.updatePreviewResults();
+      return;
+    }
+
+    this.setPreviewResults(null, null, ViewEditorPart.EDITOR);
+
+    // Fetch new results
+    const srcTableSql = this._editorView.getSourcePreviewSql(sourcePath);
+    const self = this;
+    // Resets all of the views in the service VDB
+    this._vdbService.queryVdb(srcTableSql, VdbsConstants.PREVIEW_VDB_NAME, 15, 0)
+      .subscribe(
+        (queryResult) => {
+          self.setPreviewResults(srcTableSql, queryResult, ViewEditorPart.EDITOR);
+        },
+        (error) => {
+          this._logger.error( "[ViewEditorService.updateSourcePreviewResults] - error getting results" );
+        }
+      );
+  }
+
+  /**
    * Sets the preview results. Fires a `ViewEditorEventType.PREVIEW_RESULTS_CHANGED` event having the results as an
    * argument.
    *

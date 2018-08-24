@@ -1,3 +1,4 @@
+///<reference path="../../../../../node_modules/@angular/core/src/metadata/directives.d.ts"/>
 /**
  * @license
  * Copyright 2017 JBoss Inc
@@ -79,6 +80,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
   //
   private readonly addCompositionActionId = "addCompositionActionId";
   private readonly addSourceActionId = "addSourceActionId";
+  private readonly sampleDataActionId = "sampleDataActionId";
   private readonly deleteActionId = "deleteActionId";
   private readonly errorsActionId = "errorsActionId";
   private readonly infosActionId = "infosActionId";
@@ -92,13 +94,14 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
   //
   private readonly addSourceActionIndex = 0;
   private readonly addCompositionActionIndex = 1;
-  private readonly saveActionIndex = 2;
-  private readonly undoActionIndex = 3;
-  private readonly redoActionIndex = 4;
-  private readonly deleteActionIndex = 5;
-  private readonly errorsActionIndex = 6;
-  private readonly warningsActionIndex = 7;
-  private readonly infosActionIndex = 8;
+  private readonly sampleDataActionIndex = 2;
+  private readonly saveActionIndex = 3;
+  private readonly undoActionIndex = 4;
+  private readonly redoActionIndex = 5;
+  private readonly deleteActionIndex = 6;
+  private readonly errorsActionIndex = 7;
+  private readonly warningsActionIndex = 8;
+  private readonly infosActionIndex = 9;
 
   constructor( connectionService: ConnectionService,
                selectionService: SelectionService,
@@ -121,6 +124,10 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
 
   private canAddSource(): boolean {
     return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
+  }
+
+  private canSampleData(): boolean {
+    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas && this.canvasSingleSourceSelected;
   }
 
   private canDelete(): boolean {
@@ -281,6 +288,15 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
     });
   }
 
+  private doSampleData(selection: string[]): void {
+    if (!selection || selection.length === 0) {
+      alert("Nothing selected for sample data");
+      return;
+    }
+    const path = selection[0];
+    this.editorService.updatePreviewResults(path);
+  }
+
   private doSelection(selection: string[]): void {
     this.editorService.select(selection);
   }
@@ -326,6 +342,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
    *
    * @param {TemplateRef<any>} addSourceTemplate the template for the add source toolbar button
    * @param {TemplateRef<any>} addCompositionTemplate the template for the add composition toolbar button
+   * @param {TemplateRef<any>} sampleDataTemplate the template for the sample data toolbar button
    * @param {TemplateRef<any>} undoTemplate the template for the undo toolbar button
    * @param {TemplateRef<any>} redoTemplate the template for the redo toolbar button
    * @param {TemplateRef<any>} saveTemplate the template for the save toolbar button
@@ -337,6 +354,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
    */
   public getActionConfig( addSourceTemplate: TemplateRef< any >,
                           addCompositionTemplate: TemplateRef< any >,
+                          sampleDataTemplate: TemplateRef< any >,
                           undoTemplate: TemplateRef< any >,
                           redoTemplate: TemplateRef< any >,
                           saveTemplate: TemplateRef< any >,
@@ -360,6 +378,13 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
             template: addCompositionTemplate,
             title: ViewEditorI18n.addCompositionActionTitle,
             tooltip: ViewEditorI18n.addCompositionActionTooltip
+          },
+          {
+            disabled: !this.canSampleData(),
+            id: this.sampleDataActionId,
+            template: sampleDataTemplate,
+            title: ViewEditorI18n.sampleDataActionTitle,
+            tooltip: ViewEditorI18n.sampleDataActionTooltip
           },
           {
             disabled: !this.canSave(),
@@ -433,6 +458,10 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
         break;
       case this.addSourceActionId:
         this.doAddSource();
+        break;
+      case this.sampleDataActionId:
+        const singleSelection = this.editorService.getSelection();
+        this.doSampleData(singleSelection);
         break;
       case this.deleteActionId:
         const selection = this.editorService.getSelection();
@@ -592,6 +621,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
       this.actionConfig.primaryActions[ this.undoActionIndex ].disabled = !this.canUndo();
       this.actionConfig.primaryActions[ this.undoActionIndex ].tooltip = this.editorService.getUndoActionTooltip();
       this.actionConfig.primaryActions[ this.warningsActionIndex ].disabled = !this.hasWarnings();
+      this.actionConfig.primaryActions[ this.sampleDataActionIndex ].disabled = !this.canSampleData();
     }
   }
 
