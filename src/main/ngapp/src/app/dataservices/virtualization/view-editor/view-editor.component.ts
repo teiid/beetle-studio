@@ -1,4 +1,3 @@
-///<reference path="../../../../../node_modules/@angular/core/src/metadata/directives.d.ts"/>
 /**
  * @license
  * Copyright 2017 JBoss Inc
