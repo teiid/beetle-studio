@@ -73,7 +73,7 @@ export class AboutDialogComponent implements OnInit {
         } as AboutModalConfig;
       },
       ( error ) => {
-        this.logger.error( error, "Error getting about information.");
+        self.logger.error( error, "Error getting about information.");
       }
     );
   }

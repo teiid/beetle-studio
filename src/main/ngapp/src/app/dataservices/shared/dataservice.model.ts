@@ -105,7 +105,10 @@ export class Dataservice implements Identifiable< string > {
    * @returns {string} the dataservice Vdb name (can be null)
    */
   public getServiceVdbName(): string {
-    return this.serviceVdbName;
+    if (this.serviceVdbName && this.serviceVdbName !== null) {
+      return this.serviceVdbName;
+    }
+    return "";
   }
 
   /**
@@ -124,6 +127,19 @@ export class Dataservice implements Identifiable< string > {
     }
 
     return [];
+  }
+
+  /**
+   * Remove the specified view name, if it exists
+   * @param {string} viewNameToRemove the view name to remove
+   */
+  public removeServiceViewName( viewNameToRemove: string ): void {
+    const index = this.serviceViewDefinitions.findIndex( ( viewName ) =>
+      viewName === viewNameToRemove );
+
+    if ( index !== -1 ) {
+      this.serviceViewDefinitions.splice( index, 1 );
+    }
   }
 
   /**

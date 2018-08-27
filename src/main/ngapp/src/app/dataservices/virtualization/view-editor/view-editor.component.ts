@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from "@angular/core";
+import { Component, DoCheck, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { SelectionService } from "@core/selection.service";
 import { Connection } from "@connections/shared/connection.model";
@@ -24,8 +24,6 @@ import { DataservicesConstants } from "@dataservices/shared/dataservices-constan
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
-import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
-import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { ConnectionTableDialogComponent } from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
 import { ViewEditorProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
@@ -41,7 +39,8 @@ import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/comm
 import { AddCompositionCommand } from "@dataservices/virtualization/view-editor/command/add-composition-command";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { Composition } from "@dataservices/shared/composition.model";
-import { ViewDefinition } from "@dataservices/shared/view-definition.model";
+import { Router } from "@angular/router";
+import { NavigationStart } from "@angular/router";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -50,19 +49,19 @@ import { ViewDefinition } from "@dataservices/shared/view-definition.model";
   styleUrls: ["./view-editor.component.css"],
   providers: [ ViewEditorService ]
 })
-export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterViewInit {
+export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
 
   private actionConfig: ActionConfig;
   private connections: Connection[] = [];
   private connectionService: ConnectionService;
   private readonly editorService: ViewEditorService;
-  private fatalErrorOccurred = false;
-  private isNewView = false;
   private readonly logger: LoggerService;
   private modalService: BsModalService;
+  private readonly router: Router;
   private selectionService: SelectionService;
   private subscription: Subscription;
   private saveInProgress = false;
+  private routeSub: Subscription;
 
   public toolbarConfig: ToolbarConfig;
   public readonly virtualizationsLink = DataservicesConstants.dataservicesRootPath;
@@ -104,10 +103,12 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
                selectionService: SelectionService,
                logger: LoggerService,
                editorService: ViewEditorService,
-               modalService: BsModalService ) {
+               modalService: BsModalService,
+               router: Router ) {
     this.connectionService = connectionService;
     this.logger = logger;
     this.modalService = modalService;
+    this.router = router;
     this.selectionService = selectionService;
 
     // this is the service that is injected into all the editor parts
@@ -115,27 +116,175 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
     this.editorService.setEditorVirtualization( selectionService.getSelectedVirtualization() );
   }
 
+  /**
+   * Executed by javascript framework when something changes. Used to set then enable state of the toolbar buttons.
+   */
+  public ngDoCheck(): void {
+    if (this.actionConfig ) {
+      this.actionConfig.primaryActions[ this.addCompositionActionIndex ].disabled = !this.canAddComposition();
+      this.actionConfig.primaryActions[ this.addSourceActionIndex ].disabled = !this.canAddSource();
+      this.actionConfig.primaryActions[ this.deleteActionIndex ].disabled = !this.canDelete();
+      this.actionConfig.primaryActions[ this.errorsActionIndex ].disabled = !this.hasErrors();
+      this.actionConfig.primaryActions[ this.infosActionIndex ].disabled = !this.hasInfos();
+      this.actionConfig.primaryActions[ this.redoActionIndex ].disabled = !this.canRedo();
+      this.actionConfig.primaryActions[ this.redoActionIndex ].tooltip = this.editorService.getRedoActionTooltip();
+      this.actionConfig.primaryActions[ this.saveActionIndex ].disabled = !this.canSave();
+      this.actionConfig.primaryActions[ this.undoActionIndex ].disabled = !this.canUndo();
+      this.actionConfig.primaryActions[ this.undoActionIndex ].tooltip = this.editorService.getUndoActionTooltip();
+      this.actionConfig.primaryActions[ this.warningsActionIndex ].disabled = !this.hasWarnings();
+    }
+  }
+
+  /**
+   * Cleanup code when destroying the editor.
+   */
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+    this.routeSub.unsubscribe();
+  }
+
+  /**
+   * Initialization code run after construction.
+   */
+  public ngOnInit(): void {
+    this.editorService.setEditorConfig( this.fullEditorCssType ); // this could be set via preference or last used config
+    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
+
+    this.toolbarConfig = {
+      views: [
+        {
+          id: this.fullEditorCssType,
+          iconStyleClass: "fa fa-file-text-o",
+          tooltip: ViewEditorI18n.showEditorCanvasAndViewsActionTooltip
+        },
+        {
+          id: this.canvasOnlyCssType,
+          iconStyleClass: "fa fa-file-image-o",
+          tooltip: ViewEditorI18n.showEditorCanvasOnlyActionTooltip
+        },
+        {
+          id: this.viewsOnlyCssType,
+          iconStyleClass: "fa fa-table",
+          tooltip: ViewEditorI18n.showEditorViewsOnlyActionTooltip
+        }
+      ]
+    } as ToolbarConfig;
+
+    // Load the connections
+    const self = this;
+    this.connectionService
+      .getConnections(true, true)
+      .subscribe(
+        (connectionSummaries) => {
+          const conns = [];
+          for ( const connectionSummary of connectionSummaries ) {
+            const connStatus = connectionSummary.getStatus();
+            const conn = connectionSummary.getConnection();
+            conn.setStatus(connStatus);
+            conns.push(conn);
+            self.connections = conns;
+          }
+        },
+        (error) => {
+          // self.logger.error("[ConnectionSchemaTreeComponent] Error getting connections: %o", error);
+          // self.connectionLoadingState = LoadingState.LOADED_INVALID;
+        }
+      );
+
+    // Listen for event when user moves away from this page
+    this.routeSub = this.router.events.pairwise().subscribe((event) => {
+      if (event[1] instanceof NavigationStart) {
+        if (this.editorService.hasChanges()) {
+          this.editorService.saveEditorState();
+        }
+      }
+    });
+  }
+
+  /**
+   * Determine if a view is currently selected
+   */
+  private get hasSelectedView(): boolean {
+    const selView = this.editorService.getEditorView();
+    return (selView && selView !== null);
+  }
+
+  /**
+   * @param {ViewEditorEvent} event the event being processed
+   */
+  public handleEditorEvent( event: ViewEditorEvent ): void {
+    this.logger.debug( "ViewEditorComponent received event: " + event.toString() );
+
+    if ( event.typeIsShowEditorPart() ) {
+      if ( event.args.length !== 0 ) {
+        // make sure the bottom area is showing if part is an additional editor view
+        if ( ( event.args[ 0 ] === ViewEditorPart.PREVIEW || event.args[ 0 ] === ViewEditorPart.MESSAGE_LOG )
+          && !this.isShowingAdditionalViews ) {
+          this.editorService.setEditorConfig( this.fullEditorCssType );
+        }
+      }
+    }
+    else if (event.typeIsCreateSource()) {
+      if (event.sourceIsCanvas()) {
+        alert("Multiple compositions not yet supported");
+      } else {
+        this.doAddSource();
+      }
+    }
+    else if (event.typeIsCreateComposition()) {
+      this.doAddComposition(event.args);
+    }
+    else if (event.typeIsDeleteNode()) {
+      const selection = [];
+      selection.push(event.args[0]);
+      this.doDelete(selection);
+    }
+    else if (event.typeIsCanvasSelectionChanged()) {
+      this.doSelection(event.args);
+    }
+    else if ( event.typeIsEditorViewSaveProgressChanged() ) {
+      if ( event.args.length !== 0 ) {
+        // Detect changes in view editor save progress
+        if ( event.args[ 0 ] === ViewEditorProgressChangeId.IN_PROGRESS ) {
+          this.saveInProgress = true;
+        } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_SUCCESS ) {
+          this.editorService.updatePreviewResults();
+          this.saveInProgress = false;
+        } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_FAILED ) {
+          this.editorService.setPreviewResults(null, null, ViewEditorPart.EDITOR);
+          this.saveInProgress = false;
+        }
+      }
+    }
+  }
+
   private canAddComposition(): boolean {
-    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas && this.canvasSingleSourceSelected;
+    return this.hasSelectedView &&
+          !this.editorService.isReadOnly() &&
+           this.isShowingCanvas &&
+           this.canvasSingleSourceSelected;
   }
 
   private canAddSource(): boolean {
-    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
+    return this.hasSelectedView &&
+          !this.editorService.isReadOnly() &&
+           this.isShowingCanvas;
   }
 
   private canDelete(): boolean {
-    return !this.fatalErrorOccurred &&
-            !this.editorService.isReadOnly() &&
-              this.isShowingCanvas &&
-                this.editorService.hasSelection();
+    return this.hasSelectedView &&
+          !this.editorService.isReadOnly() &&
+           this.isShowingCanvas &&
+           this.editorService.hasSelection();
   }
 
   private canRedo(): boolean {
-    return !this.fatalErrorOccurred && this.editorService.canRedo();
+    return this.hasSelectedView &&
+           this.editorService.canRedo();
   }
 
   private canSave(): boolean {
-    return !this.fatalErrorOccurred
+    return this.hasSelectedView
            && !this.editorService.isReadOnly()
            && this.editorService.canSaveView()
            && this.editorService.hasChanges()
@@ -143,7 +292,8 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
   }
 
   private canUndo(): boolean {
-    return !this.fatalErrorOccurred && this.editorService.canUndo();
+    return this.hasSelectedView &&
+           this.editorService.canUndo();
   }
 
   private doAddComposition(sourcePaths: string[]): void {
@@ -461,55 +611,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
     }
   }
 
-  /**
-   * @param {ViewEditorEvent} event the event being processed
-   */
-  public handleEditorEvent( event: ViewEditorEvent ): void {
-    this.logger.debug( "ViewEditorComponent received event: " + event.toString() );
-
-    if ( event.typeIsShowEditorPart() ) {
-      if ( event.args.length !== 0 ) {
-        // make sure the bottom area is showing if part is an additional editor view
-        if ( ( event.args[ 0 ] === ViewEditorPart.PREVIEW || event.args[ 0 ] === ViewEditorPart.MESSAGE_LOG )
-           && !this.isShowingAdditionalViews ) {
-          this.editorService.setEditorConfig( this.fullEditorCssType );
-        }
-      }
-    }
-    else if (event.typeIsCreateSource()) {
-      if (event.sourceIsCanvas()) {
-        alert("Multiple compositions not yet supported");
-      } else {
-        this.doAddSource();
-      }
-    }
-    else if (event.typeIsCreateComposition()) {
-      this.doAddComposition(event.args);
-    }
-    else if (event.typeIsDeleteNode()) {
-      const selection = [];
-      selection.push(event.args[0]);
-      this.doDelete(selection);
-    }
-    else if (event.typeIsCanvasSelectionChanged()) {
-      this.doSelection(event.args);
-    }
-    else if ( event.typeIsEditorViewSaveProgressChanged() ) {
-      if ( event.args.length !== 0 ) {
-        // Detect changes in view editor save progress
-        if ( event.args[ 0 ] === ViewEditorProgressChangeId.IN_PROGRESS ) {
-          this.saveInProgress = true;
-        } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_SUCCESS ) {
-          this.editorService.updatePreviewResults();
-          this.saveInProgress = false;
-        } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_FAILED ) {
-          this.editorService.setPreviewResults(null, null, ViewEditorPart.EDITOR);
-          this.saveInProgress = false;
-        }
-      }
-    }
-  }
-
   private hasErrors(): boolean {
     return this.errorMsgCount !== 0;
   }
@@ -574,117 +675,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
       return true;
     }
     return false;
-  }
-
-  /**
-   * Executed by javascript framework when something changes. Used to set then enable state of the toolbar buttons.
-   */
-  public ngDoCheck(): void {
-    if (this.actionConfig ) {
-      this.actionConfig.primaryActions[ this.addCompositionActionIndex ].disabled = !this.canAddComposition();
-      this.actionConfig.primaryActions[ this.addSourceActionIndex ].disabled = !this.canAddSource();
-      this.actionConfig.primaryActions[ this.deleteActionIndex ].disabled = !this.canDelete();
-      this.actionConfig.primaryActions[ this.errorsActionIndex ].disabled = !this.hasErrors();
-      this.actionConfig.primaryActions[ this.infosActionIndex ].disabled = !this.hasInfos();
-      this.actionConfig.primaryActions[ this.redoActionIndex ].disabled = !this.canRedo();
-      this.actionConfig.primaryActions[ this.redoActionIndex ].tooltip = this.editorService.getRedoActionTooltip();
-      this.actionConfig.primaryActions[ this.saveActionIndex ].disabled = !this.canSave();
-      this.actionConfig.primaryActions[ this.undoActionIndex ].disabled = !this.canUndo();
-      this.actionConfig.primaryActions[ this.undoActionIndex ].tooltip = this.editorService.getUndoActionTooltip();
-      this.actionConfig.primaryActions[ this.warningsActionIndex ].disabled = !this.hasWarnings();
-    }
-  }
-
-  /**
-   * Cleanup code when destroying the editor.
-   */
-  public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  /**
-   * Initialization code run after construction.
-   */
-  public ngOnInit(): void {
-    this.editorService.setEditorConfig( this.fullEditorCssType ); // this could be set via preference or last used config
-    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
-
-    this.toolbarConfig = {
-      views: [
-        {
-          id: this.fullEditorCssType,
-          iconStyleClass: "fa fa-file-text-o",
-          tooltip: ViewEditorI18n.showEditorCanvasAndViewsActionTooltip
-        },
-        {
-          id: this.canvasOnlyCssType,
-          iconStyleClass: "fa fa-file-image-o",
-          tooltip: ViewEditorI18n.showEditorCanvasOnlyActionTooltip
-        },
-        {
-          id: this.viewsOnlyCssType,
-          iconStyleClass: "fa fa-table",
-          tooltip: ViewEditorI18n.showEditorViewsOnlyActionTooltip
-        }
-      ]
-    } as ToolbarConfig;
-
-    // Load the connections
-    const self = this;
-    this.connectionService
-      .getConnections(true, true)
-      .subscribe(
-        (connectionSummaries) => {
-          const conns = [];
-          for ( const connectionSummary of connectionSummaries ) {
-            const connStatus = connectionSummary.getStatus();
-            const conn = connectionSummary.getConnection();
-            conn.setStatus(connStatus);
-            conns.push(conn);
-            self.connections = conns;
-          }
-        },
-        (error) => {
-          // self.logger.error("[ConnectionSchemaTreeComponent] Error getting connections: %o", error);
-          // self.connectionLoadingState = LoadingState.LOADED_INVALID;
-        }
-      );
-
-  }
-
-  /**
-   * Lifecycle hook after the component is fully initialized.  Need to set viewDefinition here to ensure that the
-   * child components have been fully intiialized and can receive events
-   */
-  public ngAfterViewInit(): void {
-    const virtualization = this.editorService.getEditorVirtualization();
-
-    let selectedViewDefn = this.selectionService.getSelectedViewDefinition();
-    if (!selectedViewDefn) {
-      this.isNewView = true;
-      selectedViewDefn = new ViewDefinition();
-    }
-
-    this.editorService.setOriginalViewName(selectedViewDefn.getName());
-
-    // must have a virtualization parent
-    if ( virtualization ) {
-      this.editorService.setEditorView(selectedViewDefn, ViewEditorPart.EDITOR);
-      if (!this.isNewView) {
-        this.editorService.updatePreviewResults();
-      }
-    } else {
-      // must have a virtualization selected
-      this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorPart.EDITOR );
-      this.fatalErrorOccurred = true;
-    }
-  }
-
-  /**
-   * @returns {string} the router link of the virtualization
-   */
-  public get virtualizationLink(): string {
-    return this.editorService.getVirtualizationLink();
   }
 
 }

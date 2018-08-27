@@ -24,14 +24,8 @@ export class DataservicesConstants {
   public static readonly dataserviceRestPath = "/dataservice";
   public static readonly dataservicesRestPath = "/dataservices";
 
-  public static readonly addDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/add-virtualization";
-  public static readonly addDataservicePath = DataservicesConstants.dataservicesRootPath + "/add-virtualization";
-
-  public static readonly virtualizationRoute = DataservicesConstants.dataservicesRootRoute + "/virtualization";
-  public static readonly virtualizationPath = DataservicesConstants.dataservicesRootPath + "/virtualization";
-
-  public static readonly viewRoute = DataservicesConstants.virtualizationRoute + "/view";
-  public static readonly viewPath = DataservicesConstants.virtualizationPath + "/view";
+  public static readonly viewRoute = DataservicesConstants.dataservicesRootRoute + "/view";
+  public static readonly viewPath = DataservicesConstants.dataservicesRootPath + "/view";
 
   public static readonly testDataserviceRoute = DataservicesConstants.dataservicesRootRoute + "/test-virtualization";
   public static readonly testDataservicePath = DataservicesConstants.dataservicesRootPath + "/test-virtualization";

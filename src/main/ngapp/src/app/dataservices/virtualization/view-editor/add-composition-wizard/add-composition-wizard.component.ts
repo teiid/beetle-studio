@@ -66,7 +66,9 @@ export class AddCompositionWizardComponent implements OnInit {
   public readonly currentSelectionMsg = ViewEditorI18n.currentSelection;
   public selectedCompositionType: CompositionType = CompositionType.INNER_JOIN;
   public selectedCompositionCondition: CompositionOperator = CompositionOperator.EQ;
-  public swapButtonText = ViewEditorI18n.addCompositionWizardSwapButtonText;
+  public readonly columnLoadFailedHeader = "Loading Failed: ";
+  public readonly columnLoadFailedMsg = "Columns failed to load!";
+  public readonly columnLoadFailedType = NotificationType.DANGER;
 
   private selectedTreeNodePath: string;
 
@@ -76,9 +78,6 @@ export class AddCompositionWizardComponent implements OnInit {
   private readonly connectionService: ConnectionService;
   private composition: Composition;
   private columnsMap = new Map<string, Column[]>();  // Maintain loaded columns map to reduce rest calls
-  private readonly columnLoadFailedHeader = "Loading Failed: ";
-  private readonly columnLoadFailedMsg = "Columns failed to load!";
-  private readonly columnLoadFailedType = NotificationType.DANGER;
 
   constructor( connectionService: ConnectionService, logger: LoggerService ) {
     this.connectionService = connectionService;

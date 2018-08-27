@@ -27,6 +27,7 @@ import { BsModalRef } from "ngx-bootstrap";
 export class ConfirmDialogComponent implements OnInit {
 
   @Output() public confirmAction = new EventEmitter();
+  @Output() public cancelAction = new EventEmitter();
 
   public title = "Title";
   public bodyContent = "Confirmation Message";
@@ -48,6 +49,7 @@ export class ConfirmDialogComponent implements OnInit {
   }
 
   public onCancelSelected(): void {
+    this.cancelAction.emit(true);
     this.bsModalRef.hide();
   }
 

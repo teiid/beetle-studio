@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Http, RequestOptions } from "@angular/http";
+import { Http } from "@angular/http";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
@@ -31,7 +31,6 @@ import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Rx";
 import { Subscription } from "rxjs/Subscription";
 import { QueryResults } from "@dataservices/shared/query-results.model";
-import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 
 @Injectable()
 /**
@@ -158,7 +157,8 @@ export class VdbService extends ApiService {
       return Observable.of( "View name cannot be empty" );
     }
 
-    const url = environment.komodoWorkspaceUrl + "/vdbs/" + vdbName + "/Models/" + modelName + "Views/nameValidation/" + encodeURIComponent( name );
+    const url = environment.komodoWorkspaceUrl + "/vdbs/" + vdbName + "/Models/" + modelName +
+                                                 "/Views/nameValidation/" + encodeURIComponent( viewName );
 
     return this.http.get( url, this.getAuthRequestOptions() )
       .map( ( response ) => {

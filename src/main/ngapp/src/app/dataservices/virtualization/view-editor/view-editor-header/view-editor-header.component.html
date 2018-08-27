@@ -3,69 +3,54 @@
   <!-- =================== -->
   <!-- Virtualization name -->
   <!-- =================== -->
-  <div class="form-group">
-    <label class="col-sm-2 control-label view-editor-header-label"
-           for="view-editor-header-virtualization-name">Virtualization:
-    </label>
-    <a class="col-sm-7 control-label view-editor-header-label"
-       id="view-editor-header-virtualization-name"
-       [routerLink]="[virtualizationLink]">{{virtualizationName}}
-    </a>
+  <div class="view-editor-header-title">
+    <h4>Virtualization Name: '{{virtualizationName}}'</h4>
   </div>
 
   <!-- ========= -->
   <!-- View name -->
   <!-- ========= -->
   <div class="form-group">
-    <label class="col-sm-2 control-label view-editor-header-label required-field"
-           id="view-editor-header-name"
-           for="view-name-input">{{viewNameLabel}}
-    </label>
-    <div class="col-sm-5 view-editor-header-input-div">
-      <input type="text"
-             id="view-name-input"
-             name="view-name-input"
-             placeholder={{viewNamePlaceholder}}
-             autofocus
-             [(ngModel)]="viewName"
-             [readonly]="readOnly"
-             (input)="viewNameChanged($event.target.value)"
-             class="form-control">
+    <div class="col-sm-1">
+      <span class="pull-right"><strong>Views:</strong></span>
+    </div>
+    <div class="col-sm-2 view-table-div" id="view-editor-header-table">
+      <pfng-table
+        [columns]="tableColumns"
+        [config]="tableConfig"
+        [dataTableConfig]="ngxTableConfig"
+        (onSelect)="viewSelectionChanged($event)"
+        [rows]="tableRows">
+      </pfng-table>
     </div>
 
-    <!-- ========================== -->
-    <!-- Show/Hide view description -->
-    <!-- ========================== -->
-    <label class="col-sm-3 control-label"
-           id="view-editor-header-show-description-label"
-           for="view-editor-header-show-description">
-      <input type="checkbox"
-             id="view-editor-header-show-description"
-             (change)="showDescription = $event.target.checked">{{showDescriptionCheckbox}}
-    </label>
-  </div>
+    <div class="col-sm-1">
+      <div class="col-sm-12 pull-left view-editor-header-create-button">
+        <button i18n="@@viewEditorHeader.addText" class="btn btn-primary btn-sm" (click)="onCreateView()">Create</button>
+      </div>
+      <div class="col-sm-12 pull-left view-editor-header-delete-button">
+        <button i18n="@@viewEditorHeader.deleteText" class="btn btn-danger btn-sm"
+                (click)="onDeleteView()" [disabled]="!deleteViewButtonEnabled">Delete</button>
+      </div>
+    </div>
 
-  <!-- ================ -->
-  <!-- View description -->
-  <!-- ================ -->
-  <div class="form-group"
-       *ngIf="showDescription">
-    <label class="col-sm-2 control-label view-editor-header-label"
-           id="view-editor-header-description"
-           for="view-editor-header-description-input">{{descriptionLabel}}
-    </label>
-    <div class="col-sm-7 view-editor-header-input-div">
-        <textarea class="form-control"
-                  id="view-editor-header-description-input"
-                  name="view-editor-header-description-input"
-                  placeholder={{descriptionPlaceholder}}
-                  [(ngModel)]="viewDescription"
-                  [readonly]="readOnly"
-                  (input)="viewDescriptionChanged($event.target.value)"
-                  rows="2"
-                  maxlength="256"
-                  title="">
-        </textarea>
+    <!-- ================ -->
+    <!-- View description -->
+    <!-- ================ -->
+    <div class="col-sm-6 pull-left view-editor-header-description-area">
+      <span>{{viewDescriptionLabel}}</span>
+      <textarea class="form-control"
+                id="view-editor-header-description-input"
+                name="view-editor-header-description-input"
+                placeholder={{viewDescriptionPlaceholder}}
+                [(ngModel)]="viewDescription"
+                [readonly]="readOnly"
+                (input)="viewDescriptionChanged($event.target.value)"
+                rows="1"
+                maxlength="256"
+                title="">
+      </textarea>
     </div>
   </div>
+
 </form>

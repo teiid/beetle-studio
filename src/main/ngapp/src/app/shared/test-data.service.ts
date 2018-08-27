@@ -791,9 +791,7 @@ export class TestDataService {
       "serviceVdbName": TestDataService.accountsVdb.getName(),
       "serviceVdbVersion": TestDataService.accountsVdb.getVersion(),
       "serviceViewModel": "views",
-      "serviceViews": [
-        "tbl1View",
-        "tbl2View"
+      "serviceViewDefinitions": [
       ],
       "serviceViewTables": [
         "connection=" + TestDataService.conn1.getId().toLowerCase() + "/schema=public/table=tbl1",
@@ -837,11 +835,9 @@ export class TestDataService {
       "serviceVdbName": TestDataService.employeesVdb.getName(),
       "serviceVdbVersion": TestDataService.employeesVdb.getVersion(),
       "serviceViewModel": "views",
-      "serviceViews": [
-        "tbl1View",
-        "tbl2View",
-        "tbl3View",
-        "tbl4View"
+      "serviceViewDefinitions": [
+        "employeesView1",
+        "employeesView2"
       ],
       "serviceViewTables": [
         "connection=" + TestDataService.conn2.getId().toLowerCase() + "/schema=public/table=tbl1",
@@ -883,17 +879,14 @@ export class TestDataService {
       "keng__dataPath": "/tko:komodo/tko:workspace/admin/Products",
       "keng__kType": "Dataservice",
       "keng__hasChildren": true,
-      "tko__description": "A dataservice for products.",
+      "tko__description": "A dataservice for products. Make this a much longer description, to see what happens...  Make this a much longer description, to see what happens...  Make this a much longer description, to see what happens...  Make this a much longer description, to see what happens...  Make this a much longer description, to see what happens...  Make it even longer now and longer",
       "serviceVdbName": TestDataService.productsVdb.getName(),
       "serviceVdbVersion": TestDataService.productsVdb.getVersion(),
       "serviceViewModel": "views",
-      "serviceViews": [
-        "tbl1View",
-        "tbl2View",
-        "tbl3View",
-        "tbl4View",
-        "tbl5View",
-        "tbl6View"
+      "serviceViewDefinitions": [
+        "productsView1",
+        "productsView2",
+        "productsView3"
       ],
       "serviceViewTables": [
         "connection=" + TestDataService.conn3.getId().toLowerCase() + "/schema=public/table=tbl1",

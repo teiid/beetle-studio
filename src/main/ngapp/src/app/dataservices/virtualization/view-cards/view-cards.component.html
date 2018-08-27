@@ -1,8 +1,0 @@
-<div class="object-card-container views-container">
-  <div *ngFor="let view of views">
-    <app-view-card [view]="view"
-                   [selectedViews]="selectedViews"
-                   (cardEvent)="onCardEvent($event)"
-                   (selectEvent)="onSelectEvent($event)"></app-view-card>
-  </div>
-</div>

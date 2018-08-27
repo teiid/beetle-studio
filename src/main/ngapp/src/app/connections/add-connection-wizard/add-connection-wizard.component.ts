@@ -367,7 +367,6 @@ export class AddConnectionWizardComponent implements OnInit {
     connection.setDescription(this.connectionDescription);
     connection.setServiceCatalogSource(this.selectedServiceCatalogSource.getId());
 
-    const self = this;
     if (this.selectionService.hasSelectedConnection) {
       this.updateDeployConnection(connection);
     } else {

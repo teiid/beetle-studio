@@ -51,6 +51,10 @@ import {
 } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 import { SqlView } from "@dataservices/shared/sql-view.model";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
+import { CreateVirtualizationDialogComponent } from "@dataservices/create-virtualization-dialog/create-virtualization-dialog.component";
+import { ViewDefinition } from "@dataservices/shared/view-definition.model";
+import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 
 @Component({
   moduleId: module.id,
@@ -60,13 +64,7 @@ import { SqlView } from "@dataservices/shared/sql-view.model";
 })
 export class DataservicesComponent extends AbstractPageComponent implements OnInit {
 
-  public readonly exportInProgressHeader: string = "Publishing:  ";
-  public readonly exportSuccessHeader: string = "Publishing Begun:  ";
-  public readonly exportFailedHeader: string = "Publishing Failed:  ";
   public readonly connectionsLoadedTag = "connections";
-
-  public readonly downloadSuccessHeader: string = "Download Succeeded:  ";
-  public readonly downloadFailedHeader: string = "Download Failed:  ";
 
   public filterConfig: FilterConfig;
   public filtersText = "";
@@ -97,10 +95,10 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   private dataserviceService: DataserviceService;
   private vdbService: VdbService;
   private sortDirection: SortDirection = SortDirection.ASC;
-  private exportNotificationHeader: string;
-  private exportNotificationMessage: string;
-  private exportNotificationType = NotificationType.SUCCESS;
-  private exportNotificationVisible = false;
+  private toastNotificationHeader: string;
+  private toastNotificationMessage: string;
+  private toastNotificationType = NotificationType.SUCCESS;
+  private toastNotificationVisible = false;
   private dataserviceDeployStateSubscription: Subscription;
   private dataservicePublishStateSubscription: Subscription;
   private notifierService: NotifierService;
@@ -323,10 +321,10 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   /**
-   * @returns {boolean} true if dataservice export notification is to be shown
+   * @returns {boolean} true if dataservice toast notification is to be shown
    */
-  public get showExportNotification(): boolean {
-    return this.exportNotificationVisible;
+  public get showToastNotification(): boolean {
+    return this.toastNotificationVisible;
   }
 
   /**
@@ -475,32 +473,75 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   public onDownload(svcName: string): void {
       this.closeLookPanels();
 
-      this.exportNotificationHeader = this.exportInProgressHeader;
-      this.exportNotificationMessage = "Downloading " + svcName + "...";
-      this.exportNotificationType = NotificationType.INFO;
-      this.exportNotificationVisible = true;
+      this.setToastNotification(Toast.Type.Download, Toast.State.InProgress, svcName);
+      this.toastNotificationVisible = true;
       this.logger.debug("[DataservicesPageComponent] Downloading Dataservice: " + svcName);
       const self = this;
       this.dataserviceService
         .downloadDataservice(svcName)
         .subscribe(
           (wasSuccess) => {
-            self.exportNotificationHeader = this.downloadSuccessHeader;
-            self.exportNotificationMessage = "   " + svcName + " was downloaded successfully!";
-            self.exportNotificationType = NotificationType.SUCCESS;
+            self.setToastNotification(Toast.Type.Download, Toast.State.Successful, svcName);
             // Dismiss toast notification after 8 sec
-            setTimeout(() => self.exportNotificationVisible = false, 8000);
+            setTimeout(() => self.toastNotificationVisible = false, 8000);
             this.logger.debug("[DataservicesPageComponent] Download Dataservice was successful");
           },
           (error) => {
-            self.exportNotificationHeader = this.downloadFailedHeader;
-            self.exportNotificationMessage = "   Failed to download dataservice " + svcName;
-            self.exportNotificationType = NotificationType.DANGER;
+            self.setToastNotification(Toast.Type.Download, Toast.State.Failed, svcName);
             // Dismiss toast notification after 8 sec
-            setTimeout(() => self.exportNotificationVisible = false, 8000);
+            setTimeout(() => self.toastNotificationVisible = false, 8000);
             this.logger.error("[DataservicesPageComponent] Download dataservice " + svcName + " failed.");
           }
         );
+  }
+
+  /**
+   * Set the toast notification details based on state and type.
+   * @param {Toast.Type} type the type of toast message (Toast.Type.xyz)
+   * @param {Toast.State} state the state of the progress (Toast.State.xyz)
+   * @param {string} virtualizationName the name of the virtualization
+   */
+  private setToastNotification( type: Toast.Type, state: Toast.State, virtualizationName: string ): void {
+    // Set InProgress Toast details
+    if ( state === Toast.State.InProgress ) {
+      this.toastNotificationType = NotificationType.INFO;
+      if ( type === Toast.Type.Download ) {
+        this.toastNotificationHeader = "Downloading: ";
+        this.toastNotificationMessage = "Downloading " + virtualizationName + "...";
+      } else if ( type === Toast.Type.Publish ) {
+        this.toastNotificationHeader = "Publishing: ";
+        this.toastNotificationMessage = "Publishing " + virtualizationName + "...";
+      } else if ( type === Toast.Type.NewVirtualization ) {
+        this.toastNotificationHeader = "Creating: ";
+        this.toastNotificationMessage = "Creating " + virtualizationName + "...";
+      }
+      // Set Successful Toast details
+    } else if ( state === Toast.State.Successful ) {
+      this.toastNotificationType = NotificationType.SUCCESS;
+      if ( type === Toast.Type.Download ) {
+        this.toastNotificationHeader = "Download Succeeded:  ";
+        this.toastNotificationMessage = "   " + virtualizationName + " was downloaded successfully!";
+      } else if ( type === Toast.Type.Publish ) {
+        this.toastNotificationHeader = "Publishing Started:  ";
+        this.toastNotificationMessage = "   " + virtualizationName + " publishing successfully initiated.";
+      } else if ( type === Toast.Type.NewVirtualization ) {
+        this.toastNotificationHeader = "Create Succeeded:  ";
+        this.toastNotificationMessage = "   " + virtualizationName + " was created successfully!";
+      }
+      // Set Failed Toast details
+    } else if ( state === Toast.State.Failed ) {
+      this.toastNotificationType = NotificationType.DANGER;
+      if ( type === Toast.Type.Download ) {
+        this.toastNotificationHeader = "Download Failed:  ";
+        this.toastNotificationMessage = "   Failed to download dataservice " + virtualizationName;
+      } else if ( type === Toast.Type.Publish ) {
+        this.toastNotificationHeader = "Publishing Failed:  ";
+        this.toastNotificationMessage = "   Failed to publish dataservice " + virtualizationName + ".";
+      } else if ( type === Toast.Type.NewVirtualization ) {
+        this.toastNotificationHeader = "Create Failed:  ";
+        this.toastNotificationMessage = "   Failed to create dataservice " + virtualizationName;
+      }
+    }
   }
 
   public onPublish(svcName: string): void {
@@ -509,29 +550,23 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     selectedService.setServiceVirtualization(virtual);
     this.closeLookPanels();
 
-    this.exportNotificationHeader = this.exportInProgressHeader;
-    this.exportNotificationMessage = "Publishing " + svcName + "...";
-    this.exportNotificationType = NotificationType.INFO;
-    this.exportNotificationVisible = true;
+    this.setToastNotification(Toast.Type.Publish, Toast.State.InProgress, svcName);
+    this.toastNotificationVisible = true;
     this.logger.debug("[DataservicesPageComponent] Publishing Dataservice: " + svcName);
     const self = this;
     this.dataserviceService
       .publishDataservice(svcName)
       .subscribe(
         (status) => {
-          self.exportNotificationHeader = this.exportSuccessHeader;
-          self.exportNotificationMessage = "   " + svcName + " publishing successfully initiated.";
-          self.exportNotificationType = NotificationType.INFO;
+          self.setToastNotification(Toast.Type.Publish, Toast.State.Successful, svcName);
           // Dismiss toast notification after 8 sec
-          setTimeout(() => self.exportNotificationVisible = false, 8000);
+          setTimeout(() => self.toastNotificationVisible = false, 8000);
           this.logger.debug("[DataservicesPageComponent] Initiated publishing of dataservice");
         },
         (error) => {
-          self.exportNotificationHeader = this.exportFailedHeader;
-          self.exportNotificationMessage = "   Failed to publish dataservice " + svcName + ".";
-          self.exportNotificationType = NotificationType.DANGER;
+          self.setToastNotification(Toast.Type.Publish, Toast.State.Failed, svcName);
           // Dismiss toast notification after 8 sec
-          setTimeout(() => self.exportNotificationVisible = false, 8000);
+          setTimeout(() => self.toastNotificationVisible = false, 8000);
           this.logger.error("[DataservicesPageComponent] Publish dataservice " + svcName + " failed.");
         }
       );
@@ -563,16 +598,131 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   /**
-   * Handle request for new Dataservice
+   * Handle request for new Virtualization
    */
   public onNew(): void {
-    this.selectionService.setSelectedVirtualization(null);
+    // Open New Virtualization dialog
+    const initialState = {
+      title: ViewEditorI18n.createVirtualizationDialogTitle,
+      cancelButtonText: ViewEditorI18n.cancelButtonText,
+      okButtonText: ViewEditorI18n.okButtonText
+    };
 
-    const link: string[] = [ DataservicesConstants.virtualizationPath ];
-    this.logger.debug("[DataservicesPageComponent] Navigating to: %o", link);
-    this.router.navigate(link).then(() => {
-      // nothing to do
+    // Show Dialog, act upon confirmation click
+    const modalRef = this.modalService.show(CreateVirtualizationDialogComponent, {initialState});
+    modalRef.content.okAction.take(1).subscribe((dialogResult) => {
+
+      // Create the new virtualization and view.
+      const virtName  = dialogResult.getVirtualizationName();
+      const virtDescr = dialogResult.getVirtualizationDescription();
+      const viewName  = dialogResult.getViewName();
+      const viewDescr = dialogResult.getViewDescription();
+      const viewDefn = new ViewDefinition();
+      viewDefn.setName(viewName);
+      viewDefn.setDescription(viewDescr);
+
+      // Display Toast notification
+      this.setToastNotification(Toast.Type.NewVirtualization, Toast.State.InProgress, virtName);
+      this.toastNotificationVisible = true;
+
+      // Create the new virtualization
+      const newVirtualization = this.dataserviceService.newDataserviceInstance(virtName, virtDescr);
+      const self = this;
+      this.dataserviceService
+        .createDataservice(newVirtualization)
+        .subscribe(
+          (wasSuccess) => {
+            // Set the current virtualization to the newly created virtualization
+            self.selectVirtualizationCreateView(virtName, viewDefn);
+          },
+          (error) => {
+            self.logger.error("[VirtualizationComponent] Error creating virtualization: %o", error);
+            // Display Toast notification
+            self.setToastNotification(Toast.Type.NewVirtualization, Toast.State.Failed, virtName);
+            // Dismiss toast notification after 8 sec
+            setTimeout(() => self.toastNotificationVisible = false, 8000);
+          }
+        );
+
     });
+
+  }
+
+  /*
+   * Select the specified Dataservice.  create a starter view under it
+   * @param {string} dsName the name of the dataservice
+   * @param {string} viewDefn the view definition to create
+   */
+  private selectVirtualizationCreateView(virtName: string, viewDefn: ViewDefinition): void {
+    const self = this;
+    this.dataserviceService
+      .getAllDataservices()
+      .subscribe(
+        (dataservices) => {
+          for (const ds of dataservices) {
+            if (ds.getId() === virtName) {
+              self.dataserviceService.setSelectedDataservice(ds);
+              self.selectionService.setSelectedVirtualization(ds);
+              self.createView(ds, viewDefn);
+            }
+          }
+        },
+        (error) => {
+          self.logger.error("[VirtualizationComponent] Error selecting the virtualization: %o", error);
+          // Display Toast notification
+          self.setToastNotification(Toast.Type.NewVirtualization, Toast.State.Failed, virtName);
+          // Dismiss toast notification after 8 sec
+          setTimeout(() => self.toastNotificationVisible = false, 8000);
+        }
+      );
+  }
+
+  private createView(dataservice: Dataservice, viewDefn: ViewDefinition): void {
+    const selectedDs = this.dataserviceService.getSelectedDataservice();
+    let editorId = "";
+    if ( selectedDs || selectedDs !== null ) {
+      editorId = this.getEditorStateId(selectedDs, viewDefn);
+    }
+
+    // Create new editor state to save
+    const editorState = new ViewEditorState();
+    editorState.setId(editorId);
+    editorState.setViewDefinition(viewDefn);
+
+    const virtName = selectedDs.getId();
+    const self = this;
+    this.dataserviceService
+      .saveViewEditorStateRefreshViews(editorState, selectedDs.getId())
+      .subscribe(
+        (wasSuccess) => {
+          // Dismiss toast since navigating away
+          self.toastNotificationVisible = false;
+
+          // transfer control to the viewEditor
+          const link: string[] = [ DataservicesConstants.viewPath ];
+          this.logger.debug("[DataservicesPageComponent] Navigating to: %o", link);
+          this.router.navigate(link).then(() => {
+            // nothing to do
+          });
+        },
+        (error) => {
+          self.logger.error("[VirtualizationComponent] Error saving the editor state: %o", error);
+          // Display Toast notification
+          self.setToastNotification(Toast.Type.NewVirtualization, Toast.State.Failed, virtName);
+          // Dismiss toast notification after 8 sec
+          setTimeout(() => self.toastNotificationVisible = false, 8000);
+        }
+      );
+  }
+
+  /**
+   * Construct id for the editor state
+   * @param {Dataservice} dataservice the dataservice
+   * @param {ViewDefinition} viewDefn the view definition
+   * @returns {string} the ID used to persist the editor state
+   */
+  private getEditorStateId(dataservice: Dataservice, viewDefn: ViewDefinition): string {
+    return dataservice.getServiceVdbName().toLowerCase() + "." + viewDefn.getName();
   }
 
   /**
@@ -588,7 +738,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     // Sets the selected dataservice and edit mode before transferring
     this.selectionService.setSelectedVirtualization(selectedService);
 
-    const link: string[] = [ DataservicesConstants.virtualizationPath ];
+    const link: string[] = [ DataservicesConstants.viewPath ];
     this.logger.debug("[DataservicesPageComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {
       // nothing to do
@@ -715,8 +865,6 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
       match = item.getId().match(filter.value) !== null;
     } else if (filter.field.id === "description") {
       match = item.getDescription().match(filter.value) !== null;
-    } else if (filter.field.id === "view") {
-      match = item.getViews() === filter.value;
     }
     return match;
   }
@@ -819,5 +967,21 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
    */
   private setOdataServiceName(svcName): void {
      this.odataSvcName = svcName;
+  }
+}
+
+/**
+ * Internal enums for Toast Notifications
+ */
+export namespace Toast {
+  export enum State {
+    InProgress,
+    Successful,
+    Failed
+  }
+  export enum Type {
+    Download,
+    Publish,
+    NewVirtualization
   }
 }
