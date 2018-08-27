@@ -80,7 +80,7 @@ export class AddCompositionCommand extends Command {
    */
   public getId(compositionName?: string): string {
     let result = this.getArg( Command.identArg ) as string;
-    const compArgValue = this.getArg( AddCompositionCommand.addedComposition ) as string;
+    const compArgValue = this.getComposition().getName();
     if (compArgValue) {
       result = result + Command.identDivider + compArgValue;
     }

@@ -26,6 +26,7 @@ export class ViewEditorI18n {
   // commands
   public static readonly addSourcesCommandName = "Add Sources";
   public static readonly addCompositionCommandName = "Add Composition";
+  public static readonly sampleDataCommandName = "Sample Data";
   public static readonly noOpCommandName = "No operation";
   public static readonly removeCompositionCommandName = "Remove Composition";
   public static readonly removeSourcesCommandName = "Remove Sources";
@@ -80,6 +81,8 @@ export class ViewEditorI18n {
   public static readonly addSourceDialogTitle = "Select View Source";
   public static readonly addSourceActionTitle = "Add Source";
   public static readonly addSourceActionTooltip = "Add Source";
+  public static readonly sampleDataActionTitle = "Sample Data";
+  public static readonly sampleDataActionTooltip = "Sample data from selected view or source";
   public static readonly deleteActionTitle = "Delete";
   public static readonly deleteActionTooltip = "Delete the selection(s)";
   public static readonly errorsActionTitle = "Errors";

@@ -33,20 +33,20 @@ import * as _ from "lodash";
       <svg:g class="node-visual-group" [id]="id('group')">
         <svg:image class="node-img" [id]="id('icon')"
                     x="-32" y="-32"
-                    width="64" height="64"
+                    width="48" height="48"
                     [attr.xlink:href]="icon">
         </svg:image>
-        <svg:text class="node-name" [id]="id('label')" dy="45">
+        <svg:text class="node-name" [id]="id('label')" dy="24">
           {{node.label}}
         </svg:text>
         <svg:g class="node-visual-tools" [id]="id('tools')">
           <svg:image class="node-visual-tools-plus" [id]="id('plus')"
-                   x="32" y="-32"
+                   x="16" y="-20"
                    width="16" height="16"
                    [attr.xlink:href]="cmdIcon('plus')">
           </svg:image>
           <svg:image class="node-visual-tools-minus" [id]="id('minus')"
-                   x="32" y="-14"
+                   x="16" y="-2"
                    width="16" height="16"
                    [attr.xlink:href]="cmdIcon('minus')">
           </svg:image>
