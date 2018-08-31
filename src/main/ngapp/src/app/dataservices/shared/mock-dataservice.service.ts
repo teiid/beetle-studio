@@ -32,8 +32,6 @@ import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
 import { ErrorObservable } from "rxjs/observable/ErrorObservable";
-import { ViewDefinition } from "@dataservices/shared/view-definition.model";
-import { SqlView } from "@dataservices/shared/sql-view.model";
 import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 
 @Injectable()
@@ -57,12 +55,6 @@ export class MockDataserviceService extends DataserviceService {
     this.queryResults = testDataService.getQueryResults();
 
     this.editorViewStateMap = testDataService.getViewEditorStateMap();
-
-    // set selected dataservice, so it's not empty
-    const ds = new Dataservice();
-    ds.setId("testDs");
-    ds.setServiceVdbName("testDsVdb");
-    this.setSelectedDataservice(ds);
   }
 
   /**
@@ -99,46 +91,6 @@ export class MockDataserviceService extends DataserviceService {
   public downloadDataservice( dataserviceName: string ): Observable< boolean > {
     alert( "Download of " + dataserviceName + " happens here" );
     return Observable.of( true );
-  }
-
-  /**
-   * Set the current Dataservice selection
-   * @param {Dataservice} service the Dataservice
-   */
-  public setSelectedDataservice(service: Dataservice): void {
-    this.selectedDs = service;
-  }
-
-  /**
-   * Get the current Dataservice selection
-   * @returns {Dataservice} the selected Dataservice
-   */
-  public getSelectedDataservice( ): Dataservice {
-    return this.selectedDs;
-  }
-
-  /**
-   * Get the view definitions for the selected Dataservice
-   * @returns {ViewDefinition[]} the view definitions
-   */
-  public getSelectedDataserviceViews(): ViewDefinition[] {
-    const table: ViewDefinition = new ViewDefinition();
-    table.setName("views.View1");
-    const tables: ViewDefinition[] = [];
-    tables.push(table);
-
-    return tables;
-  }
-
-  /**
-   * Get the views for the selected Dataservice
-   * @returns {SqlView[]} the views
-   */
-  public getSelectedDataserviceViewNames(): SqlView[] {
-    const views: SqlView[] = [];
-    views.push(new SqlView("views.View1"));
-
-    return views;
   }
 
   /**

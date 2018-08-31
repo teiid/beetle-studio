@@ -23,6 +23,7 @@ import {
   SortModule,
   TableModule,
   WizardModule } from "patternfly-ng";
+import { SelectionService } from "@core/selection.service";
 
 describe('EditorViewsComponent', () => {
   let component: EditorViewsComponent;
@@ -53,6 +54,7 @@ describe('EditorViewsComponent', () => {
         { provide: DataserviceService, useClass: MockDataserviceService },
         LoggerService,
         NotifierService,
+        SelectionService,
         { provide: VdbService, useClass: MockVdbService },
         ViewEditorService
       ]

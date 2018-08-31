@@ -24,6 +24,7 @@ import { ViewPropertyEditorsComponent } from "@dataservices/virtualization/view-
 import { TabsModule } from "ngx-bootstrap";
 import { GraphVisualComponent, LinkVisualComponent, NodeVisualComponent } from "@dataservices/virtualization/view-editor/view-canvas/visuals";
 import { CanvasService } from "@dataservices/virtualization/view-editor/view-canvas/canvas.service";
+import { SelectionService } from "@core/selection.service";
 
 describe('ViewCanvasComponent', () => {
   let component: ViewCanvasComponent;
@@ -57,6 +58,7 @@ describe('ViewCanvasComponent', () => {
         CanvasService,
         LoggerService,
         NotifierService,
+        SelectionService,
         { provide: VdbService, useClass: MockVdbService },
         ViewEditorService
       ]

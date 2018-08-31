@@ -20,6 +20,7 @@ import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { MessageLogComponent } from '@dataservices/virtualization/view-editor/editor-views/message-log/message-log.component';
+import { SelectionService } from "@core/selection.service";
 
 describe('MessageLogComponent', () => {
   let component: MessageLogComponent;
@@ -45,6 +46,7 @@ describe('MessageLogComponent', () => {
         { provide: DataserviceService, useClass: MockDataserviceService },
         LoggerService,
         NotifierService,
+        SelectionService,
         { provide: VdbService, useClass: MockVdbService },
         ViewEditorService
       ]

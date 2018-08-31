@@ -23,6 +23,7 @@ import {
   SortModule,
   TableModule,
   WizardModule } from "patternfly-ng";
+import { SelectionService } from "@core/selection.service";
 
 describe("TestDataserviceComponent", () => {
   let component: TestDataserviceComponent;
@@ -47,7 +48,7 @@ describe("TestDataserviceComponent", () => {
       ],
       declarations: [ SqlControlComponent, TestDataserviceComponent ],
       providers: [
-        NotifierService,
+        NotifierService, SelectionService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: VdbService, useClass: MockVdbService }
@@ -63,8 +64,10 @@ describe("TestDataserviceComponent", () => {
     const service = TestBed.get( DataserviceService );
     let dataservices: Dataservice[];
     service.getAllDataservices().subscribe( ( values ) => { dataservices = values; } );
+
+    const selService = TestBed.get( SelectionService );
     // noinspection JSUnusedAssignment
-    service.setSelectedDataservice( dataservices[ 0 ] );
+    selService.setSelectedVirtualization( dataservices[ 1 ] );
 
     fixture = TestBed.createComponent(TestDataserviceComponent);
     component = fixture.componentInstance;

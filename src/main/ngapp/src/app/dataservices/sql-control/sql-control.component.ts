@@ -28,6 +28,7 @@ import "codemirror/addon/selection/active-line.js";
 import "codemirror/mode/sql/sql.js";
 import { NgxDataTableConfig, TableConfig } from "patternfly-ng";
 import { SqlView } from "@dataservices/shared/sql-view.model";
+import { SelectionService } from "@core/selection.service";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -62,15 +63,18 @@ export class SqlControlComponent implements OnInit {
 
   private dataserviceService: DataserviceService;
   private logger: LoggerService;
+  private selectionService: SelectionService;
   private showResults = false;
   private queryResultsLoading: LoadingState;
   private queryResults: QueryResults;
   private queryMap: Map<string, string> = new Map<string, string>();
   private previousViewName: string;
 
-  constructor( dataserviceService: DataserviceService, logger: LoggerService ) {
+  constructor( dataserviceService: DataserviceService, logger: LoggerService,
+               selectionService: SelectionService ) {
     this.dataserviceService = dataserviceService;
     this.logger = logger;
+    this.selectionService = selectionService;
   }
 
   public ngOnInit(): void {
@@ -138,7 +142,7 @@ export class SqlControlComponent implements OnInit {
    * Submit the currently entered SQL
    */
   public submitCurrentQuery( ): void {
-    this.submitQuery(this.queryText, this.dataserviceService.getSelectedDataservice().getId(), 15, 0);
+    this.submitQuery(this.queryText, this.selectionService.getSelectedVirtualization().getId(), 15, 0);
   }
 
   /*

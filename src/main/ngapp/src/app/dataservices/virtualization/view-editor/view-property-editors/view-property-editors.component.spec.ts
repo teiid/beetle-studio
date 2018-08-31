@@ -12,6 +12,7 @@ import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
+import { SelectionService } from "@core/selection.service";
 
 describe('ViewPropertyEditorsComponent', () => {
   let component: ViewPropertyEditorsComponent;
@@ -29,6 +30,7 @@ describe('ViewPropertyEditorsComponent', () => {
         { provide: DataserviceService, useClass: MockDataserviceService },
         LoggerService,
         NotifierService,
+        SelectionService,
         { provide: VdbService, useClass: MockVdbService },
         ViewEditorService
       ]

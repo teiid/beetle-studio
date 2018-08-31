@@ -7,9 +7,9 @@ import { LoggerService } from "@core/logger.service";
 import { MockAppSettingsService } from "@core/mock-app-settings.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
-import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { SelectionService } from "@core/selection.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { CodemirrorModule } from "ng2-codemirror";
 import {
@@ -25,6 +25,7 @@ import {
 } from "patternfly-ng";
 import { SqlControlComponent } from "./sql-control.component";
 import { SqlView } from "@dataservices/shared/sql-view.model";
+import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 
 describe("SqlControlComponent", () => {
   let component: SqlControlComponent;
@@ -51,6 +52,7 @@ describe("SqlControlComponent", () => {
         AppSettingsService,
         LoggerService,
         NotifierService,
+        SelectionService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: VdbService, useClass: MockVdbService }
@@ -66,8 +68,10 @@ describe("SqlControlComponent", () => {
     const service = TestBed.get( DataserviceService );
     let dataservices: Dataservice[];
     service.getAllDataservices().subscribe( ( values ) => { dataservices = values; } );
+
+    const selService = TestBed.get( SelectionService );
     // noinspection JSUnusedAssignment
-    service.setSelectedDataservice( dataservices[ 0 ] );
+    selService.setSelectedVirtualization( dataservices[ 0 ] );
 
     fixture = TestBed.createComponent(SqlControlComponent);
     component = fixture.componentInstance;

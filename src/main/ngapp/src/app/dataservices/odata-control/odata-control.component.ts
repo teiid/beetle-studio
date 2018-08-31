@@ -28,6 +28,7 @@ import { Odata } from "@dataservices/odata-control/odata.model";
 import { OdataEntity } from "@dataservices/odata-control/odata-entity.model";
 import { OdataColumn } from "@dataservices/odata-control/odata-column.model";
 import { OdataWhere } from "@dataservices/odata-control/odata-where.model";
+import { SelectionService } from "@core/selection.service";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -44,6 +45,7 @@ export class OdataControlComponent implements OnChanges {
   private dataserviceService: DataserviceService;
   private dataservice: Dataservice;
   private logger: LoggerService;
+  private selectionService: SelectionService;
   public i18n: OdataConstants = new OdataConstants();
 
   public searchMsg: string;
@@ -91,9 +93,11 @@ export class OdataControlComponent implements OnChanges {
   //
   public results: string = null;
 
-  constructor( dataserviceService: DataserviceService, logger: LoggerService ) {
+  constructor( dataserviceService: DataserviceService, logger: LoggerService,
+               selectionService: SelectionService ) {
     this.dataserviceService = dataserviceService;
     this.logger = logger;
+    this.selectionService = selectionService;
   }
 
   public get rootUrl(): string {
@@ -105,7 +109,7 @@ export class OdataControlComponent implements OnChanges {
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    this.dataservice = this.dataserviceService.getSelectedDataservice();
+    this.dataservice = this.selectionService.getSelectedVirtualization();
 
     this.metadataFetchInProgress = false;
 

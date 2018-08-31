@@ -146,7 +146,7 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
    */
   private initViews( ): void {
     this.viewsLoadingState = LoadingState.LOADING;
-    this.selectedVirtualization = this.dataserviceService.getSelectedDataservice();
+    this.selectedVirtualization = this.selectionService.getSelectedVirtualization();
     if ( !this.selectedVirtualization || this.selectedVirtualization === null ) {
       this.tableRows = [];
     }
@@ -303,7 +303,7 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
   }
 
   private createNewView(viewDefn: ViewDefinition): void {
-    const selectedDs = this.dataserviceService.getSelectedDataservice();
+    const selectedDs = this.selectionService.getSelectedVirtualization();
     const editorId = this.getEditorStateId(selectedDs, viewDefn);
 
     // Create new editor state to save
@@ -367,7 +367,7 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
    */
   private doDeleteView(viewDefnName: string): void {
     const selectedViewDefn =  this.tableRows.find((x) => x.getName() === viewDefnName);
-    const selectedDs = this.dataserviceService.getSelectedDataservice();
+    const selectedDs = this.selectionService.getSelectedVirtualization();
     const vdbName = selectedDs.getServiceVdbName();
     const editorStateId = vdbName.toLowerCase() + "." + viewDefnName;
     const dataserviceName = selectedDs.getId();
