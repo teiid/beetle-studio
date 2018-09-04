@@ -46,10 +46,6 @@ a.list-pf-title.view-name {
   margin-left: 10px !important;
 }
 
-.views-details {
-  background-color: var(--card-body-background-color);
-}
-
 .list-pf-container {
   -ms-flex-align: start;
   align-items: flex-start;
@@ -74,4 +70,22 @@ a.list-pf-title.view-name {
 
 #publishing-card-icons .CodeMirror {
   height: 80vh;
+}
+
+.views-details {
+  background-color: transparent;
+}
+.views-details:hover {
+  background-color: transparent;
+}
+
+.views-details .blank-slate-pf {
+  background-color: transparent;
+  min-width: 200px;
+  border: none;
+  padding: 0;
+}
+
+.views-details h1, .h1 {
+  font-size: 14px;
 }

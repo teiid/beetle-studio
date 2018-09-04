@@ -28,4 +28,12 @@ export class NameValue {
     this.value = value;
   }
 
+  public getName(): string {
+    return this.name;
+  }
+
+  public getValue(): string {
+    return this.value;
+  }
+
 }

@@ -130,7 +130,7 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
     } as NgxDataTableConfig;
 
     this.emptyStateConfig = {
-      title: ViewEditorI18n.noViewsFound
+      title: ViewEditorI18n.noViewsDefined
     } as EmptyStateConfig;
 
     this.tableConfig = {
@@ -150,6 +150,8 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
     if ( !this.selectedVirtualization || this.selectedVirtualization === null ) {
       this.tableRows = [];
     }
+
+    const selectedView = this.selectionService.getSelectedViewDefinition();
 
     const vdbName = this.selectedVirtualization.getServiceVdbName();
     const editorStatesPattern = vdbName.toLowerCase() + "*";
@@ -171,7 +173,13 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
             if (left.getName() > right.getName()) return 1;
             return 0;
           });
-          const initialView = (self.tableRows && self.tableRows.length > 0) ? self.tableRows[0] : null;
+
+          let initialView: ViewDefinition = null;
+          if (!selectedView || selectedView === null) {
+            initialView = (self.tableRows && self.tableRows.length > 0) ? self.tableRows[0] : null;
+          } else {
+            initialView =  self.tableRows.find((x) => x.getName() === selectedView.getName());
+          }
           self.selectView(initialView);
           self.viewsLoadingState = LoadingState.LOADED_VALID;
         },

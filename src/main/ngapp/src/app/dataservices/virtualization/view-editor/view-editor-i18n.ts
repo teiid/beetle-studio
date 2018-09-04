@@ -113,7 +113,7 @@ export class ViewEditorI18n {
   // view editor header
   public static readonly viewDescriptionLabel = "Selected View Description";
   public static readonly viewDescriptionPlaceholder = "Enter a view description";
-  public static readonly noViewsFound = "No views found";
+  public static readonly noViewsDefined = "No views defined";
 
   // view preview
   public static readonly previewDataUnavailable = "Preview data unavailable";

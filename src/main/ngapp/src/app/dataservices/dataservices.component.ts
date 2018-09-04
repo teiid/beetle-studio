@@ -55,6 +55,7 @@ import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-ed
 import { CreateVirtualizationDialogComponent } from "@dataservices/create-virtualization-dialog/create-virtualization-dialog.component";
 import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
+import { NameValue } from "@dataservices/shared/name-value.model";
 
 @Component({
   moduleId: module.id,
@@ -725,12 +726,21 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   /**
-   * Handle Edit of the specified Dataservice
+   * Handle Edit of the specified Dataservice and View
    * @param {string} svcName
    */
-  public onEdit(svcName: string): void {
-    const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
+  public onEdit(svcNameView: NameValue): void {
+    const virtName = svcNameView.getName();
+    const selectedService =  this.filteredDataservices.find((x) => x.getId() === virtName);
     this.selectionService.setSelectedVirtualization(selectedService);
+
+    const viewName = svcNameView.getValue();
+    let viewDefn: ViewDefinition = null;
+    if (viewName && viewName !== null) {
+      viewDefn = new ViewDefinition();
+      viewDefn.setName(viewName);
+    }
+    this.selectionService.setSelectedViewDefinition(selectedService, viewDefn);
 
     this.closeLookPanels();
 

@@ -20,12 +20,13 @@ import {
 } from "@angular/core";
 import * as _ from "lodash";
 import { LoggerService } from "@core/logger.service";
-import { Action, ActionConfig, CardAction, CardConfig, ListConfig } from "patternfly-ng";
+import { Action, ActionConfig, CardAction, CardConfig, EmptyStateConfig, ListConfig } from "patternfly-ng";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { Connection } from "@connections/shared/connection.model";
+import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -74,6 +75,7 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
   private isLoading = true;
   private logger: LoggerService;
   private dataserviceService: DataserviceService;
+  private emptyStateConfig: EmptyStateConfig;
 
   public publishLogsEditorConfig = {
     lineNumbers: true,
@@ -216,13 +218,19 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
       topBorder: false
     } as CardConfig;
 
+    this.emptyStateConfig = {
+      title: ViewEditorI18n.noViewsDefined
+    } as EmptyStateConfig;
+
     this.listConfig = {
       dblClick: false,
       multiSelect: false,
       selectItems: false,
       showCheckbox: false,
-      useExpandItems: false
+      useExpandItems: false,
+      emptyStateConfig: this.emptyStateConfig
     } as ListConfig;
+
   }
 
   /**
@@ -231,6 +239,18 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
    */
   public onClick( type: string ): void {
     this.cardEvent.emit( { eventType: type, dataserviceName: this.dataservice.getId() } );
+  }
+
+  /**
+   * An event handler for when edit view is invoked.
+   * @param {string} vName the name of the view in the selected dataservice
+   */
+  public onEditView( vName: string ): void {
+    this.cardEvent.emit( {
+                                 eventType: DataserviceCardComponent.editDataserviceEvent,
+                                 dataserviceName: this.dataservice.getId(),
+                                 viewName: vName
+                               } );
   }
 
   /**
