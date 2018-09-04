@@ -178,4 +178,39 @@ export class MockVdbService extends VdbService {
     return Observable.of(true);
   }
 
+  /**
+   * Validates the specified view name within the specified vdb model. If the name contains valid characters
+   * and the name is unique, the service returns 'null'. Otherwise, a 'string' containing an error message is returned.
+   *
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @param {string} viewName the view name
+   * @returns {Observable<String>}
+   */
+  public isValidViewName( vdbName: string, modelName: string, viewName: string ): Observable< string > {
+    // Check that valid names were supplied
+    // if ( !vdbName || vdbName.length === 0 ) {
+    //   return Observable.of( "VDB name cannot be empty" );
+    // }
+    if ( !modelName || modelName.length === 0 ) {
+      return Observable.of( "Model name cannot be empty" );
+    }
+    if ( !viewName || viewName.length === 0 ) {
+      return Observable.of( "View name cannot be empty" );
+    }
+
+    // just implement a case where no special characters allowed
+    for ( let i = 0; i < viewName.length; i++ ) {
+      const c = viewName.charAt( i );
+
+      // special characters have the same upper and lower case values
+      if ( c.toUpperCase() === c.toLowerCase() ) {
+        return Observable.of( "No special characters allowed" );
+      }
+    }
+
+    // valid
+    return Observable.of( "" );
+  }
+
 }

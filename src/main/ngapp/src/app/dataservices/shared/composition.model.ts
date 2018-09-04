@@ -206,6 +206,24 @@ export class Composition {
   }
 
   /**
+   * Determine if the supplied Composition is equal to this
+   * @param {Object} values
+   */
+  public isEqual( otherComp: Composition ): boolean {
+    let equal = false;
+    if (this.getName() === otherComp.getName() &&
+      this.getLeftSourcePath() === otherComp.getLeftSourcePath() &&
+      this.getRightSourcePath() === otherComp.getRightSourcePath() &&
+      this.getLeftCriteriaColumn() === otherComp.getLeftCriteriaColumn() &&
+      this.getRightCriteriaColumn() === otherComp.getRightCriteriaColumn() &&
+      this.getType() === otherComp.getType() &&
+      this.getOperator() === otherComp.getOperator() ) {
+      equal = true;
+    }
+    return equal;
+  }
+
+  /**
    * Set all object values using the supplied View json
    * @param {Object} values
    */

@@ -38,6 +38,14 @@ export class ViewEditorI18n {
   public static readonly currentSelection = "Current Selection:";
   public static readonly noSelection = "Nothing selected";
 
+  // create virtualization dialog
+  public static readonly createVirtualizationDialogMessage = "Enter name and optional description for the virtualization and view";
+  public static readonly createVirtualizationDialogTitle = "Create Virtualization";
+
+  // create view dialog
+  public static readonly createViewDialogMessage = "Enter name and description(optional) for the new view";
+  public static readonly createViewDialogTitle = "Create View";
+
   // Add Composition Wizard
   public static readonly addCompositionWizardTitle = "Add Composition";
   public static readonly addCompositionWizardSelectSourceMessage = "Expand connection and select a source for the composition";
@@ -46,7 +54,6 @@ export class ViewEditorI18n {
   public static readonly addCompositionWizardStep2Text = "Define Composition";
   public static readonly addCompositionWizardLoadingPrimaryText = "Add Composition Wizard loading";
   public static readonly addCompositionWizardLoadingSecondaryText = "Please wait for the wizard to finish loading...";
-  public static readonly addCompositionWizardSwapButtonText = "Swap";
 
   // editor views
   public static readonly messagesTabName = "Messages";
@@ -101,11 +108,9 @@ export class ViewEditorI18n {
   public static readonly warningsActionTooltip = "Show warning messages";
 
   // view editor header
-  public static readonly descriptionLabel = "Description:";
-  public static readonly descriptionPlaceholder = "Enter a view description";
-  public static readonly showDescriptionCheckbox = "Show Description";
-  public static readonly viewNameLabel = "View Name:";
-  public static readonly viewNamePlaceholder = "Enter a view name";
+  public static readonly viewDescriptionLabel = "Selected View Description";
+  public static readonly viewDescriptionPlaceholder = "Enter a view description";
+  public static readonly noViewsFound = "No views found";
 
   // view preview
   public static readonly previewDataUnavailable = "Preview data unavailable";

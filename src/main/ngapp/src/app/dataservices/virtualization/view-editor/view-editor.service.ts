@@ -17,7 +17,6 @@
 
 import { EventEmitter, Injectable, Output } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
-import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
@@ -64,12 +63,12 @@ export class ViewEditorService {
   private _previewSql = null;
   private _readOnly = false;
   private _shouldFireEvents = true;
-  private readonly _undoMgr: UndoManager;
+  private _undoMgr: UndoManager;
   private readonly _dataserviceService: DataserviceService;
   private readonly _vdbService: VdbService;
   private _warningMsgCount = 0;
   private _selection: string[] = [];
-  private _originalViewName = null;
+  private _originalView: ViewDefinition = null;
 
   constructor( logger: LoggerService,
                dataserviceService: DataserviceService,
@@ -304,13 +303,6 @@ export class ViewEditorService {
   }
 
   /**
-   * @returns {string} the router link of the virtualization
-   */
-  public getVirtualizationLink(): string {
-    return DataservicesConstants.virtualizationPath;
-  }
-
-  /**
    * @returns {number} the number of warning messages
    */
   public getWarningMessageCount(): number {
@@ -328,8 +320,11 @@ export class ViewEditorService {
    * @returns {boolean} `true` if the editor has unsaved changes
    */
   public hasChanges(): boolean {
-    // TODO implement hasChanges
-    return true;
+    let hasChanged = false;
+    if ( this._editorView && this._editorView !== null ) {
+      hasChanged = !this._editorView.isEqual(this._originalView);
+    }
+    return hasChanged;
   }
 
   /**
@@ -411,7 +406,7 @@ export class ViewEditorService {
   }
 
   /**
-   * Saves the current editor state.  If a previous state exists, it is deleted first
+   * Saves the current editor state.
    */
   public saveEditorState(): void {
     // fire save in progress event
@@ -419,35 +414,9 @@ export class ViewEditorService {
       ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
       [ ViewEditorProgressChangeId.IN_PROGRESS ] ) );
 
-    // If a previous view state needs to be deleted, do that first.  Then save the new state
-    if (this._originalViewName && this._originalViewName !== null && this._originalViewName !== this._editorView.getName()) {
-      // Delete the 'old' view editorState and view first
-      const oldEditorStateId = this.getEditorStateId(this._originalViewName);
-
-      const self = this;
-      this._dataserviceService.deleteViewEditorState( oldEditorStateId ).subscribe( () => {
-          self.saveCurrentState();
-        }, () => {
-          // fire save editor state failed event
-          this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
-                     ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
-                     [ ViewEditorProgressChangeId.COMPLETED_FAILED ] ) );
-        }
-      );
-    } else {
-      this.saveCurrentState();
-    }
-  }
-
-  /**
-   * Saves the current editor's state.
-   * The ViewEditor state consists of the Undoables array (the current redo stack is not saved),
-   * plus the current ViewEditorDefinition
-   */
-  private saveCurrentState(): void {
     // Save the current editorState
-    this._originalViewName = this._editorView.getName();
-    const editorId = this.getEditorStateId(this._originalViewName);
+    const viewName = this._editorView.getName();
+    const editorId = this.getEditorStateId(viewName);
 
     // ViewEditorState contains Undoables array plus current ViewDefinition
     const editorState = new ViewEditorState();
@@ -485,14 +454,6 @@ export class ViewEditorService {
   }
 
   /**
-   * Set the original view name (when editor initialized or last save)
-   * @param {string} viewName the view name
-   */
-  public setOriginalViewName( viewName: string ): void {
-    this._originalViewName = viewName;
-  }
-
-  /**
    * Sets the view being edited. This should only be called once. Subsequent calls are ignored. Fires a
    * `ViewEditorEventType.VIEW_CHANGED` event having the view definition as an argument.
    *
@@ -501,13 +462,14 @@ export class ViewEditorService {
    */
   public setEditorView( viewDefn: ViewDefinition,
                         source: ViewEditorPart ): void {
-    if ( !this._editorView ) {
-      this._editorView = viewDefn;
-      this.fire( ViewEditorEvent.create( source, ViewEditorEventType.EDITED_VIEW_SET, [ this._editorView ] ) );
-      // this.restoreUndoables();
+    this._editorView = viewDefn;
+    if ( viewDefn !== null ) {
+      this._originalView = ViewDefinition.create(viewDefn.toJSON());
     } else {
-      this._logger.debug( "setEditorView called more than once" );
+      this._originalView = null;
     }
+    this.resetUndoManager();
+    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.EDITED_VIEW_SET, [ this._editorView ] ) );
   }
 
   /**
@@ -709,5 +671,12 @@ export class ViewEditorService {
 
   public hasSelection(): boolean {
     return this._selection.length > 0;
+  }
+
+  /**
+   * Reset the UndoManager
+   */
+  private resetUndoManager(): void {
+    this._undoMgr = new UndoManager();
   }
 }

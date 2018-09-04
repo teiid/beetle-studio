@@ -42,6 +42,7 @@ export class MockDataserviceService extends DataserviceService {
   private readonly services: Dataservice[];
   private readonly queryResults: QueryResults;
   private editorViewStateMap = new Map<string, ViewEditorState>();
+  private selectedDs: Dataservice;
 
   constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
               notifierService: NotifierService, logger: LoggerService ) {
@@ -56,6 +57,12 @@ export class MockDataserviceService extends DataserviceService {
     this.queryResults = testDataService.getQueryResults();
 
     this.editorViewStateMap = testDataService.getViewEditorStateMap();
+
+    // set selected dataservice, so it's not empty
+    const ds = new Dataservice();
+    ds.setId("testDs");
+    ds.setServiceVdbName("testDsVdb");
+    this.setSelectedDataservice(ds);
   }
 
   /**
@@ -92,6 +99,22 @@ export class MockDataserviceService extends DataserviceService {
   public downloadDataservice( dataserviceName: string ): Observable< boolean > {
     alert( "Download of " + dataserviceName + " happens here" );
     return Observable.of( true );
+  }
+
+  /**
+   * Set the current Dataservice selection
+   * @param {Dataservice} service the Dataservice
+   */
+  public setSelectedDataservice(service: Dataservice): void {
+    this.selectedDs = service;
+  }
+
+  /**
+   * Get the current Dataservice selection
+   * @returns {Dataservice} the selected Dataservice
+   */
+  public getSelectedDataservice( ): Dataservice {
+    return this.selectedDs;
   }
 
   /**
@@ -225,6 +248,15 @@ export class MockDataserviceService extends DataserviceService {
    * @returns {Observable<boolean>} `true` if the editor state was successfully saved
    */
   public saveViewEditorStateRefreshViews( editorState: ViewEditorState, dataserviceName: string ): Observable< boolean > {
+    return Observable.of(true);
+  }
+
+  /**
+   * @param {string} editorId the ID of the editor state being deleted
+   * @param {string} dataserviceName the name of the dataservice
+   * @returns {Observable<boolean>} `true` if the editor state was successfully saved
+   */
+  public deleteViewEditorStateRefreshViews( editorId: string, dataserviceName: string ): Observable< boolean > {
     return Observable.of(true);
   }
 

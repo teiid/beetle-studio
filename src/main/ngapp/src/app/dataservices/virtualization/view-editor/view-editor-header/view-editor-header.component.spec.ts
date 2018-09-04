@@ -12,6 +12,9 @@ import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
+import { TableModule } from "patternfly-ng";
+import { SelectionService } from "@core/selection.service";
+import { BsModalService } from "ngx-bootstrap";
 
 describe('ViewEditorHeaderComponent', () => {
   let component: ViewEditorHeaderComponent;
@@ -22,14 +25,17 @@ describe('ViewEditorHeaderComponent', () => {
       imports: [
         FormsModule,
         HttpModule,
-        RouterTestingModule
+        RouterTestingModule,
+        TableModule
       ],
       declarations: [ ViewEditorHeaderComponent ],
       providers: [
+        BsModalService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: DataserviceService, useClass: MockDataserviceService },
         LoggerService,
         NotifierService,
+        SelectionService,
         { provide: VdbService, useClass: MockVdbService },
         ViewEditorService
       ]

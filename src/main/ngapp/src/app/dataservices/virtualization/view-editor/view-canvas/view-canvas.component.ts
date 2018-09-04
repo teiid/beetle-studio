@@ -65,6 +65,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private editorSubscription: Subscription;
   private canvasSubscription: Subscription;
+  private viewNameSaveInProgress: string;
 
   constructor( editorService: ViewEditorService,
                logger: LoggerService,
@@ -105,23 +106,26 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       this.initCanvas(viewDefn);
     } else if ( event.typeIsEditorViewSaveProgressChanged() ) {
       if ( event.args.length !== 0 ) {
-        const viewName = this.editorService.getEditorView().getName();
-
         // Detect changes in view editor save progress
         if ( event.args[ 0 ] === ViewEditorProgressChangeId.IN_PROGRESS ) {
+          this.viewNameSaveInProgress = this.editorService.getEditorView().getName();
           this.saveViewNotificationHeader = this.viewSaveInProgressHeader;
-          this.saveViewNotificationMessage = "Saving View '" + viewName + "'...";
+          this.saveViewNotificationMessage = this.getViewNotificationMessage(ViewEditorProgressChangeId.IN_PROGRESS,
+                                                                             this.viewNameSaveInProgress);
           this.saveViewNotificationType = NotificationType.INFO;
           this.saveViewNotificationVisible = true;
         } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_SUCCESS ) {
           this.saveViewNotificationHeader = this.viewSaveSuccessHeader;
-          this.saveViewNotificationMessage = "View '" + viewName + "' save successful";
+          this.saveViewNotificationMessage = this.getViewNotificationMessage(ViewEditorProgressChangeId.COMPLETED_SUCCESS,
+                                                                             this.viewNameSaveInProgress);
+
           this.saveViewNotificationType = NotificationType.SUCCESS;
           // After 8 seconds, the notification is dismissed
           setTimeout(() => this.saveViewNotificationVisible = false, 8000);
         } else if ( event.args[ 0 ] === ViewEditorProgressChangeId.COMPLETED_FAILED ) {
           this.saveViewNotificationHeader = this.viewSaveFailedHeader;
-          this.saveViewNotificationMessage = "View '" + viewName + "' save failed";
+          this.saveViewNotificationMessage = this.getViewNotificationMessage(ViewEditorProgressChangeId.COMPLETED_FAILED,
+                                                                             this.viewNameSaveInProgress);
           this.saveViewNotificationType = NotificationType.DANGER;
           // After 8 seconds, the notification is dismissed
           setTimeout(() => this.saveViewNotificationVisible = false, 8000);
@@ -134,6 +138,24 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     else {
       this.logger.debug( "ViewCanvasComponent not handling received editor event: " + event.toString());
     }
+  }
+
+  /**
+   * Generates a view notification message based on the progress type and viewName
+   * @param {ViewEditorProgressChangeId} viewProgressId the progress type
+   * @param {string} viewName the view name
+   */
+  private getViewNotificationMessage(viewProgressId: ViewEditorProgressChangeId, viewName: string): string {
+    let msg = "";
+    const viewStr = ( viewName && viewName !== null ) ? "'" + viewName + "'" : "";
+    if ( viewProgressId === ViewEditorProgressChangeId.IN_PROGRESS ) {
+      msg = "View save in progress for " + viewStr;
+    } else if ( viewProgressId === ViewEditorProgressChangeId.COMPLETED_SUCCESS ) {
+      msg = "View save SUCCESS for " + viewStr;
+    } else if ( viewProgressId === ViewEditorProgressChangeId.COMPLETED_FAILED ) {
+      msg = "View save FAILED for " + viewStr;
+    }
+    return msg;
   }
 
   private handleCanvasEvent(event: ViewCanvasEvent): void {
@@ -238,6 +260,9 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param {ViewDefinition} viewDefn the ViewDefinition
    */
   private initCanvas( viewDefn: ViewDefinition ): void {
+    // Make sure canvas is cleared
+    this.canvasService.clear();
+
     if (viewDefn && viewDefn !== null) {
       // ------------------------
       // Create the source nodes
@@ -265,6 +290,8 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     }
+
+    this.canvasService.update(true);
   }
 
   /**

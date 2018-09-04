@@ -67,14 +67,13 @@ import {
   WizardModule } from "patternfly-ng";
 import { OdataControlComponent } from "./odata-control/odata-control.component";
 import { AccordionModule, BsDropdownModule, TabsModule, TooltipModule } from 'ngx-bootstrap';
-import { ViewCardComponent } from "./virtualization/view-cards/view-card/view-card.component";
-import { ViewCardsComponent } from "./virtualization/view-cards/view-cards.component";
-import { VirtualizationComponent } from "./virtualization/virtualization.component";
 import { ConnectionTreeSelectorComponent } from './virtualization/view-editor/connection-table-dialog/connection-tree-selector/connection-tree-selector.component';
 import { ConnectionTableDialogComponent } from './virtualization/view-editor/connection-table-dialog/connection-table-dialog.component';
 import { ProgressDialogComponent } from "@shared/progress-dialog/progress-dialog.component";
 import { ViewPropertyEditorsComponent } from './virtualization/view-editor/view-property-editors/view-property-editors.component';
 import { AddCompositionWizardComponent } from './virtualization/view-editor/add-composition-wizard/add-composition-wizard.component';
+import { CreateViewDialogComponent } from './virtualization/view-editor/create-view-dialog/create-view-dialog.component';
+import { CreateVirtualizationDialogComponent } from './create-virtualization-dialog/create-virtualization-dialog.component';
 
 @NgModule({
   imports: [
@@ -118,9 +117,6 @@ import { AddCompositionWizardComponent } from './virtualization/view-editor/add-
     ViewPreviewComponent,
     ViewEditorHeaderComponent,
     ViewCanvasComponent,
-    VirtualizationComponent,
-    ViewCardsComponent,
-    ViewCardComponent,
     MessageLogComponent,
     EditorViewsComponent,
     ConnectionTreeSelectorComponent,
@@ -129,7 +125,9 @@ import { AddCompositionWizardComponent } from './virtualization/view-editor/add-
     GraphVisualComponent,
     NodeVisualComponent,
     LinkVisualComponent,
-    AddCompositionWizardComponent
+    AddCompositionWizardComponent,
+    CreateViewDialogComponent,
+    CreateVirtualizationDialogComponent
   ],
   providers: [
     {
@@ -151,7 +149,8 @@ import { AddCompositionWizardComponent } from './virtualization/view-editor/add-
   ],
   exports: [
   ],
-  entryComponents: [AddCompositionWizardComponent, ConfirmDialogComponent, ConnectionTableDialogComponent, ProgressDialogComponent]
+  entryComponents: [AddCompositionWizardComponent, ConfirmDialogComponent, ConnectionTableDialogComponent,
+                    CreateViewDialogComponent, CreateVirtualizationDialogComponent, ProgressDialogComponent]
 })
 export class DataservicesModule { }
 

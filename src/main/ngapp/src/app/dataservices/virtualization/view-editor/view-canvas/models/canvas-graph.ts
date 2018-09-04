@@ -306,6 +306,12 @@ export class CanvasGraph {
       this.canvasService.update(true);
   }
 
+  public clear(): void {
+    this._nodes = [];
+    this._links = [];
+    this.layout = null;
+  }
+
   /**
    * Refreshes / restarts / updates the layout
    */

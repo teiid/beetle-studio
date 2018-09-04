@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{ title }}</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <span class="pficon pficon-close"></span>
+  </button>
+</div>
+<div class="modal-body">
+  <strong>{{message}}</strong><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;<em>(Any pending changes in previous view will automatically be saved)</em>
+  <!-- Form for Name and Description -->
+  <form [formGroup]="viewPropertyForm" class="form-horizontal">
+    <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
+      <label class="col-sm-3 control-label required-pf">Name</label>
+      <div class="col-sm-8">
+        <input class="form-control" formControlName="name" title="">
+        <div class="help-block" *ngIf="!nameValid">{{ nameValidationError }}</div>
+      </div>
+    </div>
+    <div [ngClass]="'form-group'">
+      <label class="col-sm-3 control-label">Description</label>
+      <div class="col-sm-8">
+        <textarea class="form-control" rows="2" maxlength="256" formControlName="description" title=""></textarea>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button i18n="@@createViewDialog.cancel" type="button" class="btn btn-default" (click)="onCancelSelected()">{{ cancelButtonText }}</button>
+  <button i18n="@@createViewDialog.delete" type="button" class="btn btn-primary" (click)="onOkSelected()" [disabled]="!okButtonEnabled">{{ okButtonText }}</button>
+</div>

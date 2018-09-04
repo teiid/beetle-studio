@@ -26,10 +26,11 @@ import { CompositionType } from "@dataservices/shared/composition-type.enum";
  */
 export class ViewDefinition {
   private viewName: string;
-  private keng__description: string;
+  private keng__description = "";
   private isEditable = false;
   private sourcePaths: string[] = [];
   private compositions: Composition[] = [];
+  private isSelected = false;
 
   /**
    * @param {Object} json the JSON representation of a ViewDefinition
@@ -92,7 +93,7 @@ export class ViewDefinition {
    * @param {string} description the view description
    */
   public setDescription( description?: string ): void {
-    this.keng__description = description ? description : null;
+    this.keng__description = description ? description : "";
   }
 
   /**
@@ -328,6 +329,61 @@ export class ViewDefinition {
       }
     }
     return connectionName.toLowerCase() + VdbsConstants.SCHEMA_MODEL_SUFFIX + "." + sourceNodeName;
+  }
+
+  /**
+   * @returns {boolean} 'true' if ViewDefinition isSelected
+   */
+  public get selected(): boolean {
+    return this.isSelected;
+  }
+
+  /**
+   * @param {boolean} selected the ViewDefinition isSelected state
+   */
+  public setSelected( selected: boolean ): void {
+    this.isSelected = selected;
+  }
+
+  /**
+   * Determine if the supplied ViewDefinition is equal to this
+   * @param {Object} values
+   */
+  public isEqual( otherView: ViewDefinition ): boolean {
+    let equal = false;
+    if (this.getName() === otherView.getName() &&
+        this.getDescription() === otherView.getDescription() &&
+        this.pathsEqual(this.getSourcePaths(), otherView.getSourcePaths()) &&
+        this.compositionsEqual(this.getCompositions(), otherView.getCompositions()) ) {
+      equal = true;
+    }
+    return equal;
+  }
+
+  private pathsEqual(left: string[], right: string[]): boolean {
+    if (left === right) return true;
+    if (left == null || right == null) return false;
+    if (left.length !== right.length) return false;
+
+    left.sort();
+    right.sort();
+    for (let i = 0; i < right.length; ++i) {
+      if (left[i] !== right[i]) return false;
+    }
+    return true;
+  }
+
+  private compositionsEqual(left: Composition[], right: Composition[]): boolean {
+    if (left === right) return true;
+    if (left == null || right == null) return false;
+    if (left.length !== right.length) return false;
+
+    left.sort();
+    right.sort();
+    for (let i = 0; i < right.length; ++i) {
+      if (!left[i].isEqual(right[i])) return false;
+    }
+    return true;
   }
 
   /**

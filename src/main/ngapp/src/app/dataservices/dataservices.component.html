@@ -72,10 +72,10 @@
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('dataservices')">
         <div class="dataservices-toast">
-          <!-- Notification for Dataservice Export -->
-          <pfng-toast-notification *ngIf="showExportNotification" [header]="exportNotificationHeader"
-                                 [message]="exportNotificationMessage"
-                                 [type]="exportNotificationType">
+          <!-- Notification for Dataservice opertions -->
+          <pfng-toast-notification *ngIf="showToastNotification" [header]="toastNotificationHeader"
+                                 [message]="toastNotificationMessage"
+                                 [type]="toastNotificationType">
           </pfng-toast-notification>
         </div>
 

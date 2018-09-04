@@ -670,8 +670,7 @@ export class DataserviceService extends ApiService {
     return this.http.get(environment.viewEditorState + "/" + editorId, this.getAuthRequestOptions() )
       .map( ( response ) => {
         const editorState = response.json();
-        const viewEditorState = ViewEditorState.create(editorState);
-        return Observable.of( viewEditorState );
+        return ViewEditorState.create(editorState);
       } )
       .catch( ( error ) => {
         // no editor state found

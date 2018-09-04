@@ -3,9 +3,48 @@
  */
 #view-editor-header-description-input {
   max-width: max-content;
-  min-height: 25px;
-  min-width: 600px;
+  min-height: 20px;
+  min-width: 400px;
   vertical-align: top;
+}
+
+.list-pf-container {
+  -ms-flex-align: start;
+  align-items: flex-start;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 0;
+}
+
+.view-table-div {
+  padding-left: 0;
+  padding-right: 0;
+  margin-bottom: 5px;
+  min-height: 70px;
+  max-height: 70px;
+  border: 1px inset grey;
+  overflow-y: auto;
+}
+
+.view-editor-header-name-input {
+  padding-left: 0;
+  padding-right: 5px;
+}
+
+.view-editor-header-create-button {
+  margin-left: 0;
+  padding-left: 0;
+  padding-top: 8px;
+}
+
+.view-editor-header-delete-button {
+  padding-left: 0;
+  padding-top: 8px;
+}
+
+.view-editor-header-description-area {
+  padding-left: 0;
+  margin-left: 0;
 }
 
 /*
@@ -14,6 +53,13 @@
 .view-editor-header-input-div {
   margin: 1px;
   padding: 1px;
+}
+
+/*
+ * A type for the header title
+ */
+.view-editor-header-title {
+  margin-left: 10px;
 }
 
 /*
@@ -44,4 +90,21 @@
  */
 #view-editor-header-virtualization-name {
   text-align: left;
+}
+
+/*
+ * Style the empty state component so that it is centered and extends the entire width.
+ */
+#view-editor-header-table .blank-slate-pf {
+  background-color: inherit;
+  min-width: 200px;
+  border: none;
+  padding: 0;
+}
+
+/*
+ * Style text in blank slate for table
+ */
+#view-editor-header-table h1, .h1 {
+  font-size: 14px;
 }

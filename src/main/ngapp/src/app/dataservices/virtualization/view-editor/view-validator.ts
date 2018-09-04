@@ -30,7 +30,10 @@ export class ViewValidator {
   public static validate( viewDefn: ViewDefinition ): Message[] {
     const messages: Message[] = [];
 
-    if ( viewDefn ) {
+    if ( !viewDefn || viewDefn === null ) {
+      messages.push(Message.create( Problem.ERR0110));
+    }
+    else {
       // View must have a name
       if ( !viewDefn.getName() || viewDefn.getName().length === 0 ) {
         messages.push( Message.create( Problem.ERR0110 ) );

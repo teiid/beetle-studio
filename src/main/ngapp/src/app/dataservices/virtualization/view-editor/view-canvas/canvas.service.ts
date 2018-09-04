@@ -163,6 +163,10 @@ export class CanvasService {
     return this.canvasGraph.links;
   }
 
+  public clear(): void {
+    this.canvasGraph.clear();
+  }
+
   /**
    * Makes sure both the canvas graph and the
    * view are up to date and all events have
