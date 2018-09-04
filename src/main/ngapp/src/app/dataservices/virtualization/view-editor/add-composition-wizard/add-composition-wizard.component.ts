@@ -125,7 +125,13 @@ export class AddCompositionWizardComponent implements OnInit {
       this.composition.setLeftSourcePath(idParts[1], true);
     } else {
       const selections = this.editorService.getSelection();
-      if (selections && selections.length === 1) {
+      if (selections && selections.length === 2) {
+        // ------------------
+        // this block of code should only be run if 'plus' icon is selected on a source connection node
+        // the second arg of the selection array should be the source path of the canvas node selected
+        // ------------------
+        this.composition.setLeftSourcePath(selections[1], true);
+      } else if (selections && selections.length === 1) {
         const selection = selections[0];
         const idParts = selection.split(Command.identDivider);
         this.composition.setLeftSourcePath(idParts[1], true);

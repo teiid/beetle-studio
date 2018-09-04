@@ -65,20 +65,21 @@ export class RemoveCompositionCommand extends Command {
    */
   public getComposition(): Composition {
     const compStr = this.getArg( RemoveCompositionCommand.removedComposition ) as string;
-    const comp = Composition.create(JSON.parse(compStr));
-    return comp;
+    return Composition.create(JSON.parse(compStr));
   }
 
   /**
    * @param {Composition} composition the Composition to use in generating the id
-   * @returns {string} a unique identifier of this command
+   * @returns {string} the json payload for this command
    */
-  public getId(composition?: Composition): string {
-    let argValue = this.getArg( Command.identArg ) as string;
-    if (composition)
-      argValue = argValue + Command.identDivider + JSON.stringify(composition);
-
-    return argValue;
+  public getPayload(composition?: Composition): string {
+    return JSON.stringify(composition);
   }
 
+  /**
+   * @returns {string} a unique short identifier of this command
+   */
+  public getId(composition?: Composition): string {
+    return this.getArg( Command.identArg ) as string;
+  }
 }

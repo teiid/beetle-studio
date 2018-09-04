@@ -284,13 +284,17 @@ export class ViewDefinition {
    * Get the preview SQL for the view, given the current selections
    * @returns {string} the view SQL
    */
-  public getPreviewSql(): string {
-    let previewSql = "";
+  public getPreviewSql( sourcePath?: string ): string {
 
     // TODO:  This method currently handles single source views, and single join views
     //        Will need to expand capabilites in the future - as more complex joins are supported.
 
     // The preview SQL is only generated if the view is complete
+    if ( sourcePath !=  null ) {
+      const tableName = this.getPreviewTableName(sourcePath);
+      return "SELECT * FROM " + tableName + ";";
+    }
+    // The preview SQL for the view is only generated if the view is complete
     if ( this.complete ) {
       // Join View
       if ( this.getCompositions().length === 1 ) {
@@ -301,18 +305,18 @@ export class ViewDefinition {
         const rightCriteriaColName = composition.getRightCriteriaColumn();
         const criteriaOperator = CompositionOperator.toSql(composition.getOperator());
         const joinType = CompositionType.toSql(composition.getType());
-        previewSql = "SELECT * FROM " + leftTable + " AS A " + joinType + " " +
+        return "SELECT * FROM " + leftTable + " AS A " + joinType + " " +
                                         rightTable + " AS B ON " +
                                         "A." + leftCriteriaColName + " " + criteriaOperator + " " +
                                         "B." + rightCriteriaColName + ";";
         // Single Source View
       } else {
         const tableName = this.getPreviewTableName(this.getSourcePaths()[0]);
-        previewSql = "SELECT * FROM " + tableName + ";";
+        return "SELECT * FROM " + tableName + ";";
       }
     }
 
-    return previewSql;
+    return "";
   }
 
   /**

@@ -57,7 +57,7 @@ export class CanvasService {
       const selection = [];
       if (nodes) {
         nodes.forEach((node) => {
-          selection.push(node.decodedId);
+          selection.push(node.decodedId + Command.identDivider + node.decodePayload);
         });
       }
 
@@ -102,8 +102,12 @@ export class CanvasService {
     if (source.type === CanvasConstants.SOURCE_TYPE) {
       eventType = ViewCanvasEventType.CREATE_COMPOSITION;
       args.push(source.decodedId);
+      args.push(source.decodePayload);
     } else if (source.type === CanvasConstants.COMPOSITION_TYPE)
       eventType = ViewCanvasEventType.CREATE_SOURCE;
+
+    const selectionEvent = ViewCanvasEvent.create(ViewCanvasEventType.CANVAS_SELECTION_CHANGED, args);
+    this.canvasEvent.emit(selectionEvent);
 
     const event = ViewCanvasEvent.create(eventType, args);
     this.canvasEvent.emit(event);
@@ -136,15 +140,18 @@ export class CanvasService {
   }
 
   private removeNodeCallback(node: CanvasNode): void {
-    const eventType = ViewCanvasEventType.DELETE_NODE;
     const args = [];
     //
-    // Send the decoded id so that it can be parsed
+    // Send the decoded id and payload so that it can be parsed
     // and the source path extracted from it if required
     //
     args.push(node.decodedId);
+    args.push(node.decodePayload);
 
-    const event = ViewCanvasEvent.create(eventType, args);
+    const selectionEvent = ViewCanvasEvent.create(ViewCanvasEventType.CANVAS_SELECTION_CHANGED, args);
+    this.canvasEvent.emit(selectionEvent);
+
+    const event = ViewCanvasEvent.create(ViewCanvasEventType.DELETE_NODE, args);
     this.canvasEvent.emit(event);
     this.stopPropagation();
   }
@@ -261,11 +268,11 @@ export class CanvasService {
   /**
    * Create a new node and add it to the graph
    */
-  public createNode(id: string, type: string, label: string, refresh?: boolean): string {
+  public createNode(id: string, payload: string, type: string, label: string, refresh?: boolean): string {
     if (! this.canvasGraph)
       throw new Error("A canvas graph is required before creating a node");
 
-    const canvasNode = this.canvasGraph.addNode(id, type, label, refresh);
+    const canvasNode = this.canvasGraph.addNode(id, payload, type, label, refresh);
     return canvasNode.id;
   }
 
@@ -281,7 +288,10 @@ export class CanvasService {
       // identifier has been delivered as plaintext
       // while the node identifiers are encoded
       //
+
       nodeId = CanvasNode.encodeId(nodeId);
+      const idParts = nodeId.split(Command.identDivider);
+      nodeId = idParts[0];
     }
 
     this.canvasGraph.removeNode(nodeId, refresh);

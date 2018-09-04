@@ -31,6 +31,7 @@ export class CanvasNode implements cola.Node {
 
   private readonly _id: string;
   private readonly _type: string;
+  private readonly _payload: string;
   private _label: string;
   private _selected = false;
   private _root = false;
@@ -43,8 +44,9 @@ export class CanvasNode implements cola.Node {
     return id.replace(/5X5/g, '/').replace(/6X6/g, '=');
   }
 
-  constructor(id: string, type: string, label: string, root?: boolean) {
+  constructor(id: string, payload: string, type: string, label: string, root?: boolean) {
     this._id = CanvasNode.encodeId(id);
+    this._payload = CanvasNode.encodeId(payload);
     this._type = type;
     this._label = label;
     if (root !== undefined)
@@ -57,6 +59,14 @@ export class CanvasNode implements cola.Node {
 
   public get decodedId(): string {
     return CanvasNode.decodeId(this.id);
+  }
+
+  public get payload(): string {
+    return this._payload;
+  }
+
+  public get decodePayload(): string {
+    return CanvasNode.decodeId(this.payload);
   }
 
   public get type(): string {

@@ -83,13 +83,18 @@ export class RemoveSourcesCommand extends Command {
   }
 
   /**
+   * @returns {string} the json payload for this command
+   */
+  public getPayload(sourcePath?: string): string {
+    if (sourcePath)
+      return sourcePath;
+    return this.getArg( Command.identArg ) as string;
+  }
+
+  /**
    * @returns {string} a unique identifier of this command
    */
   public getId(sourcePath?: string): string {
-    let argValue = this.getArg( Command.identArg ) as string;
-    if (sourcePath)
-      argValue = argValue + Command.identDivider + sourcePath;
-
-    return argValue;
+    return this.getArg( Command.identArg ) as string;
   }
 }
