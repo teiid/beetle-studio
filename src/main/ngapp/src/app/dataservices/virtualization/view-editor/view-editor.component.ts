@@ -79,6 +79,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
   //
   private readonly addCompositionActionId = "addCompositionActionId";
   private readonly addSourceActionId = "addSourceActionId";
+  private readonly sampleDataActionId = "sampleDataActionId";
   private readonly deleteActionId = "deleteActionId";
   private readonly errorsActionId = "errorsActionId";
   private readonly infosActionId = "infosActionId";
@@ -92,13 +93,14 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
   //
   private readonly addSourceActionIndex = 0;
   private readonly addCompositionActionIndex = 1;
-  private readonly saveActionIndex = 2;
-  private readonly undoActionIndex = 3;
-  private readonly redoActionIndex = 4;
-  private readonly deleteActionIndex = 5;
-  private readonly errorsActionIndex = 6;
-  private readonly warningsActionIndex = 7;
-  private readonly infosActionIndex = 8;
+  private readonly sampleDataActionIndex = 2;
+  private readonly saveActionIndex = 3;
+  private readonly undoActionIndex = 4;
+  private readonly redoActionIndex = 5;
+  private readonly deleteActionIndex = 6;
+  private readonly errorsActionIndex = 7;
+  private readonly warningsActionIndex = 8;
+  private readonly infosActionIndex = 9;
 
   constructor( connectionService: ConnectionService,
                selectionService: SelectionService,
@@ -121,6 +123,10 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
 
   private canAddSource(): boolean {
     return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
+  }
+
+  private canSampleData(): boolean {
+    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas && this.canvasSingleSourceSelected;
   }
 
   private canDelete(): boolean {
@@ -235,16 +241,16 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
     }
   }
 
-  private doDelete(idents: string[]): void {
+  private doDelete(selectionArgs: string[]): void {
 
-    if (!idents || idents.length === 0) {
+    if (!selectionArgs || selectionArgs.length === 0) {
       alert("Nothing selected for delete");
       return;
     }
 
     // Dialog Content
-    let message = "Do you really want to delete the " + idents.length;
-    if (idents.length > 1)
+    let message = "Do you really want to delete the " + selectionArgs.length;
+    if (selectionArgs.length > 1)
       message = message + " items?";
     else
       message = message + " item?";
@@ -259,26 +265,43 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
     // Show Dialog, act upon confirmation click
     const modalRef = this.modalService.show(ConfirmDialogComponent, {initialState});
     modalRef.content.confirmAction.take(1).subscribe((value) => {
-      idents.forEach((ident) => {
-        const identBits = ident.split(Command.identDivider);
-        const commandPart = identBits[0];
-        const argPart = identBits[1];
-        let tempCmd: Command = null;
+      // ------------------
+      // the selection arguments contain the command object arg[0] and the metadata object arg[1]
+      // 1) need to loop through each selection
+      // 2) create corresponding command
+      // 3) fire view state changed event for each
+      // ------------------
+
+      let tempCmd: Command = null;
+
+      selectionArgs.forEach( ( nextArg ) => {
+        // need to parse the command to find the source path
+        const commandPart = this.getCommandId(nextArg);
+        const argPart = this.getPayload(nextArg);
+
         if (commandPart.startsWith(AddSourcesCommand.id)) {
           tempCmd = CommandFactory.createRemoveSourcesCommand(argPart, commandPart);
         } else if (commandPart.startsWith(AddCompositionCommand.id)) {
           tempCmd = CommandFactory.createRemoveCompositionCommand(argPart, commandPart);
         }
-        if ( tempCmd !== null && tempCmd instanceof Command ) {
+        if (tempCmd !== null ) {
           const cmd = tempCmd as Command;
-          this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR, cmd );
+          this.editorService.fireViewStateHasChanged(ViewEditorPart.EDITOR, cmd);
         } else {
-          this.logger.error( "Failed to create RemoveSourcesCommand");
+          this.logger.error("Failed to create RemoveSourcesCommand");
         }
-
         this.editorService.select(null);
       });
     });
+  }
+
+  private doSampleData(selection: string[]): void {
+    if (!selection || selection.length === 0) {
+      alert("Nothing selected for sample data");
+      return;
+    }
+    const path = selection[0];
+    this.editorService.updatePreviewResults(path);
   }
 
   private doSelection(selection: string[]): void {
@@ -304,6 +327,32 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
   }
 
   /**
+   * @returns {string} argument array from the selection string
+   */
+  private getArgs(selection?: string): string[] {
+    if ( selection !== null ) {
+      return selection.split(Command.identDivider);
+    }
+    return null;
+  }
+
+  private getCommandId(selection?: string): string {
+    if (selection !== null) {
+      const args = selection.split(Command.identDivider);
+      return args[0];
+    }
+    return null;
+  }
+
+  private getPayload(selection?: string): string {
+    if (selection !== null) {
+      const args = selection.split(Command.identDivider);
+      return args[1];
+    }
+    return null;
+  }
+
+  /**
    * Callback for when a view icon is clicked on the toolbar.
    *
    * @param {ToolbarView} toolbarView the toolbar view representing the editor configuration to display
@@ -326,6 +375,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
    *
    * @param {TemplateRef<any>} addSourceTemplate the template for the add source toolbar button
    * @param {TemplateRef<any>} addCompositionTemplate the template for the add composition toolbar button
+   * @param {TemplateRef<any>} sampleDataTemplate the template for the sample data toolbar button
    * @param {TemplateRef<any>} undoTemplate the template for the undo toolbar button
    * @param {TemplateRef<any>} redoTemplate the template for the redo toolbar button
    * @param {TemplateRef<any>} saveTemplate the template for the save toolbar button
@@ -337,6 +387,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
    */
   public getActionConfig( addSourceTemplate: TemplateRef< any >,
                           addCompositionTemplate: TemplateRef< any >,
+                          sampleDataTemplate: TemplateRef< any >,
                           undoTemplate: TemplateRef< any >,
                           redoTemplate: TemplateRef< any >,
                           saveTemplate: TemplateRef< any >,
@@ -360,6 +411,13 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
             template: addCompositionTemplate,
             title: ViewEditorI18n.addCompositionActionTitle,
             tooltip: ViewEditorI18n.addCompositionActionTooltip
+          },
+          {
+            disabled: !this.canSampleData(),
+            id: this.sampleDataActionId,
+            template: sampleDataTemplate,
+            title: ViewEditorI18n.sampleDataActionTitle,
+            tooltip: ViewEditorI18n.sampleDataActionTooltip
           },
           {
             disabled: !this.canSave(),
@@ -434,6 +492,10 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
       case this.addSourceActionId:
         this.doAddSource();
         break;
+      case this.sampleDataActionId:
+        const singleSelection = this.editorService.getSelection();
+        this.doSampleData(singleSelection);
+        break;
       case this.deleteActionId:
         const selection = this.editorService.getSelection();
         this.doDelete(selection);
@@ -488,7 +550,11 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
     }
     else if (event.typeIsDeleteNode()) {
       const selection = [];
-      selection.push(event.args[0]);
+      let selectionStr = event.args[0];
+      if ( event.args.length > 1 ) {
+        selectionStr += Command.identDivider + event.args[1];
+      }
+      selection.push(selectionStr);
       this.doDelete(selection);
     }
     else if (event.typeIsCanvasSelectionChanged()) {
@@ -569,8 +635,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
   public get canvasSingleSourceSelected(): boolean {
     const selections = this.editorService.getSelection();
     if (selections && selections.length === 1) {
-      const selection = selections[0];
-      const identBits = selection.split(Command.identDivider);
       return true;
     }
     return false;
@@ -592,6 +656,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit, AfterVie
       this.actionConfig.primaryActions[ this.undoActionIndex ].disabled = !this.canUndo();
       this.actionConfig.primaryActions[ this.undoActionIndex ].tooltip = this.editorService.getUndoActionTooltip();
       this.actionConfig.primaryActions[ this.warningsActionIndex ].disabled = !this.hasWarnings();
+      this.actionConfig.primaryActions[ this.sampleDataActionIndex ].disabled = !this.canSampleData();
     }
   }
 

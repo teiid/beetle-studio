@@ -76,7 +76,7 @@ export class AddSourcesCommand extends Command {
       //
       // Generate new id for this source
       //
-      id = AddSourcesCommand.id + Date.now();
+      id = AddSourcesCommand.id + this.idGen;
     }
 
     this._args.set( Command.identArg, id);
@@ -91,13 +91,18 @@ export class AddSourcesCommand extends Command {
   }
 
   /**
-   * @returns {string} a unique identifier of this command
+   * @returns {string} the json payload for this command
+   */
+  public getPayload(sourcePath?: string): string {
+    if (sourcePath)
+      return sourcePath;
+    return this.getArg( Command.identArg ) as string;
+  }
+
+  /**
+   * @returns {string} a unique short identifier of this command
    */
   public getId(sourcePath?: string): string {
-    let argValue = this.getArg( Command.identArg ) as string;
-    if (sourcePath)
-      argValue = argValue + Command.identDivider + sourcePath;
-
-    return argValue;
+    return this.getArg( Command.identArg ) as string;
   }
 }
