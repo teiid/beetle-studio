@@ -19,6 +19,7 @@ import { Injectable } from "@angular/core";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { Connection } from "@connections/shared/connection.model";
 import { ViewDefinition } from "@dataservices/shared/view-definition.model";
+import { SqlView } from "@dataservices/shared/sql-view.model";
 
 @Injectable()
 export class SelectionService {
@@ -54,6 +55,27 @@ export class SelectionService {
    */
   public get hasSelectedVirtualization(): boolean {
     return this.selectedVirtualization && this.selectedVirtualization !== null;
+  }
+
+  /**
+   * Get the current Virtualization selection's views.View
+   * The ViewDefinition name is currently set to the full "modelName"."viewName" of the view.
+   * @returns {SqlView[]} the selected Dataservice view definitions
+   */
+  public getSelectedVirtualizationViewNames( ): SqlView[] {
+    if ( !this.hasSelectedVirtualization ) {
+      return [];
+    }
+
+    const modelName = this.selectedVirtualization.getServiceViewModel();
+    const serviceViews = this.selectedVirtualization.getServiceViewNames();
+
+    const allViewNames: SqlView[] = [];
+    for ( const serviceView of serviceViews ) {
+      allViewNames.push(new SqlView(modelName + "." + serviceView));
+    }
+
+    return allViewNames;
   }
 
   /**

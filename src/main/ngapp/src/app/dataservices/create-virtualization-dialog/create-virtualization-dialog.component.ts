@@ -25,6 +25,7 @@ import { AbstractControl, FormControl, FormGroup } from "@angular/forms";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { CreateVirtualizationResult } from "@dataservices/create-virtualization-dialog/create-virtualization-result.model";
+import { SelectionService } from "@core/selection.service";
 
 @Component({
   selector: "app-create-virtualization-dialog",
@@ -62,15 +63,17 @@ export class CreateVirtualizationDialogComponent implements OnInit {
 
   private loggerService: LoggerService;
   private dataserviceService: DataserviceService;
+  private selectionService: SelectionService;
   private vdbService: VdbService;
   private serviceVdbName = "";
 
   constructor(bsModalRef: BsModalRef, logger: LoggerService,
-              dataserviceService: DataserviceService, vdbService: VdbService) {
+              dataserviceService: DataserviceService, selectionService: SelectionService, vdbService: VdbService) {
     this.bsModalRef = bsModalRef;
     this.loggerService = logger;
     this.dataserviceService = dataserviceService;
-    const dService = this.dataserviceService.getSelectedDataservice();
+    this.selectionService = selectionService;
+    const dService = this.selectionService.getSelectedVirtualization();
     if ( dService && dService !== null ) {
       this.serviceVdbName = dService.getServiceVdbName();
     }

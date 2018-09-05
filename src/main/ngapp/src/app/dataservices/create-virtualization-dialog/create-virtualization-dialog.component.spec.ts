@@ -15,6 +15,7 @@ import { CreateVirtualizationDialogComponent } from "./create-virtualization-dia
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { SelectionService } from "@core/selection.service";
 
 describe('CreateVirtualizationDialogComponent', () => {
   let component: CreateVirtualizationDialogComponent;
@@ -31,7 +32,7 @@ describe('CreateVirtualizationDialogComponent', () => {
         NotificationModule
       ],
       declarations: [ CreateVirtualizationDialogComponent ],
-      providers: [ AppSettingsService, BsModalRef, LoggerService, NotifierService,
+      providers: [ AppSettingsService, BsModalRef, LoggerService, NotifierService, SelectionService,
         { provide: DataserviceService, useClass: MockDataserviceService },
         { provide: VdbService, useClass: MockVdbService }
       ]

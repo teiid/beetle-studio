@@ -8,13 +8,12 @@ import {
   NotificationModule
 } from "patternfly-ng";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { DataserviceService } from "@dataservices/shared/dataservice.service";
-import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { SelectionService } from "@core/selection.service";
 
 describe('CreateViewDialogComponent', () => {
   let component: CreateViewDialogComponent;
@@ -31,8 +30,7 @@ describe('CreateViewDialogComponent', () => {
         NotificationModule
       ],
       declarations: [ CreateViewDialogComponent ],
-      providers: [ AppSettingsService, BsModalRef, LoggerService, NotifierService,
-        { provide: DataserviceService, useClass: MockDataserviceService },
+      providers: [ AppSettingsService, BsModalRef, LoggerService, NotifierService, SelectionService,
         { provide: VdbService, useClass: MockVdbService }
       ]
     })

@@ -41,6 +41,7 @@ import { RemoveCompositionCommand } from "@dataservices/virtualization/view-edit
 import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
+import { SelectionService } from "@core/selection.service";
 
 @Injectable()
 export class ViewEditorService {
@@ -65,6 +66,7 @@ export class ViewEditorService {
   private _shouldFireEvents = true;
   private _undoMgr: UndoManager;
   private readonly _dataserviceService: DataserviceService;
+  private readonly _selectionService: SelectionService;
   private readonly _vdbService: VdbService;
   private _warningMsgCount = 0;
   private _selection: string[] = [];
@@ -72,9 +74,11 @@ export class ViewEditorService {
 
   constructor( logger: LoggerService,
                dataserviceService: DataserviceService,
+               selectionService: SelectionService,
                vdbService: VdbService ) {
     this._logger = logger;
     this._dataserviceService = dataserviceService;
+    this._selectionService = selectionService;
     this._vdbService = vdbService;
     this._undoMgr = new UndoManager();
   }
@@ -424,7 +428,7 @@ export class ViewEditorService {
     editorState.setUndoables(this._undoMgr.toArray());
     editorState.setViewDefinition(this._editorView);
 
-    const dataserviceName = this._dataserviceService.getSelectedDataservice().getId();
+    const dataserviceName = this._selectionService.getSelectedVirtualization().getId();
 
     this._dataserviceService.saveViewEditorStateRefreshViews( editorState, dataserviceName ).subscribe( () => {
         // fire save editor state succeeded event

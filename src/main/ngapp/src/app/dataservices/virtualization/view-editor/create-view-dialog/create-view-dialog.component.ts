@@ -23,8 +23,8 @@ import { LoggerService } from "@core/logger.service";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { AbstractControl, FormControl, FormGroup } from "@angular/forms";
 import { VdbService } from "@dataservices/shared/vdb.service";
-import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { ViewDefinition } from "@dataservices/shared/view-definition.model";
+import { SelectionService } from "@core/selection.service";
 
 @Component({
   selector: "app-create-view-dialog",
@@ -60,16 +60,16 @@ export class CreateViewDialogComponent implements OnInit {
   public viewPropertyForm: FormGroup;
 
   private loggerService: LoggerService;
-  private dataserviceService: DataserviceService;
+  private selectionService: SelectionService;
   private vdbService: VdbService;
   private serviceVdbName = "";
 
   constructor(bsModalRef: BsModalRef, logger: LoggerService,
-              dataserviceService: DataserviceService, vdbService: VdbService) {
+              selectionService: SelectionService, vdbService: VdbService) {
     this.bsModalRef = bsModalRef;
     this.loggerService = logger;
-    this.dataserviceService = dataserviceService;
-    const dService = this.dataserviceService.getSelectedDataservice();
+    this.selectionService = selectionService;
+    const dService = this.selectionService.getSelectedVirtualization();
     if ( dService && dService !== null ) {
       this.serviceVdbName = dService.getServiceVdbName();
     }

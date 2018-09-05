@@ -105,10 +105,7 @@ export class Dataservice implements Identifiable< string > {
    * @returns {string} the dataservice Vdb name (can be null)
    */
   public getServiceVdbName(): string {
-    if (this.serviceVdbName && this.serviceVdbName !== null) {
-      return this.serviceVdbName;
-    }
-    return "";
+    return this.serviceVdbName;
   }
 
   /**

@@ -452,8 +452,8 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
 
   public onTest(svcName: string): void {
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
-    this.dataserviceService.setSelectedDataservice(selectedService);
-    this.allSvcViewNames = this.dataserviceService.getSelectedDataserviceViewNames();
+    this.selectionService.setSelectedVirtualization(selectedService);
+    this.allSvcViewNames = this.selectionService.getSelectedVirtualizationViewNames();
     this.selectedSvcViewNames = [];
     this.selectedSvcViewNames.push(this.allServiceViewNames[0]);
 
@@ -661,7 +661,6 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
         (dataservices) => {
           for (const ds of dataservices) {
             if (ds.getId() === virtName) {
-              self.dataserviceService.setSelectedDataservice(ds);
               self.selectionService.setSelectedVirtualization(ds);
               self.createView(ds, viewDefn);
             }
@@ -678,7 +677,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   private createView(dataservice: Dataservice, viewDefn: ViewDefinition): void {
-    const selectedDs = this.dataserviceService.getSelectedDataservice();
+    const selectedDs = this.selectionService.getSelectedVirtualization();
     let editorId = "";
     if ( selectedDs || selectedDs !== null ) {
       editorId = this.getEditorStateId(selectedDs, viewDefn);
@@ -731,12 +730,9 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
    */
   public onEdit(svcName: string): void {
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
-    this.dataserviceService.setSelectedDataservice(selectedService);
+    this.selectionService.setSelectedVirtualization(selectedService);
 
     this.closeLookPanels();
-
-    // Sets the selected dataservice and edit mode before transferring
-    this.selectionService.setSelectedVirtualization(selectedService);
 
     const link: string[] = [ DataservicesConstants.viewPath ];
     this.logger.debug("[DataservicesPageComponent] Navigating to: %o", link);
@@ -750,8 +746,8 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
    */
   public onQuickLook(svcName: string): void {
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
-    this.dataserviceService.setSelectedDataservice(selectedService);
-    this.allSvcViewNames = this.dataserviceService.getSelectedDataserviceViewNames();
+    this.selectionService.setSelectedVirtualization(selectedService);
+    this.allSvcViewNames = this.selectionService.getSelectedVirtualizationViewNames();
     this.selectedSvcViewNames = [];
     this.selectedSvcViewNames.push(this.allServiceViewNames[0]);
     const viewName = this.selectedSvcViewNames[0];
@@ -776,7 +772,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
    */
   public onOdataLook(svcName: string): void {
     const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
-    this.dataserviceService.setSelectedDataservice(selectedService);
+    this.selectionService.setSelectedVirtualization(selectedService);
 
     if (!this.odataEditorShowing) {
       this.setOdataEditorPanelOpenState(true);

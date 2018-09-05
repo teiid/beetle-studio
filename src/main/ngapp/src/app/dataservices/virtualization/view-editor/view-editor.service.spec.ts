@@ -9,6 +9,7 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { ViewEditorService } from '@dataservices/virtualization/view-editor/view-editor.service';
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
+import { SelectionService } from "@core/selection.service";
 
 describe('ViewEditorService', () => {
   beforeEach(() => {
@@ -21,6 +22,7 @@ describe('ViewEditorService', () => {
         { provide: DataserviceService, useClass: MockDataserviceService },
         LoggerService,
         NotifierService,
+        SelectionService,
         { provide: VdbService, useClass: MockVdbService },
         ViewEditorService
       ]

@@ -15,6 +15,7 @@ import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.se
 import { TableModule } from "patternfly-ng";
 import { SelectionService } from "@core/selection.service";
 import { BsModalService } from "ngx-bootstrap";
+import { Dataservice } from "@dataservices/shared/dataservice.model";
 
 describe('ViewEditorHeaderComponent', () => {
   let component: ViewEditorHeaderComponent;
@@ -46,6 +47,14 @@ describe('ViewEditorHeaderComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ViewEditorHeaderComponent);
     component = fixture.componentInstance;
+
+    const selService = TestBed.get( SelectionService );
+    const ds: Dataservice = new Dataservice();
+    ds.setId("testDs");
+    ds.setServiceVdbName("testDsVdb");
+    // noinspection JSUnusedAssignment
+    selService.setSelectedVirtualization( ds );
+
     fixture.detectChanges();
   });
 
