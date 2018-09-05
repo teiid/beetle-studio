@@ -32,6 +32,7 @@
           <pfng-action class="toolbar-pf-actions"
                [config]="getActionConfig(addSourceTemplate,
                                          addCompositionTemplate,
+                                         sampleDataTemplate,
                                          undoTemplate,
                                          redoTemplate,
                                          saveTemplate,
@@ -48,6 +49,9 @@
               <span class="fa fa-angle-left view-editor-toolbar-icon"></span>
               <span class="fa fa-angle-right view-editor-toolbar-icon"></span>
               <span class="fa fa-plus view-editor-toolbar-icon"></span>
+            </ng-template>
+            <ng-template #sampleDataTemplate let-action="action">
+              <span id="view-editor-toolbar-sample-button" class="fa fa-play view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #undoTemplate let-action="action">
               <span id="view-editor-toolbar-undo-button" class="fa fa-rotate-left view-editor-toolbar-icon"></span>

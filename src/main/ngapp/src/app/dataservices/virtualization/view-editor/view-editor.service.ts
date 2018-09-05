@@ -463,6 +463,7 @@ export class ViewEditorService {
   public setEditorView( viewDefn: ViewDefinition,
                         source: ViewEditorPart ): void {
     this._editorView = viewDefn;
+    this._selection = [];
     if ( viewDefn !== null ) {
       this._originalView = ViewDefinition.create(viewDefn.toJSON());
     } else {
@@ -490,18 +491,26 @@ export class ViewEditorService {
    * Update the preview results for the current view.  This issues a query against the preview VDB and sets
    * the previewResults
    */
-  public updatePreviewResults( ): void {
+  public updatePreviewResults( sourcePath?: string ): void {
     // Clear preview results
     this.setPreviewResults(null, null, ViewEditorPart.EDITOR);
 
-    // Fetch new results
-    const viewSql = this._editorView.getPreviewSql();
+    var querySql = "";
+    if ( sourcePath != null && !sourcePath.startsWith(AddCompositionCommand.id) ) {
+      // Fetch new results for source table
+      querySql = this._editorView.getPreviewSql(sourcePath);
+
+    } else {
+      // Fetch new results for view
+      querySql = this._editorView.getPreviewSql();
+
+    }
     const self = this;
     // Resets all of the views in the service VDB
-    this._vdbService.queryVdb(viewSql, VdbsConstants.PREVIEW_VDB_NAME, 15, 0)
+    this._vdbService.queryVdb(querySql, VdbsConstants.PREVIEW_VDB_NAME, 15, 0)
       .subscribe(
         (queryResult) => {
-          self.setPreviewResults(viewSql, queryResult, ViewEditorPart.EDITOR);
+          self.setPreviewResults(querySql, queryResult, ViewEditorPart.EDITOR);
         },
         (error) => {
           this._logger.error( "[ViewEditorService.updatePreviewResults] - error getting results" );

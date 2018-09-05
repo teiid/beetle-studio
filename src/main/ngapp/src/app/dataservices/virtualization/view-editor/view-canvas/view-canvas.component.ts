@@ -39,6 +39,7 @@ import { RemoveCompositionCommand } from "@dataservices/virtualization/view-edit
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 import { ViewDefinition } from "@dataservices/shared/view-definition.model";
+import { Composition } from "@dataservices/shared/composition.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -81,7 +82,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (args[0] instanceof AddSourcesCommand) {
       const cmd = args[0] as AddSourcesCommand;
-      this.createSourceNodes(cmd);
+      this.createSourceNode(cmd);
     } else if (args[0] instanceof RemoveSourcesCommand) {
       const cmd = args[0] as RemoveSourcesCommand;
       this.removeSourceNodes(cmd);
@@ -265,21 +266,6 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (viewDefn && viewDefn !== null) {
       // ------------------------
-      // Create the source nodes
-      // ------------------------
-      const sourcePaths = viewDefn.getSourcePaths();
-      if (sourcePaths && sourcePaths.length > 0) {
-        let sourcesStr = "";
-        for (let i = 0; i < sourcePaths.length; i++) {
-          sourcesStr += sourcePaths[i];
-          if (i !== sourcePaths.length - 1) {
-            sourcesStr += ", ";
-          }
-        }
-        const cmd = CommandFactory.createAddSourcesCommand(sourcesStr) as AddSourcesCommand;
-        this.createSourceNodes(cmd);
-      }
-      // --------------------------
       // Create the compositions
       // --------------------------
       const compositions = viewDefn.getCompositions();
@@ -288,6 +274,19 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
           const cmd = CommandFactory.createAddCompositionCommand(composition) as AddCompositionCommand;
           this.createComposition(cmd);
         }
+      }
+
+      // ------------------------
+      // Create the source nodes
+      // ------------------------
+      const sourcePaths = viewDefn.getSourcePaths();
+      // ------------------------
+      // create a command for each source path to correspond to
+      // unique canvas nodes for each source
+      // ------------------------
+      for (const path of sourcePaths) {
+          const cmd = CommandFactory.createAddSourcesCommand(path) as AddSourcesCommand;
+          this.createSourceNode(cmd);
       }
     }
 
@@ -298,15 +297,21 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
    * Create canvas nodes using the provided AddSourcesCommand
    * @param {AddSourcesCommand} command the AddSourcesCommand
    */
-  private createSourceNodes(command: AddSourcesCommand): void {
+  private createSourceNode(command: AddSourcesCommand): void {
     const sourcePaths: string[] = command.getSourcePaths();
     for (let i = 0; i < sourcePaths.length; ++i) {
       const srcPath = sourcePaths[i];
+      const existingNode = this.getCanvasNodeForSourcePath(srcPath);
+      if ( existingNode && existingNode !== null) {
+        return;
+      }
       const update = (i === (sourcePaths.length - 1));
       const id = command.getId(srcPath);
       const label = "[" + PathUtils.getConnectionName(srcPath) +
         "]: " + PathUtils.getSourceName(srcPath);
-      this.canvasService.createNode(id, CanvasConstants.SOURCE_TYPE, label, update);
+      this.canvasService.createNode(id, command.getPayload(srcPath), CanvasConstants.SOURCE_TYPE, label, update);
+
+      this.createLink(null, srcPath);
     }
   }
 
@@ -319,8 +324,8 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     for (let i = 0; i < srcPaths.length; ++i) {
       const srcPath = srcPaths[i];
       const update = (i === (srcPaths.length - 1));
-      const id = command.getId(srcPath);
-      this.canvasService.deleteNode(id, update);
+      const srcNode = this.getCanvasNodeForSourcePath(srcPath);
+      this.canvasService.deleteNode(srcNode.id, update);
     }
   }
 
@@ -330,7 +335,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private createComposition(command: AddCompositionCommand): void {
     const composition = command.getComposition();
-    const compNodeId = this.canvasService.createNode(command.getId(composition.getName()), CanvasConstants.COMPOSITION_TYPE, composition.getName(), true);
+    const compNodeId = this.canvasService.createNode(command.getId(composition.getName()), command.getPayload(composition.getName()), CanvasConstants.COMPOSITION_TYPE, composition.getName(), true);
     // Create links to source nodes if not found
     this.createLink(compNodeId, composition.getLeftSourcePath());
     this.createLink(compNodeId, composition.getRightSourcePath());
@@ -342,7 +347,12 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private removeComposition(command: RemoveCompositionCommand): void {
     const composition = command.getComposition();
-    this.canvasService.deleteNode(command.getId(composition), true);
+    // an undo add command may be executed here where the command ID will include
+    // a timestamp that does not match any canvas node
+    // Need to find the "name" property in the composition and match it with the
+    // name property of the payload
+    const compNode = this.getCompositionNodeForCompositionName(composition.getName());
+    this.canvasService.deleteNode(compNode.id, true);
   }
 
   /**
@@ -370,8 +380,16 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
 
-      if (!linkExists) {
-        this.canvasService.createLink(sourceNodeId, compositionNodeId, true);
+      if ( !linkExists ) {
+        if ( compositionNodeId === null ) {
+          const compNode = this.getCompositionNodeForSourcePath(sourcePath);
+          if ( compNode && compNode !== null ) {
+            compositionNodeId = compNode.id;
+          }
+        }
+        if ( compositionNodeId !== null ) {
+          this.canvasService.createLink(sourceNodeId, compositionNodeId, true);
+        }
       }
     }
   }
@@ -380,17 +398,55 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     let nodeForPath: CanvasNode = null;
     const canvasNodes: CanvasNode[] = this.canvasService.nodes();
     for (const canvasNode of canvasNodes) {
-      const nodeId = canvasNode.decodedId;
+      const nodeId = canvasNode.id;
       if (nodeId.startsWith(AddSourcesCommand.id)) {
-        const identBits = nodeId.split(Command.identDivider);
-        const path = identBits[1];
-        if (path === sourcePath) {
+        const payload = canvasNode.decodePayload;
+        if (payload === sourcePath) {
           nodeForPath = canvasNode;
           break;
         }
       }
     }
     return nodeForPath;
+  }
+
+  /* if source path == null, then a source node has been added via undo sources command
+   * need to find the compositions on the canvas and check if it has an source path that matches
+   * then return that node
+   */
+  private getCompositionNodeForSourcePath( sourcePath: string): CanvasNode {
+    const canvasNodes: CanvasNode[] = this.canvasService.nodes();
+    for (const canvasNode of canvasNodes) {
+      const nodeId = canvasNode.id;
+      if (nodeId.startsWith(AddCompositionCommand.id)) {
+        const payload = canvasNode.decodePayload;
+        const comp = Composition.create(JSON.parse(payload));
+        const leftPath = comp.getLeftSourcePath();
+        const rightPath = comp.getRightSourcePath();
+        if (leftPath === sourcePath) {
+          return canvasNode;
+        } else if ( rightPath === sourcePath) {
+            return canvasNode;
+        }
+      }
+    }
+  }
+
+  private getCompositionNodeForCompositionName( compName: string): CanvasNode {
+    const canvasNodes: CanvasNode[] = this.canvasService.nodes();
+    for (const canvasNode of canvasNodes) {
+      const nodeId = canvasNode.id;
+      if (nodeId.startsWith(AddCompositionCommand.id)) {
+        const payload = canvasNode.decodePayload;
+        const comp = Composition.create(JSON.parse(payload));
+        const compNodeName = comp.getName();
+
+        if (compNodeName === compName) {
+          return canvasNode;
+        }
+      }
+    }
+    return null;
   }
 
 }

@@ -60,7 +60,7 @@ export class AddCompositionCommand extends Command {
       //
       // Generate new id for this source
       //
-      id = AddCompositionCommand.id + Date.now();
+      id = AddCompositionCommand.id + this.idGen;
     }
 
     this._args.set( Command.identArg, id);
@@ -76,15 +76,17 @@ export class AddCompositionCommand extends Command {
   }
 
   /**
-   * @returns {string} a unique identifier of this command
+   * @returns {string} json payload for this command
+   */
+  public getPayload(compositionName?: string): string {
+    return this.getArg( AddCompositionCommand.addedComposition ) as string;
+  }
+
+  /**
+   * @returns {string} a unique short identifier of this command
    */
   public getId(compositionName?: string): string {
-    let result = this.getArg( Command.identArg ) as string;
-    const compArgValue = this.getArg( AddCompositionCommand.addedComposition ) as string;
-    if (compArgValue) {
-      result = result + Command.identDivider + compArgValue;
-    }
-    return result;
+    return this.getArg( Command.identArg ) as string;
   }
 
 }

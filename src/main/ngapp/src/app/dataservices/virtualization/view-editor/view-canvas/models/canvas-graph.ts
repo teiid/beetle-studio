@@ -168,9 +168,9 @@ export class CanvasGraph {
   /**
    * Add a new node to the graph
    */
-  public addNode(id: string, type: string, label: string, update?: boolean): CanvasNode {
+  public addNode(id: string, payload: string, type: string, label: string, update?: boolean): CanvasNode {
     const isEmpty = _.isEmpty(this.nodes);
-    const canvasNode = new CanvasNode(id, type, label, isEmpty);
+    const canvasNode = new CanvasNode(id, payload, type, label, isEmpty);
 
     //
     // Set as fixed by default until its linked
@@ -246,7 +246,7 @@ export class CanvasGraph {
       }
 
       //
-      // Remove any nodes targetted by this link
+      // Remove any nodes targeted by this link
       // (ignoring the current nodeToRemove)
       //
       if (nodeToRemove !== link.target)
@@ -299,8 +299,8 @@ export class CanvasGraph {
     //
     // Remove the fix on the nodes unless it is the root
     //
-    src.setFixed(!src.root);
-    tgt.setFixed(!tgt.root);
+    src.setFixed(false);
+    tgt.setFixed(false);
 
     if (update !== undefined && update)
       this.canvasService.update(true);

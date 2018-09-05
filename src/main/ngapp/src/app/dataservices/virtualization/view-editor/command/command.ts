@@ -116,6 +116,13 @@ export abstract class Command {
   }
 
   /**
+   * @returns {string} a unique 9 digit number preceeded with an underscore '_'
+   */
+  public get idGen(): string {
+    return '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  /**
    * @returns {{}} a JSON representation of the command
    */
   public toJSON(): {} {
