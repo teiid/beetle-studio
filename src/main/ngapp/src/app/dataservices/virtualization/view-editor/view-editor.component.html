@@ -84,7 +84,7 @@
   <!-- ========== Canvas and Properties ========== -->
   <!-- =========================================== -->
   <div id="view-editor-edit-container"
-       *ngIf="isShowingCanvas">
+       [hidden]="!isShowingCanvas">
     <app-view-canvas></app-view-canvas>
   </div>
 

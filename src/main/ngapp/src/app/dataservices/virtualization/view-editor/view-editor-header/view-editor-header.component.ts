@@ -136,7 +136,9 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
     this.tableConfig = {
       emptyStateConfig: this.emptyStateConfig
     } as TableConfig;
+  }
 
+  public ngAfterViewInit(): void {
     // init the available views
     this.initViews();
   }
