@@ -430,14 +430,17 @@ export class ViewEditorService {
 
     const dataserviceName = this._selectionService.getSelectedVirtualization().getId();
 
+    const self = this;
     this._dataserviceService.saveViewEditorStateRefreshViews( editorState, dataserviceName ).subscribe( () => {
+        // reset original view to saved state
+        self._originalView = ViewDefinition.create(this._editorView.toJSON());
         // fire save editor state succeeded event
-        this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
+        self.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
                                            ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
                                            [ ViewEditorProgressChangeId.COMPLETED_SUCCESS ] ) );
       }, () => {
         // fire save editor state failed event
-        this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
+        self.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
                                            ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
                                            [ ViewEditorProgressChangeId.COMPLETED_FAILED ] ) );
       }
@@ -499,7 +502,7 @@ export class ViewEditorService {
     // Clear preview results
     this.setPreviewResults(null, null, ViewEditorPart.EDITOR);
 
-    var querySql = "";
+    let querySql = "";
     if ( sourcePath != null && !sourcePath.startsWith(AddCompositionCommand.id) ) {
       // Fetch new results for source table
       querySql = this._editorView.getPreviewSql(sourcePath);

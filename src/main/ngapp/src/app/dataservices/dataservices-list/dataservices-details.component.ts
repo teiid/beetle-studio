@@ -26,7 +26,7 @@ import { DataservicesConstants } from "../shared/dataservices-constants";
   templateUrl: "dataservices-details.component.html"
 })
 export class DataservicesDetailsComponent implements OnInit {
-  @Input() public item: Dataservice;
+  @Input() public virtualization: Dataservice;
 
   public listConfig: ListConfig;
 
@@ -49,8 +49,8 @@ export class DataservicesDetailsComponent implements OnInit {
    */
   public get properties(): string[][] {
     const props = [
-      [ DataservicesConstants.dataserviceNameLabel, this.item.getId() ],
-      [ DataservicesConstants.descriptionLabel, this.item.getDescription() ]
+      [ DataservicesConstants.dataserviceNameLabel, this.virtualization.getId() ],
+      [ DataservicesConstants.descriptionLabel, this.virtualization.getDescription() ]
     ];
 
     return props;

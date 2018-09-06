@@ -152,7 +152,7 @@
 
 .object-card-selected .card-pf .card-pf-body,
 .object-card .card-pf .card-pf-body {
-  margin: 20px;
+  margin: 0;
   padding: 0;
 }
 
@@ -170,7 +170,7 @@
 }
 
 .object-card-body {
-  margin: 0 -20px;
+  margin: 0;
   max-height: 200px;
   overflow-y: auto;
 }

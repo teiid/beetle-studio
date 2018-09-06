@@ -31,6 +31,7 @@ import { Subscription } from "rxjs/Subscription";
 import * as _ from "lodash";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
+import { NameValue } from "@dataservices/shared/name-value.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -64,7 +65,7 @@ export class DataservicesListComponent implements OnInit {
   @Output() public publishDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public downloadDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public deleteDataservice: EventEmitter<string> = new EventEmitter<string>();
-  @Output() public editDataservice: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public editDataservice: EventEmitter<NameValue> = new EventEmitter<NameValue>();
   @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public odataLookDataservice: EventEmitter<string> = new EventEmitter<string>();
 
@@ -247,7 +248,12 @@ export class DataservicesListComponent implements OnInit {
   }
 
   public onEditDataservice(dataserviceName: string): void {
-    this.editDataservice.emit(dataserviceName);
+    const nameVal = new NameValue(dataserviceName, null);
+    this.editDataservice.emit(nameVal);
+  }
+
+  public onEditView(dsNameView: NameValue): void {
+    this.editDataservice.emit(dsNameView);
   }
 
   public onPreviewDataservice( dataserviceName: string): void {

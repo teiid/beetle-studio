@@ -19,6 +19,7 @@ import { Component, EventEmitter, Input, Output, ViewEncapsulation } from "@angu
 import { LoggerService } from "@core/logger.service";
 import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
+import { NameValue } from "@dataservices/shared/name-value.model";
 
 @Component({
   moduleId: module.id,
@@ -37,7 +38,7 @@ export class DataservicesCardsComponent {
   @Output() public testDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public publishDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public deleteDataservice: EventEmitter<string> = new EventEmitter<string>();
-  @Output() public editDataservice: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public editDataservice: EventEmitter<NameValue> = new EventEmitter<NameValue>();
   @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public downloadDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public odataLookDataservice: EventEmitter<string> = new EventEmitter<string>();
@@ -55,13 +56,16 @@ export class DataservicesCardsComponent {
     return this.selectedDataservices.indexOf( dataservice ) !== -1;
   }
 
-  public onCardEvent( event: { eventType: string, dataserviceName: string } ): void {
+  public onCardEvent( event: { eventType: string, dataserviceName: string, viewName: string } ): void {
     switch ( event.eventType ) {
       case DataserviceCardComponent.deleteDataserviceEvent:
         this.deleteDataservice.emit( event.dataserviceName );
         break;
       case DataserviceCardComponent.editDataserviceEvent:
-        this.editDataservice.emit( event.dataserviceName );
+        const dsName = event.dataserviceName;
+        const viewName = event.viewName;
+        const nameVal = new NameValue(dsName, viewName);
+        this.editDataservice.emit( nameVal );
         break;
       case DataserviceCardComponent.publishDataserviceEvent:
         this.publishDataservice.emit( event.dataserviceName );

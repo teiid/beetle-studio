@@ -187,7 +187,7 @@
             <ng-template #itemTemplate let-item="item">
               <div class="list-pf-main-content">
                 <span class="fa fa-table object-inline-icon"></span>
-                <a class="list-pf-title view-name">{{ item }}</a>
+                <a class="list-pf-title view-name" (click)="onEditView(item)">{{ item }}</a>
               </div>
             </ng-template>
           </pfng-list>

@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
 import { Connection } from "@connections/shared/connection.model";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { ListConfig } from "patternfly-ng";
+import { NameValue } from "@dataservices/shared/name-value.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -27,8 +28,8 @@ import { ListConfig } from "patternfly-ng";
 })
 export class ViewsContentComponent implements OnInit {
 
-  @Input() public item: Dataservice;
-  @Input() public selectedDataservices: Dataservice[];
+  @Input() public virtualization: Dataservice;
+  @Output() public editDataservice: EventEmitter<NameValue> = new EventEmitter<NameValue>();
 
   public listConfig: ListConfig;
 
@@ -81,6 +82,15 @@ export class ViewsContentComponent implements OnInit {
       showCheckbox: false,
       useExpandItems: false
     } as ListConfig;
+  }
+
+  /**
+   * An event handler for when edit view is invoked.
+   * @param {string} vName the name of the view in the selected dataservice
+   */
+  public onEditView( vName: string ): void {
+    const nameVal = new NameValue(this.virtualization.getId(), vName);
+    this.editDataservice.emit(nameVal);
   }
 
 }
