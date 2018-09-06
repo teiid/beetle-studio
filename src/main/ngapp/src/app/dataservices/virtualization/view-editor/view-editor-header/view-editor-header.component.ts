@@ -309,6 +309,8 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
       } else {
         this.createNewView(viewDefn);
       }
+      // addition of a view undeploys active serviceVdb
+      this.editorService.undeploySelectedVirtualization();
     });
   }
 
@@ -389,6 +391,8 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
       .subscribe(
         (wasSuccess) => {
           self.removeViewDefinitionFromList(selectedViewDefn);
+          // deletion of a view undeploys active serviceVdb
+          self.editorService.undeploySelectedVirtualization();
         },
         (error) => {
           self.logger.error("[VirtualizationComponent] Error deleting the editor state: %o", error);

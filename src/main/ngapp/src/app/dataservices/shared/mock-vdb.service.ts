@@ -32,6 +32,8 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
+import {environment} from "@environments/environment";
+import {VdbsConstants} from "@dataservices/shared/vdbs-constants";
 
 @Injectable()
 export class MockVdbService extends VdbService {
@@ -95,11 +97,29 @@ export class MockVdbService extends VdbService {
   }
 
   /**
+   * Determine if the workspace has a vdb with the supplied name
+   * @param {string} vdbName the name of the VDB
+   * @returns {Observable<boolean>}
+   */
+  public hasWorkspaceVdb(vdbName: string): Observable<boolean> {
+    return Observable.of(true);
+  }
+
+  /**
    * Delete a vdb via the komodo rest interface
    * @param {string} vdbId
    * @returns {Observable<boolean>}
    */
   public deleteVdb(vdbId: string): Observable<boolean> {
+    return Observable.of(true);
+  }
+
+  /**
+   * Delete a vdb if found via the komodo rest interface
+   * @param {string} vdbId
+   * @returns {Observable<boolean>}
+   */
+  public deleteVdbIfFound(vdbId: string): Observable<boolean> {
     return Observable.of(true);
   }
 
