@@ -10,29 +10,29 @@
                      (onActionSelect)="handleAction($event)">
         </pfng-action>
       </div>
-      <span class="pull-left fa fa-check-circle-o fa-2x card-action-icon"
+      <span class="pull-left fa fa-circle card-action-icon"
             style="color:green;"
             *ngIf="dataservice.serviceDeploymentActive"
             data-toggle="tooltip"
             data-placement="right"
             title="Active">
       </span>
-      <span class="pull-left fa fa-times-circle-o fa-2x card-action-icon"
+      <span class="pull-left fa fa-circle card-action-icon"
             style="color:red;"
             *ngIf="dataservice.serviceDeploymentFailed"
             data-toggle="tooltip"
             data-placement="right"
             title="Failed to activate">
       </span>
-      <span class="pull-left fa fa-exclamation-triangle fa-2x card-action-icon"
+      <span class="pull-left fa fa-circle card-action-icon"
             style="color:orange;"
             *ngIf="dataservice.serviceDeploymentInactive"
             data-toggle="tooltip"
             data-placement="right"
             title="Inactive">
       </span>
-      <span class="pull-left fa fa-times-circle-o fa-2x card-action-icon"
-            style="color:red;"
+      <span class="pull-left fa fa-circle card-action-icon"
+            style="color:grey;"
             *ngIf="dataservice.serviceDeploymentNotDeployed"
             data-toggle="tooltip"
             data-placement="right"

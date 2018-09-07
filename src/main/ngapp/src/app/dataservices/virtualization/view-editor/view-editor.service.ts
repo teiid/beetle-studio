@@ -42,6 +42,7 @@ import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { SelectionService } from "@core/selection.service";
+import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 
 @Injectable()
 export class ViewEditorService {
@@ -434,6 +435,8 @@ export class ViewEditorService {
     this._dataserviceService.saveViewEditorStateRefreshViews( editorState, dataserviceName ).subscribe( () => {
         // reset original view to saved state
         self._originalView = ViewDefinition.create(this._editorView.toJSON());
+        // any change to service view undeploys active serviceVdb
+        self.undeploySelectedVirtualization();
         // fire save editor state succeeded event
         self.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
                                            ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
@@ -445,6 +448,26 @@ export class ViewEditorService {
                                            [ ViewEditorProgressChangeId.COMPLETED_FAILED ] ) );
       }
     );
+  }
+
+  /**
+   * Undeploy the selected virtualization (only if it is active)
+   */
+  public undeploySelectedVirtualization(): void {
+    this._logger.debug( "[ViewEditorService.undeploySelectedVirtualization]" );
+    const selectedVirt = this._selectionService.getSelectedVirtualization();
+    if (selectedVirt && selectedVirt !== null &&
+                        (selectedVirt.serviceDeploymentActive || selectedVirt.serviceDeploymentFailed)) {
+      const serviceVdbName = selectedVirt.getServiceVdbName();
+      const self = this;
+      this._vdbService.undeployVdb( serviceVdbName ).subscribe( () => {
+          self._dataserviceService.updateDataserviceStates();
+          self._logger.debug( "[ViewEditorService.undeploySelectedVirtualization] - completed" );
+        }, () => {
+          self._logger.error( "[ViewEditorService.undeploySelectedVirtualization] - error with undeploy" );
+        }
+      );
+    }
   }
 
   /**

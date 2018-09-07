@@ -19,16 +19,20 @@
             </div>
             <div class="list-pf-content-wrapper">
               <div class="list-pf-main-content">
-                <span class="pull-left pficon-ok"
+                <span class="pull-left fa fa-circle"
+                      style="color:green"
                       *ngIf="item.serviceDeploymentActive">
                 </span>
-                <span class="pull-left pficon-error-circle-o"
+                <span class="pull-left fa fa-circle"
+                      style="color:red"
                       *ngIf="item.serviceDeploymentFailed">
                 </span>
-                <span class="pull-left pficon-warning-triangle-o"
+                <span class="pull-left fa fa-circle"
+                      style="color:orange"
                       *ngIf="item.serviceDeploymentInactive">
                 </span>
-                <span class="pull-left pficon-unknown"
+                <span class="pull-left fa fa-circle"
+                      style="color:grey"
                       *ngIf="item.serviceDeploymentNotDeployed">
                 </span>
                 <span class="pull-left fa fa-spinner fa-pulse"
