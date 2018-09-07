@@ -428,28 +428,57 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
       // 3) fire view state changed event for each
       // ------------------
 
-      let tempCmd: Command = null;
-
       selectionArgs.forEach( ( nextArg ) => {
+
         // need to parse the command to find the source path
         const commandPart = this.getCommandId(nextArg);
+        // the payload for src will be the source/connection path
+        // the payload for the composition will be the json representing the composition properties
         const argPart = this.getPayload(nextArg);
 
         if (commandPart.startsWith(AddSourcesCommand.id)) {
-          tempCmd = CommandFactory.createRemoveSourcesCommand(argPart, commandPart);
+          // Look for any composition with src paths links and remove if exist
+          const comps: Composition[] = this.editorService.getEditorView().getCompositions();
+          comps.forEach( (nextComp)  => {
+            const leftPath = nextComp.getLeftSourcePath();
+            if (leftPath && leftPath != null && argPart === leftPath) {
+              let addCompCmd = CommandFactory.createRemoveCompositionCommand(nextComp.toString(), AddCompositionCommand.id);
+              if (addCompCmd && addCompCmd != null) {
+                this.notifyRemoved(addCompCmd);
+              }
+            } else {
+              const rightPath = nextComp.getRightSourcePath();
+              if (rightPath && rightPath != null && argPart === rightPath) {
+                let addCompCmd = CommandFactory.createRemoveCompositionCommand(nextComp.toString(), AddCompositionCommand.id);
+                if (addCompCmd && addCompCmd != null) {
+                  this.notifyRemoved(addCompCmd);
+                }
+              }
+            }
+          });
+
+          // Remove Source Command
+          let addSrcsCmd = CommandFactory.createRemoveSourcesCommand(argPart, commandPart);
+          this.notifyRemoved(addSrcsCmd);
+
         } else if (commandPart.startsWith(AddCompositionCommand.id)) {
-          tempCmd = CommandFactory.createRemoveCompositionCommand(argPart, commandPart);
-        }
-        if (tempCmd !== null ) {
-          const cmd = tempCmd as Command;
-          this.editorService.fireViewStateHasChanged(ViewEditorPart.EDITOR, cmd);
-        } else {
-          this.logger.error("Failed to create RemoveSourcesCommand");
+          // Remove composition
+          let addCompCmd = CommandFactory.createRemoveCompositionCommand(argPart, commandPart);
+          this.notifyRemoved(addCompCmd);
         }
 
         this.editorService.select(null);
       });
     });
+  }
+
+  private notifyRemoved(command: Command): void {
+    if (command !== null ) {
+      const cmd = command as Command;
+      this.editorService.fireViewStateHasChanged(ViewEditorPart.EDITOR, cmd);
+    } else {
+      this.logger.error("Failed to create Remove Command");
+    }
   }
 
   private doSampleData(selection: string[]): void {
