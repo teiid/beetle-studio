@@ -17,8 +17,6 @@
 
 export class PathUtils {
 
-  private readonly undefined = "undefined";
-
   /**
    * Return the path, without the leading connection info
    * @param {string} sourcePath

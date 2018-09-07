@@ -94,7 +94,7 @@ export class RemoveSourcesCommand extends Command {
   /**
    * @returns {string} a unique identifier of this command
    */
-  public getId(sourcePath?: string): string {
+  public getId( ): string {
     return this.getArg( Command.identArg ) as string;
   }
 }

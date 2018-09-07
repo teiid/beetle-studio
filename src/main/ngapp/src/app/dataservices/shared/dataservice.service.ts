@@ -17,8 +17,6 @@
 
 import { Injectable } from "@angular/core";
 import { Http, RequestOptions } from "@angular/http";
-import { Connection } from "@connections/shared/connection.model";
-import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ApiService } from "@core/api.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { LoggerService } from "@core/logger.service";
@@ -161,23 +159,6 @@ export class DataserviceService extends ApiService {
   }
 
   /**
-   * Create a dataservice via the komodo rest interface
-   * @param {string} dataserviceName,
-   * @param {string[]} tablePaths,
-   * @param {string} modelSourcePath,
-   * @returns {Observable<boolean>}
-   */
-  public setServiceVdbForSingleSourceTables(dataserviceName: string, tablePaths: string[], modelSourcePath: string): Observable<boolean> {
-    return this.http
-      .post(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRestPath + "/ServiceVdbForSingleSourceTables",
-        { dataserviceName, tablePaths, modelSourcePath}, this.getAuthRequestOptions())
-      .map((response) => {
-        return response.ok;
-      })
-      .catch( ( error ) => this.handleError( error ) );
-  }
-
-  /**
    * Create a readonly datarole for the dataservice
    * @param {string} serviceVdbName,
    * @param {string} model1Name,
@@ -270,70 +251,6 @@ export class DataserviceService extends ApiService {
         return response.ok;
       })
       .catch( ( error ) => this.handleError( error ) );
-  }
-
-  /**
-   * Derive the service vdb name from the given dataservice
-   *
-   * @param {Dataservice} dataservice
-   * @returns {string}
-   */
-  public deriveServiceVdbName(dataservice: NewDataservice): string {
-    const name = dataservice.getId() + VdbsConstants.DATASERVICE_VDB_SUFFIX;
-    return name.toLowerCase();
-  }
-
-  /**
-   * Create a dataservice which is a straight passthru to the supplied tables
-   * @param {NewDataservice} dataservice
-   * @param {SchemaNode[]} schemaNodes the source 'tables' for the service
-   * @param {Connection[]} connections the required connections for the schemaNodes
-   * @returns {Observable<boolean>}
-   */
-  public createDataserviceForSingleSourceTables(dataservice: NewDataservice,
-                                                schemaNodes: SchemaNode[],
-                                                connections: Connection[]): Observable<boolean> {
-    // All tables currently must be from same connection
-    const connection: Connection = connections[0];
-    const schemaVdbName = connection.schemaVdbName;
-    const schemaVdbModelName = connection.schemaVdbModelName;
-    const schemaVdbModelSourceName = connection.schemaVdbModelSourceName;
-
-    // The schema VDB is directly under the connection in the repo
-    const vdbPath = this.getKomodoUserWorkspacePath() + "/" + connection.getId() + "/" + schemaVdbName;
-
-    // Get table paths for the tables used in the service
-    const tablePaths = [];
-    for ( const connectionNode of schemaNodes ) {
-      const tablePath = vdbPath + "/" + schemaVdbModelName + "/" + connectionNode.getName();
-      tablePaths.push(tablePath);
-    }
-
-    // ModelSource path
-    const modelSourcePath = vdbPath + "/" + schemaVdbModelName + "/vdb:sources/" + schemaVdbModelSourceName;
-
-    // Name of the Dataservice VDB
-    const dsVdbName = this.deriveServiceVdbName(dataservice);
-
-    // Chain the individual calls together in series to build the DataService
-    return this.createDataservice(dataservice)
-      .flatMap((res) => this.setServiceVdbForSingleSourceTables(dataservice.getId(), tablePaths, modelSourcePath))
-      .flatMap((res) => this.createReadonlyDataRole(dsVdbName, schemaVdbModelName));
-  }
-
-  /**
-   * Updates a dataservice with single table source.  This is simply a create, with the added step of
-   * deleting the existing workspace dataservice first.
-   * @param {NewDataservice} dataservice
-   * @param {SchemaNode[]} schemaNodes
-   * @param {Connection[]} connections
-   * @returns {Observable<boolean>}
-   */
-  public updateDataserviceForSingleSourceTables(dataservice: NewDataservice,
-                                                schemaNodes: SchemaNode[],
-                                                connections: Connection[]): Observable<boolean> {
-    return this.deleteDataservice(dataservice.getId())
-      .flatMap((res) => this.createDataserviceForSingleSourceTables(dataservice, schemaNodes, connections));
   }
 
   /**

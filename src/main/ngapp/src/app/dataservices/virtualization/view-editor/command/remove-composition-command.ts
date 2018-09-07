@@ -35,8 +35,6 @@ export class RemoveCompositionCommand extends Command {
    */
   public static readonly removedComposition = "removedComposition";
 
-  private static readonly delim = ", ";
-
   /**
    * Constructor
    * 'removedCompositionName' must be an array of Compositions -OR- stringified composition
@@ -79,7 +77,7 @@ export class RemoveCompositionCommand extends Command {
   /**
    * @returns {string} a unique short identifier of this command
    */
-  public getId(composition?: Composition): string {
+  public getId( ): string {
     return this.getArg( Command.identArg ) as string;
   }
 }

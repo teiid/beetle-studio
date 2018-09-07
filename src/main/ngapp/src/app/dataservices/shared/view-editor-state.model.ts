@@ -29,7 +29,7 @@ export class ViewEditorState {
 
   /**
    * @param {Object} json the JSON representation of a ViewEditorState
-   * @returns {View} the new View (never null)
+   * @returns {ViewEditorState} the new ViewEditorState (never null)
    */
   public static create( json: object = {} ): ViewEditorState {
     const editorState = new ViewEditorState();

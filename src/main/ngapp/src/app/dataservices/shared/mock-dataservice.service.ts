@@ -40,7 +40,6 @@ export class MockDataserviceService extends DataserviceService {
   private readonly services: Dataservice[];
   private readonly queryResults: QueryResults;
   private editorViewStateMap = new Map<string, ViewEditorState>();
-  private selectedDs: Dataservice;
 
   constructor(http: Http, vdbService: VdbService, appSettings: AppSettingsService,
               notifierService: NotifierService, logger: LoggerService ) {
@@ -138,12 +137,6 @@ export class MockDataserviceService extends DataserviceService {
 
     // valid
     return Observable.of( "" );
-  }
-
-  public setServiceVdbForSingleSourceTables( dataserviceName: string,
-                                             tablePaths: string[],
-                                             modelSourcePath: string ): Observable< boolean > {
-    return Observable.of( true );
   }
 
   /**

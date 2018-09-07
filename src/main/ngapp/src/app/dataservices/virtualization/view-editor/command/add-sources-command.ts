@@ -102,7 +102,7 @@ export class AddSourcesCommand extends Command {
   /**
    * @returns {string} a unique short identifier of this command
    */
-  public getId(sourcePath?: string): string {
+  public getId( ): string {
     return this.getArg( Command.identArg ) as string;
   }
 }

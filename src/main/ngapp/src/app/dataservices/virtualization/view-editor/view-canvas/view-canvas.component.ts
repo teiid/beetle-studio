@@ -36,7 +36,6 @@ import { ViewCanvasEventType } from "@dataservices/virtualization/view-editor/vi
 import * as _ from "lodash";
 import { AddCompositionCommand } from "@dataservices/virtualization/view-editor/command/add-composition-command";
 import { RemoveCompositionCommand } from "@dataservices/virtualization/view-editor/command/remove-composition-command";
-import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { CommandFactory } from "@dataservices/virtualization/view-editor/command/command-factory";
 import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { Composition } from "@dataservices/shared/composition.model";
@@ -239,16 +238,6 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.editorService.isReadOnly();
   }
 
-  //
-  // /**
-  //  * Handle removal of View Source
-  //  * @param {SchemaNode} source the view source to be removed
-  //  */
-  // public onViewSourceRemoved( source: SchemaNode ): void {
-  //   const cmd = CommandFactory.createRemoveSourcesCommand( [ source ] );
-  //   this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, cmd );
-  // }
-
   /**
    * @returns {boolean} true if save view notification is to be shown
    */
@@ -306,7 +295,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       const update = (i === (sourcePaths.length - 1));
-      const id = command.getId(srcPath);
+      const id = command.getId( );
       const label = "[" + PathUtils.getConnectionName(srcPath) +
         "]: " + PathUtils.getSourceName(srcPath);
       this.canvasService.createNode(id, command.getPayload(srcPath), CanvasConstants.SOURCE_TYPE, label, update);
@@ -335,7 +324,7 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private createComposition(command: AddCompositionCommand): void {
     const composition = command.getComposition();
-    const compNodeId = this.canvasService.createNode(command.getId(composition.getName()), command.getPayload(composition.getName()), CanvasConstants.COMPOSITION_TYPE, composition.getName(), true);
+    const compNodeId = this.canvasService.createNode(command.getId(), command.getPayload(), CanvasConstants.COMPOSITION_TYPE, composition.getName(), true);
     // Create links to source nodes if not found
     this.createLink(compNodeId, composition.getLeftSourcePath());
     this.createLink(compNodeId, composition.getRightSourcePath());

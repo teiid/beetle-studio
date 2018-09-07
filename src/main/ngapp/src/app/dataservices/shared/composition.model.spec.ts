@@ -26,12 +26,6 @@ describe("Composition", () => {
     expect(composition.getRightSourcePath()).toEqual("rightPath");
     expect(composition.getType()).toEqual(CompositionType.INNER_JOIN);
     expect(composition.getOperator()).toEqual(CompositionOperator.EQ);
-
-    const json = composition.toJSON();
-
-    const str = composition.toString();
-
-    const test = "";
   });
 
 });
