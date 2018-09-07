@@ -442,14 +442,14 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
           comps.forEach( (nextComp)  => {
             const leftPath = nextComp.getLeftSourcePath();
             if (leftPath && leftPath != null && argPart === leftPath) {
-              let addCompCmd = CommandFactory.createRemoveCompositionCommand(nextComp.toString(), AddCompositionCommand.id);
+              const addCompCmd = CommandFactory.createRemoveCompositionCommand(nextComp.toString(), AddCompositionCommand.id);
               if (addCompCmd && addCompCmd != null) {
                 this.notifyRemoved(addCompCmd);
               }
             } else {
               const rightPath = nextComp.getRightSourcePath();
               if (rightPath && rightPath != null && argPart === rightPath) {
-                let addCompCmd = CommandFactory.createRemoveCompositionCommand(nextComp.toString(), AddCompositionCommand.id);
+                const addCompCmd = CommandFactory.createRemoveCompositionCommand(nextComp.toString(), AddCompositionCommand.id);
                 if (addCompCmd && addCompCmd != null) {
                   this.notifyRemoved(addCompCmd);
                 }
@@ -458,12 +458,12 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
           });
 
           // Remove Source Command
-          let addSrcsCmd = CommandFactory.createRemoveSourcesCommand(argPart, commandPart);
+          const addSrcsCmd = CommandFactory.createRemoveSourcesCommand(argPart, commandPart);
           this.notifyRemoved(addSrcsCmd);
 
         } else if (commandPart.startsWith(AddCompositionCommand.id)) {
           // Remove composition
-          let addCompCmd = CommandFactory.createRemoveCompositionCommand(argPart, commandPart);
+          const addCompCmd = CommandFactory.createRemoveCompositionCommand(argPart, commandPart);
           this.notifyRemoved(addCompCmd);
         }
 

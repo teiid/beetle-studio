@@ -42,7 +42,6 @@ import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { SelectionService } from "@core/selection.service";
-import { DeploymentState } from "@dataservices/shared/deployment-state.enum";
 
 @Injectable()
 export class ViewEditorService {

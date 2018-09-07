@@ -32,8 +32,6 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
-import {environment} from "@environments/environment";
-import {VdbsConstants} from "@dataservices/shared/vdbs-constants";
 
 @Injectable()
 export class MockVdbService extends VdbService {

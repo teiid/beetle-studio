@@ -78,14 +78,14 @@ export class AddCompositionCommand extends Command {
   /**
    * @returns {string} json payload for this command
    */
-  public getPayload(compositionName?: string): string {
+  public getPayload( ): string {
     return this.getArg( AddCompositionCommand.addedComposition ) as string;
   }
 
   /**
    * @returns {string} a unique short identifier of this command
    */
-  public getId(compositionName?: string): string {
+  public getId( ): string {
     return this.getArg( Command.identArg ) as string;
   }
 

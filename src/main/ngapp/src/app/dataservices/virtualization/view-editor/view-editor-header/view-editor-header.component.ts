@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
@@ -42,7 +42,7 @@ import { ViewEditorProgressChangeId } from "@dataservices/virtualization/view-ed
   templateUrl: "./view-editor-header.component.html",
   styleUrls: ["./view-editor-header.component.css"]
 })
-export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
+export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // used by html
   public readonly viewDescriptionLabel = ViewEditorI18n.viewDescriptionLabel;
@@ -323,7 +323,6 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
     editorState.setId(editorId);
     editorState.setViewDefinition(viewDefn);
 
-    const dsName = selectedDs.getId();
     const self = this;
     this.dataserviceService
       .saveViewEditorStateRefreshViews(editorState, selectedDs.getId())

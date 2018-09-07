@@ -20,8 +20,8 @@
  */
 export class NameValue {
 
-  private name: string;
-  private value: string;
+  private readonly name: string;
+  private readonly value: string;
 
   constructor(name: string, value: string) {
     this.name = name;

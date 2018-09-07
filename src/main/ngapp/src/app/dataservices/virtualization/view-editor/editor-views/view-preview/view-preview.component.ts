@@ -205,11 +205,4 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  private get previewSql(): string {
-    if (this._previewSql && this._previewSql !== null) {
-      return this._previewSql;
-    }
-    return "<not defined>";
-  }
-
 }

@@ -344,7 +344,7 @@ export class AddConnectionWizardComponent implements OnInit {
     }
   }
 
-  public cancelClicked($event: WizardEvent): void {
+  public cancelClicked( ): void {
     const link: string[] = [ ConnectionsConstants.connectionsRootPath ];
     this.logger.log("[AddConnectionWizardComponent] Navigating to: %o", link);
     this.router.navigate(link).then(() => {

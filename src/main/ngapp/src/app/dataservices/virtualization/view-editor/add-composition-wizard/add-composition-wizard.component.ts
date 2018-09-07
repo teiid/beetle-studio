@@ -404,7 +404,7 @@ export class AddCompositionWizardComponent implements OnInit {
     }
   }
 
-  public cancelClicked($event: WizardEvent): void {
+  public cancelClicked( ): void {
     this.cancelAction.emit();
   }
 
