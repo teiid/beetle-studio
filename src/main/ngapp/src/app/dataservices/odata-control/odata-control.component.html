@@ -45,7 +45,7 @@
           <div class="odata-exp-select-group">
             <div class="odata-exp-select-group-entity">
               <select id="selectView" class="form-control" name="entity" [(ngModel)]="entity">
-                <option *ngFor="let e of entities" [value]="e">{{e.name}}</option>
+                <option *ngFor="let e of entities" [ngValue]="e">{{e.name}}</option>
               </select>
             </div>
 
