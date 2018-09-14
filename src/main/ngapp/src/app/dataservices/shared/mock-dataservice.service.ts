@@ -205,4 +205,125 @@ export class MockDataserviceService extends DataserviceService {
     return Observable.of(true);
   }
 
+  /**
+   * Query a Dataservice's published virtualization using odata protocol
+   * @param {string} url the odata url string
+   * @returns {Observable<any>}
+   */
+  public odataGet(url: string): Observable<any> {
+    const result = this.getMetadata();
+
+    return Observable.of(result);
+  }
+  private getMetadata(): string {
+    const metadata = "<?xml version='1.0' encoding='UTF-8'?>" +
+      "<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">" +
+      "<edmx:Reference Uri=\"http://virttwovdb-odata-beetle-studio.192.168.42.112.nip.io/odata4/static/org.teiid.v1.xml\">" +
+      "  <edmx:Include Namespace=\"org.teiid.v1\" Alias=\"teiid\"/>" +
+      "</edmx:Reference>" +
+      "<edmx:Reference Uri=\"http://virttwovdb-odata-beetle-studio.192.168.42.112.nip.io/odata4/static/org.apache.olingo.v1.xml\">" +
+      " <edmx:Include Namespace=\"org.apache.olingo.v1\" Alias=\"olingo-extensions\"/>" +
+      "</edmx:Reference>" +
+      "<edmx:DataServices>" +
+    "  <Schema xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" Namespace=\"virttwovdb.1.views\" Alias=\"views\">" +
+    "     <EntityType Name=\"view1\">" +
+    "       <Key><PropertyRef Name=\"RowId\"/></Key>" +
+    "       <Property Name=\"RowId\" Type=\"Edm.Int32\" Nullable=\"false\"/>" +
+    "       <Property Name=\"_id\" Type=\"Edm.String\" MaxLength=\"4000\">" +
+    "         <Annotation Term=\"teiid.CASE_SENSITIVE\">" +
+    "           <Bool>true</Bool>" +
+    "         </Annotation>" +
+    "         <Annotation Term=\"teiid.SIGNED\">" +
+    "           <Bool>false</Bool>" +
+    "         </Annotation>" +
+    "       </Property>" +
+    "       <Property Name=\"borough\" Type=\"Edm.String\" MaxLength=\"4000\">" +
+    "         <Annotation Term=\"teiid.CASE_SENSITIVE\">" +
+    "           <Bool>true</Bool>" +
+    "         </Annotation>" +
+    "         <Annotation Term=\"teiid.SIGNED\">" +
+    "           <Bool>false</Bool>" +
+    "         </Annotation>" +
+    "       </Property>" +
+    "       <Property Name=\"cuisine\" Type=\"Edm.String\" MaxLength=\"4000\">" +
+    "         <Annotation Term=\"teiid.CASE_SENSITIVE\">" +
+    "           <Bool>true</Bool>" +
+    "         </Annotation>" +
+    "         <Annotation Term=\"teiid.SIGNED\">" +
+    "           <Bool>false</Bool>" +
+    "         </Annotation>" +
+    "       </Property>" +
+    "       <Property Name=\"name\" Type=\"Edm.String\" MaxLength=\"4000\">" +
+    "         <Annotation Term=\"teiid.CASE_SENSITIVE\">" +
+    "           <Bool>true</Bool>" +
+    "         </Annotation>" +
+    "         <Annotation Term=\"teiid.SIGNED\">" +
+    "           <Bool>false</Bool>" +
+    "         </Annotation>" +
+    "       </Property>" +
+    "       <Property Name=\"restaurant_id\" Type=\"Edm.String\" MaxLength=\"4000\">" +
+    "         <Annotation Term=\"teiid.CASE_SENSITIVE\">" +
+    "           <Bool>true</Bool>" +
+    "         </Annotation>" +
+    "         <Annotation Term=\"teiid.SIGNED\">" +
+    "           <Bool>false</Bool>" +
+    "         </Annotation>" +
+    "       </Property>" +
+    "   </EntityType>" +
+    "   <EntityType Name=\"view2\">" +
+    "     <Key><PropertyRef Name=\"RowId\"/></Key>" +
+    "     <Property Name=\"RowId\" Type=\"Edm.Int32\" Nullable=\"false\"/>" +
+    "     <Property Name=\"id\" Type=\"Edm.Int32\"/>" +
+    "     <Property Name=\"symbol\" Type=\"Edm.String\" MaxLength=\"4000\">" +
+    "       <Annotation Term=\"teiid.CASE_SENSITIVE\">" +
+    "       <Bool>true</Bool></Annotation><Annotation Term=\"teiid.SIGNED\"><Bool>false</Bool></Annotation>" +
+    "     </Property>" +
+    "     <Property Name=\"company_name\" Type=\"Edm.String\" MaxLength=\"4000\">" +
+    "       <Annotation Term=\"teiid.CASE_SENSITIVE\"><Bool>true</Bool></Annotation>" +
+    "       <Annotation Term=\"teiid.SIGNED\"><Bool>false</Bool></Annotation>" +
+    "     </Property>" +
+    "   </EntityType>" +
+    "   <EntityType Name=\"view3\">" +
+    "     <Key><PropertyRef Name=\"RowId\"/></Key>" +
+    "     <Property Name=\"RowId\" Type=\"Edm.Int32\" Nullable=\"false\"/>" +
+    "     <Property Name=\"account_id\" Type=\"Edm.Int32\"/>" +
+    "     <Property Name=\"ssn\" Type=\"Edm.String\" MaxLength=\"4000\">" +
+    "       <Annotation Term=\"teiid.CASE_SENSITIVE\"><Bool>true</Bool></Annotation>" +
+    "       <Annotation Term=\"teiid.SIGNED\"><Bool>false</Bool></Annotation>" +
+    "     </Property>" +
+    "     <Property Name=\"status\" Type=\"Edm.String\" MaxLength=\"4000\">" +
+    "       <Annotation Term=\"teiid.CASE_SENSITIVE\"><Bool>true</Bool></Annotation>" +
+    "       <Annotation Term=\"teiid.SIGNED\"><Bool>false</Bool></Annotation>" +
+    "     </Property>" +
+    "     <Property Name=\"type\" Type=\"Edm.String\" MaxLength=\"4000\">" +
+    "       <Annotation Term=\"teiid.CASE_SENSITIVE\">" +
+    "         <Bool>true</Bool>" +
+    "       </Annotation>" +
+    "       <Annotation Term=\"teiid.SIGNED\"><Bool>false</Bool></Annotation>" +
+    "     </Property>" +
+    "     <Property Name=\"dateopened\" Type=\"Edm.DateTimeOffset\" Precision=\"4\">" +
+    "       <Annotation Term=\"teiid.SIGNED\">" +
+    "       <Bool>false</Bool></Annotation>" +
+    "     </Property>" +
+    "     <Property Name=\"dateclosed\" Type=\"Edm.DateTimeOffset\" Precision=\"4\">" +
+    "       <Annotation Term=\"teiid.SIGNED\"><Bool>false</Bool></Annotation></Property>" +
+    "     <Property Name=\"transaction_id\" Type=\"Edm.Int32\"/>" +
+    "     <Property Name=\"product_id\" Type=\"Edm.Int32\"/>" +
+    "     <Property Name=\"purchase_date\" Type=\"Edm.DateTimeOffset\" Precision=\"4\">" +
+    "       <Annotation Term=\"teiid.SIGNED\">" +
+    "       <Bool>false</Bool></Annotation>" +
+    "     </Property>" +
+    "     <Property Name=\"shares_count\" Type=\"Edm.Int32\"/>" +
+      " </EntityType>" +
+    "   <EntityContainer Name=\"views\">" +
+    "     <EntitySet Name=\"view1\" EntityType=\"views.view1\"/>" +
+    "    <EntitySet Name=\"view2\" EntityType=\"views.view2\"/>" +
+    "      <EntitySet Name=\"view3\" EntityType=\"views.view3\"/>" +
+    "   </EntityContainer>" +
+    "</Schema>" +
+    "</edmx:DataServices>" +
+      "</edmx:Edmx>";
+
+    return metadata;
+  }
 }

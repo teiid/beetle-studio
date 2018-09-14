@@ -936,7 +936,17 @@ export class TestDataService {
       "build_status_message": "Accounts VDB build was successful",
       "namespace": "beetle-studio",
       "last_updated": "2018-03-29T17:02:51.181Z",
-      "publishState": PublishState.PUBLISHED
+      "publishState": PublishState.PUBLISHED,
+      "routes": [
+        {
+          "name": TestDataService.accountsVdb.getName() + "-odata",
+          "protocol": "odata",
+          "target": TestDataService.accountsVdb.getName() + "-odata",
+          "host": TestDataService.accountsVdb.getName() + "-odata" + "-beetle-studio.192.168.xx.yy",
+          "port": "odata",
+          "secure": true
+        }
+      ]
     }
   );
 
@@ -949,7 +959,17 @@ export class TestDataService {
       "build_status_message": "Employees VDB build was successful",
       "namespace": "beetle-studio",
       "last_updated": "2018-03-29T17:02:51.181Z",
-      "publishState": PublishState.PUBLISHED
+      "publishState": PublishState.PUBLISHED,
+      "routes": [
+        {
+          "name": TestDataService.employeesVdb.getName() + "-odata",
+          "protocol": "odata",
+          "target": TestDataService.employeesVdb.getName() + "-odata",
+          "host": TestDataService.employeesVdb.getName() + "-odata" + "-beetle-studio.192.168.xx.yy",
+          "port": "odata",
+          "secure": true
+        }
+      ]
     }
   );
 
@@ -962,7 +982,17 @@ export class TestDataService {
       "build_status_message": "Products VDB build was successful",
       "namespace": "beetle-studio",
       "last_updated": "2018-03-29T17:02:51.181Z",
-      "publishState": PublishState.PUBLISHED
+      "publishState": PublishState.PUBLISHED,
+      "routes": [
+        {
+          "name": TestDataService.productsVdb.getName() + "-odata",
+          "protocol": "odata",
+          "target": TestDataService.productsVdb.getName() + "-odata",
+          "host": TestDataService.productsVdb.getName() + "-odata" + "-beetle-studio.192.168.xx.yy",
+          "port": "odata",
+          "secure": true
+        }
+      ]
     }
   );
 

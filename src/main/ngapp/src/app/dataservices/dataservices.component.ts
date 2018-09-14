@@ -52,10 +52,10 @@ import {
 import { Subscription } from "rxjs/Subscription";
 import { SqlView } from "@dataservices/shared/sql-view.model";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
-import { CreateVirtualizationDialogComponent } from "@dataservices/create-virtualization-dialog/create-virtualization-dialog.component";
 import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 import { NameValue } from "@dataservices/shared/name-value.model";
+import { CreateViewsDialogComponent } from "@dataservices/create-views-dialog/create-views-dialog.component";
 
 @Component({
   moduleId: module.id,
@@ -604,23 +604,31 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   public onNew(): void {
     // Open New Virtualization dialog
     const initialState = {
-      title: ViewEditorI18n.createVirtualizationDialogTitle,
+      title: ViewEditorI18n.createViewsDialogNewVirtualizationTitle,
       cancelButtonText: ViewEditorI18n.cancelButtonText,
       okButtonText: ViewEditorI18n.okButtonText
     };
 
     // Show Dialog, act upon confirmation click
-    const modalRef = this.modalService.show(CreateVirtualizationDialogComponent, {initialState});
+    const modalRef = this.modalService.show(CreateViewsDialogComponent, {initialState, class: 'modal-lg'});
     modalRef.content.okAction.take(1).subscribe((dialogResult) => {
 
       // Create the new virtualization and view.
       const virtName  = dialogResult.getVirtualizationName();
       const virtDescr = dialogResult.getVirtualizationDescription();
-      const viewName  = dialogResult.getViewName();
-      const viewDescr = dialogResult.getViewDescription();
-      const viewDefn = new ViewDefinition();
-      viewDefn.setName(viewName);
-      viewDefn.setDescription(viewDescr);
+      const newViews = dialogResult.getViews();
+      const viewDefns: ViewDefinition[] = [];
+      for (const newView of newViews) {
+        const viewDefn = new ViewDefinition();
+        viewDefn.setName(newView.getViewName());
+        viewDefn.setDescription(newView.getViewDescription());
+        const srcNode = newView.getViewSourceNode();
+        const srcPath = "connection=" + newView.getConnectionName() + "/" + srcNode.getPath();
+        const srcPaths: string[] = [];
+        srcPaths.push(srcPath);
+        viewDefn.addSourcePaths(srcPaths);
+        viewDefns.push(viewDefn);
+      }
 
       // Display Toast notification
       this.setToastNotification(Toast.Type.NewVirtualization, Toast.State.InProgress, virtName);
@@ -634,7 +642,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
         .subscribe(
           (wasSuccess) => {
             // Set the current virtualization to the newly created virtualization
-            self.selectVirtualizationCreateView(virtName, viewDefn);
+            self.selectVirtualizationCreateViews(virtName, viewDefns);
           },
           (error) => {
             self.logger.error("[VirtualizationComponent] Error creating virtualization: %o", error);
@@ -650,11 +658,11 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
   }
 
   /*
-   * Select the specified Dataservice.  create a starter view under it
+   * Select the specified Dataservice.  create views under it
    * @param {string} dsName the name of the dataservice
-   * @param {string} viewDefn the view definition to create
+   * @param {ViewDefinition[]} viewDefns the array of view definitions to create
    */
-  private selectVirtualizationCreateView(virtName: string, viewDefn: ViewDefinition): void {
+  private selectVirtualizationCreateViews(virtName: string, viewDefns: ViewDefinition[]): void {
     const self = this;
     this.dataserviceService
       .getAllDataservices()
@@ -663,7 +671,7 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
           for (const ds of dataservices) {
             if (ds.getId() === virtName) {
               self.selectionService.setSelectedVirtualization(ds);
-              self.createView(ds, viewDefn);
+              self.createViews(ds, viewDefns);
             }
           }
         },
@@ -677,22 +685,28 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
       );
   }
 
-  private createView(dataservice: Dataservice, viewDefn: ViewDefinition): void {
+  private createViews(dataservice: Dataservice, viewDefns: ViewDefinition[]): void {
     const selectedDs = this.selectionService.getSelectedVirtualization();
-    let editorId = "";
-    if ( selectedDs || selectedDs !== null ) {
-      editorId = this.getEditorStateId(selectedDs, viewDefn);
+    if (!selectedDs || selectedDs === null) {
+      return;
     }
+    // Create the array of ViewEditorStates
+    const editorStates: ViewEditorState[] = [];
+    for (const viewDefn of viewDefns) {
+      const editorId = this.getEditorStateId(selectedDs, viewDefn);
 
-    // Create new editor state to save
-    const editorState = new ViewEditorState();
-    editorState.setId(editorId);
-    editorState.setViewDefinition(viewDefn);
+      // Create new editor state to save
+      const editorState = new ViewEditorState();
+      editorState.setId(editorId);
+      editorState.setViewDefinition(viewDefn);
+
+      editorStates.push(editorState);
+    }
 
     const virtName = selectedDs.getId();
     const self = this;
     this.dataserviceService
-      .saveViewEditorStateRefreshViews(editorState, selectedDs.getId())
+      .saveViewEditorStatesRefreshViews(editorStates, selectedDs.getId())
       .subscribe(
         (wasSuccess) => {
           // Dismiss toast since navigating away

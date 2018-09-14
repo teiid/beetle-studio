@@ -428,10 +428,13 @@ export class ViewEditorService {
     editorState.setUndoables(this._undoMgr.toArray());
     editorState.setViewDefinition(this._editorView);
 
+    const editorStates: ViewEditorState[] = [];
+    editorStates.push(editorState);
+
     const dataserviceName = this._selectionService.getSelectedVirtualization().getId();
 
     const self = this;
-    this._dataserviceService.saveViewEditorStateRefreshViews( editorState, dataserviceName ).subscribe( () => {
+    this._dataserviceService.saveViewEditorStatesRefreshViews( editorStates, dataserviceName ).subscribe( () => {
         // reset original view to saved state
         self._originalView = ViewDefinition.create(this._editorView.toJSON());
         // any change to service view undeploys active serviceVdb

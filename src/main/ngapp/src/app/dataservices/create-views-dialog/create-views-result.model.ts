@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
+import { NewView } from "@dataservices/create-views-dialog/new-view.model";
+
 /**
- * CreateVirtualizationResult model - to hold the results of the dialog entry
+ * CreateViewsResult model - to hold the results of the CreateViewsDialog entry
  */
-export class CreateVirtualizationResult {
+export class CreateViewsResult {
 
   private virtName: string;
   private virtDescription = "";
-  private viewName: string;
-  private viewDescription = "";
+  private views: NewView[] = [];
 
   constructor() {
     // nothing to do
@@ -58,31 +59,17 @@ export class CreateVirtualizationResult {
   }
 
   /**
-   * @returns {string} the view name
+   * @returns {NewView[]} the views
    */
-  public getViewName(): string {
-    return this.viewName;
+  public getViews(): NewView[] {
+    return this.views;
   }
 
   /**
-   * @param {string} name the view name
+   * @param {NewView[]} views the views to create
    */
-  public setViewName( name?: string ): void {
-    this.viewName = name ? name : null;
-  }
-
-  /**
-   * @returns {string} the view description
-   */
-  public getViewDescription(): string {
-    return this.viewDescription;
-  }
-
-  /**
-   * @param {string} description the view description
-   */
-  public setViewDescription( description?: string ): void {
-    this.viewDescription = description ? description : "";
+  public setViews( views: NewView[] ): void {
+    this.views = views;
   }
 
 }

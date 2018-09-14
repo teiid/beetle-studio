@@ -323,9 +323,12 @@ export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestr
     editorState.setId(editorId);
     editorState.setViewDefinition(viewDefn);
 
+    const editorStates: ViewEditorState[] = [];
+    editorStates.push(editorState);
+
     const self = this;
     this.dataserviceService
-      .saveViewEditorStateRefreshViews(editorState, selectedDs.getId())
+      .saveViewEditorStatesRefreshViews(editorStates, selectedDs.getId())
       .subscribe(
         (wasSuccess) => {
           // Add the new ViewDefinition to the table

@@ -63,6 +63,8 @@ export const environment = {
 
   userProfileUrl: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/service/userProfile",
 
-  viewEditorState: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/service/userProfile/viewEditorState"
+  viewEditorState: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/service/userProfile/viewEditorState",
+
+  viewEditorStates: komodoUrlPrefix + komodoEngine + "/" + komodoRestVersion + "/service/userProfile/viewEditorStates"
 
 };
