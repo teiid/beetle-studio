@@ -510,12 +510,12 @@ export class DataserviceService extends ApiService {
   }
 
   /**
-   * @param {ViewEditorState} editorState the view editor state
+   * @param {ViewEditorState[]} editorStates the view editor state array
    * @returns {Observable<boolean>} `true` if the editor state was successfully saved
    */
-  public saveViewEditorState( editorState: ViewEditorState ): Observable< boolean > {
+  public saveViewEditorStates( editorStates: ViewEditorState[] ): Observable< boolean > {
 
-    return this.http.put( environment.viewEditorState, editorState.toJSON(), this.getAuthRequestOptions() )
+    return this.http.put( environment.viewEditorStates, JSON.stringify(editorStates), this.getAuthRequestOptions() )
       .map( ( response ) => {
         return response.ok;
       } )
@@ -539,12 +539,12 @@ export class DataserviceService extends ApiService {
   }
 
   /**
-   * @param {ViewEditorState} editorState the view editor state
+   * @param {ViewEditorState[]} editorStates the view editor state array
    * @param {string} dataserviceName the name of the dataservice
    * @returns {Observable<boolean>} `true` if the editor state was successfully saved
    */
-  public saveViewEditorStateRefreshViews( editorState: ViewEditorState, dataserviceName: string ): Observable< boolean > {
-    return this.saveViewEditorState(editorState)
+  public saveViewEditorStatesRefreshViews( editorStates: ViewEditorState[], dataserviceName: string ): Observable< boolean > {
+    return this.saveViewEditorStates(editorStates)
       .flatMap((res) => this.refreshDataserviceViews(dataserviceName));
   }
 

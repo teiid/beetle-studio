@@ -73,7 +73,7 @@ import { ProgressDialogComponent } from "@shared/progress-dialog/progress-dialog
 import { ViewPropertyEditorsComponent } from './virtualization/view-editor/view-property-editors/view-property-editors.component';
 import { AddCompositionWizardComponent } from './virtualization/view-editor/add-composition-wizard/add-composition-wizard.component';
 import { CreateViewDialogComponent } from './virtualization/view-editor/create-view-dialog/create-view-dialog.component';
-import { CreateVirtualizationDialogComponent } from './create-virtualization-dialog/create-virtualization-dialog.component';
+import { CreateViewsDialogComponent } from './create-views-dialog/create-views-dialog.component';
 
 @NgModule({
   imports: [
@@ -127,7 +127,7 @@ import { CreateVirtualizationDialogComponent } from './create-virtualization-dia
     LinkVisualComponent,
     AddCompositionWizardComponent,
     CreateViewDialogComponent,
-    CreateVirtualizationDialogComponent
+    CreateViewsDialogComponent
   ],
   providers: [
     {
@@ -150,7 +150,7 @@ import { CreateVirtualizationDialogComponent } from './create-virtualization-dia
   exports: [
   ],
   entryComponents: [AddCompositionWizardComponent, ConfirmDialogComponent, ConnectionTableDialogComponent,
-                    CreateViewDialogComponent, CreateVirtualizationDialogComponent, ProgressDialogComponent]
+                    CreateViewDialogComponent, CreateViewsDialogComponent, ProgressDialogComponent]
 })
 export class DataservicesModule { }
 

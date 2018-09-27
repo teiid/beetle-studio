@@ -39,9 +39,10 @@ export class ViewEditorI18n {
   public static readonly currentSelection = "Current Selection:";
   public static readonly noSelection = "Nothing selected";
 
-  // create virtualization dialog
-  public static readonly createVirtualizationDialogMessage = "Enter name and optional description for the virtualization and view";
-  public static readonly createVirtualizationDialogTitle = "Create Virtualization";
+  // create views dialog
+  public static readonly createViewsDialogMessage = "Select the initial views for the virtualization";
+  public static readonly createViewsDialogNewVirtualizationTitle = "Create Virtualization";
+  public static readonly noViewsDisplayedMessage = "Select connection(s)";
 
   // create view dialog
   public static readonly createViewDialogMessage = "Enter name and description(optional) for the new view";

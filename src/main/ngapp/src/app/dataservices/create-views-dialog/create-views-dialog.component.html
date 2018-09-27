@@ -1,0 +1,94 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{ title }}</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <span class="pficon pficon-close"></span>
+  </button>
+</div>
+<div class="modal-body">
+  <!-- ---------------------------------------- -->
+  <!-- Form for Virtualization name-description -->
+  <!-- ---------------------------------------- -->
+  <form [formGroup]="virtualizationPropertyForm" class="form-horizontal">
+    <div [ngClass]="virtNameValid ? 'form-group' : 'form-group has-error'">
+      <label class="col-sm-3 control-label required-pf">Virtualization Name</label>
+      <div class="col-sm-8">
+        <input class="form-control" formControlName="virtName" title="">
+        <div class="help-block" *ngIf="!virtNameValid">{{ virtNameValidationError }}</div>
+      </div>
+    </div>
+    <div [ngClass]="'form-group'">
+      <label class="col-sm-3 control-label">Description</label>
+      <div class="col-sm-8">
+        <textarea class="form-control" rows="1" maxlength="256" formControlName="virtDescription" title=""></textarea>
+      </div>
+    </div>
+  </form>
+  <div class="message-div"><strong><i>{{message}}</i></strong></div>
+
+  <div class="row">
+    <!-- ---------------- -->
+    <!-- Connections List -->
+    <!-- ---------------- -->
+    <div class="col-sm-4">
+      <strong>Connections</strong>
+      <div class="col-md-12 connections-list" *ngIf="connectionsLoadedSuccess">
+        <pfng-list
+          [config]="listConfig"
+          [itemTemplate]="itemTemplate"
+          [items]="connections"
+          (onSelectionChange)="handleConnectionSelectionChange($event)">
+          <ng-template #itemTemplate let-item="item">
+            <div class="list-pf-left">
+              <span class="fa fa-plug list-pf-icon list-pf-icon-small"></span>
+            </div>
+            <div class="list-pf-content-wrapper">
+              <div class="list-pf-main-content">
+                <div class="list-pf-title">{{item.getName()}}</div>
+              </div>
+            </div>
+          </ng-template>
+        </pfng-list>
+      </div>
+      <div class="col-md-12" *ngIf="connectionsLoading">
+        <div class="spinner spinner-lg blank-slate-pf-icon"></div>
+      </div>
+      <div class="col-md-12" *ngIf="connectionsLoadedFailed">
+        <pfng-inline-notification
+          [header]="connectionsLoadFailedHeader"
+          [message]="connectionsLoadFailedMsg"
+          [type]="connectionsLoadFailedType">
+        </pfng-inline-notification>
+      </div>
+    </div>
+    <!-- ----------- -->
+    <!-- Views Table -->
+    <!-- ----------- -->
+    <div class="col-sm-8">
+      <strong>Initial Virtualization Views</strong>
+      <div id="views-table" class="col-md-12" *ngIf="viewsLoadedSuccess">
+        <pfng-table
+          [columns]="tableColumns"
+          [config]="tableConfig"
+          [dataTableConfig]="ngxTableConfig"
+          (onSelectionChange)="handleViewSelectionChange($event)"
+          [rows]="allViews">
+        </pfng-table>
+      </div>
+      <div class="col-md-12" *ngIf="viewsLoading">
+        <div class="spinner spinner-lg blank-slate-pf-icon"></div>
+      </div>
+      <div class="col-md-12" *ngIf="viewsLoadedFailed">
+        <pfng-inline-notification
+          [header]="viewsLoadFailedHeader"
+          [message]="viewsLoadFailedMsg"
+          [type]="viewsLoadFailedType">
+        </pfng-inline-notification>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button i18n="@@createViewsDialog.cancel" type="button" class="btn btn-default" (click)="onCancelSelected()">{{ cancelButtonText }}</button>
+  <button i18n="@@createViewsDialog.delete" type="button" class="btn btn-primary" (click)="onOkSelected()" [disabled]="!okButtonEnabled">{{ okButtonText }}</button>
+</div>
+
