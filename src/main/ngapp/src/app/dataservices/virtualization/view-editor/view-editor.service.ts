@@ -502,7 +502,10 @@ export class ViewEditorService {
       this._originalView = null;
     }
     this.resetUndoManager();
+    // Notify components that view has been reset
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.EDITED_VIEW_SET, [ this._editorView ] ) );
+    // Reset the preview panel for this view
+    this.updatePreviewResults();
   }
 
   /**
@@ -563,7 +566,7 @@ export class ViewEditorService {
                             source: ViewEditorPart ): void {
     this._previewSql = sql;
     this._previewResults = results;
-    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.PREVIEW_RESULTS_CHANGED, [ results ] ) );
+    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.PREVIEW_RESULTS_CHANGED ) );
   }
 
   /**

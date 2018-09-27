@@ -62,6 +62,10 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
     this.editorService = editorService;
   }
 
+  public get previewSql(): string {
+    return this._previewSql;
+  }
+
   private clearResults(): void {
     if ( this.rows && this.columns ) {
       if ( this.rows.length !== 0 || this.columns.length !== 0 ) {
