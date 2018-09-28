@@ -149,6 +149,9 @@
       <a [routerLink]="[dataservice.getId()]" (click)="onClick(editEvent)">{{ dataservice.getId() }}</a>
     </div>
     <div class="row">
+      <div class="fa fa-edit pull-left dataservice-card-edit-icon" (click)="onClick(editDescriptionEvent)"></div>
+    </div>
+    <div class="row">
       <div class="object-card-description">{{ description }}</div>
     </div>
   </ng-template>

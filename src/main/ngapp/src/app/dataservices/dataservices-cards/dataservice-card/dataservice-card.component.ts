@@ -44,12 +44,14 @@ export class DataserviceCardComponent implements DoCheck, OnInit {
   public static readonly testDataserviceEvent = "test";
   public static readonly downloadDataserviceEvent = "download";
   public static readonly odataLookDataserviceEvent = "odataLook";
+  public static readonly editDescriptionDataserviceEvent = "editDescription";
 
   public readonly editEvent = DataserviceCardComponent.editDataserviceEvent;
   public readonly quickLookEvent = DataserviceCardComponent.quickLookDataserviceEvent;
   public readonly testEvent = DataserviceCardComponent.testDataserviceEvent;
   public readonly downloadEvent = DataserviceCardComponent.downloadDataserviceEvent;
   public readonly odataLookEvent = DataserviceCardComponent.odataLookDataserviceEvent;
+  public readonly editDescriptionEvent = DataserviceCardComponent.editDescriptionDataserviceEvent;
 
   @Input() public dataservice: Dataservice;
   @Input() public selectedDataservices: Dataservice[];

@@ -68,6 +68,7 @@ export class DataservicesListComponent implements OnInit {
   @Output() public editDataservice: EventEmitter<NameValue> = new EventEmitter<NameValue>();
   @Output() public quickLookDataservice: EventEmitter<string> = new EventEmitter<string>();
   @Output() public odataLookDataservice: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public editDescriptionDataservice: EventEmitter<string> = new EventEmitter<string>();
 
   @ViewChild('publishLogsEditor') private logEditor: any;
 
@@ -250,6 +251,10 @@ export class DataservicesListComponent implements OnInit {
   public onEditDataservice(dataserviceName: string): void {
     const nameVal = new NameValue(dataserviceName, null);
     this.editDataservice.emit(nameVal);
+  }
+
+  public onEditDescription(dataserviceName: string): void {
+    this.editDescriptionDataservice.emit(dataserviceName);
   }
 
   public onEditView(dsNameView: NameValue): void {

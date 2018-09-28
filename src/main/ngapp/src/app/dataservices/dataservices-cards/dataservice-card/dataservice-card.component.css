@@ -89,3 +89,9 @@ a.list-pf-title.view-name {
 .views-details h1, .h1 {
   font-size: 14px;
 }
+
+.dataservice-card-edit-icon {
+  color: var(--card-action-icon-color);
+  cursor: pointer;
+  margin-left: 7px;
+}

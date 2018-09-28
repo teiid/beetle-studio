@@ -33,6 +33,8 @@ import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
 import { ErrorObservable } from "rxjs/observable/ErrorObservable";
 import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
+import { environment } from "@environments/environment";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 
 @Injectable()
 export class MockDataserviceService extends DataserviceService {
@@ -75,6 +77,15 @@ export class MockDataserviceService extends DataserviceService {
     ds.setDescription( dataservice.getDescription() );
 
     this.services.push( ds );
+    return Observable.of(true);
+  }
+
+  /**
+   * Update a dataservice via the komodo rest interface
+   * @param {NewDataservice} dataservice
+   * @returns {Observable<boolean>}
+   */
+  public updateDataservice(dataservice: NewDataservice): Observable<boolean> {
     return Observable.of(true);
   }
 
