@@ -54,7 +54,6 @@ export class CreateViewsDialogComponent implements OnInit {
   public allViews: NewView[] = [];
   public listConfig: ListConfig;
   public tableColumns: any[] = [];
-  public ngxTableConfig: NgxDataTableConfig;
   public tableConfig: TableConfig;
   public virtNameValidationError = "";
   public virtualizationPropertyForm: FormGroup;
@@ -99,17 +98,15 @@ export class CreateViewsDialogComponent implements OnInit {
       {
         draggable: false,
         name: "Connection",
-        prop: "connectionName",
+        prop: "connection",
         resizeable: true,
         sortable: false,
-        maxWidth: "100",
-        minWidth: "100",
         width: "100"
       },
       {
         draggable: false,
         name: "View Name",
-        prop: "viewName",
+        prop: "view",
         resizeable: true,
         sortable: false,
         width: "100"
@@ -117,17 +114,12 @@ export class CreateViewsDialogComponent implements OnInit {
       {
         draggable: false,
         name: "Source Node",
-        prop: "pathString",
+        prop: "path",
         resizeable: true,
         sortable: false,
         width: "100"
       }
     ];
-    this.ngxTableConfig = {
-      reorderable: false,
-      selectionType: "'single'",
-      sorts: [ { prop: "name", dir: "asc" } ],
-    } as NgxDataTableConfig;
 
     this.emptyStateConfig = {
       title: ViewEditorI18n.noViewsDisplayedMessage
@@ -260,16 +252,13 @@ export class CreateViewsDialogComponent implements OnInit {
    * @param {SchemaNode} conn the connection node
    */
   private onConnectionDeselected(conn: SchemaNode): void {
-    const refreshViews  = this.arrayClone(this.allViews);
-
-    let i = refreshViews.length;
+    let i = this.allViews.length;
     while (i--) {
-      if (refreshViews[i].getConnectionName() === conn.getName()) {
-        refreshViews.splice(i, 1);
+      if (this.allViews[i].getConnectionName() === conn.getName()) {
+        this.allViews.splice(i, 1);
       }
     }
-
-    this.allViews = refreshViews;
+    this.allViews = [...this.allViews];
   }
 
   /**
@@ -374,17 +363,15 @@ export class CreateViewsDialogComponent implements OnInit {
       .getConnectionSchema(connName)
       .subscribe(
         (schemaNodes) => {
-          // Copy existing view.  Need to reset array to get table to refresh??
-          const refreshViews  = this.arrayClone(self.allViews);
           const newViews: NewView[] = [];
           for ( const schemaNode of schemaNodes ) {
             const nodePath: string[] = [];
             self.generateViewInfos(connName, schemaNode, nodePath, newViews);
           }
           for (const newView of newViews) {
-            refreshViews.push(newView);
+            self.allViews.push(newView);
           }
-          self.allViews = refreshViews;
+          self.allViews = [...self.allViews];
           self.viewsLoadingState = LoadingState.LOADED_VALID;
         },
         (error) => {
@@ -416,16 +403,6 @@ export class CreateViewsDialogComponent implements OnInit {
     for (const childNode of schemaNode.getChildren()) {
       this.generateViewInfos(connName, childNode, sourcePath, viewInfos);
     }
-  }
-
-  private arrayClone(oldArray: NewView[]): NewView[] {
-    const newArray: NewView[] = [];
-    oldArray.forEach((item) => {
-      const nView = new NewView();
-      Object.assign(nView, item);
-      newArray.push(nView);
-    });
-    return newArray;
   }
 
 }

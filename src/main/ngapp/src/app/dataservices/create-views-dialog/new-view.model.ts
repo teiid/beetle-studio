@@ -22,8 +22,8 @@ import { SchemaNode } from "@connections/shared/schema-node.model";
  */
 export class NewView {
 
-  private connectionName: string;
-  private viewName: string;
+  private connection: string;
+  private view: string;
   private viewDescription = "";
   private viewSourceNode: SchemaNode;
   private nodePath: string[] = [];
@@ -36,28 +36,28 @@ export class NewView {
    * @returns {string} the connection name
    */
   public getConnectionName(): string {
-    return this.connectionName;
+    return this.connection;
   }
 
   /**
    * @param {string} name the connection name
    */
   public setConnectionName( name?: string ): void {
-    this.connectionName = name ? name : null;
+    this.connection = name ? name : null;
   }
 
   /**
    * @returns {string} the view name
    */
   public getViewName(): string {
-    return this.viewName;
+    return this.view;
   }
 
   /**
    * @param {string} name the view name
    */
   public setViewName( name?: string ): void {
-    this.viewName = name ? name : null;
+    this.view = name ? name : null;
   }
 
   /**
@@ -91,7 +91,7 @@ export class NewView {
   /**
    * @returns {string} the stringified node path
    */
-  public get pathString(): string {
+  public get path(): string {
     let path = "";
     const segLength = this.nodePath.length;
     for ( let i = 0; i < segLength; i++ ) {

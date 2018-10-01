@@ -1,13 +1,18 @@
 <tabset id="property-editors-tabs">
-  <tab *ngFor="let tabz of tabs"
-       [heading]="tabz.title"
-       [active]="tabz.active"
-       (select)="tabz.active = true"
-       (deselect)="tabz.active = false"
-       [disabled]="tabz.disabled"
-       [removable]="tabz.removable"
-       (removed)="removeTab(tabz)"
-       [customClass]="tabz.customClass">
-    {{tabz?.content}}
+  <tab [active]="tabs[0].active"
+       (select)="tabSelected(tabs[0], true)"
+       (deselect)="tabSelected(tabs[0], false)">
+    <ng-template tabHeading>
+      <span class="fa fa-list-alt property-editors-tab-icon"></span>
+      <span class="editor-views-tab-heading">View</span>
+    </ng-template>
+  </tab>
+  <tab [active]="tabs[1].active"
+       (select)="tabSelected(tabs[1], true)"
+       (deselect)="tabSelected(tabs[1], false)">
+    <ng-template tabHeading>
+      <span class="pficon pficon-info property-editors-tab-icon"></span>
+      <span class="editor-views-tab-heading">{{columnPropsTabName}}</span>
+    </ng-template>
   </tab>
 </tabset>

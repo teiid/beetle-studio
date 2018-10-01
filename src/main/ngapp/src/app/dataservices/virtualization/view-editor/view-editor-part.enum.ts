@@ -45,6 +45,11 @@ export enum ViewEditorPart {
   /**
    * The source of the event is the properties part.
    */
-  PROPERTIES = "PROPERTIES"
+  PROPERTIES = "PROPERTIES",
+
+  /**
+   * The source of the event is the properties part.
+   */
+  COLUMNS = "COLUMNS"
 
 }
