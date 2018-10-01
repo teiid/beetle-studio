@@ -5,7 +5,7 @@
   display: grid;
   grid-template-areas:
     "canvas-editor properties-editor";
-  grid-template-columns: 8fr 2fr;
+  grid-template-columns: 50fr 50fr;
   height: 100%;
 }
 
@@ -39,7 +39,7 @@
 
 .canvas-node-selected {
   stroke: red !important;
-  stroke-width: 2 !important;
+  stroke-width: 2px !important;
   stroke-dasharray: 5,5;
   fill: transparent !important;
 }

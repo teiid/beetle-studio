@@ -153,26 +153,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
     this.editorService.setEditorConfig( this.fullEditorCssType ); // this could be set via preference or last used config
     this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
 
-    this.toolbarConfig = {
-      views: [
-        {
-          id: this.fullEditorCssType,
-          iconStyleClass: "fa fa-file-text-o",
-          tooltip: ViewEditorI18n.showEditorCanvasAndViewsActionTooltip
-        },
-        {
-          id: this.canvasOnlyCssType,
-          iconStyleClass: "fa fa-file-image-o",
-          tooltip: ViewEditorI18n.showEditorCanvasOnlyActionTooltip
-        },
-        {
-          id: this.viewsOnlyCssType,
-          iconStyleClass: "fa fa-table",
-          tooltip: ViewEditorI18n.showEditorViewsOnlyActionTooltip
-        }
-      ]
-    } as ToolbarConfig;
-
     // Load the connections
     const self = this;
     this.connectionService
