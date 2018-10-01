@@ -21,3 +21,10 @@
 .property-editors-tab-heading {
   font-size: smaller;
 }
+
+/*
+ * Adds a space to the right of the icon and before the tab heading.
+ */
+.property-editors-tab-icon:after {
+  margin-right: 2px;
+}

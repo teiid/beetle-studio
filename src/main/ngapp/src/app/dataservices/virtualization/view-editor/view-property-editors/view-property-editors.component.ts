@@ -18,9 +18,11 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
+import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { Subscription } from "rxjs/Subscription";
+import 'dragula/dist/dragula.css';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -30,28 +32,27 @@ import { Subscription } from "rxjs/Subscription";
 })
 export class ViewPropertyEditorsComponent implements OnInit, OnDestroy {
 
+  public readonly columnPropsTabName = ViewEditorI18n.columnPropsTabName;
+
   private columnEditorIsEnabled = true;
   private readonly editorService: ViewEditorService;
   private readonly logger: LoggerService;
   private subscription: Subscription;
   private viewEditorIsEnabled = true;
 
-  public readonly tabs: any[] = [
+  private readonly viewIndex = 0;
+  private readonly columnIndex = 1;
+
+  /**
+   * The tabs component configuration.
+   */
+  public tabs = [
     {
-      active: true,
-      content: "View properties",
-      customClass: "property-editors-tab-heading",
-      disabled: !this.viewEditorIsEnabled,
-      removable: false,
-      title: ViewEditorI18n.viewPropsTabName
+      "active": true // preview
     },
     {
-      content: "Column editor",
-      customClass: "property-editors-tab-heading",
-      disabled: !this.columnEditorIsEnabled,
-      removable: false,
-      title: ViewEditorI18n.columnPropsTabName
-    }
+      "active": false // message log
+    },
   ];
 
   constructor( editorService: ViewEditorService,
@@ -69,6 +70,15 @@ export class ViewPropertyEditorsComponent implements OnInit, OnDestroy {
     if ( event.typeIsCanvasSelectionChanged() ) {
       // TODO set this.viewEditorIsEnabled to true if all canvas selections are views
       // TODO set this.columnEditorIsEnabled to true if all canvas selections are columns
+      if ( event.args.length !== 0 ) {
+        if ( event.args[ 0 ] === ViewEditorPart.COLUMNS ) {
+          this.tabs[ this.viewIndex ].active = false;
+          this.tabs[ this.columnIndex ].active = true;
+        } else if ( event.args[ 0 ] === ViewEditorPart.PROPERTIES) {
+          this.tabs[ this.viewIndex ].active = false;
+          this.tabs[ this.columnIndex ].active = true;
+        }
+      }
     }
   }
 
@@ -91,6 +101,16 @@ export class ViewPropertyEditorsComponent implements OnInit, OnDestroy {
    */
   public removeTab( tab: any ): void {
     this.tabs.splice( this.tabs.indexOf( tab ), 1);
+  }
+
+  /**
+   * Callback for when a tab is clicked.
+   *
+   * @param tab the tab being select or deselected
+   * @param selected `true` is selected
+   */
+  public tabSelected( tab, selected ): void {
+    tab.active = selected;
   }
 
 }
