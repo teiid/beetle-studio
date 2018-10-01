@@ -97,7 +97,10 @@
                   </slide-in>
                 </div>
                 <a class="object-name-link" [routerLink]="[item.getId()]" (click)="onEditDataservice(item.getId())">{{ item.getId() }}</a>
-                <div class="list-pf-description">{{ getDescription( item ) }}</div>
+                <div class="list-pf-description">
+                  <span class="fa fa-edit pull-left dataservice-card-edit-icon" (click)="onEditDescription(item.getId())"></span>
+                  <span>{{ getDescription( item ) }}</span>
+                </div>
               </div>
               <div class="list-pf-additional-content">
                 <pfng-list-expand-toggle [expandId]="'views'" [item]="item" [template]="viewsTemplate">

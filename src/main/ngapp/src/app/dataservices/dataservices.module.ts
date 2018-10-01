@@ -74,6 +74,7 @@ import { ViewPropertyEditorsComponent } from './virtualization/view-editor/view-
 import { AddCompositionWizardComponent } from './virtualization/view-editor/add-composition-wizard/add-composition-wizard.component';
 import { CreateViewDialogComponent } from './virtualization/view-editor/create-view-dialog/create-view-dialog.component';
 import { CreateViewsDialogComponent } from './create-views-dialog/create-views-dialog.component';
+import { SetDescriptionDialogComponent } from "@dataservices/set-description-dialog/set-description-dialog.component";
 
 @NgModule({
   imports: [
@@ -127,7 +128,8 @@ import { CreateViewsDialogComponent } from './create-views-dialog/create-views-d
     LinkVisualComponent,
     AddCompositionWizardComponent,
     CreateViewDialogComponent,
-    CreateViewsDialogComponent
+    CreateViewsDialogComponent,
+    SetDescriptionDialogComponent
   ],
   providers: [
     {
@@ -150,7 +152,7 @@ import { CreateViewsDialogComponent } from './create-views-dialog/create-views-d
   exports: [
   ],
   entryComponents: [AddCompositionWizardComponent, ConfirmDialogComponent, ConnectionTableDialogComponent,
-                    CreateViewDialogComponent, CreateViewsDialogComponent, ProgressDialogComponent]
+                    CreateViewDialogComponent, CreateViewsDialogComponent, ProgressDialogComponent, SetDescriptionDialogComponent]
 })
 export class DataservicesModule { }
 

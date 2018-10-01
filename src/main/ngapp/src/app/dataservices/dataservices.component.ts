@@ -56,6 +56,7 @@ import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 import { NameValue } from "@dataservices/shared/name-value.model";
 import { CreateViewsDialogComponent } from "@dataservices/create-views-dialog/create-views-dialog.component";
+import { SetDescriptionDialogComponent } from "@dataservices/set-description-dialog/set-description-dialog.component";
 
 @Component({
   moduleId: module.id,
@@ -803,6 +804,45 @@ export class DataservicesComponent extends AbstractPageComponent implements OnIn
     }
 
     this.setOdataServiceName(svcName);
+  }
+
+  /*
+   * Handle edit of the specified Dataservice description
+   */
+  public onEditDescription(svcName: string): void {
+    const selectedService =  this.filteredDataservices.find((x) => x.getId() === svcName);
+    this.selectionService.setSelectedVirtualization(selectedService);
+    const virtName = selectedService.getId();
+    const descr = selectedService.getDescription();
+
+    // Open Dialog to set new description
+    const initialState = {
+      title: ViewEditorI18n.setDescriptionDialogTitle,
+      cancelButtonText: ViewEditorI18n.cancelButtonText,
+      okButtonText: ViewEditorI18n.okButtonText,
+      description: descr
+    };
+
+    // Show Dialog, act upon confirmation click
+    const modalRef = this.modalService.show(SetDescriptionDialogComponent, {initialState});
+    modalRef.content.okAction.take(1).subscribe((newDesc) => {
+      if (newDesc !== descr) {
+        selectedService.setDescription(newDesc);
+        // update the repo virtualization description
+        const updVirt = this.dataserviceService.newDataserviceInstance(virtName, newDesc);
+        const self = this;
+        this.dataserviceService
+          .updateDataservice(updVirt)
+          .subscribe(
+            (wasSuccess) => {
+              this.logger.debug("[DataservicesComponent] Updated the Dataservice.");
+            },
+            (error) => {
+              self.error(error, "Error updating the dataservice");
+            }
+          );
+      }
+    });
   }
 
   /**

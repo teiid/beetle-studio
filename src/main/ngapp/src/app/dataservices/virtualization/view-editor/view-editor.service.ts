@@ -61,7 +61,7 @@ export class ViewEditorService {
   private readonly _logger: LoggerService;
   private _messages: Message[] = [];
   private _previewResults: QueryResults;
-  private _previewSql = null;
+  private _previewSql = "";
   private _readOnly = false;
   private _shouldFireEvents = true;
   private _undoMgr: UndoManager;
@@ -275,7 +275,7 @@ export class ViewEditorService {
   }
 
   /**
-   * @returns {string} the preview sql or '<not defined>' if not set
+   * @returns {string} the preview sql
    */
   public getPreviewSql(): string {
     return this._previewSql;
@@ -530,6 +530,9 @@ export class ViewEditorService {
     // Clear preview results
     this.setPreviewResults(null, null, ViewEditorPart.EDITOR);
 
+    if ( !this._editorView || this._editorView === null ) {
+      return;
+    }
     let querySql = "";
     if ( sourcePath != null && !sourcePath.startsWith(AddCompositionCommand.id) ) {
       // Fetch new results for source table

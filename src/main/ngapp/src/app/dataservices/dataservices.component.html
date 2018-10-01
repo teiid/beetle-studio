@@ -85,14 +85,16 @@
                                  (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
                                  (editDataservice)="onEdit($event)" (quickLookDataservice)="onQuickLook($event)"
                                  (downloadDataservice)="onDownload($event)" (odataLookDataservice)="onOdataLook($event)"
-                                 (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)">
+                                 (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"
+                                 (editDescriptionDataservice)="onEditDescription($event)">
           </app-dataservices-list>
           <app-dataservices-cards *ngIf="isCardLayout && hasDataservices" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
                                   (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"
                                   (publishDataservice)="onPublish($event)" (deleteDataservice)="onDelete($event)"
                                   (editDataservice)="onEdit($event)" (quickLookDataservice)="onQuickLook($event)"
                                   (downloadDataservice)="onDownload($event)" (odataLookDataservice)="onOdataLook($event)"
-                                  (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)">
+                                  (dataserviceSelected)="onSelected($event)" (dataserviceDeselected)="onDeselected($event)"
+                                  (editDescriptionDataservice)="onEditDescription($event)">
           </app-dataservices-cards>
         </div>
       </div>

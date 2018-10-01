@@ -143,6 +143,21 @@ export class DataserviceService extends ApiService {
   }
 
   /**
+   * Update a dataservice via the komodo rest interface
+   * @param {NewDataservice} dataservice
+   * @returns {Observable<boolean>}
+   */
+  public updateDataservice(dataservice: NewDataservice): Observable<boolean> {
+    return this.http
+      .put(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRestPath + "/" + dataservice.getId(),
+        dataservice, this.getAuthRequestOptions())
+      .map((response) => {
+        return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
    * Deploy a dataservice via the komodo rest interface
    * @param {string} dataserviceName
    * @returns {Observable<boolean>}

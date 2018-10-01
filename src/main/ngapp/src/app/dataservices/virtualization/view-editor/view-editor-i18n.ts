@@ -48,6 +48,10 @@ export class ViewEditorI18n {
   public static readonly createViewDialogMessage = "Enter name and description(optional) for the new view";
   public static readonly createViewDialogTitle = "Create View";
 
+  // set description dialog
+  public static readonly setDescriptionDialogTitle = "Set Virtualization Description";
+  public static readonly setDescriptionDialogMessage = "Set the description for this virtualization";
+
   // Add Composition Wizard
   public static readonly addCompositionWizardTitle = "Add Composition";
   public static readonly addCompositionWizardSelectSourceMessage = "Expand connection and select a source for the composition";
