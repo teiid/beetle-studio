@@ -36,24 +36,32 @@
     </div>
     <!-- List of Dataservices -->
     <div class="row object-collection-page">
-        <div class="row" *ngIf="isLoaded( connectionsLoadedTag) && !connectionsExist" >
-          <div class="col-sm-12">
-            <div class="form-group">
-              <pfng-empty-state
-                [config]="noConnectionsEmptyConfig"
-                (onActionSelect)="onNewConnection()"></pfng-empty-state>
-            </div>
+      <div class="dataservices-toast">
+        <!-- Toast Notification for Dataservice operations -->
+        <pfng-toast-notification *ngIf="showToastNotification" [header]="toastNotificationHeader"
+                                 [message]="toastNotificationMessage"
+                                 [type]="toastNotificationType">
+        </pfng-toast-notification>
+      </div>
+
+      <div class="row" *ngIf="isLoaded( connectionsLoadedTag) && !connectionsExist" >
+        <div class="col-sm-12">
+          <div class="form-group">
+            <pfng-empty-state
+              [config]="noConnectionsEmptyConfig"
+              (onActionSelect)="onNewConnection()"></pfng-empty-state>
           </div>
         </div>
-        <div class="row" *ngIf="connectionsExist && isLoaded('dataservices') && allDataservices.length === 0" >
-          <div class="col-sm-12">
-            <div class="form-group">
-              <pfng-empty-state
-                [config]="noDataservicesEmptyConfig"
-                (onActionSelect)="onNew()"></pfng-empty-state>
-            </div>
+      </div>
+      <div class="row" *ngIf="connectionsExist && isLoaded('dataservices') && allDataservices.length === 0" >
+        <div class="col-sm-12">
+          <div class="form-group">
+            <pfng-empty-state
+              [config]="noDataservicesEmptyConfig"
+              (onActionSelect)="onNew()"></pfng-empty-state>
           </div>
         </div>
+      </div>
       <!-- The 'loading Dataservices' card -->
       <div class="col-md-12" *ngIf="!isLoaded('dataservices') || !isLoaded( connectionsLoadedTag )">
         <div class="container-fluid container-cards-pf">
@@ -71,14 +79,6 @@
 
       <!-- The list or card view -->
       <div class="col-md-12" *ngIf="isLoaded('dataservices')">
-        <div class="dataservices-toast">
-          <!-- Toast Notification for Dataservice operations -->
-          <pfng-toast-notification *ngIf="showToastNotification" [header]="toastNotificationHeader"
-                                 [message]="toastNotificationMessage"
-                                 [type]="toastNotificationType">
-          </pfng-toast-notification>
-        </div>
-
         <div class="{{cardListAreaCss}}">
           <app-dataservices-list *ngIf="isListLayout && hasDataservices" [dataservices]="filteredDataservices" [selectedDataservices]="selectedDataservices"
                                  (activateDataservice)="onActivate($event)" (testDataservice)="onTest($event)"

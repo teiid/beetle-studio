@@ -14,7 +14,7 @@
     <div class="col-sm-1">
       <span class="pull-right"><strong>Views:</strong></span>
     </div>
-    <div class="col-sm-2 view-table-div" id="view-editor-header-table">
+    <div class="col-sm-2 view-table-div" id="view-editor-header-table" [hidden]="viewsLoading">
       <pfng-table
         [columns]="tableColumns"
         [config]="tableConfig"
@@ -22,6 +22,10 @@
         (onSelect)="viewSelectionChanged($event)"
         [rows]="tableRows">
       </pfng-table>
+    </div>
+    <!-- Show spinner while fetching views -->
+    <div class="col-sm-2" [hidden]="!viewsLoading">
+      <div class="spinner spinner-inline"></div>
     </div>
 
     <div class="col-sm-1">
