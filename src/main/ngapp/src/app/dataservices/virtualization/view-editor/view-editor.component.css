@@ -14,7 +14,7 @@
 }
 
 /*
- * A view editor area (i.e., heading, canvas, properties, editor views).
+ * A view editor area (i.e., heading, toobar, canvas, properties).
  */
 .view-editor-area {
   background-color: #ededed;
@@ -58,10 +58,10 @@
     "dataservices-breadcrumb-bar"
     "header"
     "toolbar"
-    "canvas"
-    "editor-views";
+    "canvas";
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 10fr 3fr 60fr 26fr;
+  grid-template-rows: 5fr 10fr 5fr 80fr;
+  grid-row-gap: 10px;
 }
 
 /*
@@ -76,19 +76,6 @@
  */
 #view-editor-header-container .form-group {
   margin: 0;
-}
-
-/*
- * A view editor showing only header, toolbar, and editor views areas (missing canvas and properties).
- */
-.view-editor-views-only {
-  grid-template-areas:
-    "dataservices-breadcrumb-bar"
-    "header"
-    "toolbar"
-    "editor-views";
-  grid-template-columns: 1fr;
-  grid-template-rows: 5fr 10fr 5fr 80fr;
 }
 
 /*
@@ -183,6 +170,4 @@
  * View editor bottom section containing live sample results, message log, and maybe others.
  */
 #view-editor-views-container {
-  grid-area: editor-views;
-  overflow-y: auto;
 }

@@ -3,7 +3,9 @@
  */
 #editor-views-tabs .tab-content {
   border: 1px solid lightgray;
-  height: 75%;
+  height: 140px;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 /*

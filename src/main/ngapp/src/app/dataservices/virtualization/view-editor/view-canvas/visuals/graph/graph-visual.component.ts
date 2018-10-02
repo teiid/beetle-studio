@@ -107,8 +107,8 @@ export class GraphVisualComponent implements OnInit {
   // TODO: Need to discuss how all the layout sizes affect each other.
   public get options(): any {
     return this._options = {
-      width: window.innerWidth * .7,
-      height: window.innerHeight * .4
+      width: window.innerWidth * .5,
+      height: window.innerHeight * .45
     };
   }
 }
