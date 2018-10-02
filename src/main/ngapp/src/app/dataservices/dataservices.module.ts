@@ -75,6 +75,7 @@ import { AddCompositionWizardComponent } from './virtualization/view-editor/add-
 import { CreateViewDialogComponent } from './virtualization/view-editor/create-view-dialog/create-view-dialog.component';
 import { CreateViewsDialogComponent } from './create-views-dialog/create-views-dialog.component';
 import { SetDescriptionDialogComponent } from "@dataservices/set-description-dialog/set-description-dialog.component";
+import { PropertyEditorComponent } from './virtualization/view-editor/view-property-editors/property-editor/property-editor.component';
 
 @NgModule({
   imports: [
@@ -129,7 +130,8 @@ import { SetDescriptionDialogComponent } from "@dataservices/set-description-dia
     AddCompositionWizardComponent,
     CreateViewDialogComponent,
     CreateViewsDialogComponent,
-    SetDescriptionDialogComponent
+    SetDescriptionDialogComponent,
+    PropertyEditorComponent
   ],
   providers: [
     {

@@ -410,13 +410,13 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
 
       selectionArgs.forEach( ( nextArg ) => {
 
-        // need to parse the command to find the source path
-        const commandPart = this.getCommandId(nextArg);
+        // get command type from the selection
+        const commandType = this.editorService.getSelectionCommandType(nextArg);
         // the payload for src will be the source/connection path
         // the payload for the composition will be the json representing the composition properties
-        const argPart = this.getPayload(nextArg);
+        const argPart = this.editorService.getSelectionPayload(nextArg);
 
-        if (commandPart.startsWith(AddSourcesCommand.id)) {
+        if ( commandType === AddSourcesCommand.id ) {
           // Look for any composition with src paths links and remove if exist
           const comps: Composition[] = this.editorService.getEditorView().getCompositions();
           comps.forEach( (nextComp)  => {
@@ -438,12 +438,12 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
           });
 
           // Remove Source Command
-          const addSrcsCmd = CommandFactory.createRemoveSourcesCommand(argPart, commandPart);
+          const addSrcsCmd = CommandFactory.createRemoveSourcesCommand(argPart, commandType);
           this.notifyRemoved(addSrcsCmd);
 
-        } else if (commandPart.startsWith(AddCompositionCommand.id)) {
+        } else if ( commandType === AddCompositionCommand.id ) {
           // Remove composition
-          const addCompCmd = CommandFactory.createRemoveCompositionCommand(argPart, commandPart);
+          const addCompCmd = CommandFactory.createRemoveCompositionCommand(argPart, commandType);
           this.notifyRemoved(addCompCmd);
         }
 
@@ -498,22 +498,6 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   private getArgs(selection?: string): string[] {
     if ( selection !== null ) {
       return selection.split(Command.identDivider);
-    }
-    return null;
-  }
-
-  private getCommandId(selection?: string): string {
-    if (selection !== null) {
-      const args = selection.split(Command.identDivider);
-      return args[0];
-    }
-    return null;
-  }
-
-  private getPayload(selection?: string): string {
-    if (selection !== null) {
-      const args = selection.split(Command.identDivider);
-      return args[1];
     }
     return null;
   }

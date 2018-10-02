@@ -81,8 +81,8 @@ export class ViewEditorI18n {
   public static readonly warn0100 = "The view contains an orphan source which will be ignored";
 
   // property editors
-  public static readonly columnPropsTabName = "Column";
-  public static readonly viewPropsTabName = "View";
+  public static readonly columnsTabName = "Columns";
+  public static readonly propertiesTabName = "Properties";
 
   // view canvas
   public static readonly noSourcesAlert = "Select a source for the view";

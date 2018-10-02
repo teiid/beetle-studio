@@ -1,0 +1,35 @@
+<div id="property-editor-container">
+  <div *ngIf="!hasSelectedView">
+    <h3>No View Selected</h3>
+  </div>
+
+  <div *ngIf="hasSelectedView && numberSelectedItems > 1">
+    <h3>Multiple Items Selected</h3>
+  </div>
+
+  <div *ngIf="hasSelectedView && numberSelectedItems === 1">
+    <h3>{{getFirstSelection().getSelectionType()}} Properties</h3>
+    <div *ngIf="firstSelectionIsSource">
+      <div class="col-sm-2"><strong>Name:</strong></div>
+      <div class="col-sm-9">{{getFirstSelection().getSourceName()}}</div>
+      <div class="col-sm-2"><strong>Connection:</strong></div>
+      <div class="col-sm-9">{{getFirstSelection().getSourceConnectionName()}}</div>
+    </div>
+    <div *ngIf="firstSelectionIsComposition">
+      <div class="col-sm-2"><strong>Name:</strong></div>
+      <div class="col-sm-9">{{getFirstSelection().getComposition().getName()}}</div>
+      <div class="col-sm-2"><strong>Type:</strong></div>
+      <div class="col-sm-9">{{getFirstSelection().getComposition().getType()}}</div>
+      <div class="col-sm-2"><strong>Left Source:</strong></div>
+      <div class="col-sm-9">{{getFirstSelection().getComposition().getLeftSourceDisplay()}}</div>
+      <div class="col-sm-2"><strong>Right Source:</strong></div>
+      <div class="col-sm-9">{{getFirstSelection().getComposition().getRightSourceDisplay()}}</div>
+      <div class="col-sm-2"><strong>Criteria:</strong></div>
+      <div class="col-sm-9">{{getFirstSelection().getComposition().getCriteriaDisplay()}}</div>
+    </div>
+  </div>
+
+  <div *ngIf="hasSelectedView && numberSelectedItems === 0">
+    <h3>No item selected</h3>
+  </div>
+</div>

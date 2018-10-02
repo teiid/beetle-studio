@@ -18,6 +18,7 @@
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { Composition } from "@dataservices/shared/composition.model";
+import { CommandType } from "@dataservices/virtualization/view-editor/command/command-type.enum";
 
 export class RemoveCompositionCommand extends Command {
 
@@ -26,7 +27,7 @@ export class RemoveCompositionCommand extends Command {
    *
    * @type {string}
    */
-  public static readonly id = "RemoveCompositionCommand";
+  public static readonly id = CommandType.REMOVE_COMPOSITION_COMMAND;
 
   /**
    * The name of the command argument whose value is the compositions being removed.

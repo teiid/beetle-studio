@@ -1,0 +1,7 @@
+/*
+ * The container for the property editor
+ */
+#property-editor-container {
+  height: 100%;
+  margin-left: 15px;
+}

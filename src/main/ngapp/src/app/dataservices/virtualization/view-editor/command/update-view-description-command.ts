@@ -17,6 +17,7 @@
 
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
+import { CommandType } from "@dataservices/virtualization/view-editor/command/command-type.enum";
 
 export class UpdateViewDescriptionCommand extends Command {
 
@@ -25,7 +26,7 @@ export class UpdateViewDescriptionCommand extends Command {
    *
    * @type {string}
    */
-  public static readonly id = "UpdateViewDescriptionCommand";
+  public static readonly id = CommandType.UPDATE_VIEW_DESCRIPTION_COMMAND;
 
   /**
    * The name of the command argument whose value is the new description of the view.

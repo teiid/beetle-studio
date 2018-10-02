@@ -17,6 +17,7 @@
 
 import { CompositionType } from "@dataservices/shared/composition-type.enum";
 import { CompositionOperator } from "@dataservices/shared/composition-operator.enum";
+import { PathUtils } from "@dataservices/shared/path-utils";
 
 /**
  * Composition model
@@ -248,6 +249,26 @@ export class Composition {
 
   public toString(): string {
     return JSON.stringify(this.toJSON());
+  }
+
+  public getLeftSourceDisplay(): string {
+    const leftSrcPath = this.getLeftSourcePath();
+    const leftConn = PathUtils.getConnectionName(leftSrcPath);
+    const leftSrc = PathUtils.getSourceName(leftSrcPath);
+    return "[" + leftConn + "] " + leftSrc;
+  }
+
+  public getRightSourceDisplay(): string {
+    const rightSrcPath = this.getRightSourcePath();
+    const rightConn = PathUtils.getConnectionName(rightSrcPath);
+    const rightSrc = PathUtils.getSourceName(rightSrcPath);
+    return "[" + rightConn + "] " + rightSrc;
+  }
+
+  public getCriteriaDisplay(): string {
+    const leftColumn = this.getLeftCriteriaColumn();
+    const rightColumn = this.getRightCriteriaColumn();
+    return leftColumn + " " + CompositionOperator.toSql(this.getOperator()) + " " + rightColumn;
   }
 
 }

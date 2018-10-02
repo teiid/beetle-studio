@@ -16,6 +16,7 @@
  */
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
+import { CommandType } from "@dataservices/virtualization/view-editor/command/command-type.enum";
 
 export class NoOpCommand extends Command {
 
@@ -24,7 +25,7 @@ export class NoOpCommand extends Command {
    *
    * @type {string}
    */
-  public static readonly id = "NoOpCommand";
+  public static readonly id = CommandType.NO_OP_COMMAND;
 
   /**
    * The shared instance of the no op command.

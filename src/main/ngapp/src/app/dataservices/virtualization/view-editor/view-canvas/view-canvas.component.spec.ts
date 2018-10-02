@@ -25,6 +25,7 @@ import { TabsModule } from "ngx-bootstrap";
 import { GraphVisualComponent, LinkVisualComponent, NodeVisualComponent } from "@dataservices/virtualization/view-editor/view-canvas/visuals";
 import { CanvasService } from "@dataservices/virtualization/view-editor/view-canvas/canvas.service";
 import { SelectionService } from "@core/selection.service";
+import { PropertyEditorComponent } from "@dataservices/virtualization/view-editor/view-property-editors/property-editor/property-editor.component";
 
 describe('ViewCanvasComponent', () => {
   let component: ViewCanvasComponent;
@@ -49,6 +50,7 @@ describe('ViewCanvasComponent', () => {
         GraphVisualComponent,
         LinkVisualComponent,
         NodeVisualComponent,
+        PropertyEditorComponent,
         ViewCanvasComponent,
         ViewPropertyEditorsComponent
       ],

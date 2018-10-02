@@ -18,6 +18,7 @@
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
+import { CommandType } from "@dataservices/virtualization/view-editor/command/command-type.enum";
 
 export class AddSourcesCommand extends Command {
 
@@ -26,7 +27,7 @@ export class AddSourcesCommand extends Command {
    *
    * @type {string}
    */
-  public static readonly id = "AddSourcesCommand";
+  public static readonly id = CommandType.ADD_SOURCES_COMMAND;
 
   /**
    * The name of the command argument whose value is the paths of the sources being added.

@@ -32,7 +32,8 @@ import 'dragula/dist/dragula.css';
 })
 export class ViewPropertyEditorsComponent implements OnInit, OnDestroy {
 
-  public readonly columnPropsTabName = ViewEditorI18n.columnPropsTabName;
+  public readonly columnsTabName = ViewEditorI18n.columnsTabName;
+  public readonly propertiesTabName = ViewEditorI18n.propertiesTabName;
 
   private columnEditorIsEnabled = true;
   private readonly editorService: ViewEditorService;
@@ -40,7 +41,7 @@ export class ViewPropertyEditorsComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   private viewEditorIsEnabled = true;
 
-  private readonly viewIndex = 0;
+  private readonly propertyIndex = 0;
   private readonly columnIndex = 1;
 
   /**
@@ -48,10 +49,10 @@ export class ViewPropertyEditorsComponent implements OnInit, OnDestroy {
    */
   public tabs = [
     {
-      "active": true // preview
+      "active": true // properties
     },
     {
-      "active": false // message log
+      "active": false // columns
     },
   ];
 
@@ -68,16 +69,10 @@ export class ViewPropertyEditorsComponent implements OnInit, OnDestroy {
     this.logger.debug( "ViewPropertyEditorsComponent received event: " + event.toString() );
 
     if ( event.typeIsCanvasSelectionChanged() ) {
-      // TODO set this.viewEditorIsEnabled to true if all canvas selections are views
-      // TODO set this.columnEditorIsEnabled to true if all canvas selections are columns
-      if ( event.args.length !== 0 ) {
-        if ( event.args[ 0 ] === ViewEditorPart.COLUMNS ) {
-          this.tabs[ this.viewIndex ].active = false;
-          this.tabs[ this.columnIndex ].active = true;
-        } else if ( event.args[ 0 ] === ViewEditorPart.PROPERTIES) {
-          this.tabs[ this.viewIndex ].active = false;
-          this.tabs[ this.columnIndex ].active = true;
-        }
+      // if single item is selected, show the properties tab
+      if ( event.args.length === 1 ) {
+        this.tabs[ this.propertyIndex ].active = true;
+        this.tabs[ this.columnIndex ].active = false;
       }
     }
   }
@@ -111,6 +106,14 @@ export class ViewPropertyEditorsComponent implements OnInit, OnDestroy {
    */
   public tabSelected( tab, selected ): void {
     tab.active = selected;
+  }
+
+  public get numberSelectedItems(): number {
+    const selections = this.editorService.getSelection();
+    if (selections) {
+      return selections.length;
+    }
+    return 0;
   }
 
 }
