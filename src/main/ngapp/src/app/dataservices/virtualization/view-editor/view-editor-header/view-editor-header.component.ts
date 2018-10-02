@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
@@ -42,7 +42,7 @@ import { ViewEditorProgressChangeId } from "@dataservices/virtualization/view-ed
   templateUrl: "./view-editor-header.component.html",
   styleUrls: ["./view-editor-header.component.css"]
 })
-export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
 
   // used by html
   public readonly viewDescriptionLabel = ViewEditorI18n.viewDescriptionLabel;
@@ -136,9 +136,7 @@ export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestr
     this.tableConfig = {
       emptyStateConfig: this.emptyStateConfig
     } as TableConfig;
-  }
 
-  public ngAfterViewInit(): void {
     // init the available views
     this.initViews();
   }
@@ -182,8 +180,8 @@ export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestr
           } else {
             initialView =  self.tableRows.find((x) => x.getName() === selectedView.getName());
           }
-          self.selectView(initialView);
           self.viewsLoadingState = LoadingState.LOADED_VALID;
+          self.selectView(initialView);
         },
         (error) => {
           self.logger.error("[VirtualizationComponent] Error updating the views for the virtualization: %o", error);
@@ -198,6 +196,13 @@ export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestr
    */
   public get readOnly(): boolean {
     return !this.editorService.getEditorView() || this.editorService.isReadOnly();
+  }
+
+  /**
+   * @returns {boolean} `true` if views are being loaded
+   */
+  public get viewsLoading(): boolean {
+    return this.viewsLoadingState === LoadingState.LOADING;
   }
 
   /**
@@ -326,6 +331,8 @@ export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestr
     const editorStates: ViewEditorState[] = [];
     editorStates.push(editorState);
 
+    this.viewsLoadingState = LoadingState.LOADING;
+
     const self = this;
     this.dataserviceService
       .saveViewEditorStatesRefreshViews(editorStates, selectedDs.getId())
@@ -334,10 +341,12 @@ export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestr
           // Add the new ViewDefinition to the table
           self.addViewDefinitionToList(viewDefn);
           self.viewSavedUponCompletion = null;
+          self.viewsLoadingState = LoadingState.LOADED_VALID;
         },
         (error) => {
           self.logger.error("[VirtualizationComponent] Error saving the editor state: %o", error);
           self.viewSavedUponCompletion = null;
+          self.viewsLoadingState = LoadingState.LOADED_INVALID;
         }
       );
   }
@@ -385,6 +394,8 @@ export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestr
     const vdbName = selectedDs.getServiceVdbName();
     const editorStateId = vdbName.toLowerCase() + "." + viewDefnName;
     const dataserviceName = selectedDs.getId();
+
+    this.viewsLoadingState = LoadingState.LOADING;
     // Note: we can only doDelete selected items that we can see in the UI.
     this.logger.debug("[VirtualizationComponent] Deleting selected Virtualization View.");
     const self = this;
@@ -395,9 +406,11 @@ export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestr
           self.removeViewDefinitionFromList(selectedViewDefn);
           // deletion of a view undeploys active serviceVdb
           self.editorService.undeploySelectedVirtualization();
+          this.viewsLoadingState = LoadingState.LOADED_VALID;
         },
         (error) => {
           self.logger.error("[VirtualizationComponent] Error deleting the editor state: %o", error);
+          this.viewsLoadingState = LoadingState.LOADED_INVALID;
         }
       );
   }
@@ -450,7 +463,7 @@ export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestr
   private selectView( selView: ViewDefinition ): void {
     // Updates table selection display
     let viewSelection = null;
-    if ( selView !== null ) {
+    if ( selView && selView !== null ) {
       for (const view of this.tableRows) {
         if (view.getName() === selView.getName()) {
           view.setSelected(true);
@@ -461,7 +474,7 @@ export class ViewEditorHeaderComponent implements OnInit, AfterViewInit, OnDestr
       }
     }
     // Update selection service, then fire event
-    this.selectionService.setSelectedViewDefinition(this.selectedVirtualization, selView);
+    this.selectionService.setSelectedViewDefinition(this.selectedVirtualization, viewSelection);
     this.editorService.setEditorView(viewSelection, ViewEditorPart.HEADER);
   }
 
