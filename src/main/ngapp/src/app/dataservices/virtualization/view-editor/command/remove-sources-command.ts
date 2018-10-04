@@ -18,6 +18,7 @@
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { ViewEditorI18n } from "@dataservices/virtualization/view-editor/view-editor-i18n";
 import { Command } from "@dataservices/virtualization/view-editor/command/command";
+import { CommandType } from "@dataservices/virtualization/view-editor/command/command-type.enum";
 
 export class RemoveSourcesCommand extends Command {
 
@@ -26,7 +27,7 @@ export class RemoveSourcesCommand extends Command {
    *
    * @type {string}
    */
-  public static readonly id = "RemoveSourcesCommand";
+  public static readonly id = CommandType.REMOVE_SOURCES_COMMAND;
 
   /**
    * The name of the command argument whose value is the paths of the sources being removed.

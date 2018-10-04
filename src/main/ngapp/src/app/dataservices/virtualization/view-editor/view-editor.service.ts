@@ -42,6 +42,8 @@ import { ViewDefinition } from "@dataservices/shared/view-definition.model";
 import { ViewEditorState } from "@dataservices/shared/view-editor-state.model";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { SelectionService } from "@core/selection.service";
+import { CommandType } from "@dataservices/virtualization/view-editor/command/command-type.enum";
+import { NoOpCommand } from "@dataservices/virtualization/view-editor/command/no-op-command";
 
 @Injectable()
 export class ViewEditorService {
@@ -718,6 +720,51 @@ export class ViewEditorService {
 
   public hasSelection(): boolean {
     return this._selection.length > 0;
+  }
+
+  /**
+   * Get the Command type from the selection string
+   * @param selection the selection
+   * @return {CommandType} the command type
+   */
+  public getSelectionCommandType(selection?: string): CommandType {
+    let argStr = null;
+    if (selection !== null) {
+      const args = selection.split(Command.identDivider);
+      argStr = args[0];
+    }
+    if ( argStr !== null ) {
+      if ( argStr.startsWith(AddSourcesCommand.id) ) {
+        return AddSourcesCommand.id;
+      } else if ( argStr.startsWith(AddCompositionCommand.id) ) {
+        return AddCompositionCommand.id;
+      } else if ( argStr.startsWith(RemoveCompositionCommand.id) ) {
+        return RemoveCompositionCommand.id;
+      } else if ( argStr.startsWith(RemoveSourcesCommand.id) ) {
+        return RemoveSourcesCommand.id;
+      } else if ( argStr.startsWith(NoOpCommand.id) ) {
+        return NoOpCommand.id;
+      } else if ( argStr.startsWith(UpdateViewDescriptionCommand.id) ) {
+        return UpdateViewDescriptionCommand.id;
+      } else if ( argStr.startsWith(UpdateViewNameCommand.id) ) {
+        return UpdateViewNameCommand.id;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Get the payload from the selection string
+   * @param selection the selection
+   * @return {string} the command id
+   */
+  public getSelectionPayload(selection?: string): string {
+    if (selection !== null) {
+      const args = selection.split(Command.identDivider);
+      return args[1];
+    }
+    return null;
   }
 
   /**
