@@ -43,13 +43,13 @@ export enum ViewEditorPart {
   PREVIEW = "PREVIEW",
 
   /**
-   * The source of the event is the properties part.
+   * The source of the event is the properties editor part.
    */
   PROPERTIES = "PROPERTIES",
 
   /**
-   * The source of the event is the properties part.
+   * The source of the event is the projected columns editor part.
    */
-  COLUMNS = "COLUMNS"
+  PROJECTED_COLUMNS = "PROJECTED_COLUMNS"
 
 }

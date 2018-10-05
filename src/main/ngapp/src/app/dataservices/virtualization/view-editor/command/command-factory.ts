@@ -26,6 +26,7 @@ import { NoOpCommand } from "@dataservices/virtualization/view-editor/command/no
 import { Undoable } from "@dataservices/virtualization/view-editor/command/undo-redo/undoable";
 import { Composition } from "@dataservices/shared/composition.model";
 import { RemoveCompositionCommand } from "@dataservices/virtualization/view-editor/command/remove-composition-command";
+import { UpdateProjectedColumnsCommand } from "@dataservices/virtualization/view-editor/command/update-projected-columns-command";
 
 export class CommandFactory {
 
@@ -133,7 +134,11 @@ export class CommandFactory {
       }
       case UpdateViewNameCommand.id: {
         return CommandFactory.createUpdateViewNameCommand( cmd.getArg( UpdateViewNameCommand.oldName ),
-                                                           cmd.getArg( UpdateViewNameCommand.newName ) );
+          cmd.getArg( UpdateViewNameCommand.newName ) );
+      }
+      case UpdateProjectedColumnsCommand.id: {
+        return CommandFactory.createUpdateProjectedColumnsCommand( cmd.getArg( UpdateProjectedColumnsCommand.oldProjectedColumns ),
+                                                                   cmd.getArg( UpdateProjectedColumnsCommand.newProjectedColumns ) );
       }
       default: {
         return new Error( "The '" + cmd.id + "' command does not have an undo command" );
@@ -175,6 +180,20 @@ export class CommandFactory {
     }
 
     return new Error( "Must have either a new name or an old name when creating an UpdateViewNameCommand" );
+  }
+
+  /**
+   * @param {string | ProjectedColumns} newProjColumns the stringified representation of or the new projected columns
+   * @param {string | ProjectedColumns} oldProjColumns the stringified representation of or the old projected columns
+   * @returns {Command} the update projected columns command or a no op command if args are not supplied
+   */
+  public static createUpdateProjectedColumnsCommand( newProjColumns: string,
+                                                     oldProjColumns: string ): Command {
+    if ( !newProjColumns || newProjColumns === null || !oldProjColumns || oldProjColumns === null ) {
+      return NoOpCommand.NO_OP;
+    }
+
+    return new UpdateProjectedColumnsCommand( newProjColumns, oldProjColumns );
   }
 
   /**
@@ -245,6 +264,16 @@ export class CommandFactory {
         }
 
         return new Error( "Unable to decode UpdateViewNameCommand: " + json );
+      }
+      case UpdateProjectedColumnsCommand.id: {
+        const newProjectedCols = args[ UpdateProjectedColumnsCommand.newProjectedColumns ];
+        const replacedProjectedCols = args[ UpdateProjectedColumnsCommand.oldProjectedColumns ];
+
+        if ( newProjectedCols || replacedProjectedCols ) {
+          return CommandFactory.createUpdateProjectedColumnsCommand( newProjectedCols, replacedProjectedCols );
+        }
+
+        return new Error( "Unable to decode UpdateProjectedColumnsCommand: " + json );
       }
       default: {
         return new Error( "Unhandled command: " + cmdId );

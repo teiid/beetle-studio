@@ -20,6 +20,8 @@ import { PathUtils } from "@dataservices/shared/path-utils";
 import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { CompositionOperator } from "@dataservices/shared/composition-operator.enum";
 import { CompositionType } from "@dataservices/shared/composition-type.enum";
+import { ProjectedColumn } from "@dataservices/shared/projected-column.model";
+import {select} from "d3-selection";
 
 /**
  * ViewDefinition model
@@ -31,6 +33,7 @@ export class ViewDefinition {
   private sourcePaths: string[] = [];
   private compositions: Composition[] = [];
   private isSelected = false;
+  private projectedColumns: ProjectedColumn[] = [];
 
   /**
    * @param {Object} json the JSON representation of a ViewDefinition
@@ -59,13 +62,34 @@ export class ViewDefinition {
             viewDefn.addComposition(comp);
           }
         }
+      } else if (field === "projectedColumns") {
+        const arrayElems = json[field];
+        const cols: ProjectedColumn[] = [];
+        for (const arrayElem of arrayElems) {
+          const compStr = JSON.stringify(arrayElem);
+          if (compStr.length > 2) {
+            const col = ProjectedColumn.create(arrayElem);
+            cols.push(col);
+          }
+        }
+        viewDefn.setProjectedColumns(cols);
       }
     }
     return viewDefn;
   }
 
+  /**
+   * Constructor
+   */
   constructor() {
-    // nothing to do
+    // The ViewDefinition is initialized with 'SELECT *'
+    const prjCols: ProjectedColumn[] = [];
+    const selectStar: ProjectedColumn = new ProjectedColumn();
+    selectStar.setName("ALL");
+    selectStar.setType("ALL");
+    selectStar.selected = true;
+    prjCols.push(selectStar);
+    this.setProjectedColumns(prjCols);
   }
 
   /**
@@ -122,6 +146,34 @@ export class ViewDefinition {
    */
   public setCompositions( compositions: Composition[] = [] ): void {
     this.compositions = compositions;
+  }
+
+  /**
+   * @returns {ProjectedColumn[]} the view projected columns
+   */
+  public getProjectedColumns(): ProjectedColumn[] {
+    return this.projectedColumns;
+  }
+
+  /**
+   * @param {ProjectedColumns} projColumns the projected columns
+   */
+  public setProjectedColumns( projColumns: ProjectedColumn[] ): void {
+    this.projectedColumns = projColumns;
+  }
+
+  /**
+   * Get the projected columns that are currently selected
+   * @returns {ProjectedColumn[]} the view selected projected columns
+   */
+  public getSelectedProjectedColumns(): ProjectedColumn[] {
+    const selectedProjCols: ProjectedColumn[] = [];
+    for (const projCol of this.getProjectedColumns()) {
+      if (projCol.selected) {
+        selectedProjCols.push(projCol);
+      }
+    }
+    return selectedProjCols;
   }
 
   /**
@@ -289,11 +341,12 @@ export class ViewDefinition {
     // TODO:  This method currently handles single source views, and single join views
     //        Will need to expand capabilites in the future - as more complex joins are supported.
 
-    // The preview SQL is only generated if the view is complete
+    // If source path is supplied, return the source SQL
     if ( sourcePath !=  null ) {
       const tableName = this.getPreviewTableName(sourcePath);
       return "SELECT * FROM " + tableName + ";";
     }
+
     // The preview SQL for the view is only generated if the view is complete
     if ( this.complete ) {
       // Join View
@@ -305,17 +358,81 @@ export class ViewDefinition {
         const rightCriteriaColName = composition.getRightCriteriaColumn();
         const criteriaOperator = CompositionOperator.toSql(composition.getOperator());
         const joinType = CompositionType.toSql(composition.getType());
-        return "SELECT * FROM " + leftTable + " AS A " + joinType + " " +
+        const projColsSql = this.getProjectedColumnsSql();
+        return "SELECT " + projColsSql + " FROM " + leftTable + " AS A " + joinType + " " +
                                         rightTable + " AS B ON " +
                                         "A." + leftCriteriaColName + " " + criteriaOperator + " " +
                                         "B." + rightCriteriaColName + ";";
         // Single Source View
       } else {
         const tableName = this.getPreviewTableName(this.getSourcePaths()[0]);
-        return "SELECT * FROM " + tableName + ";";
+        const projColsSql = this.getProjectedColumnsSql();
+        return "SELECT " + projColsSql + " FROM " + tableName + ";";
       }
     }
 
+    return "";
+  }
+
+  /**
+   * Determine if the current projected columns is '*'
+   * @return {boolean} 'true' if select all
+   */
+  public isProjectAllColumns(): boolean {
+    return this.getProjectedColumns().length === 1 && this.getProjectedColumns()[0].getName() === "ALL" && this.getProjectedColumns()[0].getType() === "ALL";
+  }
+
+  /**
+   * Get the SQL string for the current projected columns
+   * @return {string} the projected columns SQL
+   */
+  private getProjectedColumnsSql(): string {
+    // TODO: This function will need more work as the ViewDefinition is refined (addition of aliases, etc)
+    const finalColumnNames: string[] = [];
+    const duplicateNames: string[] = [];
+    let sql = "";
+    // Loop thru columns - create list and tag any duplicates
+    const selectedCols = this.getSelectedProjectedColumns();
+    for ( let i = 0; i < selectedCols.length; i++ ) {
+      const col = selectedCols[i];
+      const colName = this.getSqlColumnName(col);
+      // If column is a duplicate, flag it as such.  Leave out of final list
+      if (finalColumnNames.indexOf(colName) !== -1) {
+        duplicateNames.push(colName);
+      } else {
+        finalColumnNames.push(colName);
+      }
+    }
+
+    // Build the sql from the final list
+    for ( let j = 0; j < finalColumnNames.length; j++ ) {
+      // If column was a duplicate, qualify it as left table
+      const cName = finalColumnNames[j];
+      if ( duplicateNames.indexOf(cName) !== -1 ) {
+        sql = sql.concat("A." + cName);
+      } else {
+        sql = sql.concat(cName);
+      }
+      if ( j < finalColumnNames.length - 1 ) {
+        sql = sql.concat(", ");
+      }
+    }
+    return sql;
+  }
+
+  /**
+   * Get the name of the supplied column
+   * @param col the column
+   * @return {string} the column sql name
+   */
+  private getSqlColumnName(col: ProjectedColumn): string {
+    if (col && col !== null) {
+      if (col.getName() === "ALL" && col.getType() === "ALL") {
+        return "*";
+      } else {
+        return col.getName();
+      }
+    }
     return "";
   }
 
@@ -358,7 +475,8 @@ export class ViewDefinition {
     if (this.getName() === otherView.getName() &&
         this.getDescription() === otherView.getDescription() &&
         this.pathsEqual(this.getSourcePaths(), otherView.getSourcePaths()) &&
-        this.compositionsEqual(this.getCompositions(), otherView.getCompositions()) ) {
+        this.compositionsEqual(this.getCompositions(), otherView.getCompositions()) &&
+        this.projectedColumnsEqual(this.getProjectedColumns(), otherView.getProjectedColumns()) ) {
       equal = true;
     }
     return equal;
@@ -390,6 +508,19 @@ export class ViewDefinition {
     return true;
   }
 
+  private projectedColumnsEqual(left: ProjectedColumn[], right: ProjectedColumn[]): boolean {
+    if (left === right) return true;
+    if (left == null || right == null) return false;
+    if (left.length !== right.length) return false;
+
+    left.sort();
+    right.sort();
+    for (let i = 0; i < right.length; ++i) {
+      if (!left[i].isEqual(right[i])) return false;
+    }
+    return true;
+  }
+
   /**
    * Set all object values using the supplied ViewDefinition json
    * @param {Object} values
@@ -407,7 +538,8 @@ export class ViewDefinition {
       keng__description: this.keng__description,
       isComplete: this.complete,
       sourcePaths: this.sourcePaths,
-      compositions: this.compositions
+      compositions: this.compositions,
+      projectedColumns: this.projectedColumns
     };
   }
 

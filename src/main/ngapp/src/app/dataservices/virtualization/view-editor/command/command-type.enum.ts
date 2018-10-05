@@ -53,6 +53,11 @@ export enum CommandType {
   /**
    * Command id for Add Composition
    */
-  UPDATE_VIEW_NAME_COMMAND = "UpdateViewNameCommand"
+  UPDATE_VIEW_NAME_COMMAND = "UpdateViewNameCommand",
+
+  /**
+   * Command id for Update Projected Columns
+   */
+  UPDATE_PROJECTED_COLUMNS_COMMAND = "UpdateProjectedColumnsCommand"
 
 }

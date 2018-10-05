@@ -106,6 +106,13 @@ export class ViewEditorEvent {
   }
 
   /**
+   * @returns {boolean} `true` if the projected columns editor part was the source of the event
+   */
+  public sourceIsProjectedSymbols(): boolean {
+    return this.source === ViewEditorPart.PROJECTED_COLUMNS;
+  }
+
+  /**
    * @returns {string} a string representation of the event
    */
   public toString(): string {
@@ -238,4 +245,5 @@ export class ViewEditorEvent {
   public typeIsDeleteNode(): boolean {
     return this.type === ViewEditorEventType.DELETE_NODE;
   }
+
 }

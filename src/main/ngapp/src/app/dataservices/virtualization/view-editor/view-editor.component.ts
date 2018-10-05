@@ -731,10 +731,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
    */
   public get canvasSingleSourceSelected(): boolean {
     const selections = this.editorService.getSelection();
-    if (selections && selections.length === 1) {
-      return true;
-    }
-    return false;
+    return selections && selections.length === 1;
   }
 
 }

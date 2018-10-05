@@ -14,6 +14,8 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { SelectionService } from "@core/selection.service";
 import { PropertyEditorComponent } from "@dataservices/virtualization/view-editor/view-property-editors/property-editor/property-editor.component";
+import { ProjectedColumnsEditorComponent } from "@dataservices/virtualization/view-editor/view-property-editors/projected-columns-editor/projected-columns-editor.component";
+import { TableModule } from "patternfly-ng";
 
 describe('ViewPropertyEditorsComponent', () => {
   let component: ViewPropertyEditorsComponent;
@@ -23,9 +25,10 @@ describe('ViewPropertyEditorsComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpModule,
+        TableModule,
         TabsModule.forRoot()
       ],
-      declarations: [ PropertyEditorComponent, ViewPropertyEditorsComponent ],
+      declarations: [ ProjectedColumnsEditorComponent, PropertyEditorComponent, ViewPropertyEditorsComponent ],
       providers: [
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: DataserviceService, useClass: MockDataserviceService },

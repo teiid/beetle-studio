@@ -93,20 +93,14 @@ export class Composition {
    * @return {boolean} 'true' if initial source is set and on the left
    */
   public get initialSourceOnLeft(): boolean {
-    if (this.initialSourcePath !== null && this.leftSourcePath !== null && this.initialSourcePath === this.leftSourcePath) {
-      return true;
-    }
-    return false;
+    return this.initialSourcePath !== null && this.leftSourcePath !== null && this.initialSourcePath === this.leftSourcePath;
   }
 
   /**
    * @return {boolean} 'true' if initial source is set and on the right
    */
   public get initialSourceOnRight(): boolean {
-    if (this.initialSourcePath !== null && this.rightSourcePath !== null && this.initialSourcePath === this.rightSourcePath) {
-      return true;
-    }
-    return false;
+    return this.initialSourcePath !== null && this.rightSourcePath !== null && this.initialSourcePath === this.rightSourcePath;
   }
 
   /**

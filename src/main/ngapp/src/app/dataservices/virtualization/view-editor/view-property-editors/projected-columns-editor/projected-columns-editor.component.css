@@ -1,0 +1,13 @@
+/*
+ * The container for the projected columns editor
+ */
+#projected-columns-editor-container {
+  height: 100%;
+  margin-left: 15px;
+}
+
+.datatable-body-row.active .datatable-row-group {
+  /* background-color: #0088ce !important; */
+  /* border-bottom-color: #00659c !important; */
+  /* color: #fff; */
+}

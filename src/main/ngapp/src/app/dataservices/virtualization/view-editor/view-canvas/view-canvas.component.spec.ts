@@ -26,6 +26,7 @@ import { GraphVisualComponent, LinkVisualComponent, NodeVisualComponent } from "
 import { CanvasService } from "@dataservices/virtualization/view-editor/view-canvas/canvas.service";
 import { SelectionService } from "@core/selection.service";
 import { PropertyEditorComponent } from "@dataservices/virtualization/view-editor/view-property-editors/property-editor/property-editor.component";
+import { ProjectedColumnsEditorComponent } from "@dataservices/virtualization/view-editor/view-property-editors/projected-columns-editor/projected-columns-editor.component";
 
 describe('ViewCanvasComponent', () => {
   let component: ViewCanvasComponent;
@@ -50,6 +51,7 @@ describe('ViewCanvasComponent', () => {
         GraphVisualComponent,
         LinkVisualComponent,
         NodeVisualComponent,
+        ProjectedColumnsEditorComponent,
         PropertyEditorComponent,
         ViewCanvasComponent,
         ViewPropertyEditorsComponent
