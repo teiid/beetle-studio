@@ -32,6 +32,7 @@ export class ViewEditorI18n {
   public static readonly removeSourcesCommandName = "Remove Sources";
   public static readonly updateViewNameCommandName = "Update View Name";
   public static readonly updateViewDescriptionCommandName = "Update View Description";
+  public static readonly updateProjectedColumnsCommandName = "Update Projected Columns";
 
   // connection table dialog
   public static readonly connectionTableSelectionDialogMessage = "Expand connection and select a source for your view";

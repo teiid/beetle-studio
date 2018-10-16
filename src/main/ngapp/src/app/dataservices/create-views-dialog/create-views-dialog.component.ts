@@ -10,7 +10,6 @@ import {
   EmptyStateConfig,
   ListConfig,
   ListEvent,
-  NgxDataTableConfig,
   NotificationType,
   TableConfig
 } from "patternfly-ng";

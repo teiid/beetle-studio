@@ -1,0 +1,22 @@
+<div id="projected-columns-editor-container">
+  <div *ngIf="!hasSelectedView">
+    <h3>No View Selected</h3>
+  </div>
+
+  <div *ngIf="hasSelectedView">
+    <h3>View Columns</h3>
+    <!-- View projected columns are '*' -->
+    <div class="col-md-12" *ngIf="hasSelectAllProjectedColumns">
+      <h4>All columns included.  Save the view to populate the specific columns</h4>
+    </div>
+    <!-- Display the table of projected columns -->
+    <div class="col-md-12" *ngIf="!hasSelectAllProjectedColumns">
+      <pfng-table
+        [columns]="tableColumns"
+        [config]="tableConfig"
+        (onSelectionChange)="handleColumnSelectionChange($event)"
+        [rows]="projectedColumns">
+      </pfng-table>
+    </div>
+  </div>
+</div>

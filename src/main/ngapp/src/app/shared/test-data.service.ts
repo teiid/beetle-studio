@@ -1124,7 +1124,54 @@ export class TestDataService {
           "sourcePaths":
             [
               "connection=conn1/schema=public/table=customer"
-            ]
+            ],
+          "projectedColumns": [
+            {
+              "name": "SSN",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "FIRSTNAME",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "LASTNAME",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "ST_ADDRESS",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "APT_NUMBER",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "CITY",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "STATE",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "ZIPCODE",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "PHONE",
+              "type": "string",
+              "selected": false
+            }
+          ]
         }
     }
   );
@@ -1266,7 +1313,54 @@ export class TestDataService {
                 "type": "INNER_JOIN",
                 "operator": "EQ"
               }
-            ]
+            ],
+          "projectedColumns": [
+            {
+              "name": "SSN",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "FIRSTNAME",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "LASTNAME",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "ST_ADDRESS",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "APT_NUMBER",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "CITY",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "STATE",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "ZIPCODE",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "PHONE",
+              "type": "string",
+              "selected": false
+            }
+          ]
         }
     }
   );
@@ -1395,7 +1489,54 @@ export class TestDataService {
           "sourcePaths":
             [
               "connection=conn1/schema=public/table=stuff"
-            ]
+            ],
+          "projectedColumns": [
+            {
+              "name": "SSN",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "FIRSTNAME",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "LASTNAME",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "ST_ADDRESS",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "APT_NUMBER",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "CITY",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "STATE",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "ZIPCODE",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "PHONE",
+              "type": "string",
+              "selected": false
+            }
+          ]
         }
     }
   );
@@ -1537,7 +1678,14 @@ export class TestDataService {
                 "type": "INNER_JOIN",
                 "operator": "EQ"
               }
-            ]
+            ],
+          "projectedColumns": [
+            {
+              "name": "ALL",
+              "type": "ALL",
+              "selected": true
+            }
+          ]
         }
     }
   );
@@ -1679,7 +1827,54 @@ export class TestDataService {
                 "type": "INNER_JOIN",
                 "operator": "EQ"
               }
-            ]
+            ],
+          "projectedColumns": [
+            {
+              "name": "SSN",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "FIRSTNAME",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "LASTNAME",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "ST_ADDRESS",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "APT_NUMBER",
+              "type": "string",
+              "selected": false
+            },
+            {
+              "name": "CITY",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "STATE",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "ZIPCODE",
+              "type": "string",
+              "selected": true
+            },
+            {
+              "name": "PHONE",
+              "type": "string",
+              "selected": false
+            }
+          ]
         }
     }
   );

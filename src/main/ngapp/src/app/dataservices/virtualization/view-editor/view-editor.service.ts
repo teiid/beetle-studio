@@ -44,6 +44,8 @@ import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { SelectionService } from "@core/selection.service";
 import { CommandType } from "@dataservices/virtualization/view-editor/command/command-type.enum";
 import { NoOpCommand } from "@dataservices/virtualization/view-editor/command/no-op-command";
+import { UpdateProjectedColumnsCommand } from "@dataservices/virtualization/view-editor/command/update-projected-columns-command";
+import { ProjectedColumn } from "@dataservices/shared/projected-column.model";
 
 @Injectable()
 export class ViewEditorService {
@@ -536,26 +538,55 @@ export class ViewEditorService {
       return;
     }
     let querySql = "";
+    let isSelectAll = false;
     if ( sourcePath != null && !sourcePath.startsWith(AddCompositionCommand.id) ) {
       // Fetch new results for source table
       querySql = this._editorView.getPreviewSql(sourcePath);
-
     } else {
+      // Determine if view is select *
+      if (this._editorView.isProjectAllColumns()) {
+        isSelectAll = true;
+      }
       // Fetch new results for view
       querySql = this._editorView.getPreviewSql();
-
     }
+
     const self = this;
     // Resets all of the views in the service VDB
     this._vdbService.queryVdb(querySql, VdbsConstants.PREVIEW_VDB_NAME, 15, 0)
       .subscribe(
         (queryResult) => {
-          self.setPreviewResults(querySql, queryResult, ViewEditorPart.EDITOR);
+          // If view query was select *, auto expand it and save
+          if (isSelectAll) {
+            self.expandProjCols(queryResult);
+          }
+          else {
+            self.setPreviewResults(querySql, queryResult, ViewEditorPart.EDITOR);
+          }
         },
         (error) => {
           this._logger.error( "[ViewEditorService.updatePreviewResults] - error getting results" );
         }
       );
+  }
+
+  /**
+   * Expand the views projected columns using the query result columns, then save the view
+   * @param queryResults the query results
+   */
+  private expandProjCols(queryResults: QueryResults): void {
+    const resultCols = queryResults.getColumns();
+    const projCols: ProjectedColumn[] = [];
+    for (const resultCol of resultCols) {
+      const projCol: ProjectedColumn = new ProjectedColumn();
+      projCol.setName(resultCol.getName());
+      projCol.setType(resultCol.getType());
+      projCol.selected = true;
+      projCols.push(projCol);
+    }
+    this._editorView.setProjectedColumns(projCols);
+    // After expanding, reset the view
+    this.setEditorView(this._editorView, ViewEditorPart.HEADER);
   }
 
   /**
@@ -669,6 +700,12 @@ export class ViewEditorService {
         this.getEditorView().setName( cmd.getArg( UpdateViewNameCommand.newName ) );
         break;
       }
+      case UpdateProjectedColumnsCommand.id: {
+        const updateProjColsCommand = cmd as UpdateProjectedColumnsCommand;
+        const newProjCols = updateProjColsCommand.getNewProjectedColumns();
+        this.getEditorView().setProjectedColumns( newProjCols );
+        break;
+      }
       default: {
         this._logger.error( "The '" + cmd.id + "' was not handled by updateViewState");
         break;
@@ -748,6 +785,8 @@ export class ViewEditorService {
         return UpdateViewDescriptionCommand.id;
       } else if ( argStr.startsWith(UpdateViewNameCommand.id) ) {
         return UpdateViewNameCommand.id;
+      } else if ( argStr.startsWith(UpdateProjectedColumnsCommand.id) ) {
+        return UpdateProjectedColumnsCommand.id;
       }
     }
 
