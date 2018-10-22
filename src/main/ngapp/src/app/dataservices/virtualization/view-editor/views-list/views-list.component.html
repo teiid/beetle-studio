@@ -1,0 +1,37 @@
+<form class="container-fluid">
+
+  <div class="row create-delete-buttons">
+    <div class="col-sm-2 views-list-title">
+      <strong>Views</strong>
+    </div>
+    <!-- ========= -->
+    <!-- Create/Delete Buttons -->
+    <!-- ========= -->
+    <div class="col-sm-4 pull-left view-editor-header-create-button">
+      <button type="button" data-toggle="tooltip" data-placement="right" title="Create new view"
+              i18n="@@viewEditorHeader.addText" class="btn btn-primary btn-sm" (click)="onCreateView()">Create</button>
+    </div>
+    <div class="col-sm-4 pull-left view-editor-header-delete-button">
+      <button type="button" data-toggle="tooltip" data-placement="right" title="Delete selected view"
+              i18n="@@viewEditorHeader.deleteText" class="btn btn-danger btn-sm"
+              (click)="onDeleteView()" [disabled]="!deleteViewButtonEnabled">Delete</button>
+    </div>
+  </div>
+
+  <!-- ========= -->
+  <!-- Views name -->
+  <!-- ========= -->
+
+  <div class="row">
+    <div class="col-sm-10 views-list-div" id="views-list-table" [hidden]="viewsLoading">
+      <pfng-table
+        [columns]="tableColumns"
+        [config]="tableConfig"
+        [dataTableConfig]="ngxTableConfig"
+        (onSelect)="viewSelectionChanged($event)"
+        [rows]="tableRows">
+      </pfng-table>
+    </div>
+  </div>
+
+</form>

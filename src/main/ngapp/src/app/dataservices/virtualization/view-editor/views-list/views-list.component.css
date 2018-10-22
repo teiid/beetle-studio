@@ -1,0 +1,79 @@
+.list-pf-container {
+  -ms-flex-align: start;
+  align-items: flex-start;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 0;
+}
+
+.views-list-title {
+  padding-left: 10px;
+  text-align: left;
+}
+
+.create-delete-buttons {
+  horiz-align: left;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  grid-row-gap: 1px;
+  vertical-align: middle;
+}
+
+.views-list-create-button {
+  margin-left: 0px;
+  padding-left: 0;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  background-color: aquamarine;
+}
+
+.views-list-delete-button {
+  padding-left: 0px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.views-list-description-area {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.views-list-div {
+  padding-left: 1px;
+  padding-right: 1px;
+  margin-bottom: 5px;
+  min-height: 400px;
+  max-height: 400px;
+  height: 100%;
+  width: 100%;
+  border: 1px inset grey;
+  overflow-y: auto;
+}
+
+/*
+ * Style the empty state component so that it is centered and extends the entire width.
+ */
+#views-list-table .blank-slate-pf {
+  background-color: inherit;
+  min-width: 200px;
+  border: none;
+  padding: 0;
+  min-height: 400px;
+  max-height: 400px;
+}
+
+/*
+ * Style text in blank slate for table
+ */
+#views-list-table h1, .h1 {
+  font-size: 14px;
+}
+
+/*
+ * The view description text area.
+ */
+#views-list-description-input {
+  min-height: 20px;
+  min-width: 300px;
+  vertical-align: top;
+}

@@ -21,12 +21,15 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { ViewPropertyEditorsComponent } from "@dataservices/virtualization/view-editor/view-property-editors/view-property-editors.component";
-import { TabsModule } from "ngx-bootstrap";
+import { TabsModule} from "ngx-bootstrap";
 import { GraphVisualComponent, LinkVisualComponent, NodeVisualComponent } from "@dataservices/virtualization/view-editor/view-canvas/visuals";
 import { CanvasService } from "@dataservices/virtualization/view-editor/view-canvas/canvas.service";
 import { SelectionService } from "@core/selection.service";
 import { PropertyEditorComponent } from "@dataservices/virtualization/view-editor/view-property-editors/property-editor/property-editor.component";
 import { ProjectedColumnsEditorComponent } from "@dataservices/virtualization/view-editor/view-property-editors/projected-columns-editor/projected-columns-editor.component";
+import { ViewsListComponent } from "@dataservices/virtualization/view-editor/views-list/views-list.component";
+import { BsModalService } from "ngx-bootstrap";
+import { Dataservice } from "@dataservices/shared/dataservice.model";
 
 describe('ViewCanvasComponent', () => {
   let component: ViewCanvasComponent;
@@ -54,9 +57,11 @@ describe('ViewCanvasComponent', () => {
         ProjectedColumnsEditorComponent,
         PropertyEditorComponent,
         ViewCanvasComponent,
-        ViewPropertyEditorsComponent
+        ViewPropertyEditorsComponent,
+        ViewsListComponent
       ],
       providers: [
+        BsModalService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: DataserviceService, useClass: MockDataserviceService },
         CanvasService,
@@ -75,6 +80,14 @@ describe('ViewCanvasComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ViewCanvasComponent);
     component = fixture.componentInstance;
+
+    const selService = TestBed.get( SelectionService );
+    const ds: Dataservice = new Dataservice();
+    ds.setId("testDs");
+    ds.setServiceVdbName("testDsVdb");
+    // noinspection JSUnusedAssignment
+    selService.setSelectedVirtualization( ds );
+
     fixture.detectChanges();
   });
 

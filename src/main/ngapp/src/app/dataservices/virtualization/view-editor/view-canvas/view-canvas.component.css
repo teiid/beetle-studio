@@ -4,8 +4,8 @@
 #view-editor-canvas-editor {
   display: grid;
   grid-template-areas:
-    "canvas-editor properties-editor";
-  grid-template-columns: 50fr 50fr;
+    "views-list-panel canvas-editor properties-editor";
+  grid-template-columns: 20fr 50fr 30fr;
   height: 100%;
 }
 
@@ -15,6 +15,13 @@
 #view-editor-canvas-container {
   background-color: white;
   grid-area: canvas-editor;
+}
+
+/*
+ * Views List Panel
+ */
+#views-list-container {
+  grid-area: views-list-panel;
 }
 
 /*

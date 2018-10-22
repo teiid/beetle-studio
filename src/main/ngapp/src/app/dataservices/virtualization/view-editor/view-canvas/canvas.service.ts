@@ -171,6 +171,8 @@ export class CanvasService {
   }
 
   public clear(): void {
+    if (this.canvasGraph == null)
+       return;
     this.canvasGraph.clear();
   }
 
