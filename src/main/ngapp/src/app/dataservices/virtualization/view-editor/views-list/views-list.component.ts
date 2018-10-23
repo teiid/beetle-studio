@@ -34,6 +34,7 @@ import {ConfirmDialogComponent} from "@shared/confirm-dialog/confirm-dialog.comp
 import {CommandFactory} from "@dataservices/virtualization/view-editor/command/command-factory";
 import {Command} from "@dataservices/virtualization/view-editor/command/command";
 import {CreateViewDialogComponent} from "@dataservices/virtualization/view-editor/create-view-dialog/create-view-dialog.component";
+import {ChangeDetectorRef} from "@angular/core";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -62,17 +63,20 @@ export class ViewsListComponent implements OnInit, OnDestroy, AfterViewInit {
   private viewsLoadingState: LoadingState = LoadingState.LOADING;
   private selectedVirtualization: Dataservice;
   private viewSavedUponCompletion: ViewDefinition;
+  private cdRef: ChangeDetectorRef;
 
   constructor( editorService: ViewEditorService,
                dataserviceService: DataserviceService,
                selectionService: SelectionService,
                logger: LoggerService,
-               modalService: BsModalService) {
+               modalService: BsModalService,
+               cdRef: ChangeDetectorRef) {
     this.editorService = editorService;
     this.dataserviceService = dataserviceService;
     this.selectionService = selectionService;
     this.logger = logger;
     this.modalService = modalService;
+    this.cdRef = cdRef;
   }
 
   /**
@@ -136,12 +140,12 @@ export class ViewsListComponent implements OnInit, OnDestroy, AfterViewInit {
       emptyStateConfig: this.emptyStateConfig
     } as TableConfig;
 
-
   }
 
   public ngAfterViewInit(): void {
     // init the available views
     this.initViews();
+    this.cdRef.detectChanges();
   }
 
   /*

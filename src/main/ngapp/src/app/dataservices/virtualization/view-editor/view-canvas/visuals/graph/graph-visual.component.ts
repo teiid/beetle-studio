@@ -87,6 +87,7 @@ export class GraphVisualComponent implements OnInit {
   constructor(canvasService: CanvasService, ref: ChangeDetectorRef) {
     this.canvasService = canvasService;
     this.ref = ref;
+    this.canvasGraph = this.canvasService.newCanvasGraph(this.options, this.ref);
   }
 
   public get nodes(): CanvasNode[] {
@@ -99,9 +100,6 @@ export class GraphVisualComponent implements OnInit {
 
   public ngOnInit(): void {
     console.log("graph-visual: ngOnInit");
-
-    /** Receiving an initialized simulated graph from our custom canvas.service */
-    this.canvasGraph = this.canvasService.newCanvasGraph(this.options, this.ref);
   }
 
   // TODO: Need to discuss how all the layout sizes affect each other.

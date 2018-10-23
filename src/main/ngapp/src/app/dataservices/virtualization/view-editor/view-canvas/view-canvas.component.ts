@@ -46,7 +46,7 @@ import { Composition } from "@dataservices/shared/composition.model";
   templateUrl: "./view-canvas.component.html",
   styleUrls: ["./view-canvas.component.css"]
 })
-export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ViewCanvasComponent implements OnInit, OnDestroy {
 
   // used by html
   public readonly noSourcesAlert = ViewEditorI18n.noSourcesAlert;
@@ -195,40 +195,6 @@ export class ViewCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editorSubscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
 
     this.canvasSubscription = this.canvasService.canvasEvent.subscribe((event) => this.handleCanvasEvent(event));
-  }
-
-  public ngAfterViewInit(): void {
-    // const labels:string[] = ['Employee', 'Admin', 'Payroll', 'EmployeeAdmin', 'EmployeePayDay'];
-    // const type:string[] = [
-    //   CanvasConstants.SOURCE_TYPE,
-    //   CanvasConstants.SOURCE_TYPE,
-    //   CanvasConstants.SOURCE_TYPE,
-    //   CanvasConstants.COMPOSITION_TYPE,
-    //   CanvasConstants.COMPOSITION_TYPE
-    // ];
-    //
-    // /** constructing the nodes array */
-    // const nodeIds: string[] = [];
-    // for (let i = 0; i < 5; i++) {
-    //   const id = this.canvasService.createNode(type[i], labels[i]);
-    //   nodeIds.push(id);
-    // }
-    //
-    // this.canvasService.createLink(nodeIds[0], nodeIds[3]);
-    // this.canvasService.createLink(nodeIds[1], nodeIds[3]);
-    // this.canvasService.createLink(nodeIds[2], nodeIds[4]);
-    // this.canvasService.createLink(nodeIds[3], nodeIds[4], true);
-
-    this.canvasService.canvasEvent.subscribe((nodes) => {
-      if (_.isEmpty(nodes)) {
-        console.log("No nodes selected");
-        return;
-      }
-
-      for (const node of nodes) {
-        console.log("Node " + node.label + " selected");
-      }
-    });
   }
 
   /**
