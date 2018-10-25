@@ -4,57 +4,7 @@
   <!-- Virtualization name -->
   <!-- =================== -->
   <div class="view-editor-header-title">
-    <h4>Virtualization Name: '{{virtualizationName}}'</h4>
-  </div>
-
-  <!-- ========= -->
-  <!-- View name -->
-  <!-- ========= -->
-  <div class="form-group">
-    <div class="col-sm-1">
-      <span class="pull-right"><strong>Views:</strong></span>
-    </div>
-    <div class="col-sm-2 view-table-div" id="view-editor-header-table" [hidden]="viewsLoading">
-      <pfng-table
-        [columns]="tableColumns"
-        [config]="tableConfig"
-        [dataTableConfig]="ngxTableConfig"
-        (onSelect)="viewSelectionChanged($event)"
-        [rows]="tableRows">
-      </pfng-table>
-    </div>
-    <!-- Show spinner while fetching views -->
-    <div class="col-sm-2" [hidden]="!viewsLoading">
-      <div class="spinner spinner-inline"></div>
-    </div>
-
-    <div class="col-sm-1">
-      <div class="col-sm-12 pull-left view-editor-header-create-button">
-        <button i18n="@@viewEditorHeader.addText" class="btn btn-primary btn-sm" (click)="onCreateView()">Create</button>
-      </div>
-      <div class="col-sm-12 pull-left view-editor-header-delete-button">
-        <button i18n="@@viewEditorHeader.deleteText" class="btn btn-danger btn-sm"
-                (click)="onDeleteView()" [disabled]="!deleteViewButtonEnabled">Delete</button>
-      </div>
-    </div>
-
-    <!-- ================ -->
-    <!-- View description -->
-    <!-- ================ -->
-    <div class="col-sm-6 pull-left view-editor-header-description-area">
-      <span>{{viewDescriptionLabel}}</span>
-      <textarea class="form-control"
-                id="view-editor-header-description-input"
-                name="view-editor-header-description-input"
-                placeholder={{viewDescriptionPlaceholder}}
-                [(ngModel)]="viewDescription"
-                [readonly]="readOnly"
-                (input)="viewDescriptionChanged($event.target.value)"
-                rows="1"
-                maxlength="256"
-                title="">
-      </textarea>
-    </div>
+    <h4>Virtualization Name: <strong>{{virtualizationName}}</strong></h4>
   </div>
 
 </form>

@@ -77,7 +77,7 @@ export class NodeVisualComponent {
 
   public get icon(): string {
     if (this.node.type === CanvasConstants.SOURCE_TYPE)
-      return "/assets/graphicsfuel/database-64.png";
+      return "/assets/table.png";
     else if (this.node.type === CanvasConstants.COMPOSITION_TYPE)
       return "/assets/composition.png";
 

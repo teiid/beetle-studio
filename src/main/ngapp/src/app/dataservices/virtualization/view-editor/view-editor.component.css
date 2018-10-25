@@ -90,6 +90,8 @@
  */
 #view-editor-toolbar .form-group {
   margin: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 /*
@@ -99,7 +101,7 @@
   background-color: inherit;
   border: none;
   box-shadow: none;
-  padding: 0;
+  padding: 0px;
 }
 
 /*
