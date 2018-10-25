@@ -21,7 +21,7 @@ import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { CompositionOperator } from "@dataservices/shared/composition-operator.enum";
 import { CompositionType } from "@dataservices/shared/composition-type.enum";
 import { ProjectedColumn } from "@dataservices/shared/projected-column.model";
-import {select} from "d3-selection";
+import { select } from "d3-selection";
 
 /**
  * ViewDefinition model
@@ -388,36 +388,45 @@ export class ViewDefinition {
    */
   private getProjectedColumnsSql(): string {
     // TODO: This function will need more work as the ViewDefinition is refined (addition of aliases, etc)
-    const finalColumnNames: string[] = [];
-    const duplicateNames: string[] = [];
     let sql = "";
-    // Loop thru columns - create list and tag any duplicates
+
+    // Determine duplicate names from all projected columns.  They will need to be aliased so they are not ambiguous
+    const duplicateNames = this.getDuplicateColumnNames(this.getProjectedColumns());
+
+    // Build the sql from the selected columns
     const selectedCols = this.getSelectedProjectedColumns();
     for ( let i = 0; i < selectedCols.length; i++ ) {
-      const col = selectedCols[i];
-      const colName = this.getSqlColumnName(col);
-      // If column is a duplicate, flag it as such.  Leave out of final list
-      if (finalColumnNames.indexOf(colName) !== -1) {
-        duplicateNames.push(colName);
-      } else {
-        finalColumnNames.push(colName);
-      }
-    }
-
-    // Build the sql from the final list
-    for ( let j = 0; j < finalColumnNames.length; j++ ) {
-      // If column was a duplicate, qualify it as left table
-      const cName = finalColumnNames[j];
+      // If column is a duplicate, qualify it as left table
+      const cName = this.getSqlColumnName(selectedCols[i]);
       if ( duplicateNames.indexOf(cName) !== -1 ) {
         sql = sql.concat("A." + cName);
       } else {
         sql = sql.concat(cName);
       }
-      if ( j < finalColumnNames.length - 1 ) {
+      if ( i < selectedCols.length - 1 ) {
         sql = sql.concat(", ");
       }
     }
     return sql;
+  }
+
+  /**
+   * Get the array of duplicate column names.  If no duplicates, an empty array is returned
+   * @param columns the array of columns to test
+   * @return the array of duplicate names in the supplied columns
+   */
+  private getDuplicateColumnNames(columns: ProjectedColumn[]): string[] {
+    const allColNames: string[] = [];
+    const duplicateNames: string[] = [];
+    for ( const col of columns ) {
+      const colName = this.getSqlColumnName(col);
+      if (allColNames.indexOf(colName) !== -1) {
+        duplicateNames.push(colName);
+      } else {
+        allColNames.push(colName);
+      }
+    }
+    return duplicateNames;
   }
 
   /**
