@@ -11,6 +11,10 @@ import { LoggerService } from "@core/logger.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { Subscription } from "rxjs/Subscription";
 import { UpdateProjectedColumnsCommand } from "@dataservices/virtualization/view-editor/command/update-projected-columns-command";
+import { AddSourcesCommand } from "@dataservices/virtualization/view-editor/command/add-sources-command";
+import { RemoveSourcesCommand } from "@dataservices/virtualization/view-editor/command/remove-sources-command";
+import { AddCompositionCommand } from "@dataservices/virtualization/view-editor/command/add-composition-command";
+import { RemoveCompositionCommand } from "@dataservices/virtualization/view-editor/command/remove-composition-command";
 
 @Component({
   selector: 'app-projected-columns-editor',
@@ -100,8 +104,15 @@ export class ProjectedColumnsEditorComponent implements OnInit, OnDestroy {
         if ( event.args.length === 1 && event.args[ 0 ] instanceof Command ) {
           const cmd = event.args[ 0 ] as Command;
 
+          // Handle updated projected columns
           if ( cmd instanceof UpdateProjectedColumnsCommand ) {
             this.updateProjectedColumns(cmd.getNewProjectedColumns());
+          }
+          // Change in sources or compositions - forces a reset of the columns
+          else if ( cmd instanceof AddSourcesCommand || cmd instanceof RemoveSourcesCommand ||
+                    cmd instanceof AddCompositionCommand || cmd instanceof RemoveCompositionCommand ) {
+            const viewDefn = this.editorService.getEditorView();
+            this.initProjectedColumns(viewDefn.getProjectedColumns());
           }
         }
       }
