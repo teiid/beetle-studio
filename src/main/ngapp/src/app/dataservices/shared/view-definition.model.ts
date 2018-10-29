@@ -21,7 +21,6 @@ import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
 import { CompositionOperator } from "@dataservices/shared/composition-operator.enum";
 import { CompositionType } from "@dataservices/shared/composition-type.enum";
 import { ProjectedColumn } from "@dataservices/shared/projected-column.model";
-import { select } from "d3-selection";
 
 /**
  * ViewDefinition model
@@ -34,6 +33,7 @@ export class ViewDefinition {
   private compositions: Composition[] = [];
   private isSelected = false;
   private projectedColumns: ProjectedColumn[] = [];
+  private defaultProjectedColumns: ProjectedColumn[] = [];
 
   /**
    * @param {Object} json the JSON representation of a ViewDefinition
@@ -82,14 +82,15 @@ export class ViewDefinition {
    * Constructor
    */
   constructor() {
-    // The ViewDefinition is initialized with 'SELECT *'
-    const prjCols: ProjectedColumn[] = [];
+    // Define the default projected columns ('SELECT *')
     const selectStar: ProjectedColumn = new ProjectedColumn();
     selectStar.setName("ALL");
     selectStar.setType("ALL");
     selectStar.selected = true;
-    prjCols.push(selectStar);
-    this.setProjectedColumns(prjCols);
+    this.defaultProjectedColumns.push(selectStar);
+
+    // Init the ViewDefinition with default projected columns
+    this.initProjectedColumns();
   }
 
   /**
@@ -132,6 +133,8 @@ export class ViewDefinition {
    */
   public setSourcePaths( sourcePaths: string[] = [] ): void {
     this.sourcePaths = sourcePaths;
+    // change in source paths will re-init the projected columns
+    this.initProjectedColumns();
   }
 
   /**
@@ -146,6 +149,8 @@ export class ViewDefinition {
    */
   public setCompositions( compositions: Composition[] = [] ): void {
     this.compositions = compositions;
+    // change in compositions will re-init the projected columns
+    this.initProjectedColumns();
   }
 
   /**
@@ -186,6 +191,8 @@ export class ViewDefinition {
 
     if ( index === -1 ) {
       this.compositions.push( compositionToAdd );
+      // adding composition will re-init the projected columns
+      this.initProjectedColumns();
     }
   }
 
@@ -197,6 +204,8 @@ export class ViewDefinition {
 
     if ( index !== -1 ) {
       this.compositions.splice( index, 1 );
+      // removing composition will re-init the projected columns
+      this.initProjectedColumns();
     }
   }
 
@@ -212,6 +221,8 @@ export class ViewDefinition {
 
     if ( index === -1 ) {
       this.sourcePaths.push( sourcePathToAdd );
+      // adding source will re-init the projected columns
+      this.initProjectedColumns();
     }
   }
 
@@ -237,6 +248,8 @@ export class ViewDefinition {
 
     if ( index !== -1 ) {
       this.sourcePaths.splice( index, 1 );
+      // remove source will re-init the projected columns
+      this.initProjectedColumns();
     }
   }
 
@@ -380,6 +393,13 @@ export class ViewDefinition {
    */
   public isProjectAllColumns(): boolean {
     return this.getProjectedColumns().length === 1 && this.getProjectedColumns()[0].getName() === "ALL" && this.getProjectedColumns()[0].getType() === "ALL";
+  }
+
+  /**
+   * Initializes the projected columns for this view.  This resets the view projected columns to "*" ("ALL")
+   */
+  private initProjectedColumns(): void {
+    this.setProjectedColumns(this.defaultProjectedColumns);
   }
 
   /**
